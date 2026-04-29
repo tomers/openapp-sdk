@@ -1,0 +1,42 @@
+[package]
+name = "openapp-sdk-core"
+description = "Core of the OpenApp SDK: HTTP transport, auth, retries, telemetry, and per-resource sub-clients reused by every language SDK."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+openapp-sdk-common = { workspace = true }
+
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+once_cell = { workspace = true }
+parking_lot = { workspace = true }
+reqwest = { workspace = true }
+reqwest-middleware = { workspace = true }
+reqwest-retry = { workspace = true }
+rustls = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
+tracing-subscriber = { workspace = true }
+wiremock = { workspace = true }
+
+[features]
+default = []
+# Optional OpenTelemetry exporter. Off by default — consumers opt in.
+otel = []

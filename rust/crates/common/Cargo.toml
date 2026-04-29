@@ -1,0 +1,52 @@
+[package]
+name = "openapp-sdk-common"
+description = "Shared models and low-level types for the OpenApp SDK (single contract: packages/api-spec/openapi.json)."
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lib]
+path = "src/lib.rs"
+# `generated.rs` embeds OpenAPI schemas as fenced doc-comments (e.g. `{ "type": ... }`);
+# rustdoc without a language tag treats these as Rust and the per-type count
+# runs into the hundreds. Disabling doctests on the library is simpler than
+# per-block `ignore` hints on every generated type.
+doctest = false
+
+[[bin]]
+name = "openapp-sdk-openapi-gen"
+path = "src/bin/openapi_gen.rs"
+required-features = ["openapi-gen"]
+
+[dependencies]
+bytes = { workspace = true }
+chrono = { workspace = true }
+progenitor-client = "0.12"
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+url = { workspace = true }
+
+# Only used by the openapi-gen binary. Gated so default `cargo build -p
+# openapp-sdk-common` does not pull them in for every consumer.
+anyhow = { workspace = true, optional = true }
+openapiv3 = { version = "2", optional = true }
+prettyplease = { version = "0.2", optional = true }
+progenitor = { version = "0.12", optional = true }
+quote = { version = "1", optional = true }
+syn = { version = "2", features = ["full"], optional = true }
+
+[features]
+default = []
+openapi-gen = [
+    "dep:anyhow",
+    "dep:openapiv3",
+    "dep:prettyplease",
+    "dep:progenitor",
+    "dep:quote",
+    "dep:syn",
+]

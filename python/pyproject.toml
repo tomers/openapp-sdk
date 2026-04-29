@@ -1,0 +1,120 @@
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "openapp-sdk"
+version = "0.1.19"
+description = "Official Python SDK for OpenApp — the open IoT device management platform."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "OpenApp", email = "support@openapp.house" },
+]
+keywords = [
+    "openapp",
+    "iot",
+    "device-management",
+    "automation",
+    "access-control",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Hardware",
+    "Typing :: Typed",
+]
+dependencies = [
+    "httpx>=0.27",
+    "typing-extensions>=4.10",
+]
+
+[project.optional-dependencies]
+pydantic = ["pydantic>=2.6"]
+opentelemetry = ["opentelemetry-api>=1.25", "opentelemetry-sdk>=1.25"]
+dev = [
+    "datamodel-code-generator>=0.25",
+    "maturin>=1.7",
+    "pyyaml>=6",
+    "mypy>=1.10",
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "respx>=0.21",
+    "ruff>=0.5",
+]
+
+[project.urls]
+Homepage = "https://openapp.house/"
+Documentation = "https://openapp.house/docs/sdk/"
+Repository = "https://github.com/tomers/openapp-sdk"
+Changelog = "https://github.com/tomers/openapp-sdk/blob/main/python/CHANGELOG.md"
+Issues = "https://github.com/tomers/openapp-sdk/issues"
+
+[tool.maturin]
+# Treat `python/` as the import root so `openapp_sdk.bridge._bridge` resolves to the
+# compiled extension living under `python/openapp_sdk/bridge/`.
+python-source = "python"
+module-name = "openapp_sdk.bridge._bridge"
+features = ["pyo3/extension-module"]
+bindings = "pyo3"
+include = [
+    { path = "README.md", format = "sdist" },
+    { path = "CHANGELOG.md", format = "sdist" },
+    { path = "LICENSE", format = "sdist" },
+]
+strip = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = ["python/openapp_sdk/models/_generated.py"]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "B",
+    "UP",
+    "SIM",
+    "RUF",
+]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["python/openapp_sdk"]
+exclude = ["python/openapp_sdk/models/_generated.py"]
+
+[[tool.mypy.overrides]]
+module = "openapp_sdk.bridge._bridge"
+ignore_missing_imports = true
+
+# Resource sub-clients are pass-through wrappers around a JSON bridge that
+# returns `Any` by construction. Casting every response into its OpenAPI type
+# is the job of the committed `models/_generated.py` layer, not of the
+# convenience resource methods. Silence the `no-any-return` warning here.
+[[tool.mypy.overrides]]
+module = "openapp_sdk.resources.*"
+warn_return_any = false
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "error",
+    "ignore::DeprecationWarning:httpx.*",
+]

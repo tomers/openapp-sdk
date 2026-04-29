@@ -1,0 +1,64 @@
+# packages/sdk-core — Rust sdk-core workspace tasks.
+#
+# `mod rl` loads `justfiles/rust_lint.just` in a namespace so this file can define `lint`
+# (a flat `import` of that file also defines `lint`, which `just` does not allow shadowing).
+# Clippy for this workspace uses `rl::clippy-workspace-all-features` (see that justfile).
+
+import "../../justfiles/common.just"
+
+mod rl "../../justfiles/rust_lint.just"
+
+_workspace := source_directory()
+
+_:
+    @just --list
+
+# `cargo build --workspace`
+build:
+    cd {{ _workspace }} && cargo build --workspace
+
+# `cargo test --workspace`
+test:
+    cd {{ _workspace }} && cargo test --workspace
+
+# fmt --check, then clippy (workspace, all targets, all features).
+lint: rl::format rl::clippy-workspace-all-features
+
+# clippy --fix, then `cargo fmt` (see `lint-fix-workspace-all-features` in `rust_lint.just`).
+lint-fix *args: (rl::lint-fix-workspace-all-features args)
+
+fmt: rl::format-fix
+
+# Regenerate `crates/common/src/generated.rs` from packages/api-spec/openapi.json.
+openapi-gen:
+    cd {{ _workspace }}/crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen
+
+# Fail the build if the committed generated file is stale vs packages/api-spec/openapi.json.
+openapi-check:
+    cd {{ _workspace }}/crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen -- --check
+
+# Regenerate generated.rs during pre-commit, then fail if the user needs to stage it.
+_openapi-gen-pre-commit: openapi-gen
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    repo_root="$(git rev-parse --show-toplevel)"
+    generated="packages/sdk-core/crates/common/src/generated.rs"
+    if ! git -C "$repo_root" diff --quiet -- "$generated"; then
+        echo "$generated was regenerated from packages/api-spec/openapi.json." >&2
+        echo "Run: git add $generated" >&2
+        exit 1
+    fi
+
+# If lint fails: `lint-fix` then exit 1 (unstaged fixes; same idea as backend pre-commit). Otherwise openapi check + test.
+pre-commit:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if just lint; then
+      just _openapi-gen-pre-commit
+      just test
+      exit 0
+    fi
+    just lint-fix --allow-dirty
+    exit 1

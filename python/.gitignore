@@ -1,0 +1,24 @@
+# Built artefacts produced by `maturin develop` / `maturin build`.
+# The compiled PyO3 extension module lives next to the Python source because
+# `pyproject.toml` sets `module-name = "openapp_sdk.bridge._bridge"` — it
+# should never be committed; wheels are cut from CI.
+python/openapp_sdk/bridge/_bridge*.so
+python/openapp_sdk/bridge/_bridge*.pyd
+python/openapp_sdk/bridge/_bridge*.dll
+
+# Python bytecode caches.
+**/__pycache__/
+*.pyc
+
+# uv virtualenv.
+.venv/
+
+# pytest / mypy / ruff caches.
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Maturin / wheel build outputs.
+target/
+dist/
+*.whl
