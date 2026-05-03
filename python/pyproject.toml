@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "openapp-sdk"
-version = "0.1.19"
+version = "0.1.20"
 description = "Official Python SDK for OpenApp — the open IoT device management platform."
 readme = "README.md"
 license = { text = "MIT" }
@@ -44,12 +44,17 @@ dependencies = [
 pydantic = ["pydantic>=2.6"]
 opentelemetry = ["opentelemetry-api>=1.25", "opentelemetry-sdk>=1.25"]
 dev = [
+    "allure-behave==2.16.0",
+    "allure-pytest>=2.13",
+    "behave>=1.2",
     "datamodel-code-generator>=0.25",
     "maturin>=1.7",
+    "pact-python>=2.2",
     "pyyaml>=6",
     "mypy>=1.10",
     "pytest>=8",
     "pytest-asyncio>=0.23",
+    "requests>=2.31",
     "respx>=0.21",
     "ruff>=0.5",
 ]
@@ -114,6 +119,10 @@ warn_return_any = false
 minversion = "8.0"
 testpaths = ["tests"]
 asyncio_mode = "auto"
+markers = [
+    "contract: Pact HTTP contract tests (local file + optional broker-backed verify)",
+    "zone_sanity: optional zone smoke (requires OPENAPP_ZONE_SANITY=1 and API key)",
+]
 filterwarnings = [
     "error",
     "ignore::DeprecationWarning:httpx.*",

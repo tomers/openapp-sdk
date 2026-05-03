@@ -4,7 +4,7 @@ Rust workspace that hosts the language-agnostic core of the OpenApp SDK.
 
 Published sources for each release also appear under
 [`tomers/openapp-sdk`](https://github.com/tomers/openapp-sdk) in `rust/` (see
-`packages/sdk-python/RELEASING.md`).
+`packages/sdk/python/RELEASING.md`).
 
 Every OpenApp SDK (Python today; .NET / Ruby / Go / TypeScript in the future) sits on
 top of the crates in this workspace:
@@ -25,7 +25,7 @@ we enforce (single wire contract, thin language SDKs, pluggable auth).
 ## Building and testing
 
 ```sh
-cd packages/sdk-core
+cd packages/sdk/core
 cargo build --workspace
 cargo test --workspace
 ```
@@ -36,7 +36,7 @@ The generated client lives in `crates/common/src/generated.rs` and is produced f
 `packages/api-spec/openapi.json` at build time. To refresh the committed copy:
 
 ```sh
-just sdk-core openapi-gen
+just sdk::core::openapi-gen
 ```
 
-Drift is enforced in pre-commit via `just sdk-core openapi-check`.
+Drift is enforced in pre-commit via `just sdk::core::openapi-check`.

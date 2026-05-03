@@ -1,12 +1,12 @@
-# packages/sdk-core — Rust sdk-core workspace tasks.
+# packages/sdk/core — Rust openapp-sdk workspace tasks.
 #
 # `mod rl` loads `justfiles/rust_lint.just` in a namespace so this file can define `lint`
 # (a flat `import` of that file also defines `lint`, which `just` does not allow shadowing).
 # Clippy for this workspace uses `rl::clippy-workspace-all-features` (see that justfile).
 
-import "../../justfiles/common.just"
+import "../../../justfiles/common.just"
 
-mod rl "../../justfiles/rust_lint.just"
+mod rl "../../../justfiles/rust_lint.just"
 
 _workspace := source_directory()
 
@@ -43,7 +43,7 @@ _openapi-gen-pre-commit: openapi-gen
     set -euo pipefail
 
     repo_root="$(git rev-parse --show-toplevel)"
-    generated="packages/sdk-core/crates/common/src/generated.rs"
+    generated="packages/sdk/core/crates/common/src/generated.rs"
     if ! git -C "$repo_root" diff --quiet -- "$generated"; then
         echo "$generated was regenerated from packages/api-spec/openapi.json." >&2
         echo "Run: git add $generated" >&2

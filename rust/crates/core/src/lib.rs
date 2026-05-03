@@ -19,7 +19,7 @@
 //! What **does not** live here:
 //!
 //! * Workflow / determinism layers. `OpenApp` is REST; there is no workflow sandbox.
-//! * Language-specific ergonomics. Those live in `packages/sdk-python/openapp_sdk/`.
+//! * Language-specific ergonomics. Those live in `packages/sdk/python/python/openapp_sdk/`.
 
 #![deny(rust_2018_idioms, missing_debug_implementations)]
 #![warn(clippy::pedantic)]

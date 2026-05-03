@@ -22,3 +22,6 @@ python/openapp_sdk/bridge/_bridge*.dll
 target/
 dist/
 *.whl
+
+# Local test reports (JUnit / Allure); CI uploads artifacts instead.
+.tmp/

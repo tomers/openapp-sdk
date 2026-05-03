@@ -2,7 +2,7 @@
 
 The file :mod:`openapp_sdk.models._generated` is produced by
 ``datamodel-code-generator`` from ``packages/api-spec/openapi.json``. Running
-``just sdk-python openapi-gen`` rewrites it; ``just sdk-python openapi-check``
+``just sdk::python::openapi-gen`` rewrites it; ``just sdk::python::openapi-check``
 verifies it is up to date (and is wired into pre-commit).
 
 Until the first generator run has produced committed output, this package

@@ -1,6 +1,6 @@
-# `packages/sdk-core` architecture
+# `packages/sdk/core` architecture
 
-The `sdk-core` workspace is a single Rust implementation of *SDK behavior*
+The `packages/sdk/core` workspace is a single Rust implementation of *SDK behavior*
 that every language binding reuses verbatim.
 
 ## Crates and dependency flow
@@ -25,11 +25,11 @@ Low-level types and the generated REST client.
     tokens, mirroring [`apps/backend/local_server/src/api_key_store.rs`](../../apps/backend/local_server/src/api_key_store.rs).
 * Generated:
   * [`generated.rs`](crates/common/src/generated.rs) is produced by running
-    `just sdk-core openapi-gen`, which invokes the `openapp-sdk-openapi-gen`
+    `just sdk::core::openapi-gen`, which invokes the `openapp-sdk-openapi-gen`
     binary with the `openapi-gen` feature on. Under the hood that binary runs
     [`progenitor`](https://github.com/oxidecomputer/progenitor) against the spec
     and rewrites the committed file. Drift is enforced by
-    `just sdk-core openapi-check`.
+    `just sdk::core::openapi-check`.
 
 ### `openapp-sdk-core`
 
@@ -97,14 +97,14 @@ Minimal C ABI, enough to prove the architecture and let a future non-PyO3 SDK
 ## Build / test
 
 ```sh
-cd packages/sdk-core
+cd packages/sdk/core
 cargo fmt --all
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace
 
 # Regenerate the committed client from the latest OpenAPI spec.
-just sdk-core openapi-gen
+just sdk::core::openapi-gen
 
 # Drift check (CI / pre-commit).
-just sdk-core openapi-check
+just sdk::core::openapi-check
 ```

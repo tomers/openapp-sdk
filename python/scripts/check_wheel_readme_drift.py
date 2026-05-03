@@ -13,9 +13,9 @@ from pathlib import Path
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = Path(__file__).resolve().parents[4]
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "openapp-sdk-release.yml"
-PLATFORMS_DOC = REPO_ROOT / "packages" / "sdk-python" / "WHEEL_PLATFORMS.md"
+PLATFORMS_DOC = REPO_ROOT / "packages" / "sdk" / "python" / "WHEEL_PLATFORMS.md"
 ANCHOR = "Prebuilt wheels are published for:"
 
 

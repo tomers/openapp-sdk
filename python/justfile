@@ -1,17 +1,17 @@
-# packages/sdk-python — Python SDK tasks.
+# packages/sdk/python — Python SDK tasks.
 #
 # The underlying tooling is `uv` + `maturin`. Callers should go through these
 # recipes so the commands are discoverable and consistent.
 
-import "../../justfiles/common.just"
+import "../../../justfiles/common.just"
 
 # `source_directory()` (not `justfile_directory()`) because this file is
-# imported as a `mod` from `packages/sdk.justfile` via `justfile` (root).
+# imported as a `mod` from `packages/sdk/justfile` via `justfile` (root).
 # `justfile_directory()` always resolves to the *root* justfile's directory
 # regardless of module depth, which would point `_pkg` / `_spec` / `_generated`
-# at the repo root instead of `packages/sdk-python/`.
+# at the repo root instead of `packages/sdk/python/`.
 _pkg := source_directory()
-_spec := source_directory() / ".." / "api-spec" / "openapi.json"
+_spec := source_directory() / ".." / ".." / "api-spec" / "openapi.json"
 _generated := source_directory() / "python" / "openapp_sdk" / "models" / "_generated.py"
 
 _:
@@ -42,11 +42,54 @@ test: _venv
 test-unit: _venv
     cd {{ _pkg }} && uv run pytest -v tests/unit
 
+# Consumer contract tests (Pact; no live backend).
+test-contract: _venv
+    cd {{ _pkg }} && uv run pytest -v tests/contract
+
+# Shared Gherkin scenarios under `packages/sdk/features` (skip `@wip` placeholders).
+behave: _venv
+    cd {{ _pkg }} && uv run behave ../features --tags=-wip
+
+# Behave with JUnit + Allure raw results (same layout as CI `gherkin-behave`).
+behave-reports: _venv
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rep="{{ _pkg }}/.tmp/sdk-reports"
+    mkdir -p "$rep/behave-junit" "$rep/allure-behave-results"
+    cd "{{ _pkg }}"
+    uv run behave ../features --tags=-wip --no-color \
+      -f allure_behave.formatter:AllureFormatter -o "$rep/allure-behave-results" \
+      -f plain --junit --junit-directory="$rep/behave-junit"
+
+# Unit tests with JUnit XML + Allure raw results under `.tmp/sdk-reports/` (gitignored).
+test-reports: _venv
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rep="{{ _pkg }}/.tmp/sdk-reports"
+    mkdir -p "$rep"
+    cd "{{ _pkg }}"
+    uv run pytest -v tests/unit \
+      --junitxml="$rep/pytest-junit.xml" \
+      --alluredir="$rep/allure-results"
+
+# Generate HTML and open Allure (requires `allure` on PATH; see packages/sdk/docs/REPORTING.md).
+report-allure-open: test-reports
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rep="{{ _pkg }}/.tmp/sdk-reports"
+    if ! command -v allure >/dev/null 2>&1; then
+      echo "allure: command not found. Install Allure commandline:" >&2
+      echo "  https://docs.qameta.io/allure/#_installing_a_commandline" >&2
+      exit 1
+    fi
+    allure generate "$rep/allure-results" -o "$rep/allure-report" --clean
+    allure open "$rep/allure-report"
+
 # Ruff + mypy.
 lint: _venv
     cd {{ _pkg }} && uv run ruff check .
     cd {{ _pkg }} && uv run ruff format --check .
-    cd {{ _pkg }} && uv run mypy
+    cd {{ _pkg }} && uv run python -m mypy
 
 lint-fix: _venv
     cd {{ _pkg }} && uv run ruff format .
@@ -59,7 +102,7 @@ openapi-gen: _venv
     cd "{{ _pkg }}"
     tmp="$(mktemp)"
     trap 'rm -f "$tmp"' EXIT
-    uv run datamodel-codegen \
+    uv run python -m datamodel_code_generator \
         --input "{{ _spec }}" \
         --input-file-type openapi \
         --output "$tmp" \
@@ -94,7 +137,7 @@ openapi-check: _venv
     cd "{{ _pkg }}"
     tmp="$(mktemp)"
     trap 'rm -f "$tmp"' EXIT
-    uv run datamodel-codegen \
+    uv run python -m datamodel_code_generator \
         --input "{{ _spec }}" \
         --input-file-type openapi \
         --output "$tmp" \
@@ -123,5 +166,5 @@ openapi-check: _venv
     fi
     echo "openapp_sdk/models/_generated.py is up to date."
 
-# Composite recipe used by `scripts/pre-commit-subproject-wrapper.sh packages/sdk-python`.
+# Composite recipe used by `scripts/pre-commit-subproject-wrapper.sh packages/sdk/python`.
 pre-commit: lint openapi-check readme-wheel-check test-unit

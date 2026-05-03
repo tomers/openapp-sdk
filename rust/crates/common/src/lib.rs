@@ -10,10 +10,10 @@
 //! The `generated` module is regenerated on demand with
 //!
 //! ```text
-//! just sdk-core openapi-gen
+//! just sdk::core::openapi-gen
 //! ```
 //!
-//! (drift-checked by `just sdk-core openapi-check`). Default builds do **not** invoke the
+//! (drift-checked by `just sdk::core::openapi-check`). Default builds do **not** invoke the
 //! generator; the committed file is authoritative and compiled as-is.
 
 #![deny(rust_2018_idioms, missing_debug_implementations)]

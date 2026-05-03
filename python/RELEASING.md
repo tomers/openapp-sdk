@@ -23,7 +23,7 @@ and file issues without access to the private product monorepo.
    * Homepage: `https://pypi.org/project/openapp-sdk/` (Python); future SDKs can
      extend this.
    * No `.gitignore` or README — the mirror workflow seeds `README.md`.
-   * License: `MIT` (matches `packages/sdk-python/pyproject.toml` and Rust crates).
+   * License: `MIT` (matches `packages/sdk/python/pyproject.toml` and Rust crates).
 3. Under **Settings → General → Features**, enable *Issues* and disable
    *Wikis* and *Projects* (optional, avoids confusion).
 4. Create a GitHub App for SDK release automation:
@@ -111,8 +111,8 @@ docs content is generated from `apps/docs` (Starlight); no DNS changes needed.
 
 1. `sdk-python auto release` (`.github/workflows/sdk-python-auto-release.yml`)
    triggers on pushes to `main` that touch:
-   * `packages/sdk-python/**`
-   * `packages/sdk-core/**`
+   * `packages/sdk/python/**`
+   * `packages/sdk/core/**`
    * `packages/api-spec/openapi.json`
 2. The workflow determines semantic bump level from commit messages since the
    previous `sdk-python-v*` tag:
@@ -122,8 +122,8 @@ docs content is generated from `apps/docs` (Starlight); no DNS changes needed.
    * **patch**: commit subject starts with `fix(...)` / `fix:`
    * **default**: patch when no marker is found
 3. The workflow (not a human) bumps version and commits it on `main` in:
-   * `packages/sdk-python/pyproject.toml`
-   * `packages/sdk-python/python/openapp_sdk/_version.py`
+   * `packages/sdk/python/pyproject.toml`
+   * `packages/sdk/python/python/openapp_sdk/_version.py`
 4. The workflow creates and pushes tag `sdk-python-vX.Y.Z`.
 5. The auto-generated release commit (`chore(sdk-python): release vX.Y.Z`) is
    intentionally ignored by `sdk-python auto release` to avoid release loops.
@@ -133,7 +133,7 @@ docs content is generated from `apps/docs` (Starlight); no DNS changes needed.
    1. Builds wheels for Linux, macOS (x86_64 + arm64), and Windows.
    2. Builds the sdist.
    3. Publishes everything to PyPI via OIDC.
-   4. Mirrors `packages/sdk-core` → `rust/`, `packages/sdk-python` → `python/`,
+   4. Mirrors `packages/sdk/core` → `rust/`, `packages/sdk/python` → `python/`,
       `packages/api-spec` → `api-spec/` on `tomers/openapp-sdk` and pushes the
       tag on the mirror.
 
@@ -166,7 +166,7 @@ After a push that touches SDK paths, verify:
 
 * Human operators should not manually edit SDK version numbers during normal
   releases; the automation is the source of truth for release bumps.
-* `packages/sdk-python/CHANGELOG.md` can still be maintained manually if desired,
+* `packages/sdk/python/CHANGELOG.md` can still be maintained manually if desired,
   but it is not required for publishing.
 
 ## Manual release fallback (exception only)

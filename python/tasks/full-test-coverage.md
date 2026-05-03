@@ -6,7 +6,7 @@ implementation so the final PR matches what was agreed.
 
 ## Goal
 
-Raise `packages/sdk-python` from its current smoke-level coverage to:
+Raise `packages/sdk/python` from its current smoke-level coverage to:
 
 1. **100% method coverage at the unit layer** — every public resource method
    has a test that asserts the exact HTTP request it constructs (method, path,
@@ -279,7 +279,7 @@ them right up front makes every subsequent test cheap.
   (tracked separately).
 - Running live tests in CI — deliberately deferred per decision.
 - A 3.2.0 spec bump (also deliberately deferred; see
-  `packages/sdk-core/crates/common/src/bin/openapi_gen.rs` header for rationale).
+  `packages/sdk/core/crates/common/src/bin/openapi_gen.rs` header for rationale).
 
 ## Acceptance criteria
 

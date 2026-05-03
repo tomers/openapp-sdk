@@ -2,7 +2,7 @@
 
 These run against the pure-Python bridge fallback (httpx-based), which is what
 `OPENAPP_SDK_BRIDGE=python` in ``conftest.py`` selects. The Rust bridge has its
-own coverage in ``packages/sdk-core``.
+own coverage in ``packages/sdk/core``.
 """
 
 from __future__ import annotations

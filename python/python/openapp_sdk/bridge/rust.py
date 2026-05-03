@@ -19,7 +19,7 @@ try:
 except ImportError as exc:  # pragma: no cover
     raise ImportError(
         "openapp_sdk.bridge._bridge is not available; install a wheel from PyPI or "
-        "build the extension with `just sdk-python build-develop`."
+        "build the extension with `just sdk::python::build-develop`."
     ) from exc
 
 
