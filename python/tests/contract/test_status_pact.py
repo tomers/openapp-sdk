@@ -40,7 +40,12 @@ def test_get_status_consumer_and_provider_roundtrip() -> None:
 
     with pact.serve() as srv:
         base = str(srv.url).rstrip("/")
-        response = httpx.get(f"{base}/api/v1/status", timeout=10.0)
+        # CI runners may set HTTP(S)_PROXY; bypass so the request hits the mock.
+        response = httpx.get(
+            f"{base}/api/v1/status",
+            timeout=10.0,
+            trust_env=False,
+        )
         assert response.status_code == 200
         body = response.json()
         assert "environment" in body and "version" in body
