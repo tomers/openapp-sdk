@@ -17,6 +17,7 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.mark.zone_sanity
+@pytest.mark.tier_2
 @pytest.mark.skipif(
     not os.environ.get("OPENAPP_SDK_TEST_API_KEY"),
     reason="OPENAPP_SDK_TEST_API_KEY not set",

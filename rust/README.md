@@ -24,7 +24,21 @@ we enforce (single wire contract, thin language SDKs, pluggable auth).
 
 ## Building and testing
 
+Default **`just`** recipes (`lint`, `build`, `test`, `openapi-gen`, `pre-commit`, …)
+run inside **Docker** (`sdk-core`) so a host Rust toolchain is optional — same as
+`just sdk docker core` from the repo root. For local iteration with **`cargo`**
+installed, use **`build-host`**, **`test-host`**, **`lint-host`**, and friends (see
+`just --justfile packages/sdk/core/justfile --list`).
+
 ```sh
+cd packages/sdk/core
+just lint
+just build
+just test
+```
+
+```sh
+# Host Rust (optional)
 cd packages/sdk/core
 cargo build --workspace
 cargo test --workspace

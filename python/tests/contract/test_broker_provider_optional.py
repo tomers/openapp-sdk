@@ -12,10 +12,13 @@ import os
 import pytest
 from pact import Verifier
 
-pytestmark = pytest.mark.skipif(
-    os.environ.get("PACT_BROKER_VERIFY") != "1",
-    reason="PACT_BROKER_VERIFY is not set to 1",
-)
+pytestmark = [
+    pytest.mark.skipif(
+        os.environ.get("PACT_BROKER_VERIFY") != "1",
+        reason="PACT_BROKER_VERIFY is not set to 1",
+    ),
+    pytest.mark.tier_2,
+]
 
 
 @pytest.mark.contract

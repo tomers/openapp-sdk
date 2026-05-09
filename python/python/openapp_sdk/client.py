@@ -9,6 +9,7 @@ underlying :class:`~openapp_sdk.bridge.BridgeClient`.
 from __future__ import annotations
 
 import asyncio
+import inspect
 import json
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -355,7 +356,7 @@ def _wrap(async_sub: Any, sync_client: Client) -> Any:
         if name.startswith("_"):
             continue
         attr = getattr(async_sub, name)
-        if asyncio.iscoroutinefunction(attr):
+        if inspect.iscoroutinefunction(attr):
 
             def make(method: Any) -> Any:
                 def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -391,7 +392,7 @@ def _has_coroutine_methods(value: Any) -> bool:
         for name in dir(value):
             if name.startswith("_"):
                 continue
-            if asyncio.iscoroutinefunction(getattr(value, name)):
+            if inspect.iscoroutinefunction(getattr(value, name)):
                 return True
     except Exception:
         return False

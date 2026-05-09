@@ -7,6 +7,8 @@
 
 use std::time::Duration;
 
+use bytes::Bytes;
+use futures::{Stream, StreamExt};
 use reqwest::multipart::{Form, Part};
 use reqwest::{Method, StatusCode};
 use reqwest_middleware::ClientWithMiddleware;
@@ -155,6 +157,147 @@ impl Transport {
         let status = response.status();
         if status.is_success() {
             decode_success::<R>(response).await
+        } else {
+            Err(decode_error(status, response).await)
+        }
+    }
+
+    /// JSON response body; request body is **opaque bytes** with an explicit
+    /// `Content-Type` (for example a pre-encoded `multipart/form-data` body from `OpenAPI`
+    /// generator clients). Same auth, interceptors, and error handling as
+    /// [`Self::request_json`].
+    #[allow(clippy::too_many_arguments)] // mirrors `request_json` inputs plus explicit body/type
+    pub async fn request_json_raw_body(
+        &self,
+        method: Method,
+        path: &str,
+        query: &[(&str, Option<String>)],
+        body: Vec<u8>,
+        content_type: &str,
+        extra_headers: &[(&str, String)],
+        timeout: Option<Duration>,
+    ) -> Result<serde_json::Value, SdkError> {
+        let url = self.resolve_url(path)?;
+
+        let ct = reqwest::header::HeaderValue::from_str(content_type)
+            .map_err(|e| SdkError::Serialize(format!("content-type: {e}")))?;
+
+        let mut builder = self.client.request(method.clone(), url.clone());
+        builder = builder.header(reqwest::header::USER_AGENT, &self.user_agent);
+        builder = builder.header(reqwest::header::CONTENT_TYPE, ct);
+
+        let token = self.tokens.token().await?;
+        builder = builder.header(reqwest::header::AUTHORIZATION, &token.authorization);
+
+        for (name, value) in extra_headers {
+            builder = builder.header(*name, value);
+        }
+
+        let pairs: Vec<(&str, String)> = query
+            .iter()
+            .filter_map(|(k, v)| v.clone().map(|vv| (*k, vv)))
+            .collect();
+        if !pairs.is_empty() {
+            builder = builder.query(&pairs);
+        }
+
+        builder = builder.body(body);
+
+        if let Some(t) = timeout {
+            builder = builder.timeout(t);
+        } else {
+            builder = builder.timeout(self.default_timeout);
+        }
+
+        let mut request = builder
+            .build()
+            .map_err(|e| SdkError::Serialize(e.to_string()))?;
+        for interceptor in &self.interceptors {
+            request = interceptor.on_request(request).await?;
+        }
+
+        let response = self.client.execute(request).await.map_err(SdkError::from)?;
+
+        for interceptor in &self.interceptors {
+            interceptor.on_response(&response).await?;
+        }
+
+        let status = response.status();
+        if status.is_success() {
+            decode_success::<serde_json::Value>(response).await
+        } else {
+            Err(decode_error(status, response).await)
+        }
+    }
+
+    /// Execute a request and return the success HTTP status plus the **raw** body as a
+    /// stream of byte chunks.
+    ///
+    /// Use this for `text/event-stream` (SSE) and other non-JSON bodies. Auth, retries
+    /// (on the initial connect), interceptors, and error mapping for the status line
+    /// match [`Self::request_json`]. Chunk errors from the wire are propagated as
+    /// [`SdkError::Transport`].
+    pub async fn request_stream<B>(
+        &self,
+        spec: RequestSpec<'_, B>,
+    ) -> Result<
+        (
+            StatusCode,
+            impl Stream<Item = Result<Bytes, SdkError>> + Send,
+        ),
+        SdkError,
+    >
+    where
+        B: Serialize + ?Sized,
+    {
+        let url = self.resolve_url(spec.path)?;
+
+        let mut builder = self.client.request(spec.method.clone(), url.clone());
+        builder = builder.header(reqwest::header::USER_AGENT, &self.user_agent);
+
+        let token = self.tokens.token().await?;
+        builder = builder.header(reqwest::header::AUTHORIZATION, &token.authorization);
+
+        for (name, value) in spec.extra_headers {
+            builder = builder.header(*name, value);
+        }
+
+        let pairs: Vec<(&str, String)> = spec
+            .query
+            .iter()
+            .filter_map(|(k, v)| v.clone().map(|vv| (*k, vv)))
+            .collect();
+        if !pairs.is_empty() {
+            builder = builder.query(&pairs);
+        }
+
+        if let Some(body) = spec.body {
+            builder = builder.json(body);
+        }
+
+        if let Some(timeout) = spec.timeout {
+            builder = builder.timeout(timeout);
+        } else {
+            builder = builder.timeout(self.default_timeout);
+        }
+
+        let mut request = builder
+            .build()
+            .map_err(|e| SdkError::Serialize(e.to_string()))?;
+        for interceptor in &self.interceptors {
+            request = interceptor.on_request(request).await?;
+        }
+
+        let response = self.client.execute(request).await.map_err(SdkError::from)?;
+
+        for interceptor in &self.interceptors {
+            interceptor.on_response(&response).await?;
+        }
+
+        let status = response.status();
+        if status.is_success() {
+            let stream = response.bytes_stream().map(|r| r.map_err(SdkError::from));
+            Ok((status, stream))
         } else {
             Err(decode_error(status, response).await)
         }

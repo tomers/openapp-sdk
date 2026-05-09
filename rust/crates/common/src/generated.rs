@@ -5048,6 +5048,13 @@ pub mod types {
     ///      "type": "string"
     ///    },
     ///    "invitee_message": {},
+    ///    "name": {
+    ///      "description": "Optional admin-defined label (management UI \"name\"); exposed for link previews and guests who already know the invite by name.",
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    },
     ///    "schedule": {
     ///      "oneOf": [
     ///        {
@@ -5132,6 +5139,9 @@ pub mod types {
         pub invite_token: ::std::string::String,
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub invitee_message: ::std::option::Option<::serde_json::Value>,
+        ///Optional admin-defined label (management UI "name"); exposed for link previews and guests who already know the invite by name.
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub name: ::std::option::Option<::std::string::String>,
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub schedule: ::std::option::Option<InviteScheduleSnapshot>,
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]

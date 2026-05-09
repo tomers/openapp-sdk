@@ -4,8 +4,8 @@ This document covers the one-time bootstrap for publishing the Python SDK and
 the day-to-day release process.
 
 Public SDK sources are mirrored to [`tomers/openapp-sdk`](https://github.com/tomers/openapp-sdk)
-(**Option B**: one open-source monorepo for Rust core, Python package, and API
-spec — `rust/`, `python/`, `api-spec/`).
+(**Option B**: one open-source monorepo for Rust core, Python package, Go module,
+and API spec — `rust/`, `python/`, `go/`, `api-spec/`).
 
 ## One-time bootstrap
 
@@ -19,7 +19,7 @@ and file issues without access to the private product monorepo.
 
 1. Sign in to GitHub as `tomers` (or the owner account).
 2. Create a new **public** repo named `openapp-sdk`:
-   * Description: *Open-source OpenApp client SDKs (Rust core, Python, API spec).*
+   * Description: *Open-source OpenApp client SDKs (Rust core, Python, Go, API spec).*
    * Homepage: `https://pypi.org/project/openapp-sdk/` (Python); future SDKs can
      extend this.
    * No `.gitignore` or README — the mirror workflow seeds `README.md`.
@@ -134,8 +134,8 @@ docs content is generated from `apps/docs` (Starlight); no DNS changes needed.
    2. Builds the sdist.
    3. Publishes everything to PyPI via OIDC.
    4. Mirrors `packages/sdk/core` → `rust/`, `packages/sdk/python` → `python/`,
-      `packages/api-spec` → `api-spec/` on `tomers/openapp-sdk` and pushes the
-      tag on the mirror.
+      `packages/sdk/go` → `go/`, `packages/api-spec` → `api-spec/` on
+      `tomers/openapp-sdk` and pushes the tag on the mirror.
 
 ### Authoring commit messages for release level
 
@@ -159,7 +159,7 @@ After a push that touches SDK paths, verify:
 2. **`openapp-sdk release`** succeeds.
 3. `pip install --upgrade openapp-sdk` works in a clean venv.
 4. `https://github.com/tomers/openapp-sdk/tree/sdk-python-v0.1.0`
-   (replace with actual tag) shows `rust/`, `python/`, and `api-spec/`.
+   (replace with actual tag) shows `rust/`, `python/`, `go/`, and `api-spec/`.
 5. The `Releases` page on `openapp-sdk` has the new tag.
 
 ### Notes
@@ -184,7 +184,7 @@ For any release path, verify:
 
 1. `pip install --upgrade openapp-sdk` works in a clean venv.
 2. `https://github.com/tomers/openapp-sdk/tree/sdk-python-v0.1.0`
-   shows `rust/`, `python/`, and `api-spec/`.
+   shows `rust/`, `python/`, `go/`, and `api-spec/`.
 3. The `Releases` page on `openapp-sdk` has the new tag.
 
 ## Rollback

@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "openapp-sdk"
-version = "0.1.20"
+version = "0.1.45"
 description = "Official Python SDK for OpenApp — the open IoT device management platform."
 readme = "README.md"
 license = { text = "MIT" }
@@ -30,6 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Rust",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: System :: Hardware",
@@ -122,6 +123,9 @@ asyncio_mode = "auto"
 markers = [
     "contract: Pact HTTP contract tests (local file + optional broker-backed verify)",
     "zone_sanity: optional zone smoke (requires OPENAPP_ZONE_SANITY=1 and API key)",
+    "tier_0: PR-critical fast smoke (unit + binding sanity)",
+    "tier_1: standard regression (default for unmarked unit tests)",
+    "tier_2: exhaustive / live / scheduled (integration, zone, broker verify)",
 ]
 filterwarnings = [
     "error",

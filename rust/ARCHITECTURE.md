@@ -11,7 +11,7 @@ flowchart LR
   common["openapp-sdk-common<br/>(models + types)"] --> core["openapp-sdk-core<br/>(transport, auth, retries, sub-clients)"]
   core --> cbridge["openapp-sdk-core-c-bridge<br/>(C ABI for non-PyO3 SDKs)"]
   core -.pyo3.-> python["openapp-sdk-python-bridge"]
-  cbridge -.future.-> nonpy["future: .NET / Ruby / Go / Swift"]
+  cbridge -.future.-> nonpy["future: Node / .NET / Ruby / Go / Swift"]
 ```
 
 ### `openapp-sdk-common`

@@ -7,6 +7,8 @@ import sys
 
 import pytest
 
+pytestmark = pytest.mark.tier_0
+
 
 def _reload_bridge_module() -> None:
     # Forcing a fresh import re-runs the cache-aware selector.

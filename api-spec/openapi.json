@@ -11092,6 +11092,13 @@
             "type": "string"
           },
           "invitee_message": {},
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional admin-defined label (management UI \"name\"); exposed for link previews and guests who already know the invite by name."
+          },
           "schedule": {
             "oneOf": [
               {

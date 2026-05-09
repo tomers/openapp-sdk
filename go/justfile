@@ -1,0 +1,78 @@
+# packages/sdk/go — OpenAPI Generator Go client (docker-based codegen).
+
+import "../../../justfiles/common.just"
+
+_pkg := source_directory()
+_repo := source_directory() / ".." / ".." / ".."
+# Same service as `just sdk docker go` (packages/sdk/docker/compose.yaml) — no host Go required.
+_compose := source_directory() / ".." / "docker" / "compose.yaml"
+_openapi_generator_image := "openapitools/openapi-generator-cli:v7.12.0"
+# Same Go toolchain as packages/sdk/docker/go/Dockerfile (pin patch + trixie).
+_go_toolchain_image := "golang:1.26.2-trixie"
+
+_:
+    @just --list
+
+# Regenerate all Go sources from the repo OpenAPI spec (same image as CI).
+generate:
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "{{ _repo }}:/workspace" \
+        {{ _openapi_generator_image }} generate \
+        -i /workspace/packages/api-spec/openapi.json \
+        -g go \
+        -o /workspace/packages/sdk/go \
+        --git-user-id tomers \
+        --git-repo-id openapp-sdk/go \
+        --additional-properties=generateMarshalJSON=false
+    bash "{{ _pkg }}/scripts/fix_openapi_generator_go.sh"
+    docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "{{ _repo }}:/workspace" \
+        -w /workspace/packages/sdk/go \
+        -e GOCACHE=/tmp/gocache \
+        -e GOMODCACHE=/tmp/gomodcache \
+        {{ _go_toolchain_image }} \
+        bash -eux scripts/post_openapi_generate_go.sh
+
+openapi-check: generate
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{ _pkg }}"
+    git diff --exit-code
+
+# Run Go via sdk-go container (see packages/sdk/docker/go/Dockerfile).
+_go *ARGS:
+    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-go \
+        sh -euxc 'mkdir -p .gocache .gomodcache && go {{ ARGS }}'
+
+# Multi-step Go commands in one container (`&&` chains).
+_go_cmd CMD:
+    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-go \
+        sh -euxc 'mkdir -p .gocache .gomodcache && {{ CMD }}'
+
+lint:
+    @just _go vet ./...
+
+build:
+    @just _go build ./...
+
+test:
+    @just _go test ./...
+
+# Vet/build/test in sdk-go only. Build the image first: `docker compose -f packages/sdk/docker/compose.yaml build sdk-go`
+# (see `.github/workflows/openapp-sdk-release.yml`).
+release-gate:
+    @just _go_cmd 'go vet ./... && go build ./... && go test ./...'
+
+# Invoked from repo root via `scripts/pre-commit-subproject-wrapper.sh packages/sdk/go`.
+# Same openapi drift gate as CI (`just sdk go openapi-check`); hook wiring is `.pre-commit-config.yaml`.
+# Pre-commit runs OpenAPI codegen/drift then delegates to `release-gate` (same vet/build/test).
+pre-commit:
+    @just openapi-check
+    @just release-gate
+
+# Go modules ship via git tags (`sdk-go-v*`); no registry upload. Verifies tests; see VERSIONING.md for tagging.
+publish:
+    @echo >&2 "Go: push a version tag to release (e.g. sdk-go-v0.1.0); see packages/sdk/docs/VERSIONING.md. Verifying module…"
+    @just _go_cmd 'go test ./...'

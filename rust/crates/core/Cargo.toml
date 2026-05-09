@@ -1,6 +1,7 @@
 [package]
 name = "openapp-sdk-core"
 description = "Core of the OpenApp SDK: HTTP transport, auth, retries, telemetry, and per-resource sub-clients reused by every language SDK."
+readme = "README.md"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

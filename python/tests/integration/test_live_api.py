@@ -16,10 +16,13 @@ import os
 import pytest
 from openapp_sdk import AsyncClient
 
-pytestmark = pytest.mark.skipif(
-    not os.environ.get("OPENAPP_SDK_TEST_API_KEY"),
-    reason="OPENAPP_SDK_TEST_API_KEY not set; skipping live-API tests",
-)
+pytestmark = [
+    pytest.mark.skipif(
+        not os.environ.get("OPENAPP_SDK_TEST_API_KEY"),
+        reason="OPENAPP_SDK_TEST_API_KEY not set; skipping live-API tests",
+    ),
+    pytest.mark.tier_2,
+]
 
 
 @pytest.fixture

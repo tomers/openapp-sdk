@@ -1,41 +1,55 @@
 # packages/sdk/core — Rust openapp-sdk workspace tasks.
 #
-# `mod rl` loads `justfiles/rust_lint.just` in a namespace so this file can define `lint`
-# (a flat `import` of that file also defines `lint`, which `just` does not allow shadowing).
-# Clippy for this workspace uses `rl::clippy-workspace-all-features` (see that justfile).
+# Default recipes run inside Docker (`sdk-core`) so contributors need no host Rust
+# toolchain. Use *-host variants for fast local iteration when Rust is installed.
+#
+# `mod rl` loads `justfiles/rust_lint.just` for `lint-host` / `lint-fix-host` only.
 
 import "../../../justfiles/common.just"
 
 mod rl "../../../justfiles/rust_lint.just"
 
 _workspace := source_directory()
+_compose := source_directory() / ".." / "docker" / "compose.yaml"
 
 _:
     @just --list
 
+# --- Docker (default): same image/service as `just sdk docker core` ---
+
+_core_cmd CMD:
+    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-core \
+        sh -euxc '{{ CMD }}'
+
 # `cargo build --workspace`
 build:
-    cd {{ _workspace }} && cargo build --workspace
+    @just _core_cmd 'cargo build --workspace'
 
 # `cargo test --workspace`
 test:
-    cd {{ _workspace }} && cargo test --workspace
+    @just _core_cmd 'cargo test --workspace'
 
 # fmt --check, then clippy (workspace, all targets, all features).
-lint: rl::format rl::clippy-workspace-all-features
+lint:
+    @just _core_cmd 'cargo fmt --all -- --check && cargo clippy --workspace --all-targets --all-features -- -D warnings'
 
-# clippy --fix, then `cargo fmt` (see `lint-fix-workspace-all-features` in `rust_lint.just`).
-lint-fix *args: (rl::lint-fix-workspace-all-features args)
+# clippy --fix, then `cargo fmt` (matches `lint-fix-workspace-all-features` intent).
+lint-fix *ARGS:
+    @just _core_cmd 'cargo clippy --workspace --all-targets --all-features --fix {{ ARGS }} -- -D warnings && cargo fmt --all'
 
-fmt: rl::format-fix
+fmt:
+    @just _core_cmd 'cargo fmt --all'
+
+# Canonical SDK recipe name (`MULTI_SDK_ROADMAP.md`); same as `openapi-gen`.
+generate: openapi-gen
 
 # Regenerate `crates/common/src/generated.rs` from packages/api-spec/openapi.json.
 openapi-gen:
-    cd {{ _workspace }}/crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen
+    @just _core_cmd 'cd crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen'
 
 # Fail the build if the committed generated file is stale vs packages/api-spec/openapi.json.
 openapi-check:
-    cd {{ _workspace }}/crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen -- --check
+    @just _core_cmd 'cd crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen -- --check'
 
 # Regenerate generated.rs during pre-commit, then fail if the user needs to stage it.
 _openapi-gen-pre-commit: openapi-gen
@@ -57,8 +71,60 @@ pre-commit:
 
     if just lint; then
       just _openapi-gen-pre-commit
+      just build
       just test
       exit 0
     fi
     just lint-fix --allow-dirty
     exit 1
+
+# Publish workspace crates to crates.io (dependency order). Uses host `cargo`
+# (registry credentials). Forward flags e.g. `just publish -- --dry-run`.
+# Skips a crate if this version is already on the registry (so a partial
+# release can still publish the remaining packages).
+publish *ARGS:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{ _workspace }}"
+    cargo_publish_skip_if_present() {
+      local pkg="$1"
+      local log
+      log="$(mktemp)"
+      set +e
+      cargo publish -p "$pkg" {{ ARGS }} 2>&1 | tee "$log"
+      local st="${PIPESTATUS[0]}"
+      set -e
+      if [[ "$st" -eq 0 ]]; then
+        rm -f "$log"
+        return 0
+      fi
+      if grep -qiE 'already exists|already uploaded|duplicate version|version.*already' "$log"; then
+        echo "Skipping ${pkg}: same version already on crates.io." >&2
+        rm -f "$log"
+        return 0
+      fi
+      cat "$log" >&2
+      rm -f "$log"
+      return "$st"
+    }
+    for pkg in openapp-sdk-common openapp-sdk-core openapp-sdk-core-c-bridge; do
+      cargo_publish_skip_if_present "$pkg"
+    done
+
+# --- Host Rust (optional): when `cargo` is installed ---
+
+build-host:
+    cd {{ _workspace }} && cargo build --workspace
+
+test-host:
+    cd {{ _workspace }} && cargo test --workspace
+
+lint-host: rl::format rl::clippy-workspace-all-features
+
+lint-fix-host *args: (rl::lint-fix-workspace-all-features args)
+
+openapi-gen-host:
+    cd {{ _workspace }}/crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen
+
+openapi-check-host:
+    cd {{ _workspace }}/crates/common && cargo run --features openapi-gen --bin openapp-sdk-openapi-gen -- --check

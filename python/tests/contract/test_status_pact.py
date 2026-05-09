@@ -18,6 +18,7 @@ PACTS_DIR = Path(__file__).resolve().parents[3] / "contracts" / "pacts"
 
 
 @pytest.mark.contract
+@pytest.mark.tier_0
 @pytest.mark.filterwarnings("ignore::ResourceWarning")
 def test_get_status_consumer_and_provider_roundtrip() -> None:
     PACTS_DIR.mkdir(parents=True, exist_ok=True)

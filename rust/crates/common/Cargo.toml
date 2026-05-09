@@ -1,6 +1,7 @@
 [package]
 name = "openapp-sdk-common"
 description = "Shared models and low-level types for the OpenApp SDK (single contract: packages/api-spec/openapi.json)."
+readme = "README.md"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

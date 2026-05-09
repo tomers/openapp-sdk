@@ -6,7 +6,7 @@ authors = ["OpenApp <support@openapp.house>"]
 license = "MIT"
 description = "PyO3 bridge that exposes openapp-sdk-core to Python (via maturin)."
 repository = "https://github.com/tomers/openapp-sdk"
-rust-version = "1.85"
+rust-version = "1.95"
 
 [lib]
 name = "_bridge"

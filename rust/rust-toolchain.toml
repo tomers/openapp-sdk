@@ -1,3 +1,8 @@
+# Canonical SDK Rust channel — rolling stable (rustc version resolved at CI / image pull /
+# docker pull). Matches justfiles/docker-image.just `_read-rust-version` on this directory.
+#
+# GitHub workflows: dtolnay/rust-toolchain@stable · Docker sdk-rust: rust:slim-trixie
+# Host helper: scripts/read-sdk-stable-rust-version.sh
 [toolchain]
 channel = "stable"
 components = ["rustfmt", "clippy"]

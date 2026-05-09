@@ -33,6 +33,7 @@ async def _connect(**kwargs: Any) -> AsyncClient:
     )
 
 
+@pytest.mark.tier_0
 @pytest.mark.asyncio
 async def test_status_get(_routes: respx.MockRouter) -> None:
     _routes.get("/status").mock(return_value=httpx.Response(200, json={"backend": "ok"}))
@@ -44,6 +45,7 @@ async def test_status_get(_routes: respx.MockRouter) -> None:
         await client.close()
 
 
+@pytest.mark.tier_0
 @pytest.mark.asyncio
 async def test_orgs_create_propagates_body(_routes: respx.MockRouter) -> None:
     route = _routes.post("/orgs").mock(
@@ -104,6 +106,7 @@ async def test_401_maps_to_auth_error(_routes: respx.MockRouter) -> None:
         await client.close()
 
 
+@pytest.mark.tier_0
 @pytest.mark.asyncio
 async def test_device_action_invokes_path_segments(_routes: respx.MockRouter) -> None:
     route = _routes.post("/entities/ent_1/actions/open").mock(

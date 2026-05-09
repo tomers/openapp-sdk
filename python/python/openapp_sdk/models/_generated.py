@@ -1620,6 +1620,12 @@ class PublicInviteResponse(BaseModel):
     grants: list[PublicInviteGrant1 | PublicInviteGrant2]
     invite_token: str
     invitee_message: Any | None = None
+    name: Annotated[
+        str | None,
+        Field(
+            description='Optional admin-defined label (management UI "name"); exposed for link previews and guests who already know the invite by name.'
+        ),
+    ] = None
     schedule: InviteScheduleSnapshot | None = None
     schedule_combined: InviteScheduleCombined | None = None
     schedule_entries: list[InviteScheduleEntrySnapshot] | None = None
