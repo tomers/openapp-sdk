@@ -743,7 +743,7 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "openapp-sdk-common"
-version = "0.1.4"
+version = "0.1.51"
 dependencies = [
  "bytes",
  "chrono",
@@ -757,7 +757,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-core"
-version = "0.1.4"
+version = "0.1.51"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -783,7 +783,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-python-bridge"
-version = "0.1.0"
+version = "0.1.51"
 dependencies = [
  "once_cell",
  "openapp-sdk-core",

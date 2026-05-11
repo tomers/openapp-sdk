@@ -945,7 +945,7 @@ wheels = [
 
 [[package]]
 name = "openapp-sdk"
-version = "0.1.46"
+version = "0.1.51"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },

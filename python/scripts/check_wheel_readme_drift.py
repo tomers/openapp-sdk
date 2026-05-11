@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Fail if WHEEL_PLATFORMS.md disagrees with openapp-sdk-release.yml.
+"""Fail if WHEEL_PLATFORMS.md disagrees with sdk-unified-release.yml.
 
-Canonical matrix: .github/workflows/openapp-sdk-release.yml (build-wheels job).
+Canonical matrix: .github/workflows/sdk-unified-release.yml (build-wheels job).
 User-facing README intentionally omits platform details.
 """
 
@@ -14,7 +14,7 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
-WORKFLOW = REPO_ROOT / ".github" / "workflows" / "openapp-sdk-release.yml"
+WORKFLOW = REPO_ROOT / ".github" / "workflows" / "sdk-unified-release.yml"
 PLATFORMS_DOC = REPO_ROOT / "packages" / "sdk" / "python" / "WHEEL_PLATFORMS.md"
 ANCHOR = "Prebuilt wheels are published for:"
 
@@ -118,7 +118,7 @@ def main() -> int:
     norm_exp = [ln.strip() for ln in expected]
     if norm != norm_exp:
         print(
-            "WHEEL_PLATFORMS.md wheel bullets drift from .github/workflows/openapp-sdk-release.yml.\n",
+            "WHEEL_PLATFORMS.md wheel bullets drift from .github/workflows/sdk-unified-release.yml.\n",
             file=sys.stderr,
         )
         print("Expected:", file=sys.stderr)
@@ -133,7 +133,7 @@ def main() -> int:
         )
         return 1
 
-    print("WHEEL_PLATFORMS.md wheel bullets match openapp-sdk-release.yml.")
+    print("WHEEL_PLATFORMS.md wheel bullets match sdk-unified-release.yml.")
     return 0
 
 
