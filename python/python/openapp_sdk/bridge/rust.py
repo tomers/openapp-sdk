@@ -1,9 +1,8 @@
 """Rust/PyO3 bridge implementation (requires the compiled :mod:`_bridge`).
 
-Imported lazily by :func:`openapp_sdk.bridge.get_bridge` — the module is empty at
-import time when the wheel was built without a native extension (e.g. an sdist
-installed on a platform with no prebuilt wheel). In that case the loader falls
-back to :mod:`openapp_sdk.bridge.python_fallback`.
+Imported lazily by :func:`openapp_sdk.bridge.get_bridge`. If the compiled
+extension is unavailable, client construction fails clearly instead of falling
+back to a separate Python HTTP transport.
 """
 
 from __future__ import annotations

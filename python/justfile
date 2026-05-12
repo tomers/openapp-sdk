@@ -82,6 +82,12 @@ test-contract:
 behave: _venv
     cd {{ _pkg }} && uv run behave ../features --tags=-wip
 
+behave-tier0: _venv
+    cd {{ _pkg }} && uv run behave ../features --tags="@tier0 and not @wip"
+
+test-tier0:
+    @just _py_bridge 'uv run pytest -q -m tier_0 tests/unit tests/contract && uv run behave ../features --tags="@tier0 and not @wip"'
+
 # Behave with JUnit + Allure raw results (same layout as CI `gherkin-behave`).
 behave-reports: _venv
     #!/usr/bin/env bash

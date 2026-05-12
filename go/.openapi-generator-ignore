@@ -25,6 +25,8 @@
 # Hand-maintained (do not overwrite on regenerate)
 /README.md
 /justfile
+/_gherkin_tier1_test.go
+/gherkin_tier1_test.go
 /.travis.yml
 /git_push.sh
 /.gitignore

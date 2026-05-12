@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::{JsonValue, types};
+use super::types;
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -20,9 +20,9 @@ impl OrgsClient {
         Self { transport }
     }
 
-    pub async fn list(&self) -> Result<Vec<JsonValue>, SdkError> {
+    pub async fn list(&self) -> Result<types::PaginatedResponse, SdkError> {
         self.transport
-            .request_json::<(), Vec<JsonValue>>(RequestSpec {
+            .request_json::<(), types::PaginatedResponse>(RequestSpec {
                 method: Method::GET,
                 path: "/orgs",
                 ..Default::default()
@@ -97,10 +97,10 @@ impl OrgsClient {
             .await
     }
 
-    pub async fn permissions(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn permissions(&self, id: &str) -> Result<types::OrgPermissionsResponse, SdkError> {
         let path = format!("/orgs/{id}/permissions");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::OrgPermissionsResponse>(RequestSpec {
                 method: Method::GET,
                 path: &path,
                 ..Default::default()
@@ -108,10 +108,10 @@ impl OrgsClient {
             .await
     }
 
-    pub async fn users(&self, org_id: &str) -> Result<Vec<JsonValue>, SdkError> {
+    pub async fn users(&self, org_id: &str) -> Result<types::PaginatedResponse, SdkError> {
         let path = format!("/orgs/{org_id}/users");
         self.transport
-            .request_json::<(), Vec<JsonValue>>(RequestSpec {
+            .request_json::<(), types::PaginatedResponse>(RequestSpec {
                 method: Method::GET,
                 path: &path,
                 ..Default::default()

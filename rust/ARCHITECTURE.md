@@ -70,9 +70,10 @@ Current surface:
 * Telemetry bootstrap: `openapp_sdk_telemetry_init`.
 * Strings returned from the bridge: free with `openapp_sdk_string_free`.
 
-Language bindings do not have to consume every bridge function immediately. For
-example, Go uses the async/raw/streaming surface in its generated transport,
-while Node currently uses the synchronous JSON call on a libuv worker thread.
+Language bindings do not have to consume every bridge function immediately. Go
+uses the async/raw/streaming surface in its generated transport; Node binds the
+configured client constructor and raw-body requests while keeping JSON calls on
+a libuv worker thread.
 
 ## Invariants
 

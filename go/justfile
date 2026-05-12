@@ -64,6 +64,9 @@ build:
 test:
     @just _go_cmd '{{ _go_test_with_reports }}'
 
+gherkin-tier0:
+    @just _go_cmd 'OPENAPP_SDK_GHERKIN_TAGS="@tier0 and not @wip" go test . -run TestGherkinTier1 -count=1'
+
 # Vet/build/test in sdk-go only. Build the image first: `docker compose -f packages/sdk/docker/compose.yaml build sdk-go`
 # (see `.github/workflows/sdk-unified-release.yml`).
 release-gate:

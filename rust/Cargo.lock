@@ -870,7 +870,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-common"
-version = "0.1.54"
+version = "0.1.56"
 dependencies = [
  "anyhow",
  "bytes",
@@ -890,7 +890,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-core"
-version = "0.1.54"
+version = "0.1.56"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -917,7 +917,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-core-c-bridge"
-version = "0.1.54"
+version = "0.1.56"
 dependencies = [
  "futures",
  "libc",

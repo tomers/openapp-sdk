@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::JsonValue;
+use super::types;
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -21,9 +21,9 @@ impl ApiKeysClient {
     }
 
     /// `GET /api-keys` — list API keys for the authenticated user's org.
-    pub async fn list(&self) -> Result<Vec<JsonValue>, SdkError> {
+    pub async fn list(&self) -> Result<Vec<types::ApiKeyListItem>, SdkError> {
         self.transport
-            .request_json::<(), Vec<JsonValue>>(RequestSpec {
+            .request_json::<(), Vec<types::ApiKeyListItem>>(RequestSpec {
                 method: Method::GET,
                 path: "/api-keys",
                 ..Default::default()
@@ -32,9 +32,12 @@ impl ApiKeysClient {
     }
 
     /// `POST /api-keys` — mint a new API key.
-    pub async fn create(&self, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn create(
+        &self,
+        body: &types::CreateApiKeyRequest,
+    ) -> Result<types::CreateApiKeyResponse, SdkError> {
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
+            .request_json::<types::CreateApiKeyRequest, types::CreateApiKeyResponse>(RequestSpec {
                 method: Method::POST,
                 path: "/api-keys",
                 body: Some(body),
@@ -44,10 +47,14 @@ impl ApiKeysClient {
     }
 
     /// `PATCH /api-keys/{id}` — rename or adjust scopes.
-    pub async fn update(&self, id: &str, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn update(
+        &self,
+        id: &str,
+        body: &types::UpdateApiKeyRequest,
+    ) -> Result<(), SdkError> {
         let path = format!("/api-keys/{id}");
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
+            .request_json::<types::UpdateApiKeyRequest, ()>(RequestSpec {
                 method: Method::PATCH,
                 path: &path,
                 body: Some(body),
@@ -69,10 +76,10 @@ impl ApiKeysClient {
     }
 
     /// `POST /api-keys/{id}/restore` — un-revoke a previously revoked key.
-    pub async fn restore(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn restore(&self, id: &str) -> Result<(), SdkError> {
         let path = format!("/api-keys/{id}/restore");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), ()>(RequestSpec {
                 method: Method::POST,
                 path: &path,
                 ..Default::default()

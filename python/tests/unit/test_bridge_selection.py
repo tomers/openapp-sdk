@@ -23,18 +23,17 @@ def test_python_bridge_selected_by_env(monkeypatch: pytest.MonkeyPatch) -> None:
     _reload_bridge_module()
     from openapp_sdk.bridge import get_bridge
 
-    assert get_bridge().name == "python"
+    with pytest.raises(ValueError, match="expected one of 'rust' / 'auto'"):
+        get_bridge()
 
 
-def test_falls_back_when_rust_unavailable(monkeypatch: pytest.MonkeyPatch) -> None:
-    # Simulate a wheel without the compiled Rust extension: mask out the
-    # `openapp_sdk.bridge._bridge` module so `from .rust import RustBridge`
-    # raises `ImportError`, triggering the python-fallback branch. The mask
-    # must be applied *after* `_reload_bridge_module` — otherwise the module
-    # teardown wipes out our `None` entry before selection runs.
+def test_rust_bridge_required_when_native_extension_unavailable(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.delenv("OPENAPP_SDK_BRIDGE", raising=False)
     _reload_bridge_module()
     monkeypatch.setitem(sys.modules, "openapp_sdk.bridge._bridge", None)
     from openapp_sdk.bridge import get_bridge
 
-    assert get_bridge().name == "python"
+    with pytest.raises(ImportError, match=r"openapp_sdk\.bridge\._bridge is not available"):
+        get_bridge()

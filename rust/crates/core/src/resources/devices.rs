@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::{JsonValue, types};
+use super::types;
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -20,9 +20,9 @@ impl DevicesClient {
         Self { transport }
     }
 
-    pub async fn list(&self) -> Result<Vec<JsonValue>, SdkError> {
+    pub async fn list(&self) -> Result<Vec<types::DeviceResponse>, SdkError> {
         self.transport
-            .request_json::<(), Vec<JsonValue>>(RequestSpec {
+            .request_json::<(), Vec<types::DeviceResponse>>(RequestSpec {
                 method: Method::GET,
                 path: "/devices",
                 ..Default::default()

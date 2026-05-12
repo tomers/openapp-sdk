@@ -217,7 +217,7 @@ impl Client {
 }
 
 /// Convert `Result<T, SdkError>` into a Python-friendly result, preserving the
-/// error shape (kind + message + optional status) for the pure-Python layer to
+/// error shape (kind + message + optional status) for the Python wrapper to
 /// translate into typed exceptions.
 fn translate(result: Result<serde_json::Value, SdkError>) -> PyResult<Py<PyAny>> {
     Python::attach(|py| match result {

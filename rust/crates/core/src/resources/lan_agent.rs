@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::JsonValue;
+use super::{JsonValue, types};
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -20,9 +20,9 @@ impl LanAgentClient {
         Self { transport }
     }
 
-    pub async fn meta(&self) -> Result<JsonValue, SdkError> {
+    pub async fn meta(&self) -> Result<types::LanAgentMetaResponse, SdkError> {
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::LanAgentMetaResponse>(RequestSpec {
                 method: Method::GET,
                 path: "/lan-agent/meta",
                 ..Default::default()
@@ -40,9 +40,15 @@ impl LanAgentClient {
             .await
     }
 
-    pub async fn bootstrap_token(&self, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn bootstrap_token(
+        &self,
+        body: &types::LanAgentBootstrapTokenRequest,
+    ) -> Result<types::LanAgentBootstrapTokenResponse, SdkError> {
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
+            .request_json::<
+                types::LanAgentBootstrapTokenRequest,
+                types::LanAgentBootstrapTokenResponse,
+            >(RequestSpec {
                 method: Method::POST,
                 path: "/lan-agent/cli/bootstrap-token",
                 body: Some(body),
@@ -51,12 +57,11 @@ impl LanAgentClient {
             .await
     }
 
-    pub async fn token(&self, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn token(&self) -> Result<types::LanAgentCliTokenResponse, SdkError> {
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
+            .request_json::<(), types::LanAgentCliTokenResponse>(RequestSpec {
                 method: Method::POST,
                 path: "/lan-agent/cli/token",
-                body: Some(body),
                 ..Default::default()
             })
             .await
@@ -65,16 +70,18 @@ impl LanAgentClient {
     pub async fn submit_task_spec(
         &self,
         integration_id: &str,
-        body: &JsonValue,
-    ) -> Result<JsonValue, SdkError> {
+        body: &types::LanAgentTaskSpecRequest,
+    ) -> Result<types::LanAgentTaskSpecResponse, SdkError> {
         let path = format!("/integrations/{integration_id}/lan-agent/task-spec");
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
-                method: Method::POST,
-                path: &path,
-                body: Some(body),
-                ..Default::default()
-            })
+            .request_json::<types::LanAgentTaskSpecRequest, types::LanAgentTaskSpecResponse>(
+                RequestSpec {
+                    method: Method::POST,
+                    path: &path,
+                    body: Some(body),
+                    ..Default::default()
+                },
+            )
             .await
     }
 

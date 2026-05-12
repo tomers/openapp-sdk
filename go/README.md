@@ -59,6 +59,9 @@ fmt.Printf("orgs: %#v\n", resp)
 
 ## Maintainer docs
 
+Shared Gherkin story packs run through `go test` via `gherkin_tier1_test.go`.
+For the PR-fast slice, use `just sdk go gherkin-tier0`.
+
 Internal development, codegen, CI, and release notes are documented in
 [`../docs/GO_MAINTAINERS.md`](../docs/GO_MAINTAINERS.md) and
 [`../docs/SDK_DEVELOPMENT_POLICY.md`](../docs/SDK_DEVELOPMENT_POLICY.md).

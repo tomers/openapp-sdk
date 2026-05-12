@@ -21,7 +21,7 @@ Raise `packages/sdk/python` from its current smoke-level coverage to:
 
 | Question                    | Answer                                                                                 |
 | --------------------------- | -------------------------------------------------------------------------------------- |
-| Coverage shape              | **Both**: respx-mocked unit tests for every method + live end-to-end scenario suite    |
+| Coverage shape              | **Both**: fake-bridge unit tests for every method + live end-to-end scenario suite     |
 | Headless-undriveable endpoints | **Mock only** (no live coverage attempt for push, EULA-on-used-account, lan_agent CLI token handshake, multi-party public-session flows) |
 | Where live tests run        | **Local only** — developer provisions a token via `just tests sdk-python provision-token`; CI stays at unit tests (current state) |
 
@@ -78,11 +78,9 @@ Already partially covered by existing unit tests — gaps to close:
   `contrib.pydantic.dump`), `None` branch, raw-bytes passthrough.
 - `client._json_default` — dataclass, enum, datetime, UUID, decimal.
 - `interceptor._compose_request` + `Interceptor` protocol conformance.
-- `bridge.python_fallback._decode` / `_extract_message` / `_exp_backoff` /
-  `_sleep_for_retry` — retry-after header honoured, non-JSON error path.
-- `bridge.rust.RustBridge` — only reachable when the native extension is built;
-  already has one selection test. Add a request round-trip test that runs only
-  when `OPENAPP_SDK_BRIDGE=rust` is available.
+- `bridge.rust.RustBridge` — native extension selection and bridge payload
+  translation; add a request round-trip test that runs only when the extension
+  is available.
 - `contrib.pydantic.parse_as` / `dump` — happy path + validation-error mapping
   to `SerializationError`.
 - `errors.from_bridge_payload` — every discriminator branch (api, http, auth,
@@ -97,16 +95,15 @@ Two tiers, strictly separated. No cross-contamination of mocks and live calls.
 ### Tier 1 — `tests/unit/resources/` (new directory)
 
 - One `test_<client>.py` per resource file, mirroring the source layout 1:1.
-- Each file uses `respx` to intercept the bridge's `httpx.AsyncClient` and
-  asserts the exact request shape. Responses are minimal fixtures (just
-  enough to let the SDK deserialize).
+- Each file uses a fake `Bridge` implementation and asserts the exact request
+  shape. Responses are minimal fixtures (just enough to let the SDK deserialize).
 - Every method gets at least: `happy_path`, `passes_query_params` (if
   applicable), `passes_body` (if applicable), and an `api_error_maps` test
   (server returns `4xx` JSON error → SDK raises `ApiError` with matching fields).
 - Shared fixtures go in `tests/unit/resources/conftest.py`:
-  - `mocked_client` — an `AsyncClient` wired to the python bridge with `respx`
-    already active and a baked-in fake API token.
-  - `respx_mock` scoped per-test (function scope) for isolation.
+  - `mocked_client` — an `AsyncClient` wired to a fake bridge and a baked-in
+    fake API token.
+  - `bridge_mock` scoped per-test (function scope) for isolation.
 - Runs in CI on every PR. Required to stay green.
 
 ### Tier 2 — `tests/integration/scenarios/` (new directory)
@@ -255,7 +252,7 @@ them right up front makes every subsequent test cheap.
 3. **Unit coverage — non-resource gaps**
    - `client._serialize_body` / `_json_default` / sync wrapper.
    - `interceptor._compose_request`.
-   - `bridge.python_fallback._decode` / `_exp_backoff` / `_sleep_for_retry`.
+   - `bridge.rust.RustBridge` native error payload branches.
    - `errors.from_bridge_payload` branches.
    - `contrib.pydantic` round-trips.
    - One PR.

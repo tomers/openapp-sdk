@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # Python SDK checks for openapp-sdk-release.yml (pytest unit+contract, Behave, JUnit + Allure inputs).
-# Run from repo: `just sdk python release-gate` (OPENAPP_SDK_BRIDGE defaults to python).
+# Run from repo: `just sdk python release-gate`.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export OPENAPP_SDK_BRIDGE="${OPENAPP_SDK_BRIDGE:-python}"
 rm -rf .venv
 uv sync --all-extras
 uv run maturin develop --features pyo3/extension-module
