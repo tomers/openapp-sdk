@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::JsonValue;
+use super::{JsonValue, types};
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -30,9 +30,12 @@ impl DevicesClient {
             .await
     }
 
-    pub async fn create(&self, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn create(
+        &self,
+        body: &types::CreateDeviceRequest,
+    ) -> Result<types::DeviceResponse, SdkError> {
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
+            .request_json::<types::CreateDeviceRequest, types::DeviceResponse>(RequestSpec {
                 method: Method::POST,
                 path: "/devices",
                 body: Some(body),
@@ -41,10 +44,10 @@ impl DevicesClient {
             .await
     }
 
-    pub async fn get(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn get(&self, id: &str) -> Result<types::DeviceResponse, SdkError> {
         let path = format!("/devices/{id}");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::DeviceResponse>(RequestSpec {
                 method: Method::GET,
                 path: &path,
                 ..Default::default()
@@ -52,10 +55,14 @@ impl DevicesClient {
             .await
     }
 
-    pub async fn update(&self, id: &str, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn update(
+        &self,
+        id: &str,
+        body: &types::UpdateDeviceRequest,
+    ) -> Result<types::DeviceResponse, SdkError> {
         let path = format!("/devices/{id}");
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
+            .request_json::<types::UpdateDeviceRequest, types::DeviceResponse>(RequestSpec {
                 method: Method::PUT,
                 path: &path,
                 body: Some(body),
@@ -86,10 +93,10 @@ impl DevicesClient {
             .await
     }
 
-    pub async fn restore(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn restore(&self, id: &str) -> Result<types::DeviceResponse, SdkError> {
         let path = format!("/devices/{id}/restore");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::DeviceResponse>(RequestSpec {
                 method: Method::POST,
                 path: &path,
                 ..Default::default()
@@ -97,10 +104,13 @@ impl DevicesClient {
             .await
     }
 
-    pub async fn door_restrictions(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn door_restrictions(
+        &self,
+        id: &str,
+    ) -> Result<types::DoorRestrictionsResponse, SdkError> {
         let path = format!("/devices/{id}/door-restrictions");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::DoorRestrictionsResponse>(RequestSpec {
                 method: Method::GET,
                 path: &path,
                 ..Default::default()
@@ -108,10 +118,13 @@ impl DevicesClient {
             .await
     }
 
-    pub async fn metadata_definition(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn metadata_definition(
+        &self,
+        id: &str,
+    ) -> Result<types::DeviceMetadataDefinitionResponse, SdkError> {
         let path = format!("/devices/{id}/metadata-definition");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::DeviceMetadataDefinitionResponse>(RequestSpec {
                 method: Method::GET,
                 path: &path,
                 ..Default::default()

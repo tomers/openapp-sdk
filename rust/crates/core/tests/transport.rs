@@ -2,6 +2,7 @@
 
 use std::time::Duration;
 
+use openapp_sdk_common::generated::types::{CreateOrganizationRequest, LocalizedString};
 use openapp_sdk_core::{Client, SdkError};
 use serde_json::json;
 use wiremock::{
@@ -27,15 +28,15 @@ async fn get_status_attaches_bearer() {
         .and(path("/status"))
         .and(bearer_token(token))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-            "backend": "ok",
-            "database": "ok"
+            "environment": "test",
+            "version": "dev"
         })))
         .mount(&server)
         .await;
 
     let client = build_client(&server.uri(), token);
     let body = client.status().get().await.unwrap();
-    assert_eq!(body["backend"], "ok");
+    assert_eq!(body.environment, "test");
 }
 
 #[tokio::test]
@@ -75,7 +76,15 @@ async fn json_error_decodes_into_api_variant() {
         .await;
 
     let client = build_client(&server.uri(), "https://api.test_openapp_SECRET");
-    let err = client.orgs().create(&json!({})).await.unwrap_err();
+    let body = CreateOrganizationRequest {
+        description: None,
+        id: None,
+        name: LocalizedString {
+            value: [("en".to_string(), "".to_string())].into_iter().collect(),
+        },
+        parent_id: None,
+    };
+    let err = client.orgs().create(&body).await.unwrap_err();
     match err {
         SdkError::Api { status, body } => {
             assert_eq!(status, 400);

@@ -8,6 +8,7 @@ wraps these with a small shim that blocks on the async calls.
 from .apartment_residents import ApartmentResidentsClient
 from .api_keys import ApiKeysClient
 from .auth import AuthClient
+from .billing import BillingClient
 from .devices import DevicesClient
 from .entities import EntitiesClient
 from .eula import EulaClient
@@ -25,6 +26,7 @@ __all__ = [
     "ApartmentResidentsClient",
     "ApiKeysClient",
     "AuthClient",
+    "BillingClient",
     "DevicesClient",
     "EntitiesClient",
     "EulaClient",

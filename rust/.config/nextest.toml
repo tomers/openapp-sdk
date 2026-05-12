@@ -1,0 +1,6 @@
+# JUnit for `just sdk test` → Allure merge (`scripts/sdk_merge_allure_results.py`).
+# Report is written under `target/nextest/sdk-allure/`; the justfile copies into `.tmp/sdk-reports/`.
+
+[profile.sdk-allure.junit]
+path = "junit-sdk-core.xml"
+report-name = "sdk-core"

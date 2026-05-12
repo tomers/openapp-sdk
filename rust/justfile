@@ -12,6 +12,11 @@ mod rl "../../../justfiles/rust_lint.just"
 _workspace := source_directory()
 _compose := source_directory() / ".." / "docker" / "compose.yaml"
 
+# `just test` → nextest + JUnit copy for merged Allure (`scripts/sdk_merge_allure_results.py`).
+_core_test_with_reports := "mkdir -p .tmp/sdk-reports && " \
+    + "cargo nextest run --workspace -P sdk-allure && " \
+    + "cp target/nextest/sdk-allure/junit-sdk-core.xml .tmp/sdk-reports/"
+
 _:
     @just --list
 
@@ -25,9 +30,9 @@ _core_cmd CMD:
 build:
     @just _core_cmd 'cargo build --workspace'
 
-# `cargo test --workspace`
+# `cargo nextest` (JUnit for merged Allure) + workspace scope; see `.config/nextest.toml`.
 test:
-    @just _core_cmd 'cargo test --workspace'
+    @just _core_cmd '{{ _core_test_with_reports }}'
 
 # fmt --check, then clippy (workspace, all targets, all features).
 lint:

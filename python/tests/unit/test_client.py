@@ -63,6 +63,20 @@ async def test_orgs_create_propagates_body(_routes: respx.MockRouter) -> None:
 
 
 @pytest.mark.asyncio
+async def test_billing_plan_uses_org_billing_path(_routes: respx.MockRouter) -> None:
+    route = _routes.get("/orgs/org_1/billing/plan").mock(
+        return_value=httpx.Response(200, json={"org_id": "org_1", "tier_id": "starter"})
+    )
+    client = await _connect()
+    try:
+        plan = await client.billing.plan("org_1")
+        assert plan["org_id"] == "org_1"
+        assert route.called
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
 async def test_non_json_error_maps_to_http_error(_routes: respx.MockRouter) -> None:
     _routes.get("/status").mock(return_value=httpx.Response(502, text="bad gateway"))
     client = await _connect(max_retries=0)

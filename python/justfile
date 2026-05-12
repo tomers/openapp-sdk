@@ -15,6 +15,9 @@ _spec := source_directory() / ".." / ".." / "api-spec" / "openapi.json"
 _generated := source_directory() / "python" / "openapp_sdk" / "models" / "_generated.py"
 _compose := source_directory() / ".." / "docker" / "compose.yaml"
 
+# Pytest + Behave + merged reports (see `scripts/test_allure_merge.sh`).
+_python_test_merge := "bash scripts/test_allure_merge.sh"
+
 _:
     @just --list
 
@@ -57,10 +60,15 @@ wheel: _venv
 sdist: _venv
     cd {{ _pkg }} && uv run maturin sdist
 
-# Run the full test suite (unit + integration; integration tests auto-skip without
-# `OPENAPP_SDK_TEST_API_KEY`).
-test:
+# Full `pytest -v` only (unit + integration; integration tests auto-skip without
+# `OPENAPP_SDK_TEST_API_KEY`). No Behave or merged Allure — use `test` for that.
+test-pytest:
     @just _py_bridge uv run pytest -v
+
+# Canonical Python SDK test: same pytest scope as `test-pytest`, plus Behave and merged
+# JUnit/Allure under `.tmp/sdk-reports/` (used by `just sdk test`, same tree as `release_gate.sh`).
+test:
+    @just _py_bridge '{{ _python_test_merge }}'
 
 # Run just the unit suite — fast, no backend needed.
 test-unit:
@@ -109,6 +117,27 @@ report-allure-open: test-reports
     allure generate "$rep/allure-results" -o "$rep/allure-report" --clean
     allure open "$rep/allure-report"
 
+# Open merged HTML from `just sdk test` (cross-language merge under `packages/sdk/.tmp/`)
+# or from Python-only `just sdk python test` / release-check (`packages/sdk/python/.tmp/`).
+# Does not re-run tests; uses `scripts/sdk-prepare-allure-cli.sh` when needed.
+report-allure-view:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    root="$(git rev-parse --show-toplevel)"
+    merged="${root}/packages/sdk/.tmp/sdk-reports/allure-report"
+    py="{{ _pkg }}/.tmp/sdk-reports/allure-report"
+    if [[ -f "${merged}/index.html" ]]; then
+      rep="${merged}"
+    elif [[ -f "${py}/index.html" ]]; then
+      rep="${py}"
+    else
+      echo "No Allure HTML; run \`just sdk test\` (merged report) or \`just sdk python test\` / \`just sdk release-check\` first." >&2
+      exit 1
+    fi
+    # shellcheck source=/dev/null
+    source "${root}/scripts/sdk-prepare-allure-cli.sh"
+    allure open "$rep"
+
 # Ruff + mypy.
 lint:
     @just _py_cmd "uv run ruff check . && uv run ruff format --check . && uv run python -m mypy"
@@ -124,7 +153,7 @@ generate: openapi-gen
 openapi-gen:
     @just _py bash scripts/openapi_models.sh gen
 
-# README "Prebuilt wheels" bullets must match openapp-sdk-release.yml (CI guard).
+# README "Prebuilt wheels" bullets must match sdk-unified-release.yml (CI guard).
 readme-wheel-check:
     @just _py uv run python scripts/check_wheel_readme_drift.py
 
@@ -132,7 +161,7 @@ readme-wheel-check:
 openapi-check:
     @just _py bash scripts/openapi_models.sh check
 
-# Same pytest/Behave/report layout as `.github/workflows/openapp-sdk-release.yml` (JUnit + Allure raw under `.tmp/sdk-reports/`).
+# Same pytest/Behave/report layout as `.github/workflows/sdk-unified-release.yml` (JUnit + Allure raw under `.tmp/sdk-reports/`).
 release-gate:
     bash scripts/release_gate.sh
 

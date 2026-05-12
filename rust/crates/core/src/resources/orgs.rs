@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::JsonValue;
+use super::{JsonValue, types};
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -30,21 +30,26 @@ impl OrgsClient {
             .await
     }
 
-    pub async fn create(&self, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn create(
+        &self,
+        body: &types::CreateOrganizationRequest,
+    ) -> Result<types::OrganizationResponse, SdkError> {
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
-                method: Method::POST,
-                path: "/orgs",
-                body: Some(body),
-                ..Default::default()
-            })
+            .request_json::<types::CreateOrganizationRequest, types::OrganizationResponse>(
+                RequestSpec {
+                    method: Method::POST,
+                    path: "/orgs",
+                    body: Some(body),
+                    ..Default::default()
+                },
+            )
             .await
     }
 
-    pub async fn get(&self, id: &str) -> Result<JsonValue, SdkError> {
+    pub async fn get(&self, id: &str) -> Result<types::OrganizationResponse, SdkError> {
         let path = format!("/orgs/{id}");
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::OrganizationResponse>(RequestSpec {
                 method: Method::GET,
                 path: &path,
                 ..Default::default()
@@ -52,15 +57,21 @@ impl OrgsClient {
             .await
     }
 
-    pub async fn update(&self, id: &str, body: &JsonValue) -> Result<JsonValue, SdkError> {
+    pub async fn update(
+        &self,
+        id: &str,
+        body: &types::UpdateOrganizationRequest,
+    ) -> Result<types::OrganizationResponse, SdkError> {
         let path = format!("/orgs/{id}");
         self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
-                method: Method::PUT,
-                path: &path,
-                body: Some(body),
-                ..Default::default()
-            })
+            .request_json::<types::UpdateOrganizationRequest, types::OrganizationResponse>(
+                RequestSpec {
+                    method: Method::PUT,
+                    path: &path,
+                    body: Some(body),
+                    ..Default::default()
+                },
+            )
             .await
     }
 

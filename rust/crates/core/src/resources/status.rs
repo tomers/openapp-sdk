@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use reqwest::Method;
 
-use super::JsonValue;
+use super::types;
 use crate::{
     error::SdkError,
     transport::{RequestSpec, Transport},
@@ -21,9 +21,9 @@ impl StatusClient {
     }
 
     /// `GET /status` — backend liveness probe.
-    pub async fn get(&self) -> Result<JsonValue, SdkError> {
+    pub async fn get(&self) -> Result<types::BackendStatus, SdkError> {
         self.transport
-            .request_json::<(), JsonValue>(RequestSpec {
+            .request_json::<(), types::BackendStatus>(RequestSpec {
                 method: Method::GET,
                 path: "/status",
                 ..Default::default()

@@ -1,7 +1,9 @@
 <!-- markdownlint-disable MD013 MD060 -->
 # Go SDK (`github.com/tomers/openapp-sdk/go`)
 
-Official Go SDK for OpenApp.
+Official Go SDK for OpenApp. The public API is generated from OpenAPI, while the
+default client transport goes through `openapp-sdk-core-c-bridge` so auth,
+retries, error mapping, and wire dispatch stay aligned with the other SDKs.
 
 ## Installation
 

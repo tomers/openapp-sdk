@@ -24,6 +24,7 @@ from .resources import (
     ApartmentResidentsClient,
     ApiKeysClient,
     AuthClient,
+    BillingClient,
     DevicesClient,
     EntitiesClient,
     EulaClient,
@@ -58,6 +59,7 @@ class AsyncClient:
     """Async-first client. Construct via :meth:`connect`."""
 
     api_keys: ApiKeysClient
+    billing: BillingClient
     users: UsersClient
     orgs: OrgsClient
     devices: DevicesClient
@@ -86,6 +88,7 @@ class AsyncClient:
 
         # Sub-clients: all share the same request dispatcher.
         self.api_keys = ApiKeysClient(self)
+        self.billing = BillingClient(self)
         self.users = UsersClient(self)
         self.orgs = OrgsClient(self)
         self.devices = DevicesClient(self)
@@ -223,6 +226,7 @@ class Client:
     """
 
     api_keys: ApiKeysClient
+    billing: BillingClient
     users: UsersClient
     orgs: OrgsClient
     devices: DevicesClient
@@ -246,6 +250,7 @@ class Client:
         self._inner = inner
         self._loop: asyncio.AbstractEventLoop = loop or asyncio.new_event_loop()
         self.api_keys = _wrap(inner.api_keys, self)
+        self.billing = _wrap(inner.billing, self)
         self.users = _wrap(inner.users, self)
         self.orgs = _wrap(inner.orgs, self)
         self.devices = _wrap(inner.devices, self)

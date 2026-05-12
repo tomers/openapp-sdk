@@ -267,6 +267,11 @@ impl Client {
     }
 
     #[must_use]
+    pub fn billing(&self) -> resources::BillingClient {
+        resources::BillingClient::new(self.transport.clone())
+    }
+
+    #[must_use]
     pub fn entities(&self) -> resources::EntitiesClient {
         resources::EntitiesClient::new(self.transport.clone())
     }

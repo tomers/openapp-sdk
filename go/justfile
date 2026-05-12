@@ -10,6 +10,10 @@ _openapi_generator_image := "openapitools/openapi-generator-cli:v7.12.0"
 # Same Go toolchain as packages/sdk/docker/go/Dockerfile (pin patch + trixie).
 _go_toolchain_image := "golang:1.26.2-trixie"
 
+# `go test -json` for merged Allure (`scripts/sdk_merge_allure_results.py`).
+_go_test_with_reports := "mkdir -p .tmp/sdk-reports && " \
+    + "go test ./... -json > .tmp/sdk-reports/go-test.jsonl"
+
 _:
     @just --list
 
@@ -58,10 +62,10 @@ build:
     @just _go build ./...
 
 test:
-    @just _go test ./...
+    @just _go_cmd '{{ _go_test_with_reports }}'
 
 # Vet/build/test in sdk-go only. Build the image first: `docker compose -f packages/sdk/docker/compose.yaml build sdk-go`
-# (see `.github/workflows/openapp-sdk-release.yml`).
+# (see `.github/workflows/sdk-unified-release.yml`).
 release-gate:
     @just _go_cmd 'go vet ./... && go build ./... && go test ./...'
 
