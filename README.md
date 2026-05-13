@@ -9,4 +9,4 @@
 | `go/` | Go module (`go get github.com/tomers/openapp-sdk/go`) |
 | `api-spec/` | OpenAPI definitions |
 
-**Synced:** `sdk-python-v0.1.56` · [PyPI](https://pypi.org/project/openapp-sdk/) · [Go module](https://pkg.go.dev/github.com/tomers/openapp-sdk/go) · [Issues](https://github.com/tomers/openapp-sdk/issues)
+**Synced:** `sdk-python-v0.1.57` · [PyPI](https://pypi.org/project/openapp-sdk/) · [Go module](https://pkg.go.dev/github.com/tomers/openapp-sdk/go) · [Issues](https://github.com/tomers/openapp-sdk/issues)
