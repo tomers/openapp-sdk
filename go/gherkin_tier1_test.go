@@ -49,7 +49,7 @@ func TestGherkinTier1(t *testing.T) {
 		},
 		Options: &godog.Options{
 			Format:   "progress",
-			Paths:    []string{"../features"},
+			Paths:    []string{"../tests/features"},
 			Tags:     gherkinTags(),
 			TestingT: t,
 		},

@@ -1,6 +1,6 @@
 [package]
 name = "openapp-sdk-python-bridge"
-version = "0.1.59"
+version = "0.1.61"
 edition = "2024"
 authors = ["OpenApp <support@openapp.house>"]
 license = "MIT"

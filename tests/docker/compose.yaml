@@ -1,0 +1,53 @@
+# Local SDK builds for tomers/openapp-sdk.
+# Repo root is mounted at /workspace (rust/, python/, go/, tests/ at top level).
+#
+# From repo root: `just docker python` or `docker compose -f tests/docker/compose.yaml run --rm sdk-python`
+
+name: openapp-sdk
+
+services:
+  sdk-core:
+    build:
+      context: .
+      dockerfile: rust/Dockerfile
+    volumes:
+      - ../..:/workspace
+      - openapp-sdk-cargo-registry:/usr/local/cargo/registry
+      - openapp-sdk-cargo-git:/usr/local/cargo/git
+    working_dir: /workspace/rust
+    user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
+    environment:
+      HOME: /tmp
+
+  sdk-python:
+    build:
+      context: .
+      dockerfile: python/Dockerfile
+    volumes:
+      - ../..:/workspace
+      - openapp-sdk-python-venv:/workspace/python/.venv
+    working_dir: /workspace/python
+    user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
+    environment:
+      HOME: /tmp
+      UV_LINK_MODE: copy
+
+  sdk-go:
+    build:
+      context: ../..
+      dockerfile: tests/docker/go/Dockerfile
+    volumes:
+      - ../..:/workspace
+    working_dir: /workspace/go
+    user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
+    environment:
+      HOME: /tmp
+      GOCACHE: /workspace/go/.gocache
+      GOMODCACHE: /workspace/go/.gomodcache
+      CGO_ENABLED: "1"
+      LD_LIBRARY_PATH: "/workspace/rust/target/release/deps:/usr/local/lib"
+
+volumes:
+  openapp-sdk-cargo-registry:
+  openapp-sdk-cargo-git:
+  openapp-sdk-python-venv:

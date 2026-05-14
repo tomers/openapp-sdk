@@ -11,7 +11,7 @@ uv run pytest -v \
   --junitxml="$rep/pytest-junit.xml" \
   --alluredir="$rep/allure-results"
 
-uv run behave ../features --tags=-wip --no-color \
+uv run behave ../tests/features --tags=-wip --no-color \
   -f allure_behave.formatter:AllureFormatter -o "$rep/allure-behave-results" \
   -f plain --junit --junit-directory="$rep/behave-junit"
 

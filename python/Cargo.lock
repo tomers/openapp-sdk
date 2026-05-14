@@ -743,7 +743,7 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "openapp-sdk-common"
-version = "0.1.59"
+version = "0.1.61"
 dependencies = [
  "bytes",
  "chrono",
@@ -757,7 +757,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-core"
-version = "0.1.59"
+version = "0.1.61"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -783,7 +783,7 @@ dependencies = [
 
 [[package]]
 name = "openapp-sdk-python-bridge"
-version = "0.1.59"
+version = "0.1.61"
 dependencies = [
  "once_cell",
  "openapp-sdk-core",
@@ -880,9 +880,9 @@ dependencies = [
 
 [[package]]
 name = "progenitor-client"
-version = "0.12.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ffab7b358944dba033a7b324e7558e66e6bcb1fb4705cf57f26fd5092bcae630"
+checksum = "4e8a874cf25a33cac7a01b9c1de87bcfbc8aea93f3156d09dcc3bee516a78926"
 dependencies = [
  "bytes",
  "futures-core",

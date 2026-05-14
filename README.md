@@ -17,6 +17,19 @@
 - Home and parking — gates and barriers via PalGate Cloud and relays
 - Automation — agents, webhooks, and MCP against the same HTTP API
 
+## Running tests
+
+Clone this repository (tests are not included in PyPI wheels). From the repo root:
+
+```bash
+just test          # host toolchains — same slice as CI
+just test-docker   # Docker only (see tests/docker/)
+```
+
+Details: [`TESTING.md`](TESTING.md) · shared scenarios under [`tests/`](tests/).
+
+Tests in this repository use mocked fixtures only. Never commit real API keys.
+
 ## Documentation
 
 - Product: https://openapp.house/
@@ -33,7 +46,9 @@
 | `python/` | Python package (`openapp-sdk` on PyPI) |
 | `go/` | Go module (`go get github.com/tomers/openapp-sdk/go`) |
 | `api-spec/` | OpenAPI definitions |
-| `features/` | Shared Gherkin scenarios (Behave / godog) |
-| `contracts/` | Pact consumer fixtures |
+| `tests/features/` | Shared Gherkin scenarios (Behave / godog) |
+| `tests/contracts/` | Pact consumer fixtures |
+| `tests/docker/` | Optional Docker toolchains for local test runs |
+| `justfile` | Run `just test` or `just test-docker` — see [`TESTING.md`](TESTING.md) |
 
-**Synced:** `sdk-python-v0.1.59` · [PyPI](https://pypi.org/project/openapp-sdk/) · [Go module](https://pkg.go.dev/github.com/tomers/openapp-sdk/go) · [crates.io](https://crates.io/crates/openapp-sdk) · [npm](https://www.npmjs.com/package/@tomers/openapp-sdk) · [Test report](https://tomers.github.io/openapp-sdk/) · [Issues](https://github.com/tomers/openapp-sdk/issues)
+**Synced:** `sdk-python-v0.1.61` · [PyPI](https://pypi.org/project/openapp-sdk/) · [Go module](https://pkg.go.dev/github.com/tomers/openapp-sdk/go) · [crates.io](https://crates.io/crates/openapp-sdk) · [npm](https://www.npmjs.com/package/@tomers/openapp-sdk) · [Test report](https://tomers.github.io/openapp-sdk/) · [Issues](https://github.com/tomers/openapp-sdk/issues)

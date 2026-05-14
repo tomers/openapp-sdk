@@ -25,7 +25,7 @@ required-features = ["openapi-gen"]
 [dependencies]
 bytes = { workspace = true }
 chrono = { workspace = true }
-progenitor-client = "0.12"
+progenitor-client = "0.14"
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -37,7 +37,7 @@ url = { workspace = true }
 anyhow = { workspace = true, optional = true }
 openapiv3 = { version = "2", optional = true }
 prettyplease = { version = "0.2", optional = true }
-progenitor = { version = "0.12", optional = true }
+progenitor = { version = "0.14", optional = true }
 quote = { version = "1", optional = true }
 syn = { version = "2", features = ["full"], optional = true }
 

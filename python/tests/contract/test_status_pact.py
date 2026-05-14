@@ -14,7 +14,7 @@ import httpx
 import pytest
 from pact import Pact, Verifier, match
 
-PACTS_DIR = Path(__file__).resolve().parents[3] / "contracts" / "pacts"
+PACTS_DIR = Path(__file__).resolve().parents[3] / "tests" / "contracts" / "pacts"
 
 
 @pytest.mark.contract

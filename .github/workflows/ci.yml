@@ -1,6 +1,4 @@
-# Public CI for tomers/openapp-sdk (mirror layout). Source of truth lives under
-# packages/sdk/oss-mirror/ in the OpenApp monorepo and is copied by
-# scripts/publish-openapp-sdk-mirror.sh.
+# CI for tomers/openapp-sdk — Rust core, Python, and Go SDK tests + Allure report.
 
 name: CI
 
@@ -60,7 +58,7 @@ jobs:
           uv run pytest -v tests/unit tests/contract \
             --junitxml=.tmp/sdk-reports/junit-python-ci.xml \
             --alluredir=.tmp/sdk-reports/allure-results
-          uv run behave ../features --tags=-wip --no-color \
+          uv run behave ../tests/features --tags=-wip --no-color \
             -f allure_behave.formatter:AllureFormatter -o .tmp/sdk-reports/allure-results \
             -f plain --junit --junit-directory=.tmp/sdk-reports/behave-junit
 

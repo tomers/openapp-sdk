@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "openapp-sdk"
-version = "0.1.59"
+version = "0.1.61"
 description = "Official Python SDK for OpenApp — Physical Security as a Service (PSaaS): API-first access control for doors, gates, intercom, invitations, and audit."
 readme = "README.md"
 license = { text = "MIT" }

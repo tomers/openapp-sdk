@@ -11,7 +11,7 @@ mkdir -p .tmp/sdk-reports/behave-junit .tmp/sdk-reports/allure-results .tmp/sdk-
 uv run pytest -q tests/unit tests/contract \
   --junitxml=.tmp/sdk-reports/junit-release-gates.xml \
   --alluredir=.tmp/sdk-reports/allure-results
-uv run behave ../features --tags=-wip --no-color \
+uv run behave ../tests/features --tags=-wip --no-color \
   -f allure_behave.formatter:AllureFormatter -o .tmp/sdk-reports/allure-behave-results \
   -f plain --junit --junit-directory=.tmp/sdk-reports/behave-junit
 shopt -s nullglob

@@ -18,27 +18,54 @@ use std::{
     collections::HashSet,
     env, fs,
     io::Write,
-    path::PathBuf,
+    path::{Path, PathBuf},
     process::{Command, Stdio},
 };
 
 use anyhow::{Context, Result};
 use serde_json::{Map, Value};
 
+fn locate_openapi_spec(manifest_dir: &Path) -> Result<PathBuf> {
+    if let Ok(override_path) = env::var("OPENAPP_OPENAPI_SPEC") {
+        return PathBuf::from(override_path)
+            .canonicalize()
+            .context("locating OPENAPP_OPENAPI_SPEC");
+    }
+
+    // Monorepo: packages/sdk/core/crates/common -> packages/api-spec/openapi.json
+    // Mirror:   rust/crates/common -> api-spec/openapi.json
+    let candidates = [
+        manifest_dir
+            .join("..")
+            .join("..")
+            .join("..")
+            .join("..")
+            .join("api-spec")
+            .join("openapi.json"),
+        manifest_dir
+            .join("..")
+            .join("..")
+            .join("..")
+            .join("api-spec")
+            .join("openapi.json"),
+    ];
+    for candidate in candidates {
+        if let Ok(path) = candidate.canonicalize() {
+            return Ok(path);
+        }
+    }
+    anyhow::bail!(
+        "could not locate api-spec/openapi.json from {} \
+         (tried monorepo and mirror layouts; set OPENAPP_OPENAPI_SPEC to override)",
+        manifest_dir.display()
+    );
+}
+
 fn main() -> Result<()> {
     let check_mode = env::args().any(|arg| arg == "--check");
 
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?);
-    // packages/sdk/core/crates/common -> packages/api-spec/openapi.json
-    let spec_path = manifest_dir
-        .join("..")
-        .join("..")
-        .join("..")
-        .join("..")
-        .join("api-spec")
-        .join("openapi.json")
-        .canonicalize()
-        .context("locating packages/api-spec/openapi.json")?;
+    let spec_path = locate_openapi_spec(&manifest_dir)?;
 
     let spec_bytes =
         fs::read(&spec_path).with_context(|| format!("reading {}", spec_path.display()))?;
