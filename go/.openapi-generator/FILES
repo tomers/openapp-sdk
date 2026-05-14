@@ -38,6 +38,8 @@ docs/BillingPlanResponse.md
 docs/BillingWebhookResponse.md
 docs/BuildingUserResponse.md
 docs/CheckoutRequest.md
+docs/CreateAccessInviteRequest.md
+docs/CreateAccessInviteResponse.md
 docs/CreateAccessPortalRequest.md
 docs/CreateAccessPortalResponse.md
 docs/CreateApiKeyRequest.md
@@ -93,6 +95,7 @@ docs/LimitSourceOneOf1.md
 docs/LimitSourceOneOf2.md
 docs/ListDevicesQuery.md
 docs/ListEntitiesQuery.md
+docs/ListIntegrationAccessInvitesResponse.md
 docs/ListIntegrationAccessPortalsResponse.md
 docs/ListIntegrationsQuery.md
 docs/ListOrgUsersQuery.md
@@ -192,6 +195,8 @@ model_billing_plan_response.go
 model_billing_webhook_response.go
 model_building_user_response.go
 model_checkout_request.go
+model_create_access_invite_request.go
+model_create_access_invite_response.go
 model_create_access_portal_request.go
 model_create_access_portal_response.go
 model_create_api_key_request.go
@@ -242,6 +247,7 @@ model_limit_source_one_of_1.go
 model_limit_source_one_of_2.go
 model_list_devices_query.go
 model_list_entities_query.go
+model_list_integration_access_invites_response.go
 model_list_integration_access_portals_response.go
 model_list_integrations_query.go
 model_list_org_users_query.go

@@ -3290,6 +3290,182 @@
         ]
       }
     },
+    "/integrations/{id}/access-invites": {
+      "get": {
+        "tags": [
+          "Integrations"
+        ],
+        "summary": "List access invites for an integration.",
+        "operationId": "list_integration_access_invites",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Org",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of access invites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListIntegrationAccessInvitesResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Integrations"
+        ],
+        "summary": "Create an access invite granting portal_open on one or more portals.",
+        "operationId": "create_integration_access_invite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Org",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccessInviteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Created invite",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAccessInviteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer_auth": []
+          }
+        ]
+      }
+    },
     "/integrations/{id}/access-invites/{invite_link_id}": {
       "put": {
         "tags": [
@@ -8923,6 +9099,142 @@
           }
         }
       },
+      "CreateAccessInviteRequest": {
+        "type": "object",
+        "required": [
+          "portal_ids"
+        ],
+        "properties": {
+          "expires_in": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "invite_recurrence": {},
+          "invitee_message": {},
+          "is_enabled": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "max_uses": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "portal_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "schedules": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/InviteScheduleEntryInput"
+            },
+            "description": "When set (non-empty), defines one or more schedule entries; legacy `valid_from` /\n`valid_to` / `invite_recurrence` are ignored for scheduling."
+          },
+          "valid_from": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "valid_to": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "CreateAccessInviteResponse": {
+        "type": "object",
+        "required": [
+          "invite_link_id",
+          "invite_token",
+          "valid_from",
+          "valid_to",
+          "is_enabled",
+          "schedule_kind",
+          "schedule_combined",
+          "schedule_entries",
+          "schedule",
+          "uses",
+          "granted_portals"
+        ],
+        "properties": {
+          "granted_portals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessInviteGrantedPortal"
+            }
+          },
+          "invite_link_id": {
+            "type": "string"
+          },
+          "invite_recurrence": {},
+          "invite_token": {
+            "type": "string"
+          },
+          "invitee_message": {},
+          "is_enabled": {
+            "type": "boolean"
+          },
+          "max_uses": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/InviteScheduleSnapshot"
+          },
+          "schedule_combined": {
+            "$ref": "#/components/schemas/InviteScheduleCombined"
+          },
+          "schedule_entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InviteScheduleEntrySnapshot"
+            }
+          },
+          "schedule_kind": {
+            "$ref": "#/components/schemas/InviteScheduleKind"
+          },
+          "uses": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "valid_from": {
+            "type": "string"
+          },
+          "valid_to": {
+            "type": "string"
+          }
+        }
+      },
       "CreateAccessPortalRequest": {
         "type": "object",
         "required": [
@@ -10239,6 +10551,20 @@
           }
         ],
         "description": "List entities for the organization context (X-Org)."
+      },
+      "ListIntegrationAccessInvitesResponse": {
+        "type": "object",
+        "required": [
+          "invites"
+        ],
+        "properties": {
+          "invites": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessInviteListItem"
+            }
+          }
+        }
       },
       "ListIntegrationAccessPortalsResponse": {
         "type": "object",

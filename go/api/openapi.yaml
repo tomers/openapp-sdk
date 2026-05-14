@@ -2222,6 +2222,119 @@ paths:
       summary: Update an integration.
       tags:
       - Integrations
+  /integrations/{id}/access-invites:
+    get:
+      operationId: list_integration_access_invites
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: X-Org
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIntegrationAccessInvitesResponse'
+          description: List of access invites
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Not found
+      security:
+      - bearer_auth: []
+      summary: List access invites for an integration.
+      tags:
+      - Integrations
+    post:
+      operationId: create_integration_access_invite
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: header
+        name: X-Org
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccessInviteRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAccessInviteResponse'
+          description: Created invite
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Unauthorized
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Forbidden
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+          description: Not found
+      security:
+      - bearer_auth: []
+      summary: Create an access invite granting portal_open on one or more portals.
+      tags:
+      - Integrations
   /integrations/{id}/access-invites/{invite_link_id}:
     delete:
       operationId: delete_integration_access_invite
@@ -6144,6 +6257,191 @@ components:
           type: string
       required:
       - tier_slug
+    CreateAccessInviteRequest:
+      example:
+        is_enabled: true
+        invite_recurrence: ""
+        max_uses: 0
+        invitee_message: ""
+        schedules:
+        - is_enabled: true
+          invite_recurrence: ""
+          valid_to: valid_to
+          name: name
+          valid_from: valid_from
+          id: id
+        - is_enabled: true
+          invite_recurrence: ""
+          valid_to: valid_to
+          name: name
+          valid_from: valid_from
+          id: id
+        valid_to: valid_to
+        name: name
+        valid_from: valid_from
+        expires_in: expires_in
+        portal_ids:
+        - portal_ids
+        - portal_ids
+      properties:
+        expires_in:
+          nullable: true
+          type: string
+        invite_recurrence: {}
+        invitee_message: {}
+        is_enabled:
+          nullable: true
+          type: boolean
+        max_uses:
+          format: int32
+          nullable: true
+          type: integer
+        name:
+          nullable: true
+          type: string
+        portal_ids:
+          items:
+            type: string
+          type: array
+        schedules:
+          description: |-
+            When set (non-empty), defines one or more schedule entries; legacy `valid_from` /
+            `valid_to` / `invite_recurrence` are ignored for scheduling.
+          items:
+            $ref: '#/components/schemas/InviteScheduleEntryInput'
+          nullable: true
+          type: array
+        valid_from:
+          nullable: true
+          type: string
+        valid_to:
+          nullable: true
+          type: string
+      required:
+      - portal_ids
+    CreateAccessInviteResponse:
+      example:
+        invite_recurrence: ""
+        schedule_kind: single_window
+        invitee_message: ""
+        valid_from: valid_from
+        schedule_entries:
+        - is_enabled: true
+          invite_recurrence: ""
+          schedule:
+            slot_duration_seconds: 6
+            next_window:
+              from: from
+              to: to
+            is_recurring: true
+            active_window:
+              from: from
+              to: to
+            series_end:
+              kind: never
+          valid_to: valid_to
+          name: name
+          valid_from: valid_from
+          id: id
+        - is_enabled: true
+          invite_recurrence: ""
+          schedule:
+            slot_duration_seconds: 6
+            next_window:
+              from: from
+              to: to
+            is_recurring: true
+            active_window:
+              from: from
+              to: to
+            series_end:
+              kind: never
+          valid_to: valid_to
+          name: name
+          valid_from: valid_from
+          id: id
+        granted_portals:
+        - name:
+            value:
+              key: value
+          id: id
+          public_id: public_id
+        - name:
+            value:
+              key: value
+          id: id
+          public_id: public_id
+        is_enabled: true
+        schedule:
+          slot_duration_seconds: 6
+          next_window:
+            from: from
+            to: to
+          is_recurring: true
+          active_window:
+            from: from
+            to: to
+          series_end:
+            kind: never
+        invite_link_id: invite_link_id
+        max_uses: 0
+        valid_to: valid_to
+        name: name
+        uses: 6
+        invite_token: invite_token
+        schedule_combined:
+          open_ended_recurrence: true
+          until: until
+          since: since
+      properties:
+        granted_portals:
+          items:
+            $ref: '#/components/schemas/AccessInviteGrantedPortal'
+          type: array
+        invite_link_id:
+          type: string
+        invite_recurrence: {}
+        invite_token:
+          type: string
+        invitee_message: {}
+        is_enabled:
+          type: boolean
+        max_uses:
+          format: int32
+          nullable: true
+          type: integer
+        name:
+          nullable: true
+          type: string
+        schedule:
+          $ref: '#/components/schemas/InviteScheduleSnapshot'
+        schedule_combined:
+          $ref: '#/components/schemas/InviteScheduleCombined'
+        schedule_entries:
+          items:
+            $ref: '#/components/schemas/InviteScheduleEntrySnapshot'
+          type: array
+        schedule_kind:
+          $ref: '#/components/schemas/InviteScheduleKind'
+        uses:
+          format: int32
+          type: integer
+        valid_from:
+          type: string
+        valid_to:
+          type: string
+      required:
+      - granted_portals
+      - invite_link_id
+      - invite_token
+      - is_enabled
+      - schedule
+      - schedule_combined
+      - schedule_entries
+      - schedule_kind
+      - uses
+      - valid_from
+      - valid_to
     CreateAccessPortalRequest:
       example:
         device_external_id: device_external_id
@@ -7076,6 +7374,170 @@ components:
             nullable: true
             type: string
       description: List entities for the organization context (X-Org).
+    ListIntegrationAccessInvitesResponse:
+      example:
+        invites:
+        - invite_recurrence: ""
+          schedule_kind: single_window
+          invitee_message: ""
+          created_at: created_at
+          valid_from: valid_from
+          schedule_entries:
+          - is_enabled: true
+            invite_recurrence: ""
+            schedule:
+              slot_duration_seconds: 6
+              next_window:
+                from: from
+                to: to
+              is_recurring: true
+              active_window:
+                from: from
+                to: to
+              series_end:
+                kind: never
+            valid_to: valid_to
+            name: name
+            valid_from: valid_from
+            id: id
+          - is_enabled: true
+            invite_recurrence: ""
+            schedule:
+              slot_duration_seconds: 6
+              next_window:
+                from: from
+                to: to
+              is_recurring: true
+              active_window:
+                from: from
+                to: to
+              series_end:
+                kind: never
+            valid_to: valid_to
+            name: name
+            valid_from: valid_from
+            id: id
+          granted_portals:
+          - name:
+              value:
+                key: value
+            id: id
+            public_id: public_id
+          - name:
+              value:
+                key: value
+            id: id
+            public_id: public_id
+          is_enabled: true
+          last_used_at: last_used_at
+          schedule:
+            slot_duration_seconds: 6
+            next_window:
+              from: from
+              to: to
+            is_recurring: true
+            active_window:
+              from: from
+              to: to
+            series_end:
+              kind: never
+          revoked_at: revoked_at
+          max_uses: 0
+          updated_at: updated_at
+          valid_to: valid_to
+          disabled_justification: disabled_justification
+          name: name
+          uses: 1
+          id: id
+          state: state
+          schedule_combined:
+            open_ended_recurrence: true
+            until: until
+            since: since
+        - invite_recurrence: ""
+          schedule_kind: single_window
+          invitee_message: ""
+          created_at: created_at
+          valid_from: valid_from
+          schedule_entries:
+          - is_enabled: true
+            invite_recurrence: ""
+            schedule:
+              slot_duration_seconds: 6
+              next_window:
+                from: from
+                to: to
+              is_recurring: true
+              active_window:
+                from: from
+                to: to
+              series_end:
+                kind: never
+            valid_to: valid_to
+            name: name
+            valid_from: valid_from
+            id: id
+          - is_enabled: true
+            invite_recurrence: ""
+            schedule:
+              slot_duration_seconds: 6
+              next_window:
+                from: from
+                to: to
+              is_recurring: true
+              active_window:
+                from: from
+                to: to
+              series_end:
+                kind: never
+            valid_to: valid_to
+            name: name
+            valid_from: valid_from
+            id: id
+          granted_portals:
+          - name:
+              value:
+                key: value
+            id: id
+            public_id: public_id
+          - name:
+              value:
+                key: value
+            id: id
+            public_id: public_id
+          is_enabled: true
+          last_used_at: last_used_at
+          schedule:
+            slot_duration_seconds: 6
+            next_window:
+              from: from
+              to: to
+            is_recurring: true
+            active_window:
+              from: from
+              to: to
+            series_end:
+              kind: never
+          revoked_at: revoked_at
+          max_uses: 0
+          updated_at: updated_at
+          valid_to: valid_to
+          disabled_justification: disabled_justification
+          name: name
+          uses: 1
+          id: id
+          state: state
+          schedule_combined:
+            open_ended_recurrence: true
+            until: until
+            since: since
+      properties:
+        invites:
+          items:
+            $ref: '#/components/schemas/AccessInviteListItem'
+          type: array
+      required:
+      - invites
     ListIntegrationAccessPortalsResponse:
       example:
         portals:

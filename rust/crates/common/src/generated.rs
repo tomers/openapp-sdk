@@ -974,6 +974,202 @@ pub mod types {
     pub struct CheckoutRequest {
         pub tier_slug: ::std::string::String,
     }
+    ///`CreateAccessInviteRequest`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "portal_ids"
+    ///  ],
+    ///  "properties": {
+    ///    "expires_in": {
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    },
+    ///    "invite_recurrence": {},
+    ///    "invitee_message": {},
+    ///    "is_enabled": {
+    ///      "type": [
+    ///        "boolean",
+    ///        "null"
+    ///      ]
+    ///    },
+    ///    "max_uses": {
+    ///      "type": [
+    ///        "integer",
+    ///        "null"
+    ///      ],
+    ///      "format": "int32"
+    ///    },
+    ///    "name": {
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    },
+    ///    "portal_ids": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "type": "string"
+    ///      }
+    ///    },
+    ///    "schedules": {
+    ///      "description": "When set (non-empty), defines one or more schedule entries; legacy `valid_from` /\n`valid_to` / `invite_recurrence` are ignored for scheduling.",
+    ///      "type": [
+    ///        "array",
+    ///        "null"
+    ///      ],
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/InviteScheduleEntryInput"
+    ///      }
+    ///    },
+    ///    "valid_from": {
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    },
+    ///    "valid_to": {
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct CreateAccessInviteRequest {
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub expires_in: ::std::option::Option<::std::string::String>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub invite_recurrence: ::std::option::Option<::serde_json::Value>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub invitee_message: ::std::option::Option<::serde_json::Value>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub is_enabled: ::std::option::Option<bool>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub max_uses: ::std::option::Option<i32>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub name: ::std::option::Option<::std::string::String>,
+        pub portal_ids: ::std::vec::Vec<::std::string::String>,
+        /**When set (non-empty), defines one or more schedule entries; legacy `valid_from` /
+        `valid_to` / `invite_recurrence` are ignored for scheduling.*/
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub schedules: ::std::option::Option<::std::vec::Vec<InviteScheduleEntryInput>>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub valid_from: ::std::option::Option<::std::string::String>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub valid_to: ::std::option::Option<::std::string::String>,
+    }
+    ///`CreateAccessInviteResponse`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "granted_portals",
+    ///    "invite_link_id",
+    ///    "invite_token",
+    ///    "is_enabled",
+    ///    "schedule",
+    ///    "schedule_combined",
+    ///    "schedule_entries",
+    ///    "schedule_kind",
+    ///    "uses",
+    ///    "valid_from",
+    ///    "valid_to"
+    ///  ],
+    ///  "properties": {
+    ///    "granted_portals": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/AccessInviteGrantedPortal"
+    ///      }
+    ///    },
+    ///    "invite_link_id": {
+    ///      "type": "string"
+    ///    },
+    ///    "invite_recurrence": {},
+    ///    "invite_token": {
+    ///      "type": "string"
+    ///    },
+    ///    "invitee_message": {},
+    ///    "is_enabled": {
+    ///      "type": "boolean"
+    ///    },
+    ///    "max_uses": {
+    ///      "type": [
+    ///        "integer",
+    ///        "null"
+    ///      ],
+    ///      "format": "int32"
+    ///    },
+    ///    "name": {
+    ///      "type": [
+    ///        "string",
+    ///        "null"
+    ///      ]
+    ///    },
+    ///    "schedule": {
+    ///      "$ref": "#/components/schemas/InviteScheduleSnapshot"
+    ///    },
+    ///    "schedule_combined": {
+    ///      "$ref": "#/components/schemas/InviteScheduleCombined"
+    ///    },
+    ///    "schedule_entries": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/InviteScheduleEntrySnapshot"
+    ///      }
+    ///    },
+    ///    "schedule_kind": {
+    ///      "$ref": "#/components/schemas/InviteScheduleKind"
+    ///    },
+    ///    "uses": {
+    ///      "type": "integer",
+    ///      "format": "int32"
+    ///    },
+    ///    "valid_from": {
+    ///      "type": "string"
+    ///    },
+    ///    "valid_to": {
+    ///      "type": "string"
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct CreateAccessInviteResponse {
+        pub granted_portals: ::std::vec::Vec<AccessInviteGrantedPortal>,
+        pub invite_link_id: ::std::string::String,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub invite_recurrence: ::std::option::Option<::serde_json::Value>,
+        pub invite_token: ::std::string::String,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub invitee_message: ::std::option::Option<::serde_json::Value>,
+        pub is_enabled: bool,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub max_uses: ::std::option::Option<i32>,
+        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+        pub name: ::std::option::Option<::std::string::String>,
+        pub schedule: InviteScheduleSnapshot,
+        pub schedule_combined: InviteScheduleCombined,
+        pub schedule_entries: ::std::vec::Vec<InviteScheduleEntrySnapshot>,
+        pub schedule_kind: InviteScheduleKind,
+        pub uses: i32,
+        pub valid_from: ::std::string::String,
+        pub valid_to: ::std::string::String,
+    }
     ///`CreateAccessPortalRequest`
     ///
     /// <details><summary>JSON schema</summary>
@@ -3454,6 +3650,31 @@ pub mod types {
         ///Optional filter: only entities in this zone.
         #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
         pub zone_id: ::std::option::Option<::std::string::String>,
+    }
+    ///`ListIntegrationAccessInvitesResponse`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "invites"
+    ///  ],
+    ///  "properties": {
+    ///    "invites": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/AccessInviteListItem"
+    ///      }
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct ListIntegrationAccessInvitesResponse {
+        pub invites: ::std::vec::Vec<AccessInviteListItem>,
     }
     ///`ListIntegrationAccessPortalsResponse`
     ///
@@ -9956,6 +10177,122 @@ impl Client {
             401u16 => Err(Error::ErrorResponse(ResponseValue::empty(response))),
             403u16 => Err(Error::ErrorResponse(ResponseValue::empty(response))),
             404u16 => Err(Error::ErrorResponse(ResponseValue::empty(response))),
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**List access invites for an integration
+
+    Sends a `GET` request to `/integrations/{id}/access-invites`
+
+    */
+    pub async fn list_integration_access_invites<'a>(
+        &'a self,
+        id: &'a str,
+        x_org: &'a str,
+    ) -> Result<
+        ResponseValue<types::ListIntegrationAccessInvitesResponse>,
+        Error<types::ApiErrorResponse>,
+    > {
+        let url = format!(
+            "{}/integrations/{}/access-invites",
+            self.baseurl,
+            encode_path(&id.to_string()),
+        );
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(2usize);
+        header_map.append(
+            ::reqwest::header::HeaderName::from_static("api-version"),
+            ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+        );
+        header_map.append("X-Org", x_org.to_string().try_into()?);
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .get(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "list_integration_access_invites",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
+            400u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            401u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            403u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            404u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            _ => Err(Error::UnexpectedResponse(response)),
+        }
+    }
+    /**Create an access invite granting portal_open on one or more portals
+
+    Sends a `POST` request to `/integrations/{id}/access-invites`
+
+    */
+    pub async fn create_integration_access_invite<'a>(
+        &'a self,
+        id: &'a str,
+        x_org: &'a str,
+        body: &'a types::CreateAccessInviteRequest,
+    ) -> Result<ResponseValue<types::CreateAccessInviteResponse>, Error<types::ApiErrorResponse>>
+    {
+        let url = format!(
+            "{}/integrations/{}/access-invites",
+            self.baseurl,
+            encode_path(&id.to_string()),
+        );
+        let mut header_map = ::reqwest::header::HeaderMap::with_capacity(2usize);
+        header_map.append(
+            ::reqwest::header::HeaderName::from_static("api-version"),
+            ::reqwest::header::HeaderValue::from_static(Self::api_version()),
+        );
+        header_map.append("X-Org", x_org.to_string().try_into()?);
+        #[allow(unused_mut)]
+        let mut request = self
+            .client
+            .post(url)
+            .header(
+                ::reqwest::header::ACCEPT,
+                ::reqwest::header::HeaderValue::from_static("application/json"),
+            )
+            .json(&body)
+            .headers(header_map)
+            .build()?;
+        let info = OperationInfo {
+            operation_id: "create_integration_access_invite",
+        };
+        self.pre(&mut request, &info).await?;
+        let result = self.exec(request, &info).await;
+        self.post(&result, &info).await?;
+        let response = result?;
+        match response.status().as_u16() {
+            200u16 => ResponseValue::from_response(response).await,
+            400u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            401u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            403u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
+            404u16 => Err(Error::ErrorResponse(
+                ResponseValue::from_response(response).await?,
+            )),
             _ => Err(Error::UnexpectedResponse(response)),
         }
     }

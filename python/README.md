@@ -3,8 +3,9 @@
 [![PyPI version](https://img.shields.io/pypi/v/openapp-sdk.svg)](https://pypi.org/project/openapp-sdk/)
 [![Python versions](https://img.shields.io/pypi/pyversions/openapp-sdk.svg)](https://pypi.org/project/openapp-sdk/)
 
-Official Python SDK for [OpenApp](https://openapp.house/) — the open IoT device
-management platform for buildings, homes, and access control.
+Official Python SDK for [OpenApp](https://openapp.house/) — **Physical Security as a
+Service (PSaaS)**: API-first access control for doors, gates, intercom, invitations,
+policies, and audit across buildings, hotels, campuses, and homes.
 
 The SDK wraps a shared Rust core
 ([`openapp-sdk-core`](https://github.com/tomers/openapp-sdk/tree/main/rust)): Rust
@@ -136,3 +137,10 @@ records from Python. Enable via `OPENAPP_SDK_LOG=info` (Rust) or the usual
 ## License
 
 MIT
+
+## Documentation
+
+- [Python SDK docs](https://openapp.house/docs/sdk/python/)
+- [API reference](https://openapp.house/docs/api-reference/)
+- [Agents & automation](https://openapp.house/docs/guides/agents/overview/)
+- [Access control by sector](https://openapp.house/docs/guides/access-control-architecture/access-control-model-by-sector/)

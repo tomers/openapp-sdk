@@ -1087,6 +1087,24 @@ class BillingWebhookResponse(BaseModel):
     provider: str
 
 
+class CreateAccessInviteRequest(BaseModel):
+    expires_in: str | None = None
+    invite_recurrence: Any | None = None
+    invitee_message: Any | None = None
+    is_enabled: bool | None = None
+    max_uses: int | None = None
+    name: str | None = None
+    portal_ids: list[str]
+    schedules: Annotated[
+        list[InviteScheduleEntryInput] | None,
+        Field(
+            description="When set (non-empty), defines one or more schedule entries; legacy `valid_from` /\n`valid_to` / `invite_recurrence` are ignored for scheduling."
+        ),
+    ] = None
+    valid_from: str | None = None
+    valid_to: str | None = None
+
+
 class CreateAccessPortalRequest(BaseModel):
     device_external_id: Annotated[
         str | None,
@@ -1666,3 +1684,25 @@ class AccessInviteListItem(BaseModel):
     uses: int
     valid_from: str | None = None
     valid_to: str | None = None
+
+
+class CreateAccessInviteResponse(BaseModel):
+    granted_portals: list[AccessInviteGrantedPortal]
+    invite_link_id: str
+    invite_recurrence: Any | None = None
+    invite_token: str
+    invitee_message: Any | None = None
+    is_enabled: bool
+    max_uses: int | None = None
+    name: str | None = None
+    schedule: InviteScheduleSnapshot
+    schedule_combined: InviteScheduleCombined
+    schedule_entries: list[InviteScheduleEntrySnapshot]
+    schedule_kind: InviteScheduleKind
+    uses: int
+    valid_from: str
+    valid_to: str
+
+
+class ListIntegrationAccessInvitesResponse(BaseModel):
+    invites: list[AccessInviteListItem]

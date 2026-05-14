@@ -5,6 +5,7 @@ All URIs are relative to */api/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CreateIntegration**](IntegrationsAPI.md#CreateIntegration) | **Post** /integrations | Create an integration in an organization.
+[**CreateIntegrationAccessInvite**](IntegrationsAPI.md#CreateIntegrationAccessInvite) | **Post** /integrations/{id}/access-invites | Create an access invite granting portal_open on one or more portals.
 [**CreateIntegrationAccessPortal**](IntegrationsAPI.md#CreateIntegrationAccessPortal) | **Post** /integrations/{id}/access-portals | Create a public access portal for an integration.
 [**DeleteIntegrationAccessInvite**](IntegrationsAPI.md#DeleteIntegrationAccessInvite) | **Delete** /integrations/{id}/access-invites/{invite_link_id} | Delete an access invite (permanently).
 [**DeleteIntegrationAccessPortal**](IntegrationsAPI.md#DeleteIntegrationAccessPortal) | **Delete** /integrations/{id}/access-portals/{portal_id} | Delete a public access portal.
@@ -15,6 +16,7 @@ Method | HTTP request | Description
 [**GetIntegrationDiscoveredDevices**](IntegrationsAPI.md#GetIntegrationDiscoveredDevices) | **Get** /integrations/{id}/discovered-devices | List devices discovered from the upstream provider for this integration.
 [**GetIntegrationProviderDefinition**](IntegrationsAPI.md#GetIntegrationProviderDefinition) | **Get** /integrations/provider-types/{provider_type}/definition | Get a provider definition (capabilities, actions, schemas) for UI/CLI.
 [**HardDeleteIntegration**](IntegrationsAPI.md#HardDeleteIntegration) | **Delete** /integrations/{id}/purge | Permanently delete (purge) an integration.
+[**ListIntegrationAccessInvites**](IntegrationsAPI.md#ListIntegrationAccessInvites) | **Get** /integrations/{id}/access-invites | List access invites for an integration.
 [**ListIntegrationAccessPortals**](IntegrationsAPI.md#ListIntegrationAccessPortals) | **Get** /integrations/{id}/access-portals | List public access portals for an integration (for admin links to public portal pages).
 [**ListIntegrationEntities**](IntegrationsAPI.md#ListIntegrationEntities) | **Get** /integrations/{id}/entities | List resource entities for devices belonging to an integration.
 [**ListIntegrationOps**](IntegrationsAPI.md#ListIntegrationOps) | **Get** /integrations/{id}/ops | List provider-specific ops available for an integration.
@@ -87,6 +89,82 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**IntegrationResponse**](IntegrationResponse.md)
+
+### Authorization
+
+[bearer_auth](../README.md#bearer_auth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## CreateIntegrationAccessInvite
+
+> CreateAccessInviteResponse CreateIntegrationAccessInvite(ctx, id).XOrg(xOrg).CreateAccessInviteRequest(createAccessInviteRequest).Execute()
+
+Create an access invite granting portal_open on one or more portals.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	xOrg := "xOrg_example" // string |
+	createAccessInviteRequest := *openapiclient.NewCreateAccessInviteRequest([]string{"PortalIds_example"}) // CreateAccessInviteRequest |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.IntegrationsAPI.CreateIntegrationAccessInvite(context.Background(), id).XOrg(xOrg).CreateAccessInviteRequest(createAccessInviteRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.CreateIntegrationAccessInvite``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `CreateIntegrationAccessInvite`: CreateAccessInviteResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.CreateIntegrationAccessInvite`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiCreateIntegrationAccessInviteRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **xOrg** | **string** |  |
+ **createAccessInviteRequest** | [**CreateAccessInviteRequest**](CreateAccessInviteRequest.md) |  |
+
+### Return type
+
+[**CreateAccessInviteResponse**](CreateAccessInviteResponse.md)
 
 ### Authorization
 
@@ -842,6 +920,80 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**IntegrationResponse**](IntegrationResponse.md)
+
+### Authorization
+
+[bearer_auth](../README.md#bearer_auth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ListIntegrationAccessInvites
+
+> ListIntegrationAccessInvitesResponse ListIntegrationAccessInvites(ctx, id).XOrg(xOrg).Execute()
+
+List access invites for an integration.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	xOrg := "xOrg_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.IntegrationsAPI.ListIntegrationAccessInvites(context.Background(), id).XOrg(xOrg).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.ListIntegrationAccessInvites``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListIntegrationAccessInvites`: ListIntegrationAccessInvitesResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.ListIntegrationAccessInvites`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListIntegrationAccessInvitesRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **xOrg** | **string** |  |
+
+### Return type
+
+[**ListIntegrationAccessInvitesResponse**](ListIntegrationAccessInvitesResponse.md)
 
 ### Authorization
 

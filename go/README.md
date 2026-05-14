@@ -1,9 +1,14 @@
 <!-- markdownlint-disable MD013 MD060 -->
 # Go SDK (`github.com/tomers/openapp-sdk/go`)
 
-Official Go SDK for OpenApp. The public API is generated from OpenAPI, while the
-default client transport goes through `openapp-sdk-core-c-bridge` so auth,
+Official Go SDK for **OpenApp — Physical Security as a Service (PSaaS)**: API-first
+access control for doors, gates, virtual intercom, guest invitations, policies, and
+audit across heterogeneous hardware and automation. The public API is generated from
+OpenAPI; the default client transport uses `openapp-sdk-core-c-bridge` so auth,
 retries, error mapping, and wire dispatch stay aligned with the other SDKs.
+
+- Docs: [openapp.house/docs/sdk/go/](https://openapp.house/docs/sdk/go/)
+- OpenAPI: [openapp-openapi.json](https://openapp.house/docs/api-spec/openapp-openapi.json)
 
 ## Installation
 
@@ -65,3 +70,9 @@ For the PR-fast slice, use `just sdk go gherkin-tier0`.
 Internal development, codegen, CI, and release notes are documented in
 [`../docs/GO_MAINTAINERS.md`](../docs/GO_MAINTAINERS.md) and
 [`../docs/SDK_DEVELOPMENT_POLICY.md`](../docs/SDK_DEVELOPMENT_POLICY.md).
+
+## Documentation
+
+- [Agents & automation](https://openapp.house/docs/guides/agents/overview/)
+- [API reference](https://openapp.house/docs/api-reference/)
+- [Time-bound guest invitation](https://openapp.house/docs/guides/agents/time-bound-guest-invitation/)

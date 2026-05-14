@@ -1,0 +1,149 @@
+# Public CI for tomers/openapp-sdk (mirror layout). Source of truth lives under
+# packages/sdk/oss-mirror/ in the OpenApp monorepo and is copied by
+# scripts/publish-openapp-sdk-mirror.sh.
+
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: SDK tests + Allure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Rust core (fmt + clippy + test)
+        working-directory: rust
+        run: |
+          set -euo pipefail
+          cargo fmt --all -- --check
+          cargo clippy --workspace --all-targets --all-features -- -D warnings
+          cargo test --workspace
+
+      - name: OpenAPI drift (generated Rust client)
+        working-directory: rust/crates/common
+        run: cargo run --features openapi-gen --bin openapp-sdk-openapi-gen -- --check
+
+      - uses: astral-sh/setup-uv@v8.1.0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Python SDK (unit + contract + Behave)
+        working-directory: python
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .venv
+          uv sync --all-extras
+          uv run maturin develop --features pyo3/extension-module
+          mkdir -p .tmp/sdk-reports/behave-junit
+          uv run pytest -v tests/unit tests/contract \
+            --junitxml=.tmp/sdk-reports/junit-python-ci.xml \
+            --alluredir=.tmp/sdk-reports/allure-results
+          uv run behave ../features --tags=-wip --no-color \
+            -f allure_behave.formatter:AllureFormatter -o .tmp/sdk-reports/allure-results \
+            -f plain --junit --junit-directory=.tmp/sdk-reports/behave-junit
+
+      - name: Build C bridge (release, for Go cgo)
+        working-directory: rust
+        run: cargo build -p openapp-sdk-core-c-bridge --release
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.2'
+
+      - name: Go SDK (vet + build + test)
+        working-directory: go
+        env:
+          CGO_ENABLED: '1'
+          LD_LIBRARY_PATH: ${{ github.workspace }}/rust/target/release/deps
+        run: |
+          set -euo pipefail
+          mkdir -p .tmp/sdk-reports
+          go vet ./...
+          go build ./...
+          go test ./... -json > .tmp/sdk-reports/go-test.jsonl
+
+      - name: Merge Allure inputs
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 scripts/sdk_merge_allure_results.py \
+            --layout mirror \
+            --repo "${GITHUB_WORKSPACE}" \
+            --out "${GITHUB_WORKSPACE}/.tmp/sdk-reports/allure-results-merged"
+
+      - name: Allure HTML
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -d .tmp/sdk-reports/allure-results-merged ]] \
+            || [[ -z "$(ls -A .tmp/sdk-reports/allure-results-merged 2>/dev/null)" ]]; then
+            echo "No Allure inputs; skipping report." >&2
+            exit 0
+          fi
+          source scripts/sdk-prepare-allure-cli.sh
+          allure generate .tmp/sdk-reports/allure-results-merged \
+            -o .tmp/sdk-reports/allure-report --clean
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-report
+          path: .tmp/sdk-reports/allure-report
+
+      - name: Upload JUnit (pytest)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: junit-python
+          path: python/.tmp/sdk-reports/junit-python-ci.xml
+
+      - name: Upload JUnit (Behave)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: junit-behave
+          path: python/.tmp/sdk-reports/behave-junit
+
+  publish-report:
+    name: Publish test report (GitHub Pages)
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Deploy Allure to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          force_orphan: true
