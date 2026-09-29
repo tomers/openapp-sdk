@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Description** | Pointer to **NullableString** |  | [optional]
 **Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
+**ParentId** | Pointer to **NullableString** | Move the org under a new parent (re-parent). When present and different from the current parent, the org (and its whole subtree) is moved under &#x60;parent_id&#x60;. Requires &#x60;admin&#x60; on the destination parent (or an ancestor) in addition to &#x60;update_orgs&#x60; on the org being moved. | [optional]
 
 ## Methods
 
@@ -96,5 +97,40 @@ HasName returns a boolean if a field has been set.
 `func (o *UpdateOrganizationRequest) UnsetName()`
 
 UnsetName ensures that no value is present for Name, not even an explicit nil
+### GetParentId
+
+`func (o *UpdateOrganizationRequest) GetParentId() string`
+
+GetParentId returns the ParentId field if non-nil, zero value otherwise.
+
+### GetParentIdOk
+
+`func (o *UpdateOrganizationRequest) GetParentIdOk() (*string, bool)`
+
+GetParentIdOk returns a tuple with the ParentId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetParentId
+
+`func (o *UpdateOrganizationRequest) SetParentId(v string)`
+
+SetParentId sets ParentId field to given value.
+
+### HasParentId
+
+`func (o *UpdateOrganizationRequest) HasParentId() bool`
+
+HasParentId returns a boolean if a field has been set.
+
+### SetParentIdNil
+
+`func (o *UpdateOrganizationRequest) SetParentIdNil(b bool)`
+
+ SetParentIdNil sets the value for ParentId to be an explicit nil
+
+### UnsetParentId
+`func (o *UpdateOrganizationRequest) UnsetParentId()`
+
+UnsetParentId ensures that no value is present for ParentId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

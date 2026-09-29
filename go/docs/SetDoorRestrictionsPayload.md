@@ -4,13 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ApartmentEntityIds** | **[]string** |  |
+**ListingEntityIds** | **[]string** |  |
 
 ## Methods
 
 ### NewSetDoorRestrictionsPayload
 
-`func NewSetDoorRestrictionsPayload(apartmentEntityIds []string, ) *SetDoorRestrictionsPayload`
+`func NewSetDoorRestrictionsPayload(listingEntityIds []string, ) *SetDoorRestrictionsPayload`
 
 NewSetDoorRestrictionsPayload instantiates a new SetDoorRestrictionsPayload object
 This constructor will assign default values to properties that have it defined,
@@ -25,24 +25,24 @@ NewSetDoorRestrictionsPayloadWithDefaults instantiates a new SetDoorRestrictions
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetApartmentEntityIds
+### GetListingEntityIds
 
-`func (o *SetDoorRestrictionsPayload) GetApartmentEntityIds() []string`
+`func (o *SetDoorRestrictionsPayload) GetListingEntityIds() []string`
 
-GetApartmentEntityIds returns the ApartmentEntityIds field if non-nil, zero value otherwise.
+GetListingEntityIds returns the ListingEntityIds field if non-nil, zero value otherwise.
 
-### GetApartmentEntityIdsOk
+### GetListingEntityIdsOk
 
-`func (o *SetDoorRestrictionsPayload) GetApartmentEntityIdsOk() (*[]string, bool)`
+`func (o *SetDoorRestrictionsPayload) GetListingEntityIdsOk() (*[]string, bool)`
 
-GetApartmentEntityIdsOk returns a tuple with the ApartmentEntityIds field if it's non-nil, zero value otherwise
+GetListingEntityIdsOk returns a tuple with the ListingEntityIds field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetApartmentEntityIds
+### SetListingEntityIds
 
-`func (o *SetDoorRestrictionsPayload) SetApartmentEntityIds(v []string)`
+`func (o *SetDoorRestrictionsPayload) SetListingEntityIds(v []string)`
 
-SetApartmentEntityIds sets ApartmentEntityIds field to given value.
+SetListingEntityIds sets ListingEntityIds field to given value.
 
 
 

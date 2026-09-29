@@ -40,6 +40,8 @@ func (r ApiCreateApiKeyRequest) Execute() (*CreateApiKeyResponse, *http.Response
 /*
 CreateApiKey Method for CreateApiKey
 
+Mint an API key. Quota: consumes 1 from `api_keys` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
+
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateApiKeyRequest
 */
@@ -134,9 +136,23 @@ func (a *APIKeysAPIService) CreateApiKeyExecute(r ApiCreateApiKeyRequest) (*Crea
 type ApiListApiKeysRequest struct {
 	ctx        context.Context
 	ApiService *APIKeysAPIService
+	limit      *int32
+	offset     *int32
 }
 
-func (r ApiListApiKeysRequest) Execute() ([]ApiKeyListItem, *http.Response, error) {
+// Number of items per page. Default from config, max 200.
+func (r ApiListApiKeysRequest) Limit(limit int32) ApiListApiKeysRequest {
+	r.limit = &limit
+	return r
+}
+
+// Number of items to skip. Default 0.
+func (r ApiListApiKeysRequest) Offset(offset int32) ApiListApiKeysRequest {
+	r.offset = &offset
+	return r
+}
+
+func (r ApiListApiKeysRequest) Execute() (*PaginatedResponseApiKeyListItem, *http.Response, error) {
 	return r.ApiService.ListApiKeysExecute(r)
 }
 
@@ -155,13 +171,13 @@ func (a *APIKeysAPIService) ListApiKeys(ctx context.Context) ApiListApiKeysReque
 
 // Execute executes the request
 //
-//	@return []ApiKeyListItem
-func (a *APIKeysAPIService) ListApiKeysExecute(r ApiListApiKeysRequest) ([]ApiKeyListItem, *http.Response, error) {
+//	@return PaginatedResponseApiKeyListItem
+func (a *APIKeysAPIService) ListApiKeysExecute(r ApiListApiKeysRequest) (*PaginatedResponseApiKeyListItem, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue []ApiKeyListItem
+		localVarReturnValue *PaginatedResponseApiKeyListItem
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "APIKeysAPIService.ListApiKeys")
@@ -175,6 +191,12 @@ func (a *APIKeysAPIService) ListApiKeysExecute(r ApiListApiKeysRequest) ([]ApiKe
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

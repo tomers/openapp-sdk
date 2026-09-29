@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 from builtins import list as _list
-from typing import Any
+from typing import Any, Literal
 
 from .._image_from_url import fetch_image_for_upload
 from ._base import _BaseResource
+from ._resolve import _bridge_get_by_name
+
+MatchMode = Literal["exact", "fuzzy"]
 
 
 class IntegrationsClient(_BaseResource):
@@ -17,18 +20,50 @@ class IntegrationsClient(_BaseResource):
         *,
         org_id: str | None = None,
         provider_type: str | None = None,
+        q: str | None = None,
         include_deleted: bool | None = None,
         limit: int | None = None,
         cursor: str | None = None,
     ) -> dict[str, Any]:
-        q = self._query(
+        q_params = self._query(
             orgId=org_id,
             providerType=provider_type,
+            q=q,
             includeDeleted=include_deleted,
             limit=limit,
             cursor=cursor,
         )
-        return await self._client._request("GET", "/integrations", query=q)
+        return await self._client._request("GET", "/integrations", query=q_params)
+
+    async def get_by_name(
+        self,
+        name: str,
+        *,
+        match: MatchMode = "exact",
+        provider_type: str | None = None,
+    ) -> dict[str, Any]:
+        return await _bridge_get_by_name(
+            self._client,
+            "integrations_get_by_name",
+            name,
+            match=match,
+            provider_type=provider_type,
+        )
+
+    async def get_access_portal_by_name(
+        self,
+        integration_id: str,
+        name: str,
+        *,
+        match: MatchMode = "exact",
+    ) -> dict[str, Any]:
+        return await _bridge_get_by_name(
+            self._client,
+            "integrations_get_access_portal_by_name",
+            integration_id,
+            name,
+            match=match,
+        )
 
     async def create(self, **body: Any) -> dict[str, Any]:
         return await self._client._request("POST", "/integrations", body=body)
@@ -61,6 +96,13 @@ class IntegrationsClient(_BaseResource):
     async def discovered_devices(self, integration_id: str) -> _list[dict[str, Any]]:
         return await self._client._request(
             "GET", f"/integrations/{integration_id}/discovered-devices"
+        )
+
+    async def refresh_device_channel_counts(self, integration_id: str) -> dict[str, Any]:
+        """Refresh provider-reported channel counts on linked devices."""
+        return await self._client._request(
+            "POST",
+            f"/integrations/{integration_id}/discovered-devices/refresh-channel-counts",
         )
 
     async def entities(self, integration_id: str) -> _list[dict[str, Any]]:
@@ -104,6 +146,13 @@ class IntegrationsClient(_BaseResource):
     async def delete_access_portal(self, integration_id: str, portal_id: str) -> None:
         await self._client._request(
             "DELETE", f"/integrations/{integration_id}/access-portals/{portal_id}"
+        )
+
+    async def create_access_invite(self, integration_id: str, **body: Any) -> dict[str, Any]:
+        return await self._client._request(
+            "POST",
+            f"/integrations/{integration_id}/access-invites",
+            body=body,
         )
 
     async def update_access_invite(

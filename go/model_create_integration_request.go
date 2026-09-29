@@ -24,10 +24,11 @@ type CreateIntegrationRequest struct {
 	Config  interface{} `json:"config,omitempty"`
 	Enabled *bool       `json:"enabled,omitempty"`
 	// Human-friendly name for this integration (optional; defaults server-side). Accepts string or LocalizedString map, e.g. { \"en\": \"Name\", \"he\": \"שם\" }.
-	Name         NullableLocalizedString `json:"name,omitempty"`
-	OrgId        string                  `json:"org_id"`
-	ProviderType string                  `json:"provider_type"`
-	Secrets      interface{}             `json:"secrets,omitempty"`
+	Name                   NullableLocalizedString `json:"name,omitempty"`
+	NonAdminAcknowledgment interface{}             `json:"non_admin_acknowledgment,omitempty"`
+	OrgId                  string                  `json:"org_id"`
+	ProviderType           string                  `json:"provider_type"`
+	Secrets                interface{}             `json:"secrets,omitempty"`
 }
 
 type _CreateIntegrationRequest CreateIntegrationRequest
@@ -159,6 +160,39 @@ func (o *CreateIntegrationRequest) UnsetName() {
 	o.Name.Unset()
 }
 
+// GetNonAdminAcknowledgment returns the NonAdminAcknowledgment field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateIntegrationRequest) GetNonAdminAcknowledgment() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.NonAdminAcknowledgment
+}
+
+// GetNonAdminAcknowledgmentOk returns a tuple with the NonAdminAcknowledgment field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateIntegrationRequest) GetNonAdminAcknowledgmentOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.NonAdminAcknowledgment) {
+		return nil, false
+	}
+	return &o.NonAdminAcknowledgment, true
+}
+
+// HasNonAdminAcknowledgment returns a boolean if a field has been set.
+func (o *CreateIntegrationRequest) HasNonAdminAcknowledgment() bool {
+	if o != nil && !IsNil(o.NonAdminAcknowledgment) {
+		return true
+	}
+
+	return false
+}
+
+// SetNonAdminAcknowledgment gets a reference to the given interface{} and assigns it to the NonAdminAcknowledgment field.
+func (o *CreateIntegrationRequest) SetNonAdminAcknowledgment(v interface{}) {
+	o.NonAdminAcknowledgment = v
+}
+
 // GetOrgId returns the OrgId field value
 func (o *CreateIntegrationRequest) GetOrgId() string {
 	if o == nil {
@@ -250,6 +284,9 @@ func (o CreateIntegrationRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
+	}
+	if o.NonAdminAcknowledgment != nil {
+		toSerialize["non_admin_acknowledgment"] = o.NonAdminAcknowledgment
 	}
 	toSerialize["org_id"] = o.OrgId
 	toSerialize["provider_type"] = o.ProviderType

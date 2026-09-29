@@ -20,9 +20,9 @@ type PublicPortalMode string
 
 // List of PublicPortalMode
 const (
-	GUEST_DIRECTORY     PublicPortalMode = "guest_directory"
-	RESIDENT_QUICK_OPEN PublicPortalMode = "resident_quick_open"
-	GUEST_QUICK_OPEN    PublicPortalMode = "guest_quick_open"
+	PUBLICPORTALMODE_GUEST_DIRECTORY     PublicPortalMode = "guest_directory"
+	PUBLICPORTALMODE_RESIDENT_QUICK_OPEN PublicPortalMode = "resident_quick_open"
+	PUBLICPORTALMODE_GUEST_QUICK_OPEN    PublicPortalMode = "guest_quick_open"
 )
 
 // All allowed values of PublicPortalMode enum

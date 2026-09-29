@@ -4,17 +4,17 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Apartments** | **[]string** |  |
-**Role** | **string** |  |
+**Listings** | **[]string** |  |
+**Role** | **NullableString** |  |
 **UserEmail** | Pointer to **NullableString** |  | [optional]
-**UserId** | **string** |  |
+**UserId** | **NullableString** |  |
 **UserName** | Pointer to **interface{}** |  | [optional]
 
 ## Methods
 
 ### NewBuildingUserResponse
 
-`func NewBuildingUserResponse(apartments []string, role string, userId string, ) *BuildingUserResponse`
+`func NewBuildingUserResponse(listings []string, role NullableString, userId NullableString, ) *BuildingUserResponse`
 
 NewBuildingUserResponse instantiates a new BuildingUserResponse object
 This constructor will assign default values to properties that have it defined,
@@ -29,24 +29,24 @@ NewBuildingUserResponseWithDefaults instantiates a new BuildingUserResponse obje
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetApartments
+### GetListings
 
-`func (o *BuildingUserResponse) GetApartments() []string`
+`func (o *BuildingUserResponse) GetListings() []string`
 
-GetApartments returns the Apartments field if non-nil, zero value otherwise.
+GetListings returns the Listings field if non-nil, zero value otherwise.
 
-### GetApartmentsOk
+### GetListingsOk
 
-`func (o *BuildingUserResponse) GetApartmentsOk() (*[]string, bool)`
+`func (o *BuildingUserResponse) GetListingsOk() (*[]string, bool)`
 
-GetApartmentsOk returns a tuple with the Apartments field if it's non-nil, zero value otherwise
+GetListingsOk returns a tuple with the Listings field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetApartments
+### SetListings
 
-`func (o *BuildingUserResponse) SetApartments(v []string)`
+`func (o *BuildingUserResponse) SetListings(v []string)`
 
-SetApartments sets Apartments field to given value.
+SetListings sets Listings field to given value.
 
 
 ### GetRole
@@ -69,6 +69,16 @@ and a boolean to check if the value has been set.
 SetRole sets Role field to given value.
 
 
+### SetRoleNil
+
+`func (o *BuildingUserResponse) SetRoleNil(b bool)`
+
+ SetRoleNil sets the value for Role to be an explicit nil
+
+### UnsetRole
+`func (o *BuildingUserResponse) UnsetRole()`
+
+UnsetRole ensures that no value is present for Role, not even an explicit nil
 ### GetUserEmail
 
 `func (o *BuildingUserResponse) GetUserEmail() string`
@@ -124,6 +134,16 @@ and a boolean to check if the value has been set.
 SetUserId sets UserId field to given value.
 
 
+### SetUserIdNil
+
+`func (o *BuildingUserResponse) SetUserIdNil(b bool)`
+
+ SetUserIdNil sets the value for UserId to be an explicit nil
+
+### UnsetUserId
+`func (o *BuildingUserResponse) UnsetUserId()`
+
+UnsetUserId ensures that no value is present for UserId, not even an explicit nil
 ### GetUserName
 
 `func (o *BuildingUserResponse) GetUserName() interface{}`

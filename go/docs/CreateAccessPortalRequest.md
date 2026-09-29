@@ -4,7 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**DeviceExternalId** | Pointer to **NullableString** | Device external_id (virtual_access_portal device in this integration). Standard way to link portal to device. | [optional]
+**DeviceId** | Pointer to **NullableString** | Door device id (virtual_access_portal device in this integration). Links the portal to a door. | [optional]
+**DirectoryId** | Pointer to **NullableString** | Directory device id (virtual_access_directory in this integration). | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) | Portal display name (localized). Accepts string or object e.g. { \&quot;en\&quot;: \&quot;Lobby\&quot;, \&quot;he\&quot;: \&quot;לובי\&quot; }. |
 
 ## Methods
@@ -26,41 +27,76 @@ NewCreateAccessPortalRequestWithDefaults instantiates a new CreateAccessPortalRe
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetDeviceExternalId
+### GetDeviceId
 
-`func (o *CreateAccessPortalRequest) GetDeviceExternalId() string`
+`func (o *CreateAccessPortalRequest) GetDeviceId() string`
 
-GetDeviceExternalId returns the DeviceExternalId field if non-nil, zero value otherwise.
+GetDeviceId returns the DeviceId field if non-nil, zero value otherwise.
 
-### GetDeviceExternalIdOk
+### GetDeviceIdOk
 
-`func (o *CreateAccessPortalRequest) GetDeviceExternalIdOk() (*string, bool)`
+`func (o *CreateAccessPortalRequest) GetDeviceIdOk() (*string, bool)`
 
-GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field if it's non-nil, zero value otherwise
+GetDeviceIdOk returns a tuple with the DeviceId field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetDeviceExternalId
+### SetDeviceId
 
-`func (o *CreateAccessPortalRequest) SetDeviceExternalId(v string)`
+`func (o *CreateAccessPortalRequest) SetDeviceId(v string)`
 
-SetDeviceExternalId sets DeviceExternalId field to given value.
+SetDeviceId sets DeviceId field to given value.
 
-### HasDeviceExternalId
+### HasDeviceId
 
-`func (o *CreateAccessPortalRequest) HasDeviceExternalId() bool`
+`func (o *CreateAccessPortalRequest) HasDeviceId() bool`
 
-HasDeviceExternalId returns a boolean if a field has been set.
+HasDeviceId returns a boolean if a field has been set.
 
-### SetDeviceExternalIdNil
+### SetDeviceIdNil
 
-`func (o *CreateAccessPortalRequest) SetDeviceExternalIdNil(b bool)`
+`func (o *CreateAccessPortalRequest) SetDeviceIdNil(b bool)`
 
- SetDeviceExternalIdNil sets the value for DeviceExternalId to be an explicit nil
+ SetDeviceIdNil sets the value for DeviceId to be an explicit nil
 
-### UnsetDeviceExternalId
-`func (o *CreateAccessPortalRequest) UnsetDeviceExternalId()`
+### UnsetDeviceId
+`func (o *CreateAccessPortalRequest) UnsetDeviceId()`
 
-UnsetDeviceExternalId ensures that no value is present for DeviceExternalId, not even an explicit nil
+UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
+### GetDirectoryId
+
+`func (o *CreateAccessPortalRequest) GetDirectoryId() string`
+
+GetDirectoryId returns the DirectoryId field if non-nil, zero value otherwise.
+
+### GetDirectoryIdOk
+
+`func (o *CreateAccessPortalRequest) GetDirectoryIdOk() (*string, bool)`
+
+GetDirectoryIdOk returns a tuple with the DirectoryId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDirectoryId
+
+`func (o *CreateAccessPortalRequest) SetDirectoryId(v string)`
+
+SetDirectoryId sets DirectoryId field to given value.
+
+### HasDirectoryId
+
+`func (o *CreateAccessPortalRequest) HasDirectoryId() bool`
+
+HasDirectoryId returns a boolean if a field has been set.
+
+### SetDirectoryIdNil
+
+`func (o *CreateAccessPortalRequest) SetDirectoryIdNil(b bool)`
+
+ SetDirectoryIdNil sets the value for DirectoryId to be an explicit nil
+
+### UnsetDirectoryId
+`func (o *CreateAccessPortalRequest) UnsetDirectoryId()`
+
+UnsetDirectoryId ensures that no value is present for DirectoryId, not even an explicit nil
 ### GetName
 
 `func (o *CreateAccessPortalRequest) GetName() LocalizedString`

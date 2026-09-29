@@ -55,17 +55,20 @@ extern "C" fn async_request_complete(
 #[tokio::test]
 async fn c_bridge_get_roundtrip_returns_json() {
     let server = MockServer::start().await;
-    Mock::given(method("GET"))
-        .and(path("/ping"))
-        .respond_with(
-            ResponseTemplate::new(200).set_body_json(serde_json::json!({ "hello": "world" })),
-        )
-        .mount(&server)
-        .await;
-
     let base = server.uri().to_string();
     let base = base.trim_end_matches('/');
     let token = format!("{base}_openapp_testsecret");
+    // The bridge adds no auth of its own: the core sends the key as `X-API-Key` and
+    // derives the `/api/v1` root from the token's origin.
+    Mock::given(method("GET"))
+        .and(path("/api/v1/ping"))
+        .and(header("x-api-key", token.as_str()))
+        .respond_with(
+            ResponseTemplate::new(200).set_body_json(serde_json::json!({ "hello": "world" })),
+        )
+        .expect(1)
+        .mount(&server)
+        .await;
 
     let body_text = tokio::task::spawn_blocking(move || unsafe {
         let runtime = openapp_sdk_core_c_bridge::openapp_sdk_runtime_new();
@@ -113,7 +116,7 @@ async fn c_bridge_get_roundtrip_returns_json() {
 async fn c_bridge_async_get_roundtrip_returns_json_via_callback() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/ping"))
+        .and(path("/api/v1/ping"))
         .respond_with(
             ResponseTemplate::new(200).set_body_json(serde_json::json!({ "hello": "async" })),
         )
@@ -176,7 +179,7 @@ async fn c_bridge_async_get_roundtrip_returns_json_via_callback() {
 async fn c_bridge_non_2xx_sets_api_status_and_error_body() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/gone"))
+        .and(path("/api/v1/gone"))
         .respond_with(ResponseTemplate::new(404).set_body_json(serde_json::json!({
             "message": "not found"
         })))
@@ -232,7 +235,7 @@ async fn c_bridge_config_custom_user_agent_is_sent() {
     const UA: &str = "openapp-c-bridge-config-test/1.0";
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/ping"))
+        .and(path("/api/v1/ping"))
         .and(header("user-agent", UA))
         .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({ "ok": true })))
         .mount(&server)
@@ -334,7 +337,7 @@ extern "C" fn stream_complete_cb(
 async fn c_bridge_stream_get_delivers_body_via_chunks() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/sse"))
+        .and(path("/api/v1/sse"))
         .respond_with(ResponseTemplate::new(200).set_body_string("event: ping\ndata: hi\n\n"))
         .mount(&server)
         .await;
@@ -406,7 +409,7 @@ async fn c_bridge_stream_get_delivers_body_via_chunks() {
 async fn c_bridge_raw_post_returns_json() {
     let server = MockServer::start().await;
     Mock::given(method("POST"))
-        .and(path("/upload"))
+        .and(path("/api/v1/upload"))
         .and(header("Content-Type", "application/octet-stream"))
         .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
             "raw": true

@@ -3,7 +3,7 @@
 ## Enum
 
 
-* `APARTMENT` (value: `"apartment"`)
+* `DIRECTORY_LISTING` (value: `"directory_listing"`)
 
 * `DOOR` (value: `"door"`)
 

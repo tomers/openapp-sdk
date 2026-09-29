@@ -21,10 +21,11 @@ var _ MappedNullable = &CreateAccessPortalResponse{}
 
 // CreateAccessPortalResponse struct for CreateAccessPortalResponse
 type CreateAccessPortalResponse struct {
-	DeviceExternalId NullableString  `json:"device_external_id,omitempty"`
-	Id               string          `json:"id"`
-	Name             LocalizedString `json:"name"`
-	PublicId         string          `json:"public_id"`
+	DeviceId    NullableString  `json:"device_id,omitempty"`
+	DirectoryId NullableString  `json:"directory_id,omitempty"`
+	Id          string          `json:"id"`
+	Name        LocalizedString `json:"name"`
+	PublicId    string          `json:"public_id"`
 }
 
 type _CreateAccessPortalResponse CreateAccessPortalResponse
@@ -49,47 +50,90 @@ func NewCreateAccessPortalResponseWithDefaults() *CreateAccessPortalResponse {
 	return &this
 }
 
-// GetDeviceExternalId returns the DeviceExternalId field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateAccessPortalResponse) GetDeviceExternalId() string {
-	if o == nil || IsNil(o.DeviceExternalId.Get()) {
+// GetDeviceId returns the DeviceId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessPortalResponse) GetDeviceId() string {
+	if o == nil || IsNil(o.DeviceId.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.DeviceExternalId.Get()
+	return *o.DeviceId.Get()
 }
 
-// GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field value if set, nil otherwise
+// GetDeviceIdOk returns a tuple with the DeviceId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateAccessPortalResponse) GetDeviceExternalIdOk() (*string, bool) {
+func (o *CreateAccessPortalResponse) GetDeviceIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.DeviceExternalId.Get(), o.DeviceExternalId.IsSet()
+	return o.DeviceId.Get(), o.DeviceId.IsSet()
 }
 
-// HasDeviceExternalId returns a boolean if a field has been set.
-func (o *CreateAccessPortalResponse) HasDeviceExternalId() bool {
-	if o != nil && o.DeviceExternalId.IsSet() {
+// HasDeviceId returns a boolean if a field has been set.
+func (o *CreateAccessPortalResponse) HasDeviceId() bool {
+	if o != nil && o.DeviceId.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDeviceExternalId gets a reference to the given NullableString and assigns it to the DeviceExternalId field.
-func (o *CreateAccessPortalResponse) SetDeviceExternalId(v string) {
-	o.DeviceExternalId.Set(&v)
+// SetDeviceId gets a reference to the given NullableString and assigns it to the DeviceId field.
+func (o *CreateAccessPortalResponse) SetDeviceId(v string) {
+	o.DeviceId.Set(&v)
 }
 
-// SetDeviceExternalIdNil sets the value for DeviceExternalId to be an explicit nil
-func (o *CreateAccessPortalResponse) SetDeviceExternalIdNil() {
-	o.DeviceExternalId.Set(nil)
+// SetDeviceIdNil sets the value for DeviceId to be an explicit nil
+func (o *CreateAccessPortalResponse) SetDeviceIdNil() {
+	o.DeviceId.Set(nil)
 }
 
-// UnsetDeviceExternalId ensures that no value is present for DeviceExternalId, not even an explicit nil
-func (o *CreateAccessPortalResponse) UnsetDeviceExternalId() {
-	o.DeviceExternalId.Unset()
+// UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
+func (o *CreateAccessPortalResponse) UnsetDeviceId() {
+	o.DeviceId.Unset()
+}
+
+// GetDirectoryId returns the DirectoryId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessPortalResponse) GetDirectoryId() string {
+	if o == nil || IsNil(o.DirectoryId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DirectoryId.Get()
+}
+
+// GetDirectoryIdOk returns a tuple with the DirectoryId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessPortalResponse) GetDirectoryIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DirectoryId.Get(), o.DirectoryId.IsSet()
+}
+
+// HasDirectoryId returns a boolean if a field has been set.
+func (o *CreateAccessPortalResponse) HasDirectoryId() bool {
+	if o != nil && o.DirectoryId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDirectoryId gets a reference to the given NullableString and assigns it to the DirectoryId field.
+func (o *CreateAccessPortalResponse) SetDirectoryId(v string) {
+	o.DirectoryId.Set(&v)
+}
+
+// SetDirectoryIdNil sets the value for DirectoryId to be an explicit nil
+func (o *CreateAccessPortalResponse) SetDirectoryIdNil() {
+	o.DirectoryId.Set(nil)
+}
+
+// UnsetDirectoryId ensures that no value is present for DirectoryId, not even an explicit nil
+func (o *CreateAccessPortalResponse) UnsetDirectoryId() {
+	o.DirectoryId.Unset()
 }
 
 // GetId returns the Id field value
@@ -166,8 +210,11 @@ func (o *CreateAccessPortalResponse) SetPublicId(v string) {
 
 func (o CreateAccessPortalResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.DeviceExternalId.IsSet() {
-		toSerialize["device_external_id"] = o.DeviceExternalId.Get()
+	if o.DeviceId.IsSet() {
+		toSerialize["device_id"] = o.DeviceId.Get()
+	}
+	if o.DirectoryId.IsSet() {
+		toSerialize["directory_id"] = o.DirectoryId.Get()
 	}
 	toSerialize["id"] = o.Id
 	toSerialize["name"] = o.Name

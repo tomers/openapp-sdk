@@ -20,9 +20,9 @@ type InviteScheduleKind string
 
 // List of InviteScheduleKind
 const (
-	SINGLE_WINDOW    InviteScheduleKind = "single_window"
-	SINGLE_RECURRING InviteScheduleKind = "single_recurring"
-	MULTIPLE         InviteScheduleKind = "multiple"
+	INVITESCHEDULEKIND_SINGLE_WINDOW    InviteScheduleKind = "single_window"
+	INVITESCHEDULEKIND_SINGLE_RECURRING InviteScheduleKind = "single_recurring"
+	INVITESCHEDULEKIND_MULTIPLE         InviteScheduleKind = "multiple"
 )
 
 // All allowed values of InviteScheduleKind enum

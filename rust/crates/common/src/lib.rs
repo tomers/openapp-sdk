@@ -21,12 +21,17 @@
 #![allow(clippy::module_name_repetitions)]
 
 pub mod error;
+pub mod localized;
 pub mod token;
 
 pub mod generated;
 
 pub use error::ApiErrorResponse;
-pub use token::{API_KEY_SEPARATOR, ApiKey, TokenFormatError};
+pub use localized::{
+    NameMatch, ResolveError, filter_by_name, localized_values, name_match_from_i32, name_matches,
+    resolve_unique,
+};
+pub use token::{API_KEY_SEPARATOR, API_PATH_PREFIX, ApiKey, TokenFormatError};
 
 /// The SDK name we advertise in the `User-Agent` header.
 pub const SDK_NAME: &str = "openapp-sdk";

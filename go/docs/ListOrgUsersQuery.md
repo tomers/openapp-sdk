@@ -4,9 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IncludeDeleted** | **bool** |  |
-**IncludeMetadata** | **bool** |  |
-**OnlyDeleted** | **bool** |  |
+**IncludeDeleted** | Pointer to **bool** |  | [optional]
+**OnlyDeleted** | Pointer to **bool** |  | [optional]
 **Limit** | Pointer to **int32** | Number of items per page. Default from config, max 200. | [optional]
 **Offset** | Pointer to **int32** | Number of items to skip. Default 0. | [optional]
 **Recursive** | Pointer to **NullableBool** |  | [optional]
@@ -15,7 +14,7 @@ Name | Type | Description | Notes
 
 ### NewListOrgUsersQuery
 
-`func NewListOrgUsersQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool, ) *ListOrgUsersQuery`
+`func NewListOrgUsersQuery() *ListOrgUsersQuery`
 
 NewListOrgUsersQuery instantiates a new ListOrgUsersQuery object
 This constructor will assign default values to properties that have it defined,
@@ -49,26 +48,11 @@ and a boolean to check if the value has been set.
 
 SetIncludeDeleted sets IncludeDeleted field to given value.
 
+### HasIncludeDeleted
 
-### GetIncludeMetadata
+`func (o *ListOrgUsersQuery) HasIncludeDeleted() bool`
 
-`func (o *ListOrgUsersQuery) GetIncludeMetadata() bool`
-
-GetIncludeMetadata returns the IncludeMetadata field if non-nil, zero value otherwise.
-
-### GetIncludeMetadataOk
-
-`func (o *ListOrgUsersQuery) GetIncludeMetadataOk() (*bool, bool)`
-
-GetIncludeMetadataOk returns a tuple with the IncludeMetadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIncludeMetadata
-
-`func (o *ListOrgUsersQuery) SetIncludeMetadata(v bool)`
-
-SetIncludeMetadata sets IncludeMetadata field to given value.
-
+HasIncludeDeleted returns a boolean if a field has been set.
 
 ### GetOnlyDeleted
 
@@ -89,6 +73,11 @@ and a boolean to check if the value has been set.
 
 SetOnlyDeleted sets OnlyDeleted field to given value.
 
+### HasOnlyDeleted
+
+`func (o *ListOrgUsersQuery) HasOnlyDeleted() bool`
+
+HasOnlyDeleted returns a boolean if a field has been set.
 
 ### GetLimit
 

@@ -5,13 +5,14 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **AllowedActions** | **[]string** |  |
-**ApartmentLabel** | Pointer to **interface{}** |  | [optional]
-**ApartmentNumber** | Pointer to **NullableInt64** |  | [optional]
 **CallAvailable** | Pointer to **NullableBool** | True when at least one resident (receives_calls) exists. When false, voice/video are excluded from allowed_actions. | [optional]
+**DenialReasons** | Pointer to **[]string** | Why this entry cannot be called: &#x60;no_callees&#x60;, &#x60;dnd&#x60;, or &#x60;guest_disabled&#x60;.  The server already computes each of these to decide &#x60;allowed_actions&#x60;; publishing them means the client can explain a greyed-out call button instead of leaving the visitor to guess. | [optional]
 **DisplayName** | **interface{}** |  |
 **Floor** | **interface{}** |  |
 **FloorNumber** | Pointer to **NullableInt64** |  | [optional]
 **Image** | Pointer to **NullableString** |  | [optional]
+**ListingLabel** | Pointer to **interface{}** |  | [optional]
+**ListingNumber** | Pointer to **NullableInt64** |  | [optional]
 **RequireVideo** | Pointer to **NullableBool** |  | [optional]
 **TargetId** | **string** |  |
 
@@ -54,76 +55,6 @@ and a boolean to check if the value has been set.
 SetAllowedActions sets AllowedActions field to given value.
 
 
-### GetApartmentLabel
-
-`func (o *PublicPortalTarget) GetApartmentLabel() interface{}`
-
-GetApartmentLabel returns the ApartmentLabel field if non-nil, zero value otherwise.
-
-### GetApartmentLabelOk
-
-`func (o *PublicPortalTarget) GetApartmentLabelOk() (*interface{}, bool)`
-
-GetApartmentLabelOk returns a tuple with the ApartmentLabel field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetApartmentLabel
-
-`func (o *PublicPortalTarget) SetApartmentLabel(v interface{})`
-
-SetApartmentLabel sets ApartmentLabel field to given value.
-
-### HasApartmentLabel
-
-`func (o *PublicPortalTarget) HasApartmentLabel() bool`
-
-HasApartmentLabel returns a boolean if a field has been set.
-
-### SetApartmentLabelNil
-
-`func (o *PublicPortalTarget) SetApartmentLabelNil(b bool)`
-
- SetApartmentLabelNil sets the value for ApartmentLabel to be an explicit nil
-
-### UnsetApartmentLabel
-`func (o *PublicPortalTarget) UnsetApartmentLabel()`
-
-UnsetApartmentLabel ensures that no value is present for ApartmentLabel, not even an explicit nil
-### GetApartmentNumber
-
-`func (o *PublicPortalTarget) GetApartmentNumber() int64`
-
-GetApartmentNumber returns the ApartmentNumber field if non-nil, zero value otherwise.
-
-### GetApartmentNumberOk
-
-`func (o *PublicPortalTarget) GetApartmentNumberOk() (*int64, bool)`
-
-GetApartmentNumberOk returns a tuple with the ApartmentNumber field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetApartmentNumber
-
-`func (o *PublicPortalTarget) SetApartmentNumber(v int64)`
-
-SetApartmentNumber sets ApartmentNumber field to given value.
-
-### HasApartmentNumber
-
-`func (o *PublicPortalTarget) HasApartmentNumber() bool`
-
-HasApartmentNumber returns a boolean if a field has been set.
-
-### SetApartmentNumberNil
-
-`func (o *PublicPortalTarget) SetApartmentNumberNil(b bool)`
-
- SetApartmentNumberNil sets the value for ApartmentNumber to be an explicit nil
-
-### UnsetApartmentNumber
-`func (o *PublicPortalTarget) UnsetApartmentNumber()`
-
-UnsetApartmentNumber ensures that no value is present for ApartmentNumber, not even an explicit nil
 ### GetCallAvailable
 
 `func (o *PublicPortalTarget) GetCallAvailable() bool`
@@ -159,6 +90,31 @@ HasCallAvailable returns a boolean if a field has been set.
 `func (o *PublicPortalTarget) UnsetCallAvailable()`
 
 UnsetCallAvailable ensures that no value is present for CallAvailable, not even an explicit nil
+### GetDenialReasons
+
+`func (o *PublicPortalTarget) GetDenialReasons() []string`
+
+GetDenialReasons returns the DenialReasons field if non-nil, zero value otherwise.
+
+### GetDenialReasonsOk
+
+`func (o *PublicPortalTarget) GetDenialReasonsOk() (*[]string, bool)`
+
+GetDenialReasonsOk returns a tuple with the DenialReasons field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDenialReasons
+
+`func (o *PublicPortalTarget) SetDenialReasons(v []string)`
+
+SetDenialReasons sets DenialReasons field to given value.
+
+### HasDenialReasons
+
+`func (o *PublicPortalTarget) HasDenialReasons() bool`
+
+HasDenialReasons returns a boolean if a field has been set.
+
 ### GetDisplayName
 
 `func (o *PublicPortalTarget) GetDisplayName() interface{}`
@@ -289,6 +245,76 @@ HasImage returns a boolean if a field has been set.
 `func (o *PublicPortalTarget) UnsetImage()`
 
 UnsetImage ensures that no value is present for Image, not even an explicit nil
+### GetListingLabel
+
+`func (o *PublicPortalTarget) GetListingLabel() interface{}`
+
+GetListingLabel returns the ListingLabel field if non-nil, zero value otherwise.
+
+### GetListingLabelOk
+
+`func (o *PublicPortalTarget) GetListingLabelOk() (*interface{}, bool)`
+
+GetListingLabelOk returns a tuple with the ListingLabel field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetListingLabel
+
+`func (o *PublicPortalTarget) SetListingLabel(v interface{})`
+
+SetListingLabel sets ListingLabel field to given value.
+
+### HasListingLabel
+
+`func (o *PublicPortalTarget) HasListingLabel() bool`
+
+HasListingLabel returns a boolean if a field has been set.
+
+### SetListingLabelNil
+
+`func (o *PublicPortalTarget) SetListingLabelNil(b bool)`
+
+ SetListingLabelNil sets the value for ListingLabel to be an explicit nil
+
+### UnsetListingLabel
+`func (o *PublicPortalTarget) UnsetListingLabel()`
+
+UnsetListingLabel ensures that no value is present for ListingLabel, not even an explicit nil
+### GetListingNumber
+
+`func (o *PublicPortalTarget) GetListingNumber() int64`
+
+GetListingNumber returns the ListingNumber field if non-nil, zero value otherwise.
+
+### GetListingNumberOk
+
+`func (o *PublicPortalTarget) GetListingNumberOk() (*int64, bool)`
+
+GetListingNumberOk returns a tuple with the ListingNumber field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetListingNumber
+
+`func (o *PublicPortalTarget) SetListingNumber(v int64)`
+
+SetListingNumber sets ListingNumber field to given value.
+
+### HasListingNumber
+
+`func (o *PublicPortalTarget) HasListingNumber() bool`
+
+HasListingNumber returns a boolean if a field has been set.
+
+### SetListingNumberNil
+
+`func (o *PublicPortalTarget) SetListingNumberNil(b bool)`
+
+ SetListingNumberNil sets the value for ListingNumber to be an explicit nil
+
+### UnsetListingNumber
+`func (o *PublicPortalTarget) UnsetListingNumber()`
+
+UnsetListingNumber ensures that no value is present for ListingNumber, not even an explicit nil
 ### GetRequireVideo
 
 `func (o *PublicPortalTarget) GetRequireVideo() bool`

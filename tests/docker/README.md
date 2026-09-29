@@ -13,11 +13,11 @@ Run **Rust core**, **Python**, and **Go** SDK checks inside containers when you 
 | Path | Role |
 |------|------|
 | [`compose.yaml`](compose.yaml) | Services `sdk-core`, `sdk-python`, `sdk-go` |
-| [`rust/Dockerfile`](rust/Dockerfile) | Rust stable + rustfmt/clippy |
+| [`rust/Dockerfile`](rust/Dockerfile) | Pinned rustc (`rust-pin.env`) + rustfmt/clippy |
 | [`python/Dockerfile`](python/Dockerfile) | Python 3.14 + uv + Rust (maturin) |
 | [`go/Dockerfile`](go/Dockerfile) | Multi-stage: builds C bridge from `rust/`, copies `.so` into Go image |
 
-Each service mounts the **repository root** at `/workspace`.
+Each service mounts the **repository root** at `/workspace`. Host recipes mkdir `go/.gocache` and `go/.gomodcache` as the invoking user before `sdk-go` runs, and `just docker go` passes `--user` so those caches are not created as root.
 
 ## Commands
 
@@ -34,7 +34,7 @@ Raw Compose:
 
 ```bash
 SDK_DOCKER_UID="$(id -u)" SDK_DOCKER_GID="$(id -g)" \
-  docker compose -f tests/docker/compose.yaml run --rm sdk-python \
+  docker compose --env-file tests/docker/rust-pin.env -f tests/docker/compose.yaml run --rm sdk-python \
   sh -euxc 'uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && uv run pytest -q tests/unit'
 ```
 

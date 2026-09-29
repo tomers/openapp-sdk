@@ -63,6 +63,8 @@ pub struct MultipartRequestSpec<'a> {
     pub timeout: Option<Duration>,
 }
 
+const ORG_HEADER: &str = "X-Org";
+
 /// Shared HTTP engine used by every sub-client.
 #[derive(Debug, Clone)]
 pub struct Transport {
@@ -72,6 +74,7 @@ pub struct Transport {
     tokens: SharedTokenProvider,
     interceptors: Vec<SharedInterceptor>,
     default_timeout: Duration,
+    default_org: Option<String>,
 }
 
 impl Transport {
@@ -82,6 +85,7 @@ impl Transport {
         tokens: SharedTokenProvider,
         interceptors: Vec<SharedInterceptor>,
         default_timeout: Duration,
+        default_org: Option<String>,
     ) -> Self {
         Self {
             client,
@@ -90,7 +94,16 @@ impl Transport {
             tokens,
             interceptors,
             default_timeout,
+            default_org,
         }
+    }
+
+    /// Return a clone of this transport scoped to a different organization.
+    #[must_use]
+    pub fn with_default_org(&self, org: impl Into<String>) -> Self {
+        let mut cloned = self.clone();
+        cloned.default_org = Some(org.into());
+        cloned
     }
 
     /// The base URL every path is resolved against.
@@ -114,9 +127,9 @@ impl Transport {
         let mut builder = self.client.request(spec.method.clone(), url.clone());
         builder = builder.header(reqwest::header::USER_AGENT, &self.user_agent);
 
-        let token = self.tokens.token().await?;
-        builder = builder.header(reqwest::header::AUTHORIZATION, &token.authorization);
+        builder = self.apply_auth(builder).await?;
 
+        builder = apply_default_org(builder, self.default_org.as_ref(), spec.extra_headers);
         for (name, value) in spec.extra_headers {
             builder = builder.header(*name, value);
         }
@@ -186,9 +199,9 @@ impl Transport {
         builder = builder.header(reqwest::header::USER_AGENT, &self.user_agent);
         builder = builder.header(reqwest::header::CONTENT_TYPE, ct);
 
-        let token = self.tokens.token().await?;
-        builder = builder.header(reqwest::header::AUTHORIZATION, &token.authorization);
+        builder = self.apply_auth(builder).await?;
 
+        builder = apply_default_org(builder, self.default_org.as_ref(), extra_headers);
         for (name, value) in extra_headers {
             builder = builder.header(*name, value);
         }
@@ -255,9 +268,9 @@ impl Transport {
         let mut builder = self.client.request(spec.method.clone(), url.clone());
         builder = builder.header(reqwest::header::USER_AGENT, &self.user_agent);
 
-        let token = self.tokens.token().await?;
-        builder = builder.header(reqwest::header::AUTHORIZATION, &token.authorization);
+        builder = self.apply_auth(builder).await?;
 
+        builder = apply_default_org(builder, self.default_org.as_ref(), spec.extra_headers);
         for (name, value) in spec.extra_headers {
             builder = builder.header(*name, value);
         }
@@ -319,8 +332,9 @@ impl Transport {
         let mut builder = self.client.request(Method::POST, url.clone());
         builder = builder.header(reqwest::header::USER_AGENT, &self.user_agent);
 
-        let token = self.tokens.token().await?;
-        builder = builder.header(reqwest::header::AUTHORIZATION, &token.authorization);
+        builder = self.apply_auth(builder).await?;
+
+        builder = apply_default_org(builder, self.default_org.as_ref(), &[]);
 
         let pairs: Vec<(&str, String)> = spec
             .query
@@ -360,6 +374,20 @@ impl Transport {
         }
     }
 
+    /// Default organization id attached to every request as `X-Org`, if configured.
+    #[must_use]
+    pub fn default_org(&self) -> Option<&str> {
+        self.default_org.as_deref()
+    }
+
+    async fn apply_auth(
+        &self,
+        builder: reqwest_middleware::RequestBuilder,
+    ) -> Result<reqwest_middleware::RequestBuilder, SdkError> {
+        let token = self.tokens.token().await?;
+        Ok(builder.header(token.header, token.value))
+    }
+
     fn resolve_url(&self, path: &str) -> Result<Url, SdkError> {
         let path = path.strip_prefix('/').unwrap_or(path);
         // Ensure the base URL ends with `/` so `join` treats it as a directory.
@@ -371,6 +399,20 @@ impl Transport {
         base.join(path)
             .map_err(|e| SdkError::Config(format!("could not build URL from path {path}: {e}")))
     }
+}
+
+fn apply_default_org(
+    mut builder: reqwest_middleware::RequestBuilder,
+    default_org: Option<&String>,
+    extra_headers: &[(&str, String)],
+) -> reqwest_middleware::RequestBuilder {
+    let has_org = extra_headers
+        .iter()
+        .any(|(name, _)| name.eq_ignore_ascii_case(ORG_HEADER));
+    if !has_org && let Some(org) = default_org {
+        builder = builder.header(ORG_HEADER, org);
+    }
+    builder
 }
 
 async fn decode_success<R: DeserializeOwned + 'static>(

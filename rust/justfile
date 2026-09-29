@@ -23,12 +23,34 @@ _:
 # --- Docker (default): same image/service as `just sdk docker core` ---
 
 _core_cmd CMD:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-core \
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-core \
         sh -euxc '{{ CMD }}'
 
 # `cargo build --workspace`
 build:
     @just _core_cmd 'cargo build --workspace'
+
+# Single source of truth for the C bridge cdylib (release) used by the Go cgo linker and the
+# Node FFI loader. Writes packages/sdk/core/target/release/deps/libopenapp_sdk_core_c_bridge.so;
+# compose prefers this repo path over the image-baked /usr/local/lib copy, which goes stale
+# whenever c-bridge exports change (CI ships a fresh bridge; local `docker compose run` does not).
+# The sdk-{go,node} pre-commit hooks delegate here (`just sdk core bridge`) — do not duplicate.
+bridge:
+    @just _core_cmd 'cargo build -p openapp-sdk-core-c-bridge --release'
+
+# CI-guarded wrapper around `bridge`: a no-op when `$CI` is set (e.g. GitHub Actions), since CI
+# already ships a fresh bridge (image rebuild for Go; uploaded host artifact for Node). The
+# sdk-{go,node} `_bridge` delegations point here so local `pre-commit`/`test`/`release-gate`
+# refresh the cdylib without adding a redundant sdk-core build to the CI release-gate path.
+# Single source of the CI guard — do not duplicate in the per-SDK justfiles.
+_bridge-local:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -n "${CI:-}" ]; then
+      echo "CI detected; skipping local core bridge build (CI ships a fresh bridge)." >&2
+      exit 0
+    fi
+    just -f "{{ justfile() }}" bridge
 
 # `cargo nextest` (JUnit for merged Allure) + workspace scope; see `.config/nextest.toml`.
 test:

@@ -21,15 +21,17 @@ var _ MappedNullable = &PublicPortalTarget{}
 
 // PublicPortalTarget struct for PublicPortalTarget
 type PublicPortalTarget struct {
-	AllowedActions  []string      `json:"allowed_actions"`
-	ApartmentLabel  interface{}   `json:"apartment_label,omitempty"`
-	ApartmentNumber NullableInt64 `json:"apartment_number,omitempty"`
+	AllowedActions []string `json:"allowed_actions"`
 	// True when at least one resident (receives_calls) exists. When false, voice/video are excluded from allowed_actions.
-	CallAvailable NullableBool   `json:"call_available,omitempty"`
+	CallAvailable NullableBool `json:"call_available,omitempty"`
+	// Why this entry cannot be called: `no_callees`, `dnd`, or `guest_disabled`.  The server already computes each of these to decide `allowed_actions`; publishing them means the client can explain a greyed-out call button instead of leaving the visitor to guess.
+	DenialReasons []string       `json:"denial_reasons,omitempty"`
 	DisplayName   interface{}    `json:"display_name"`
 	Floor         interface{}    `json:"floor"`
 	FloorNumber   NullableInt64  `json:"floor_number,omitempty"`
 	Image         NullableString `json:"image,omitempty"`
+	ListingLabel  interface{}    `json:"listing_label,omitempty"`
+	ListingNumber NullableInt64  `json:"listing_number,omitempty"`
 	RequireVideo  NullableBool   `json:"require_video,omitempty"`
 	TargetId      string         `json:"target_id"`
 }
@@ -81,82 +83,6 @@ func (o *PublicPortalTarget) SetAllowedActions(v []string) {
 	o.AllowedActions = v
 }
 
-// GetApartmentLabel returns the ApartmentLabel field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PublicPortalTarget) GetApartmentLabel() interface{} {
-	if o == nil {
-		var ret interface{}
-		return ret
-	}
-	return o.ApartmentLabel
-}
-
-// GetApartmentLabelOk returns a tuple with the ApartmentLabel field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PublicPortalTarget) GetApartmentLabelOk() (*interface{}, bool) {
-	if o == nil || IsNil(o.ApartmentLabel) {
-		return nil, false
-	}
-	return &o.ApartmentLabel, true
-}
-
-// HasApartmentLabel returns a boolean if a field has been set.
-func (o *PublicPortalTarget) HasApartmentLabel() bool {
-	if o != nil && !IsNil(o.ApartmentLabel) {
-		return true
-	}
-
-	return false
-}
-
-// SetApartmentLabel gets a reference to the given interface{} and assigns it to the ApartmentLabel field.
-func (o *PublicPortalTarget) SetApartmentLabel(v interface{}) {
-	o.ApartmentLabel = v
-}
-
-// GetApartmentNumber returns the ApartmentNumber field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PublicPortalTarget) GetApartmentNumber() int64 {
-	if o == nil || IsNil(o.ApartmentNumber.Get()) {
-		var ret int64
-		return ret
-	}
-	return *o.ApartmentNumber.Get()
-}
-
-// GetApartmentNumberOk returns a tuple with the ApartmentNumber field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PublicPortalTarget) GetApartmentNumberOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.ApartmentNumber.Get(), o.ApartmentNumber.IsSet()
-}
-
-// HasApartmentNumber returns a boolean if a field has been set.
-func (o *PublicPortalTarget) HasApartmentNumber() bool {
-	if o != nil && o.ApartmentNumber.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetApartmentNumber gets a reference to the given NullableInt64 and assigns it to the ApartmentNumber field.
-func (o *PublicPortalTarget) SetApartmentNumber(v int64) {
-	o.ApartmentNumber.Set(&v)
-}
-
-// SetApartmentNumberNil sets the value for ApartmentNumber to be an explicit nil
-func (o *PublicPortalTarget) SetApartmentNumberNil() {
-	o.ApartmentNumber.Set(nil)
-}
-
-// UnsetApartmentNumber ensures that no value is present for ApartmentNumber, not even an explicit nil
-func (o *PublicPortalTarget) UnsetApartmentNumber() {
-	o.ApartmentNumber.Unset()
-}
-
 // GetCallAvailable returns the CallAvailable field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicPortalTarget) GetCallAvailable() bool {
 	if o == nil || IsNil(o.CallAvailable.Get()) {
@@ -198,6 +124,38 @@ func (o *PublicPortalTarget) SetCallAvailableNil() {
 // UnsetCallAvailable ensures that no value is present for CallAvailable, not even an explicit nil
 func (o *PublicPortalTarget) UnsetCallAvailable() {
 	o.CallAvailable.Unset()
+}
+
+// GetDenialReasons returns the DenialReasons field value if set, zero value otherwise.
+func (o *PublicPortalTarget) GetDenialReasons() []string {
+	if o == nil || IsNil(o.DenialReasons) {
+		var ret []string
+		return ret
+	}
+	return o.DenialReasons
+}
+
+// GetDenialReasonsOk returns a tuple with the DenialReasons field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicPortalTarget) GetDenialReasonsOk() ([]string, bool) {
+	if o == nil || IsNil(o.DenialReasons) {
+		return nil, false
+	}
+	return o.DenialReasons, true
+}
+
+// HasDenialReasons returns a boolean if a field has been set.
+func (o *PublicPortalTarget) HasDenialReasons() bool {
+	if o != nil && !IsNil(o.DenialReasons) {
+		return true
+	}
+
+	return false
+}
+
+// SetDenialReasons gets a reference to the given []string and assigns it to the DenialReasons field.
+func (o *PublicPortalTarget) SetDenialReasons(v []string) {
+	o.DenialReasons = v
 }
 
 // GetDisplayName returns the DisplayName field value
@@ -338,6 +296,82 @@ func (o *PublicPortalTarget) UnsetImage() {
 	o.Image.Unset()
 }
 
+// GetListingLabel returns the ListingLabel field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalTarget) GetListingLabel() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.ListingLabel
+}
+
+// GetListingLabelOk returns a tuple with the ListingLabel field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalTarget) GetListingLabelOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.ListingLabel) {
+		return nil, false
+	}
+	return &o.ListingLabel, true
+}
+
+// HasListingLabel returns a boolean if a field has been set.
+func (o *PublicPortalTarget) HasListingLabel() bool {
+	if o != nil && !IsNil(o.ListingLabel) {
+		return true
+	}
+
+	return false
+}
+
+// SetListingLabel gets a reference to the given interface{} and assigns it to the ListingLabel field.
+func (o *PublicPortalTarget) SetListingLabel(v interface{}) {
+	o.ListingLabel = v
+}
+
+// GetListingNumber returns the ListingNumber field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalTarget) GetListingNumber() int64 {
+	if o == nil || IsNil(o.ListingNumber.Get()) {
+		var ret int64
+		return ret
+	}
+	return *o.ListingNumber.Get()
+}
+
+// GetListingNumberOk returns a tuple with the ListingNumber field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalTarget) GetListingNumberOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ListingNumber.Get(), o.ListingNumber.IsSet()
+}
+
+// HasListingNumber returns a boolean if a field has been set.
+func (o *PublicPortalTarget) HasListingNumber() bool {
+	if o != nil && o.ListingNumber.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetListingNumber gets a reference to the given NullableInt64 and assigns it to the ListingNumber field.
+func (o *PublicPortalTarget) SetListingNumber(v int64) {
+	o.ListingNumber.Set(&v)
+}
+
+// SetListingNumberNil sets the value for ListingNumber to be an explicit nil
+func (o *PublicPortalTarget) SetListingNumberNil() {
+	o.ListingNumber.Set(nil)
+}
+
+// UnsetListingNumber ensures that no value is present for ListingNumber, not even an explicit nil
+func (o *PublicPortalTarget) UnsetListingNumber() {
+	o.ListingNumber.Unset()
+}
+
 // GetRequireVideo returns the RequireVideo field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicPortalTarget) GetRequireVideo() bool {
 	if o == nil || IsNil(o.RequireVideo.Get()) {
@@ -408,14 +442,11 @@ func (o *PublicPortalTarget) SetTargetId(v string) {
 func (o PublicPortalTarget) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["allowed_actions"] = o.AllowedActions
-	if o.ApartmentLabel != nil {
-		toSerialize["apartment_label"] = o.ApartmentLabel
-	}
-	if o.ApartmentNumber.IsSet() {
-		toSerialize["apartment_number"] = o.ApartmentNumber.Get()
-	}
 	if o.CallAvailable.IsSet() {
 		toSerialize["call_available"] = o.CallAvailable.Get()
+	}
+	if !IsNil(o.DenialReasons) {
+		toSerialize["denial_reasons"] = o.DenialReasons
 	}
 	if o.DisplayName != nil {
 		toSerialize["display_name"] = o.DisplayName
@@ -428,6 +459,12 @@ func (o PublicPortalTarget) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Image.IsSet() {
 		toSerialize["image"] = o.Image.Get()
+	}
+	if o.ListingLabel != nil {
+		toSerialize["listing_label"] = o.ListingLabel
+	}
+	if o.ListingNumber.IsSet() {
+		toSerialize["listing_number"] = o.ListingNumber.Get()
 	}
 	if o.RequireVideo.IsSet() {
 		toSerialize["require_video"] = o.RequireVideo.Get()

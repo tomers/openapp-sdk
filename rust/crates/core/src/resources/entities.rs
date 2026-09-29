@@ -127,6 +127,44 @@ impl EntitiesClient {
             .await
     }
 
+    /// `POST /entities/{id}/actions/{action_id}/preview` — Cedar dry-run, no hardware call.
+    pub async fn preview_action(
+        &self,
+        id: &str,
+        action_id: &str,
+        body: &JsonValue,
+    ) -> Result<JsonValue, SdkError> {
+        let path = format!("/entities/{id}/actions/{action_id}/preview");
+        self.transport
+            .request_json::<JsonValue, JsonValue>(RequestSpec {
+                method: Method::POST,
+                path: &path,
+                body: Some(body),
+                ..Default::default()
+            })
+            .await
+    }
+
+    /// `POST /entities/{id}/actions/{action_id}` with optional idempotency / confirm headers.
+    pub async fn invoke_action_with_headers(
+        &self,
+        id: &str,
+        action_id: &str,
+        body: &JsonValue,
+        extra_headers: &[(&str, String)],
+    ) -> Result<JsonValue, SdkError> {
+        let path = format!("/entities/{id}/actions/{action_id}");
+        self.transport
+            .request_json::<JsonValue, JsonValue>(RequestSpec {
+                method: Method::POST,
+                path: &path,
+                body: Some(body),
+                extra_headers,
+                ..Default::default()
+            })
+            .await
+    }
+
     pub async fn metadata_definition(&self, id: &str) -> Result<JsonValue, SdkError> {
         let path = format!("/entities/{id}/metadata-definition");
         self.transport
@@ -163,8 +201,8 @@ impl EntitiesClient {
             .await
     }
 
-    pub async fn apartment_floors(&self, device_id: &str) -> Result<JsonValue, SdkError> {
-        let path = format!("/devices/{device_id}/apartment-floors");
+    pub async fn directory_floors(&self, device_id: &str) -> Result<JsonValue, SdkError> {
+        let path = format!("/devices/{device_id}/directory-floors");
         self.transport
             .request_json::<(), JsonValue>(RequestSpec {
                 method: Method::GET,

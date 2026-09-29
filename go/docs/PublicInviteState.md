@@ -15,5 +15,7 @@
 
 * `NOT_FOUND` (value: `"not_found"`)
 
+* `MAX_DEVICES_REACHED` (value: `"max_devices_reached"`)
+
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

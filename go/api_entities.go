@@ -28,7 +28,6 @@ type ApiCreateEntityRequest struct {
 	xOrg                *string
 	createEntityRequest *CreateEntityRequest
 	includeDeleted      *bool
-	includeMetadata     *bool
 }
 
 func (r ApiCreateEntityRequest) XOrg(xOrg string) ApiCreateEntityRequest {
@@ -46,17 +45,14 @@ func (r ApiCreateEntityRequest) IncludeDeleted(includeDeleted bool) ApiCreateEnt
 	return r
 }
 
-func (r ApiCreateEntityRequest) IncludeMetadata(includeMetadata bool) ApiCreateEntityRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiCreateEntityRequest) Execute() (*EntityResponse, *http.Response, error) {
 	return r.ApiService.CreateEntityExecute(r)
 }
 
 /*
 CreateEntity Create an entity on a device.
+
+Create an entity. Quota: consumes 1 from `entities` (unit: count, lifetime capacity) — capacity-checked before creation, so a full quota returns 429 `quota_exceeded`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateEntityRequest
@@ -98,9 +94,6 @@ func (a *EntitiesAPIService) CreateEntityExecute(r ApiCreateEntityRequest) (*Ent
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -225,12 +218,11 @@ func (a *EntitiesAPIService) CreateEntityExecute(r ApiCreateEntityRequest) (*Ent
 }
 
 type ApiDeleteEntityRequest struct {
-	ctx             context.Context
-	ApiService      *EntitiesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *EntitiesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiDeleteEntityRequest) XOrg(xOrg string) ApiDeleteEntityRequest {
@@ -240,11 +232,6 @@ func (r ApiDeleteEntityRequest) XOrg(xOrg string) ApiDeleteEntityRequest {
 
 func (r ApiDeleteEntityRequest) IncludeDeleted(includeDeleted bool) ApiDeleteEntityRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiDeleteEntityRequest) IncludeMetadata(includeMetadata bool) ApiDeleteEntityRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -295,9 +282,6 @@ func (a *EntitiesAPIService) DeleteEntityExecute(r ApiDeleteEntityRequest) (*Ent
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -438,6 +422,8 @@ func (r ApiExecuteEntityActionRequest) Execute() (*http.Response, error) {
 
 /*
 ExecuteEntityAction Execute an entity action using the integration engine.
+
+Execute an entity action. Quota: a `switchable.open` (door open) consumes 1 from `door_opens` (unit: count, per day and per month); when invoked via an API key it additionally consumes 1 from `voice_invocations` (unit: count, per day). When the org is over capacity, a degraded open may be delayed (the response carries a `degradation` warning) but is never blocked. An applicable `require_step_up` policy requires a prior authenticated preview or confirmation response; retry the same org, principal, entity, action, and JSON payload with its short-lived, single-use value in `X-OpenApp-Confirm`. The proof expires after 10 minutes and is not a separate second factor. Agents should also send `Idempotency-Key`. Success JSON includes `correlation_id`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -647,12 +633,11 @@ func (a *EntitiesAPIService) GetDeviceEntityMetadataDefinitionExecute(r ApiGetDe
 }
 
 type ApiGetEntityRequest struct {
-	ctx             context.Context
-	ApiService      *EntitiesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *EntitiesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiGetEntityRequest) XOrg(xOrg string) ApiGetEntityRequest {
@@ -662,11 +647,6 @@ func (r ApiGetEntityRequest) XOrg(xOrg string) ApiGetEntityRequest {
 
 func (r ApiGetEntityRequest) IncludeDeleted(includeDeleted bool) ApiGetEntityRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiGetEntityRequest) IncludeMetadata(includeMetadata bool) ApiGetEntityRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -717,9 +697,6 @@ func (a *EntitiesAPIService) GetEntityExecute(r ApiGetEntityRequest) (*EntityRes
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -806,6 +783,129 @@ func (a *EntitiesAPIService) GetEntityExecute(r ApiGetEntityRequest) (*EntityRes
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetEntityHoldRequest struct {
+	ctx        context.Context
+	ApiService *EntitiesAPIService
+	id         string
+}
+
+func (r ApiGetEntityHoldRequest) Execute() (*HoldView, *http.Response, error) {
+	return r.ApiService.GetEntityHoldExecute(r)
+}
+
+/*
+GetEntityHold Method for GetEntityHold
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiGetEntityHoldRequest
+*/
+func (a *EntitiesAPIService) GetEntityHold(ctx context.Context, id string) ApiGetEntityHoldRequest {
+	return ApiGetEntityHoldRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return HoldView
+func (a *EntitiesAPIService) GetEntityHoldExecute(r ApiGetEntityHoldRequest) (*HoldView, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *HoldView
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EntitiesAPIService.GetEntityHold")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/entities/{id}/hold"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -943,12 +1043,11 @@ func (a *EntitiesAPIService) GetEntityMetadataDefinitionExecute(r ApiGetEntityMe
 }
 
 type ApiHardDeleteEntityRequest struct {
-	ctx             context.Context
-	ApiService      *EntitiesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *EntitiesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiHardDeleteEntityRequest) XOrg(xOrg string) ApiHardDeleteEntityRequest {
@@ -958,11 +1057,6 @@ func (r ApiHardDeleteEntityRequest) XOrg(xOrg string) ApiHardDeleteEntityRequest
 
 func (r ApiHardDeleteEntityRequest) IncludeDeleted(includeDeleted bool) ApiHardDeleteEntityRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiHardDeleteEntityRequest) IncludeMetadata(includeMetadata bool) ApiHardDeleteEntityRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1013,9 +1107,6 @@ func (a *EntitiesAPIService) HardDeleteEntityExecute(r ApiHardDeleteEntityReques
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1137,31 +1228,31 @@ func (a *EntitiesAPIService) HardDeleteEntityExecute(r ApiHardDeleteEntityReques
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListDeviceApartmentFloorsRequest struct {
+type ApiListDeviceDirectoryFloorsRequest struct {
 	ctx        context.Context
 	ApiService *EntitiesAPIService
 	deviceId   string
 	xOrg       *string
 }
 
-func (r ApiListDeviceApartmentFloorsRequest) XOrg(xOrg string) ApiListDeviceApartmentFloorsRequest {
+func (r ApiListDeviceDirectoryFloorsRequest) XOrg(xOrg string) ApiListDeviceDirectoryFloorsRequest {
 	r.xOrg = &xOrg
 	return r
 }
 
-func (r ApiListDeviceApartmentFloorsRequest) Execute() (*ApartmentFloorListResponse, *http.Response, error) {
-	return r.ApiService.ListDeviceApartmentFloorsExecute(r)
+func (r ApiListDeviceDirectoryFloorsRequest) Execute() (*DirectoryFloorListResponse, *http.Response, error) {
+	return r.ApiService.ListDeviceDirectoryFloorsExecute(r)
 }
 
 /*
-ListDeviceApartmentFloors Method for ListDeviceApartmentFloors
+ListDeviceDirectoryFloors Method for ListDeviceDirectoryFloors
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param deviceId
-	@return ApiListDeviceApartmentFloorsRequest
+	@return ApiListDeviceDirectoryFloorsRequest
 */
-func (a *EntitiesAPIService) ListDeviceApartmentFloors(ctx context.Context, deviceId string) ApiListDeviceApartmentFloorsRequest {
-	return ApiListDeviceApartmentFloorsRequest{
+func (a *EntitiesAPIService) ListDeviceDirectoryFloors(ctx context.Context, deviceId string) ApiListDeviceDirectoryFloorsRequest {
+	return ApiListDeviceDirectoryFloorsRequest{
 		ApiService: a,
 		ctx:        ctx,
 		deviceId:   deviceId,
@@ -1170,21 +1261,21 @@ func (a *EntitiesAPIService) ListDeviceApartmentFloors(ctx context.Context, devi
 
 // Execute executes the request
 //
-//	@return ApartmentFloorListResponse
-func (a *EntitiesAPIService) ListDeviceApartmentFloorsExecute(r ApiListDeviceApartmentFloorsRequest) (*ApartmentFloorListResponse, *http.Response, error) {
+//	@return DirectoryFloorListResponse
+func (a *EntitiesAPIService) ListDeviceDirectoryFloorsExecute(r ApiListDeviceDirectoryFloorsRequest) (*DirectoryFloorListResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ApartmentFloorListResponse
+		localVarReturnValue *DirectoryFloorListResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EntitiesAPIService.ListDeviceApartmentFloors")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EntitiesAPIService.ListDeviceDirectoryFloors")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/devices/{device_id}/apartment-floors"
+	localVarPath := localBasePath + "/devices/{device_id}/directory-floors"
 	localVarPath = strings.Replace(localVarPath, "{"+"device_id"+"}", url.PathEscape(parameterValueToString(r.deviceId, "deviceId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -1293,15 +1384,14 @@ func (a *EntitiesAPIService) ListDeviceApartmentFloorsExecute(r ApiListDeviceApa
 }
 
 type ApiListDeviceEntitiesRequest struct {
-	ctx             context.Context
-	ApiService      *EntitiesAPIService
-	deviceId        string
-	xOrg            *string
-	pagination      *PaginationQuery
-	includeDeleted  *bool
-	onlyDeleted     *bool
-	includeMetadata *bool
-	entityType      *string
+	ctx            context.Context
+	ApiService     *EntitiesAPIService
+	deviceId       string
+	xOrg           *string
+	pagination     *PaginationQuery
+	includeDeleted *bool
+	onlyDeleted    *bool
+	entityType     *string
 }
 
 func (r ApiListDeviceEntitiesRequest) XOrg(xOrg string) ApiListDeviceEntitiesRequest {
@@ -1324,12 +1414,7 @@ func (r ApiListDeviceEntitiesRequest) OnlyDeleted(onlyDeleted bool) ApiListDevic
 	return r
 }
 
-func (r ApiListDeviceEntitiesRequest) IncludeMetadata(includeMetadata bool) ApiListDeviceEntitiesRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
-// When set, only entities of this type are returned (e.g. &#x60;apartment&#x60;).
+// When set, only entities of this type are returned (e.g. &#x60;directory_listing&#x60;).
 func (r ApiListDeviceEntitiesRequest) EntityType(entityType string) ApiListDeviceEntitiesRequest {
 	r.entityType = &entityType
 	return r
@@ -1388,9 +1473,6 @@ func (a *EntitiesAPIService) ListDeviceEntitiesExecute(r ApiListDeviceEntitiesRe
 	}
 	if r.onlyDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "only_deleted", r.onlyDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	if r.entityType != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "entity_type", r.entityType, "form", "")
@@ -1501,6 +1583,8 @@ type ApiListEntitiesRequest struct {
 	outputOptions *MultiResourceOutputOptionsQuery
 	pagination    *PaginationQuery
 	zoneId        *string
+	q             *string
+	sort          *string
 }
 
 func (r ApiListEntitiesRequest) XOrg(xOrg string) ApiListEntitiesRequest {
@@ -1521,6 +1605,18 @@ func (r ApiListEntitiesRequest) Pagination(pagination PaginationQuery) ApiListEn
 // Optional filter: only entities in this zone.
 func (r ApiListEntitiesRequest) ZoneId(zoneId string) ApiListEntitiesRequest {
 	r.zoneId = &zoneId
+	return r
+}
+
+// Case-insensitive substring match on entity &#x60;name&#x60; (plain text). Applies to org-wide lists.
+func (r ApiListEntitiesRequest) Q(q string) ApiListEntitiesRequest {
+	r.q = &q
+	return r
+}
+
+// Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;zone_id&#x60; is set. Defaults to insertion order when omitted.
+func (r ApiListEntitiesRequest) Sort(sort string) ApiListEntitiesRequest {
+	r.sort = &sort
 	return r
 }
 
@@ -1576,6 +1672,12 @@ func (a *EntitiesAPIService) ListEntitiesExecute(r ApiListEntitiesRequest) (*Pag
 	parameterAddToHeaderOrQuery(localVarQueryParams, "pagination", r.pagination, "form", "")
 	if r.zoneId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "zone_id", r.zoneId, "form", "")
+	}
+	if r.q != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
+	}
+	if r.sort != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "sort", r.sort, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1671,7 +1773,6 @@ type ApiPatchEntityRequest struct {
 	xOrg               *string
 	patchEntityRequest *PatchEntityRequest
 	includeDeleted     *bool
-	includeMetadata    *bool
 }
 
 func (r ApiPatchEntityRequest) XOrg(xOrg string) ApiPatchEntityRequest {
@@ -1686,11 +1787,6 @@ func (r ApiPatchEntityRequest) PatchEntityRequest(patchEntityRequest PatchEntity
 
 func (r ApiPatchEntityRequest) IncludeDeleted(includeDeleted bool) ApiPatchEntityRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiPatchEntityRequest) IncludeMetadata(includeMetadata bool) ApiPatchEntityRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1744,9 +1840,6 @@ func (a *EntitiesAPIService) PatchEntityExecute(r ApiPatchEntityRequest) (*Entit
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -1870,13 +1963,251 @@ func (a *EntitiesAPIService) PatchEntityExecute(r ApiPatchEntityRequest) (*Entit
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiPreviewEntityActionRequest struct {
+	ctx        context.Context
+	ApiService *EntitiesAPIService
+	id         string
+	actionId   string
+	body       *interface{}
+}
+
+func (r ApiPreviewEntityActionRequest) Body(body interface{}) ApiPreviewEntityActionRequest {
+	r.body = &body
+	return r
+}
+
+func (r ApiPreviewEntityActionRequest) Execute() (*http.Response, error) {
+	return r.ApiService.PreviewEntityActionExecute(r)
+}
+
+/*
+PreviewEntityAction Preview an entity action (Cedar + policies, no hardware call).
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param actionId
+	@return ApiPreviewEntityActionRequest
+*/
+func (a *EntitiesAPIService) PreviewEntityAction(ctx context.Context, id string, actionId string) ApiPreviewEntityActionRequest {
+	return ApiPreviewEntityActionRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+		actionId:   actionId,
+	}
+}
+
+// Execute executes the request
+func (a *EntitiesAPIService) PreviewEntityActionExecute(r ApiPreviewEntityActionRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EntitiesAPIService.PreviewEntityAction")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/entities/{id}/actions/{action_id}/preview"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"action_id"+"}", url.PathEscape(parameterValueToString(r.actionId, "actionId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.body == nil {
+		return nil, reportError("body is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.body
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiPutEntityHoldRequest struct {
+	ctx            context.Context
+	ApiService     *EntitiesAPIService
+	id             string
+	putHoldRequest *PutHoldRequest
+}
+
+func (r ApiPutEntityHoldRequest) PutHoldRequest(putHoldRequest PutHoldRequest) ApiPutEntityHoldRequest {
+	r.putHoldRequest = &putHoldRequest
+	return r
+}
+
+func (r ApiPutEntityHoldRequest) Execute() (*HoldView, *http.Response, error) {
+	return r.ApiService.PutEntityHoldExecute(r)
+}
+
+/*
+PutEntityHold Method for PutEntityHold
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPutEntityHoldRequest
+*/
+func (a *EntitiesAPIService) PutEntityHold(ctx context.Context, id string) ApiPutEntityHoldRequest {
+	return ApiPutEntityHoldRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return HoldView
+func (a *EntitiesAPIService) PutEntityHoldExecute(r ApiPutEntityHoldRequest) (*HoldView, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *HoldView
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EntitiesAPIService.PutEntityHold")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/entities/{id}/hold"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.putHoldRequest == nil {
+		return localVarReturnValue, nil, reportError("putHoldRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.putHoldRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiRestoreEntityRequest struct {
-	ctx             context.Context
-	ApiService      *EntitiesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *EntitiesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiRestoreEntityRequest) XOrg(xOrg string) ApiRestoreEntityRequest {
@@ -1886,11 +2217,6 @@ func (r ApiRestoreEntityRequest) XOrg(xOrg string) ApiRestoreEntityRequest {
 
 func (r ApiRestoreEntityRequest) IncludeDeleted(includeDeleted bool) ApiRestoreEntityRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiRestoreEntityRequest) IncludeMetadata(includeMetadata bool) ApiRestoreEntityRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1941,9 +2267,6 @@ func (a *EntitiesAPIService) RestoreEntityExecute(r ApiRestoreEntityRequest) (*E
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -2072,7 +2395,6 @@ type ApiUpdateEntityRequest struct {
 	xOrg                *string
 	updateEntityRequest *UpdateEntityRequest
 	includeDeleted      *bool
-	includeMetadata     *bool
 }
 
 func (r ApiUpdateEntityRequest) XOrg(xOrg string) ApiUpdateEntityRequest {
@@ -2087,11 +2409,6 @@ func (r ApiUpdateEntityRequest) UpdateEntityRequest(updateEntityRequest UpdateEn
 
 func (r ApiUpdateEntityRequest) IncludeDeleted(includeDeleted bool) ApiUpdateEntityRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiUpdateEntityRequest) IncludeMetadata(includeMetadata bool) ApiUpdateEntityRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -2145,9 +2462,6 @@ func (a *EntitiesAPIService) UpdateEntityExecute(r ApiUpdateEntityRequest) (*Ent
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

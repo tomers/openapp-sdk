@@ -21,9 +21,9 @@ var _ MappedNullable = &UpdateApiKeyRequest{}
 
 // UpdateApiKeyRequest struct for UpdateApiKeyRequest
 type UpdateApiKeyRequest struct {
-	// RFC3339 absolute expiration timestamp. Mutually exclusive with expires_in. Optional; if omitted, expiry is unchanged.
+	// [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) absolute expiration timestamp (UTC). Mutually exclusive with `expires_in`. Optional; if omitted, expiry is unchanged.
 	ExpiresAt NullableString `json:"expires_at,omitempty"`
-	// Duration from now, e.g. \"1d\", \"2w\", \"90d\". Mutually exclusive with expires_at. Optional; if omitted, expiry is unchanged.
+	// Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Mutually exclusive with `expires_at`. Optional; if omitted, expiry is unchanged.
 	ExpiresIn NullableString `json:"expires_in,omitempty"`
 	Name      string         `json:"name"`
 }

@@ -11,9 +11,7 @@ API version: v1
 package openapi
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 // checks if the ListDevicesQuery type satisfies the MappedNullable interface at compile time
@@ -21,9 +19,8 @@ var _ MappedNullable = &ListDevicesQuery{}
 
 // ListDevicesQuery struct for ListDevicesQuery
 type ListDevicesQuery struct {
-	IncludeDeleted  bool `json:"include_deleted"`
-	IncludeMetadata bool `json:"include_metadata"`
-	OnlyDeleted     bool `json:"only_deleted"`
+	IncludeDeleted *bool `json:"include_deleted,omitempty"`
+	OnlyDeleted    *bool `json:"only_deleted,omitempty"`
 	// Number of items per page. Default from config, max 200.
 	Limit *int32 `json:"limit,omitempty"`
 	// Number of items to skip. Default 0.
@@ -40,21 +37,20 @@ type ListDevicesQuery struct {
 	IncludeStale NullableBool `json:"include_stale,omitempty"`
 	// Optional filter: only devices belonging to this integration.
 	IntegrationId NullableString `json:"integration_id,omitempty"`
+	// Locale used to resolve the localized `name` when sorting by name (e.g. `en`). Defaults to `en`.
+	Locale NullableString `json:"locale,omitempty"`
 	// Case-insensitive substring match on localized device name (JSON). Best-effort when `integration_id` is set (SQL ILIKE).
 	Q NullableString `json:"q,omitempty"`
+	// Server-side ordering for org-wide lists: `name:asc`, `name:desc`, `created_at:asc`, `created_at:desc`. Ignored when `integration_id` is set. Defaults to insertion order when omitted.
+	Sort NullableString `json:"sort,omitempty"`
 }
-
-type _ListDevicesQuery ListDevicesQuery
 
 // NewListDevicesQuery instantiates a new ListDevicesQuery object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewListDevicesQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool) *ListDevicesQuery {
+func NewListDevicesQuery() *ListDevicesQuery {
 	this := ListDevicesQuery{}
-	this.IncludeDeleted = includeDeleted
-	this.IncludeMetadata = includeMetadata
-	this.OnlyDeleted = onlyDeleted
 	return &this
 }
 
@@ -66,76 +62,68 @@ func NewListDevicesQueryWithDefaults() *ListDevicesQuery {
 	return &this
 }
 
-// GetIncludeDeleted returns the IncludeDeleted field value
+// GetIncludeDeleted returns the IncludeDeleted field value if set, zero value otherwise.
 func (o *ListDevicesQuery) GetIncludeDeleted() bool {
-	if o == nil {
+	if o == nil || IsNil(o.IncludeDeleted) {
 		var ret bool
 		return ret
 	}
-
-	return o.IncludeDeleted
+	return *o.IncludeDeleted
 }
 
-// GetIncludeDeletedOk returns a tuple with the IncludeDeleted field value
+// GetIncludeDeletedOk returns a tuple with the IncludeDeleted field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *ListDevicesQuery) GetIncludeDeletedOk() (*bool, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.IncludeDeleted) {
 		return nil, false
 	}
-	return &o.IncludeDeleted, true
+	return o.IncludeDeleted, true
 }
 
-// SetIncludeDeleted sets field value
+// HasIncludeDeleted returns a boolean if a field has been set.
+func (o *ListDevicesQuery) HasIncludeDeleted() bool {
+	if o != nil && !IsNil(o.IncludeDeleted) {
+		return true
+	}
+
+	return false
+}
+
+// SetIncludeDeleted gets a reference to the given bool and assigns it to the IncludeDeleted field.
 func (o *ListDevicesQuery) SetIncludeDeleted(v bool) {
-	o.IncludeDeleted = v
+	o.IncludeDeleted = &v
 }
 
-// GetIncludeMetadata returns the IncludeMetadata field value
-func (o *ListDevicesQuery) GetIncludeMetadata() bool {
-	if o == nil {
-		var ret bool
-		return ret
-	}
-
-	return o.IncludeMetadata
-}
-
-// GetIncludeMetadataOk returns a tuple with the IncludeMetadata field value
-// and a boolean to check if the value has been set.
-func (o *ListDevicesQuery) GetIncludeMetadataOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IncludeMetadata, true
-}
-
-// SetIncludeMetadata sets field value
-func (o *ListDevicesQuery) SetIncludeMetadata(v bool) {
-	o.IncludeMetadata = v
-}
-
-// GetOnlyDeleted returns the OnlyDeleted field value
+// GetOnlyDeleted returns the OnlyDeleted field value if set, zero value otherwise.
 func (o *ListDevicesQuery) GetOnlyDeleted() bool {
-	if o == nil {
+	if o == nil || IsNil(o.OnlyDeleted) {
 		var ret bool
 		return ret
 	}
-
-	return o.OnlyDeleted
+	return *o.OnlyDeleted
 }
 
-// GetOnlyDeletedOk returns a tuple with the OnlyDeleted field value
+// GetOnlyDeletedOk returns a tuple with the OnlyDeleted field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *ListDevicesQuery) GetOnlyDeletedOk() (*bool, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.OnlyDeleted) {
 		return nil, false
 	}
-	return &o.OnlyDeleted, true
+	return o.OnlyDeleted, true
 }
 
-// SetOnlyDeleted sets field value
+// HasOnlyDeleted returns a boolean if a field has been set.
+func (o *ListDevicesQuery) HasOnlyDeleted() bool {
+	if o != nil && !IsNil(o.OnlyDeleted) {
+		return true
+	}
+
+	return false
+}
+
+// SetOnlyDeleted gets a reference to the given bool and assigns it to the OnlyDeleted field.
 func (o *ListDevicesQuery) SetOnlyDeleted(v bool) {
-	o.OnlyDeleted = v
+	o.OnlyDeleted = &v
 }
 
 // GetLimit returns the Limit field value if set, zero value otherwise.
@@ -451,6 +439,49 @@ func (o *ListDevicesQuery) UnsetIntegrationId() {
 	o.IntegrationId.Unset()
 }
 
+// GetLocale returns the Locale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ListDevicesQuery) GetLocale() string {
+	if o == nil || IsNil(o.Locale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Locale.Get()
+}
+
+// GetLocaleOk returns a tuple with the Locale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ListDevicesQuery) GetLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Locale.Get(), o.Locale.IsSet()
+}
+
+// HasLocale returns a boolean if a field has been set.
+func (o *ListDevicesQuery) HasLocale() bool {
+	if o != nil && o.Locale.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocale gets a reference to the given NullableString and assigns it to the Locale field.
+func (o *ListDevicesQuery) SetLocale(v string) {
+	o.Locale.Set(&v)
+}
+
+// SetLocaleNil sets the value for Locale to be an explicit nil
+func (o *ListDevicesQuery) SetLocaleNil() {
+	o.Locale.Set(nil)
+}
+
+// UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+func (o *ListDevicesQuery) UnsetLocale() {
+	o.Locale.Unset()
+}
+
 // GetQ returns the Q field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *ListDevicesQuery) GetQ() string {
 	if o == nil || IsNil(o.Q.Get()) {
@@ -494,11 +525,57 @@ func (o *ListDevicesQuery) UnsetQ() {
 	o.Q.Unset()
 }
 
+// GetSort returns the Sort field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ListDevicesQuery) GetSort() string {
+	if o == nil || IsNil(o.Sort.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Sort.Get()
+}
+
+// GetSortOk returns a tuple with the Sort field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ListDevicesQuery) GetSortOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Sort.Get(), o.Sort.IsSet()
+}
+
+// HasSort returns a boolean if a field has been set.
+func (o *ListDevicesQuery) HasSort() bool {
+	if o != nil && o.Sort.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSort gets a reference to the given NullableString and assigns it to the Sort field.
+func (o *ListDevicesQuery) SetSort(v string) {
+	o.Sort.Set(&v)
+}
+
+// SetSortNil sets the value for Sort to be an explicit nil
+func (o *ListDevicesQuery) SetSortNil() {
+	o.Sort.Set(nil)
+}
+
+// UnsetSort ensures that no value is present for Sort, not even an explicit nil
+func (o *ListDevicesQuery) UnsetSort() {
+	o.Sort.Unset()
+}
+
 func (o ListDevicesQuery) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["include_deleted"] = o.IncludeDeleted
-	toSerialize["include_metadata"] = o.IncludeMetadata
-	toSerialize["only_deleted"] = o.OnlyDeleted
+	if !IsNil(o.IncludeDeleted) {
+		toSerialize["include_deleted"] = o.IncludeDeleted
+	}
+	if !IsNil(o.OnlyDeleted) {
+		toSerialize["only_deleted"] = o.OnlyDeleted
+	}
 	if !IsNil(o.Limit) {
 		toSerialize["limit"] = o.Limit
 	}
@@ -523,49 +600,16 @@ func (o ListDevicesQuery) ToMap() (map[string]interface{}, error) {
 	if o.IntegrationId.IsSet() {
 		toSerialize["integration_id"] = o.IntegrationId.Get()
 	}
+	if o.Locale.IsSet() {
+		toSerialize["locale"] = o.Locale.Get()
+	}
 	if o.Q.IsSet() {
 		toSerialize["q"] = o.Q.Get()
 	}
+	if o.Sort.IsSet() {
+		toSerialize["sort"] = o.Sort.Get()
+	}
 	return toSerialize, nil
-}
-
-func (o *ListDevicesQuery) UnmarshalJSON(data []byte) (err error) {
-	// This validates that all required properties are included in the JSON object
-	// by unmarshalling the object into a generic map with string keys and checking
-	// that every required field exists as a key in the generic map.
-	requiredProperties := []string{
-		"include_deleted",
-		"include_metadata",
-		"only_deleted",
-	}
-
-	allProperties := make(map[string]interface{})
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err
-	}
-
-	for _, requiredProperty := range requiredProperties {
-		if _, exists := allProperties[requiredProperty]; !exists {
-			return fmt.Errorf("no value given for required property %v", requiredProperty)
-		}
-	}
-
-	varListDevicesQuery := _ListDevicesQuery{}
-
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varListDevicesQuery)
-
-	if err != nil {
-		return err
-	}
-
-	*o = ListDevicesQuery(varListDevicesQuery)
-
-	return err
 }
 
 type NullableListDevicesQuery struct {

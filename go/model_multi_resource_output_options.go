@@ -27,7 +27,7 @@ type MultiResourceOutputOptions struct {
 	Offset int32 `json:"offset"`
 	// If true, return *only* soft-deleted items.  Note: This implies `include_deleted=true` at the API boundary, but repository/storage implementations should treat this as a separate filter.
 	OnlyDeleted bool `json:"only_deleted"`
-	// Single-resource options (include_deleted, include_metadata). Accessed flat via `Deref`.
+	// Single-resource options (`include_deleted`). Accessed flat via `Deref`.
 	Single SingleResourceOutputOptions `json:"single"`
 }
 

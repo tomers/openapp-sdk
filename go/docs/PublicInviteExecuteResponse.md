@@ -4,8 +4,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Degradation** | Pointer to **interface{}** |  | [optional]
 **DoorAutoCloseDuration** | Pointer to **NullableInt64** |  | [optional]
-**LightsAutoOffDuration** | Pointer to **map[string]int64** | Map of light entity ULID to auto-off duration in seconds. Serializes as JSON object with string keys. | [optional]
+**DoorOpenDurationSeconds** | Pointer to **NullableInt64** |  | [optional]
+**LightsAutoOffDuration** | Pointer to **map[string]int64** | Map of light entity ULID to auto-off duration in seconds. | [optional]
 **Message** | Pointer to **NullableString** |  | [optional]
 **Ok** | **bool** |  |
 
@@ -28,6 +30,41 @@ NewPublicInviteExecuteResponseWithDefaults instantiates a new PublicInviteExecut
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
+### GetDegradation
+
+`func (o *PublicInviteExecuteResponse) GetDegradation() interface{}`
+
+GetDegradation returns the Degradation field if non-nil, zero value otherwise.
+
+### GetDegradationOk
+
+`func (o *PublicInviteExecuteResponse) GetDegradationOk() (*interface{}, bool)`
+
+GetDegradationOk returns a tuple with the Degradation field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDegradation
+
+`func (o *PublicInviteExecuteResponse) SetDegradation(v interface{})`
+
+SetDegradation sets Degradation field to given value.
+
+### HasDegradation
+
+`func (o *PublicInviteExecuteResponse) HasDegradation() bool`
+
+HasDegradation returns a boolean if a field has been set.
+
+### SetDegradationNil
+
+`func (o *PublicInviteExecuteResponse) SetDegradationNil(b bool)`
+
+ SetDegradationNil sets the value for Degradation to be an explicit nil
+
+### UnsetDegradation
+`func (o *PublicInviteExecuteResponse) UnsetDegradation()`
+
+UnsetDegradation ensures that no value is present for Degradation, not even an explicit nil
 ### GetDoorAutoCloseDuration
 
 `func (o *PublicInviteExecuteResponse) GetDoorAutoCloseDuration() int64`
@@ -63,6 +100,41 @@ HasDoorAutoCloseDuration returns a boolean if a field has been set.
 `func (o *PublicInviteExecuteResponse) UnsetDoorAutoCloseDuration()`
 
 UnsetDoorAutoCloseDuration ensures that no value is present for DoorAutoCloseDuration, not even an explicit nil
+### GetDoorOpenDurationSeconds
+
+`func (o *PublicInviteExecuteResponse) GetDoorOpenDurationSeconds() int64`
+
+GetDoorOpenDurationSeconds returns the DoorOpenDurationSeconds field if non-nil, zero value otherwise.
+
+### GetDoorOpenDurationSecondsOk
+
+`func (o *PublicInviteExecuteResponse) GetDoorOpenDurationSecondsOk() (*int64, bool)`
+
+GetDoorOpenDurationSecondsOk returns a tuple with the DoorOpenDurationSeconds field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDoorOpenDurationSeconds
+
+`func (o *PublicInviteExecuteResponse) SetDoorOpenDurationSeconds(v int64)`
+
+SetDoorOpenDurationSeconds sets DoorOpenDurationSeconds field to given value.
+
+### HasDoorOpenDurationSeconds
+
+`func (o *PublicInviteExecuteResponse) HasDoorOpenDurationSeconds() bool`
+
+HasDoorOpenDurationSeconds returns a boolean if a field has been set.
+
+### SetDoorOpenDurationSecondsNil
+
+`func (o *PublicInviteExecuteResponse) SetDoorOpenDurationSecondsNil(b bool)`
+
+ SetDoorOpenDurationSecondsNil sets the value for DoorOpenDurationSeconds to be an explicit nil
+
+### UnsetDoorOpenDurationSeconds
+`func (o *PublicInviteExecuteResponse) UnsetDoorOpenDurationSeconds()`
+
+UnsetDoorOpenDurationSeconds ensures that no value is present for DoorOpenDurationSeconds, not even an explicit nil
 ### GetLightsAutoOffDuration
 
 `func (o *PublicInviteExecuteResponse) GetLightsAutoOffDuration() map[string]int64`

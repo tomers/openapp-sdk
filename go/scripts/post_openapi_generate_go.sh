@@ -5,8 +5,8 @@
 # - go mod tidy: refresh dependencies/sum after large codegen churn.
 # - gofmt: format generated .go only; prune .gocache/.gomodcache so we do not walk the module
 #   download tree (noisy permissions; wrong targets).
-# GOCACHE/GOMODCACHE: use container-local paths (see packages/sdk/go/justfile `generate`) so bind-mount
-# caches are never mixed with root-owned artifacts from older Docker runs.
+# GOCACHE/GOMODCACHE: container-local /tmp for this generate step (justfile `generate`).
+# sdk-go compose caches stay on the bind mount and are mkdir'd on the host as the user.
 set -euo pipefail
 : "${GOCACHE:=/tmp/gocache}"
 : "${GOMODCACHE:=/tmp/gomodcache}"

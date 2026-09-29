@@ -4,7 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**DeviceExternalId** | Pointer to **NullableString** | Device external_id. Must be a virtual_access_portal device in this integration. Use null to unlink. | [optional]
+**DeviceId** | Pointer to **NullableString** | Door device id. Must be a virtual_access_portal device in this integration. Use null to unlink. | [optional]
+**DirectoryId** | Pointer to **NullableString** | Directory device id. Must be a virtual_access_directory device in this integration. Use null to unlink. | [optional]
 **Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
 
 ## Methods
@@ -26,41 +27,76 @@ NewUpdateAccessPortalRequestWithDefaults instantiates a new UpdateAccessPortalRe
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetDeviceExternalId
+### GetDeviceId
 
-`func (o *UpdateAccessPortalRequest) GetDeviceExternalId() string`
+`func (o *UpdateAccessPortalRequest) GetDeviceId() string`
 
-GetDeviceExternalId returns the DeviceExternalId field if non-nil, zero value otherwise.
+GetDeviceId returns the DeviceId field if non-nil, zero value otherwise.
 
-### GetDeviceExternalIdOk
+### GetDeviceIdOk
 
-`func (o *UpdateAccessPortalRequest) GetDeviceExternalIdOk() (*string, bool)`
+`func (o *UpdateAccessPortalRequest) GetDeviceIdOk() (*string, bool)`
 
-GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field if it's non-nil, zero value otherwise
+GetDeviceIdOk returns a tuple with the DeviceId field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetDeviceExternalId
+### SetDeviceId
 
-`func (o *UpdateAccessPortalRequest) SetDeviceExternalId(v string)`
+`func (o *UpdateAccessPortalRequest) SetDeviceId(v string)`
 
-SetDeviceExternalId sets DeviceExternalId field to given value.
+SetDeviceId sets DeviceId field to given value.
 
-### HasDeviceExternalId
+### HasDeviceId
 
-`func (o *UpdateAccessPortalRequest) HasDeviceExternalId() bool`
+`func (o *UpdateAccessPortalRequest) HasDeviceId() bool`
 
-HasDeviceExternalId returns a boolean if a field has been set.
+HasDeviceId returns a boolean if a field has been set.
 
-### SetDeviceExternalIdNil
+### SetDeviceIdNil
 
-`func (o *UpdateAccessPortalRequest) SetDeviceExternalIdNil(b bool)`
+`func (o *UpdateAccessPortalRequest) SetDeviceIdNil(b bool)`
 
- SetDeviceExternalIdNil sets the value for DeviceExternalId to be an explicit nil
+ SetDeviceIdNil sets the value for DeviceId to be an explicit nil
 
-### UnsetDeviceExternalId
-`func (o *UpdateAccessPortalRequest) UnsetDeviceExternalId()`
+### UnsetDeviceId
+`func (o *UpdateAccessPortalRequest) UnsetDeviceId()`
 
-UnsetDeviceExternalId ensures that no value is present for DeviceExternalId, not even an explicit nil
+UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
+### GetDirectoryId
+
+`func (o *UpdateAccessPortalRequest) GetDirectoryId() string`
+
+GetDirectoryId returns the DirectoryId field if non-nil, zero value otherwise.
+
+### GetDirectoryIdOk
+
+`func (o *UpdateAccessPortalRequest) GetDirectoryIdOk() (*string, bool)`
+
+GetDirectoryIdOk returns a tuple with the DirectoryId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDirectoryId
+
+`func (o *UpdateAccessPortalRequest) SetDirectoryId(v string)`
+
+SetDirectoryId sets DirectoryId field to given value.
+
+### HasDirectoryId
+
+`func (o *UpdateAccessPortalRequest) HasDirectoryId() bool`
+
+HasDirectoryId returns a boolean if a field has been set.
+
+### SetDirectoryIdNil
+
+`func (o *UpdateAccessPortalRequest) SetDirectoryIdNil(b bool)`
+
+ SetDirectoryIdNil sets the value for DirectoryId to be an explicit nil
+
+### UnsetDirectoryId
+`func (o *UpdateAccessPortalRequest) UnsetDirectoryId()`
+
+UnsetDirectoryId ensures that no value is present for DirectoryId, not even an explicit nil
 ### GetName
 
 `func (o *UpdateAccessPortalRequest) GetName() LocalizedString`

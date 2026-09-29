@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **Email** | Pointer to **NullableString** |  | [optional]
 **Id** | Pointer to **NullableString** |  | [optional]
 **Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
+**Phone** | Pointer to **NullableString** |  | [optional]
 
 ## Methods
 
@@ -132,5 +133,40 @@ HasName returns a boolean if a field has been set.
 `func (o *UpdateUserRequest) UnsetName()`
 
 UnsetName ensures that no value is present for Name, not even an explicit nil
+### GetPhone
+
+`func (o *UpdateUserRequest) GetPhone() string`
+
+GetPhone returns the Phone field if non-nil, zero value otherwise.
+
+### GetPhoneOk
+
+`func (o *UpdateUserRequest) GetPhoneOk() (*string, bool)`
+
+GetPhoneOk returns a tuple with the Phone field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPhone
+
+`func (o *UpdateUserRequest) SetPhone(v string)`
+
+SetPhone sets Phone field to given value.
+
+### HasPhone
+
+`func (o *UpdateUserRequest) HasPhone() bool`
+
+HasPhone returns a boolean if a field has been set.
+
+### SetPhoneNil
+
+`func (o *UpdateUserRequest) SetPhoneNil(b bool)`
+
+ SetPhoneNil sets the value for Phone to be an explicit nil
+
+### UnsetPhone
+`func (o *UpdateUserRequest) UnsetPhone()`
+
+UnsetPhone ensures that no value is present for Phone, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

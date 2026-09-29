@@ -21,8 +21,8 @@ var _ MappedNullable = &InviteWindow{}
 
 // InviteWindow struct for InviteWindow
 type InviteWindow struct {
-	From string `json:"from"`
-	To   string `json:"to"`
+	From NullableString `json:"from"`
+	To   NullableString `json:"to"`
 }
 
 type _InviteWindow InviteWindow
@@ -31,7 +31,7 @@ type _InviteWindow InviteWindow
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInviteWindow(from string, to string) *InviteWindow {
+func NewInviteWindow(from NullableString, to NullableString) *InviteWindow {
 	this := InviteWindow{}
 	this.From = from
 	this.To = to
@@ -47,57 +47,61 @@ func NewInviteWindowWithDefaults() *InviteWindow {
 }
 
 // GetFrom returns the From field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *InviteWindow) GetFrom() string {
-	if o == nil {
+	if o == nil || o.From.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.From
+	return *o.From.Get()
 }
 
 // GetFromOk returns a tuple with the From field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *InviteWindow) GetFromOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.From, true
+	return o.From.Get(), o.From.IsSet()
 }
 
 // SetFrom sets field value
 func (o *InviteWindow) SetFrom(v string) {
-	o.From = v
+	o.From.Set(&v)
 }
 
 // GetTo returns the To field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *InviteWindow) GetTo() string {
-	if o == nil {
+	if o == nil || o.To.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.To
+	return *o.To.Get()
 }
 
 // GetToOk returns a tuple with the To field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *InviteWindow) GetToOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.To, true
+	return o.To.Get(), o.To.IsSet()
 }
 
 // SetTo sets field value
 func (o *InviteWindow) SetTo(v string) {
-	o.To = v
+	o.To.Set(&v)
 }
 
 func (o InviteWindow) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["from"] = o.From
-	toSerialize["to"] = o.To
+	toSerialize["from"] = o.From.Get()
+	toSerialize["to"] = o.To.Get()
 	return toSerialize, nil
 }
 

@@ -21,17 +21,36 @@ var _ MappedNullable = &CreateAccessInviteRequest{}
 
 // CreateAccessInviteRequest struct for CreateAccessInviteRequest
 type CreateAccessInviteRequest struct {
-	ExpiresIn        NullableString `json:"expires_in,omitempty"`
-	InviteRecurrence interface{}    `json:"invite_recurrence,omitempty"`
-	InviteeMessage   interface{}    `json:"invitee_message,omitempty"`
-	IsEnabled        NullableBool   `json:"is_enabled,omitempty"`
-	MaxUses          NullableInt32  `json:"max_uses,omitempty"`
-	Name             NullableString `json:"name,omitempty"`
-	PortalIds        []string       `json:"portal_ids"`
-	// When set (non-empty), defines one or more schedule entries; legacy `valid_from` / `valid_to` / `invite_recurrence` are ignored for scheduling.
-	Schedules []InviteScheduleEntryInput `json:"schedules,omitempty"`
-	ValidFrom NullableString             `json:"valid_from,omitempty"`
-	ValidTo   NullableString             `json:"valid_to,omitempty"`
+	// Whether anyone holding the link may use the invitation, or only the named contacts.
+	Audience *InviteAudience `json:"audience,omitempty"`
+	// Who the invitation is for. Each contact is either free-form (an email address or a phone number) or drawn from the organization (a person or a group). Rejected for shares, which carry no invitee identity. Empty when the link is open to anyone.
+	Contacts []AccessInviteContactInput `json:"contacts,omitempty"`
+	// Why this invitation is being created (required when `invitation_require_justification` applies).
+	CreationJustification NullableString `json:"creation_justification,omitempty"`
+	// Admin-only emergency exception: skip invitation curfew at redemption.
+	CurfewExempt NullableBool `json:"curfew_exempt,omitempty"`
+	// Correlation to the record in the external system of record that owns this invitation (PMS reservation, work order, enrolment). One live invitation may own a given `(source, record_id)` pair per integration, which is what makes retries and duplicate webhook deliveries safe. Omit for invitations authored inside OpenApp.
+	ExternalRef NullableExternalReferenceInput `json:"external_ref,omitempty"`
+	// True when the client will upload a photo immediately after create (media is a follow-up POST).
+	HasPhoto       NullableBool      `json:"has_photo,omitempty"`
+	InviteeMessage interface{}       `json:"invitee_message,omitempty"`
+	IsEnabled      NullableBool      `json:"is_enabled,omitempty"`
+	Kind           *AccessInviteKind `json:"kind,omitempty"`
+	// Reusable org-scoped location id to bind, only consumed when `location_mode` is `explicit`. Create the location first via the locations API (which can geocode it), then reference it here.
+	LocationId NullableString `json:"location_id,omitempty"`
+	// How the event location is resolved. Defaults to `inherit` (use the building location) when omitted. `explicit` binds to the reusable org location referenced by `location_id`; `none` shows no event location.
+	LocationMode NullableLocationBindingMode `json:"location_mode,omitempty"`
+	// Virtual keycard limit: max unique devices allowed to redeem/use this invite. JSON `null` or omitted means unlimited.
+	MaxDevices NullableInt32 `json:"max_devices,omitempty"`
+	// Omit to apply the share default (or leave invitations unlimited). JSON `null` means unlimited.
+	MaxUses NullableInt32  `json:"max_uses,omitempty"`
+	Name    NullableString `json:"name,omitempty"`
+	// Host-chosen PIN (stored hashed). Required when `invitation_require_identity.require_pin`. JSON `null` means no PIN; omission leaves the create default unchanged.
+	Pin NullableString `json:"pin,omitempty"`
+	// Portal ULIDs to grant. Array order is the display order on the public invite page.
+	PortalIds []string `json:"portal_ids"`
+	// One or more validity windows. A single non-recurring entry is the ordinary case; a share is exactly one entry with no explicit start (it opens at request time).
+	Schedules []InviteScheduleEntryInput `json:"schedules"`
 }
 
 type _CreateAccessInviteRequest CreateAccessInviteRequest
@@ -40,9 +59,10 @@ type _CreateAccessInviteRequest CreateAccessInviteRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateAccessInviteRequest(portalIds []string) *CreateAccessInviteRequest {
+func NewCreateAccessInviteRequest(portalIds []string, schedules []InviteScheduleEntryInput) *CreateAccessInviteRequest {
 	this := CreateAccessInviteRequest{}
 	this.PortalIds = portalIds
+	this.Schedules = schedules
 	return &this
 }
 
@@ -54,80 +74,240 @@ func NewCreateAccessInviteRequestWithDefaults() *CreateAccessInviteRequest {
 	return &this
 }
 
-// GetExpiresIn returns the ExpiresIn field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateAccessInviteRequest) GetExpiresIn() string {
-	if o == nil || IsNil(o.ExpiresIn.Get()) {
+// GetAudience returns the Audience field value if set, zero value otherwise.
+func (o *CreateAccessInviteRequest) GetAudience() InviteAudience {
+	if o == nil || IsNil(o.Audience) {
+		var ret InviteAudience
+		return ret
+	}
+	return *o.Audience
+}
+
+// GetAudienceOk returns a tuple with the Audience field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateAccessInviteRequest) GetAudienceOk() (*InviteAudience, bool) {
+	if o == nil || IsNil(o.Audience) {
+		return nil, false
+	}
+	return o.Audience, true
+}
+
+// HasAudience returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasAudience() bool {
+	if o != nil && !IsNil(o.Audience) {
+		return true
+	}
+
+	return false
+}
+
+// SetAudience gets a reference to the given InviteAudience and assigns it to the Audience field.
+func (o *CreateAccessInviteRequest) SetAudience(v InviteAudience) {
+	o.Audience = &v
+}
+
+// GetContacts returns the Contacts field value if set, zero value otherwise.
+func (o *CreateAccessInviteRequest) GetContacts() []AccessInviteContactInput {
+	if o == nil || IsNil(o.Contacts) {
+		var ret []AccessInviteContactInput
+		return ret
+	}
+	return o.Contacts
+}
+
+// GetContactsOk returns a tuple with the Contacts field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateAccessInviteRequest) GetContactsOk() ([]AccessInviteContactInput, bool) {
+	if o == nil || IsNil(o.Contacts) {
+		return nil, false
+	}
+	return o.Contacts, true
+}
+
+// HasContacts returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasContacts() bool {
+	if o != nil && !IsNil(o.Contacts) {
+		return true
+	}
+
+	return false
+}
+
+// SetContacts gets a reference to the given []AccessInviteContactInput and assigns it to the Contacts field.
+func (o *CreateAccessInviteRequest) SetContacts(v []AccessInviteContactInput) {
+	o.Contacts = v
+}
+
+// GetCreationJustification returns the CreationJustification field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetCreationJustification() string {
+	if o == nil || IsNil(o.CreationJustification.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.ExpiresIn.Get()
+	return *o.CreationJustification.Get()
 }
 
-// GetExpiresInOk returns a tuple with the ExpiresIn field value if set, nil otherwise
+// GetCreationJustificationOk returns a tuple with the CreationJustification field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateAccessInviteRequest) GetExpiresInOk() (*string, bool) {
+func (o *CreateAccessInviteRequest) GetCreationJustificationOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.ExpiresIn.Get(), o.ExpiresIn.IsSet()
+	return o.CreationJustification.Get(), o.CreationJustification.IsSet()
 }
 
-// HasExpiresIn returns a boolean if a field has been set.
-func (o *CreateAccessInviteRequest) HasExpiresIn() bool {
-	if o != nil && o.ExpiresIn.IsSet() {
+// HasCreationJustification returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasCreationJustification() bool {
+	if o != nil && o.CreationJustification.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetExpiresIn gets a reference to the given NullableString and assigns it to the ExpiresIn field.
-func (o *CreateAccessInviteRequest) SetExpiresIn(v string) {
-	o.ExpiresIn.Set(&v)
+// SetCreationJustification gets a reference to the given NullableString and assigns it to the CreationJustification field.
+func (o *CreateAccessInviteRequest) SetCreationJustification(v string) {
+	o.CreationJustification.Set(&v)
 }
 
-// SetExpiresInNil sets the value for ExpiresIn to be an explicit nil
-func (o *CreateAccessInviteRequest) SetExpiresInNil() {
-	o.ExpiresIn.Set(nil)
+// SetCreationJustificationNil sets the value for CreationJustification to be an explicit nil
+func (o *CreateAccessInviteRequest) SetCreationJustificationNil() {
+	o.CreationJustification.Set(nil)
 }
 
-// UnsetExpiresIn ensures that no value is present for ExpiresIn, not even an explicit nil
-func (o *CreateAccessInviteRequest) UnsetExpiresIn() {
-	o.ExpiresIn.Unset()
+// UnsetCreationJustification ensures that no value is present for CreationJustification, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetCreationJustification() {
+	o.CreationJustification.Unset()
 }
 
-// GetInviteRecurrence returns the InviteRecurrence field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateAccessInviteRequest) GetInviteRecurrence() interface{} {
-	if o == nil {
-		var ret interface{}
+// GetCurfewExempt returns the CurfewExempt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetCurfewExempt() bool {
+	if o == nil || IsNil(o.CurfewExempt.Get()) {
+		var ret bool
 		return ret
 	}
-	return o.InviteRecurrence
+	return *o.CurfewExempt.Get()
 }
 
-// GetInviteRecurrenceOk returns a tuple with the InviteRecurrence field value if set, nil otherwise
+// GetCurfewExemptOk returns a tuple with the CurfewExempt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateAccessInviteRequest) GetInviteRecurrenceOk() (*interface{}, bool) {
-	if o == nil || IsNil(o.InviteRecurrence) {
+func (o *CreateAccessInviteRequest) GetCurfewExemptOk() (*bool, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return &o.InviteRecurrence, true
+	return o.CurfewExempt.Get(), o.CurfewExempt.IsSet()
 }
 
-// HasInviteRecurrence returns a boolean if a field has been set.
-func (o *CreateAccessInviteRequest) HasInviteRecurrence() bool {
-	if o != nil && !IsNil(o.InviteRecurrence) {
+// HasCurfewExempt returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasCurfewExempt() bool {
+	if o != nil && o.CurfewExempt.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetInviteRecurrence gets a reference to the given interface{} and assigns it to the InviteRecurrence field.
-func (o *CreateAccessInviteRequest) SetInviteRecurrence(v interface{}) {
-	o.InviteRecurrence = v
+// SetCurfewExempt gets a reference to the given NullableBool and assigns it to the CurfewExempt field.
+func (o *CreateAccessInviteRequest) SetCurfewExempt(v bool) {
+	o.CurfewExempt.Set(&v)
+}
+
+// SetCurfewExemptNil sets the value for CurfewExempt to be an explicit nil
+func (o *CreateAccessInviteRequest) SetCurfewExemptNil() {
+	o.CurfewExempt.Set(nil)
+}
+
+// UnsetCurfewExempt ensures that no value is present for CurfewExempt, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetCurfewExempt() {
+	o.CurfewExempt.Unset()
+}
+
+// GetExternalRef returns the ExternalRef field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetExternalRef() ExternalReferenceInput {
+	if o == nil || IsNil(o.ExternalRef.Get()) {
+		var ret ExternalReferenceInput
+		return ret
+	}
+	return *o.ExternalRef.Get()
+}
+
+// GetExternalRefOk returns a tuple with the ExternalRef field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessInviteRequest) GetExternalRefOk() (*ExternalReferenceInput, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ExternalRef.Get(), o.ExternalRef.IsSet()
+}
+
+// HasExternalRef returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasExternalRef() bool {
+	if o != nil && o.ExternalRef.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetExternalRef gets a reference to the given NullableExternalReferenceInput and assigns it to the ExternalRef field.
+func (o *CreateAccessInviteRequest) SetExternalRef(v ExternalReferenceInput) {
+	o.ExternalRef.Set(&v)
+}
+
+// SetExternalRefNil sets the value for ExternalRef to be an explicit nil
+func (o *CreateAccessInviteRequest) SetExternalRefNil() {
+	o.ExternalRef.Set(nil)
+}
+
+// UnsetExternalRef ensures that no value is present for ExternalRef, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetExternalRef() {
+	o.ExternalRef.Unset()
+}
+
+// GetHasPhoto returns the HasPhoto field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetHasPhoto() bool {
+	if o == nil || IsNil(o.HasPhoto.Get()) {
+		var ret bool
+		return ret
+	}
+	return *o.HasPhoto.Get()
+}
+
+// GetHasPhotoOk returns a tuple with the HasPhoto field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessInviteRequest) GetHasPhotoOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.HasPhoto.Get(), o.HasPhoto.IsSet()
+}
+
+// HasHasPhoto returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasHasPhoto() bool {
+	if o != nil && o.HasPhoto.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetHasPhoto gets a reference to the given NullableBool and assigns it to the HasPhoto field.
+func (o *CreateAccessInviteRequest) SetHasPhoto(v bool) {
+	o.HasPhoto.Set(&v)
+}
+
+// SetHasPhotoNil sets the value for HasPhoto to be an explicit nil
+func (o *CreateAccessInviteRequest) SetHasPhotoNil() {
+	o.HasPhoto.Set(nil)
+}
+
+// UnsetHasPhoto ensures that no value is present for HasPhoto, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetHasPhoto() {
+	o.HasPhoto.Unset()
 }
 
 // GetInviteeMessage returns the InviteeMessage field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -204,6 +384,167 @@ func (o *CreateAccessInviteRequest) SetIsEnabledNil() {
 // UnsetIsEnabled ensures that no value is present for IsEnabled, not even an explicit nil
 func (o *CreateAccessInviteRequest) UnsetIsEnabled() {
 	o.IsEnabled.Unset()
+}
+
+// GetKind returns the Kind field value if set, zero value otherwise.
+func (o *CreateAccessInviteRequest) GetKind() AccessInviteKind {
+	if o == nil || IsNil(o.Kind) {
+		var ret AccessInviteKind
+		return ret
+	}
+	return *o.Kind
+}
+
+// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateAccessInviteRequest) GetKindOk() (*AccessInviteKind, bool) {
+	if o == nil || IsNil(o.Kind) {
+		return nil, false
+	}
+	return o.Kind, true
+}
+
+// HasKind returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasKind() bool {
+	if o != nil && !IsNil(o.Kind) {
+		return true
+	}
+
+	return false
+}
+
+// SetKind gets a reference to the given AccessInviteKind and assigns it to the Kind field.
+func (o *CreateAccessInviteRequest) SetKind(v AccessInviteKind) {
+	o.Kind = &v
+}
+
+// GetLocationId returns the LocationId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetLocationId() string {
+	if o == nil || IsNil(o.LocationId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.LocationId.Get()
+}
+
+// GetLocationIdOk returns a tuple with the LocationId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessInviteRequest) GetLocationIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.LocationId.Get(), o.LocationId.IsSet()
+}
+
+// HasLocationId returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasLocationId() bool {
+	if o != nil && o.LocationId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocationId gets a reference to the given NullableString and assigns it to the LocationId field.
+func (o *CreateAccessInviteRequest) SetLocationId(v string) {
+	o.LocationId.Set(&v)
+}
+
+// SetLocationIdNil sets the value for LocationId to be an explicit nil
+func (o *CreateAccessInviteRequest) SetLocationIdNil() {
+	o.LocationId.Set(nil)
+}
+
+// UnsetLocationId ensures that no value is present for LocationId, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetLocationId() {
+	o.LocationId.Unset()
+}
+
+// GetLocationMode returns the LocationMode field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetLocationMode() LocationBindingMode {
+	if o == nil || IsNil(o.LocationMode.Get()) {
+		var ret LocationBindingMode
+		return ret
+	}
+	return *o.LocationMode.Get()
+}
+
+// GetLocationModeOk returns a tuple with the LocationMode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessInviteRequest) GetLocationModeOk() (*LocationBindingMode, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.LocationMode.Get(), o.LocationMode.IsSet()
+}
+
+// HasLocationMode returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasLocationMode() bool {
+	if o != nil && o.LocationMode.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocationMode gets a reference to the given NullableLocationBindingMode and assigns it to the LocationMode field.
+func (o *CreateAccessInviteRequest) SetLocationMode(v LocationBindingMode) {
+	o.LocationMode.Set(&v)
+}
+
+// SetLocationModeNil sets the value for LocationMode to be an explicit nil
+func (o *CreateAccessInviteRequest) SetLocationModeNil() {
+	o.LocationMode.Set(nil)
+}
+
+// UnsetLocationMode ensures that no value is present for LocationMode, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetLocationMode() {
+	o.LocationMode.Unset()
+}
+
+// GetMaxDevices returns the MaxDevices field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetMaxDevices() int32 {
+	if o == nil || IsNil(o.MaxDevices.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.MaxDevices.Get()
+}
+
+// GetMaxDevicesOk returns a tuple with the MaxDevices field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessInviteRequest) GetMaxDevicesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MaxDevices.Get(), o.MaxDevices.IsSet()
+}
+
+// HasMaxDevices returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasMaxDevices() bool {
+	if o != nil && o.MaxDevices.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMaxDevices gets a reference to the given NullableInt32 and assigns it to the MaxDevices field.
+func (o *CreateAccessInviteRequest) SetMaxDevices(v int32) {
+	o.MaxDevices.Set(&v)
+}
+
+// SetMaxDevicesNil sets the value for MaxDevices to be an explicit nil
+func (o *CreateAccessInviteRequest) SetMaxDevicesNil() {
+	o.MaxDevices.Set(nil)
+}
+
+// UnsetMaxDevices ensures that no value is present for MaxDevices, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetMaxDevices() {
+	o.MaxDevices.Unset()
 }
 
 // GetMaxUses returns the MaxUses field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -292,6 +633,49 @@ func (o *CreateAccessInviteRequest) UnsetName() {
 	o.Name.Unset()
 }
 
+// GetPin returns the Pin field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAccessInviteRequest) GetPin() string {
+	if o == nil || IsNil(o.Pin.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Pin.Get()
+}
+
+// GetPinOk returns a tuple with the Pin field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAccessInviteRequest) GetPinOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Pin.Get(), o.Pin.IsSet()
+}
+
+// HasPin returns a boolean if a field has been set.
+func (o *CreateAccessInviteRequest) HasPin() bool {
+	if o != nil && o.Pin.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPin gets a reference to the given NullableString and assigns it to the Pin field.
+func (o *CreateAccessInviteRequest) SetPin(v string) {
+	o.Pin.Set(&v)
+}
+
+// SetPinNil sets the value for Pin to be an explicit nil
+func (o *CreateAccessInviteRequest) SetPinNil() {
+	o.Pin.Set(nil)
+}
+
+// UnsetPin ensures that no value is present for Pin, not even an explicit nil
+func (o *CreateAccessInviteRequest) UnsetPin() {
+	o.Pin.Unset()
+}
+
 // GetPortalIds returns the PortalIds field value
 func (o *CreateAccessInviteRequest) GetPortalIds() []string {
 	if o == nil {
@@ -316,132 +700,49 @@ func (o *CreateAccessInviteRequest) SetPortalIds(v []string) {
 	o.PortalIds = v
 }
 
-// GetSchedules returns the Schedules field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetSchedules returns the Schedules field value
 func (o *CreateAccessInviteRequest) GetSchedules() []InviteScheduleEntryInput {
 	if o == nil {
 		var ret []InviteScheduleEntryInput
 		return ret
 	}
+
 	return o.Schedules
 }
 
-// GetSchedulesOk returns a tuple with the Schedules field value if set, nil otherwise
+// GetSchedulesOk returns a tuple with the Schedules field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *CreateAccessInviteRequest) GetSchedulesOk() ([]InviteScheduleEntryInput, bool) {
-	if o == nil || IsNil(o.Schedules) {
+	if o == nil {
 		return nil, false
 	}
 	return o.Schedules, true
 }
 
-// HasSchedules returns a boolean if a field has been set.
-func (o *CreateAccessInviteRequest) HasSchedules() bool {
-	if o != nil && !IsNil(o.Schedules) {
-		return true
-	}
-
-	return false
-}
-
-// SetSchedules gets a reference to the given []InviteScheduleEntryInput and assigns it to the Schedules field.
+// SetSchedules sets field value
 func (o *CreateAccessInviteRequest) SetSchedules(v []InviteScheduleEntryInput) {
 	o.Schedules = v
 }
 
-// GetValidFrom returns the ValidFrom field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateAccessInviteRequest) GetValidFrom() string {
-	if o == nil || IsNil(o.ValidFrom.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.ValidFrom.Get()
-}
-
-// GetValidFromOk returns a tuple with the ValidFrom field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateAccessInviteRequest) GetValidFromOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.ValidFrom.Get(), o.ValidFrom.IsSet()
-}
-
-// HasValidFrom returns a boolean if a field has been set.
-func (o *CreateAccessInviteRequest) HasValidFrom() bool {
-	if o != nil && o.ValidFrom.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetValidFrom gets a reference to the given NullableString and assigns it to the ValidFrom field.
-func (o *CreateAccessInviteRequest) SetValidFrom(v string) {
-	o.ValidFrom.Set(&v)
-}
-
-// SetValidFromNil sets the value for ValidFrom to be an explicit nil
-func (o *CreateAccessInviteRequest) SetValidFromNil() {
-	o.ValidFrom.Set(nil)
-}
-
-// UnsetValidFrom ensures that no value is present for ValidFrom, not even an explicit nil
-func (o *CreateAccessInviteRequest) UnsetValidFrom() {
-	o.ValidFrom.Unset()
-}
-
-// GetValidTo returns the ValidTo field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateAccessInviteRequest) GetValidTo() string {
-	if o == nil || IsNil(o.ValidTo.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.ValidTo.Get()
-}
-
-// GetValidToOk returns a tuple with the ValidTo field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateAccessInviteRequest) GetValidToOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.ValidTo.Get(), o.ValidTo.IsSet()
-}
-
-// HasValidTo returns a boolean if a field has been set.
-func (o *CreateAccessInviteRequest) HasValidTo() bool {
-	if o != nil && o.ValidTo.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetValidTo gets a reference to the given NullableString and assigns it to the ValidTo field.
-func (o *CreateAccessInviteRequest) SetValidTo(v string) {
-	o.ValidTo.Set(&v)
-}
-
-// SetValidToNil sets the value for ValidTo to be an explicit nil
-func (o *CreateAccessInviteRequest) SetValidToNil() {
-	o.ValidTo.Set(nil)
-}
-
-// UnsetValidTo ensures that no value is present for ValidTo, not even an explicit nil
-func (o *CreateAccessInviteRequest) UnsetValidTo() {
-	o.ValidTo.Unset()
-}
-
 func (o CreateAccessInviteRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.ExpiresIn.IsSet() {
-		toSerialize["expires_in"] = o.ExpiresIn.Get()
+	if !IsNil(o.Audience) {
+		toSerialize["audience"] = o.Audience
 	}
-	if o.InviteRecurrence != nil {
-		toSerialize["invite_recurrence"] = o.InviteRecurrence
+	if !IsNil(o.Contacts) {
+		toSerialize["contacts"] = o.Contacts
+	}
+	if o.CreationJustification.IsSet() {
+		toSerialize["creation_justification"] = o.CreationJustification.Get()
+	}
+	if o.CurfewExempt.IsSet() {
+		toSerialize["curfew_exempt"] = o.CurfewExempt.Get()
+	}
+	if o.ExternalRef.IsSet() {
+		toSerialize["external_ref"] = o.ExternalRef.Get()
+	}
+	if o.HasPhoto.IsSet() {
+		toSerialize["has_photo"] = o.HasPhoto.Get()
 	}
 	if o.InviteeMessage != nil {
 		toSerialize["invitee_message"] = o.InviteeMessage
@@ -449,22 +750,29 @@ func (o CreateAccessInviteRequest) ToMap() (map[string]interface{}, error) {
 	if o.IsEnabled.IsSet() {
 		toSerialize["is_enabled"] = o.IsEnabled.Get()
 	}
+	if !IsNil(o.Kind) {
+		toSerialize["kind"] = o.Kind
+	}
+	if o.LocationId.IsSet() {
+		toSerialize["location_id"] = o.LocationId.Get()
+	}
+	if o.LocationMode.IsSet() {
+		toSerialize["location_mode"] = o.LocationMode.Get()
+	}
+	if o.MaxDevices.IsSet() {
+		toSerialize["max_devices"] = o.MaxDevices.Get()
+	}
 	if o.MaxUses.IsSet() {
 		toSerialize["max_uses"] = o.MaxUses.Get()
 	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
 	}
+	if o.Pin.IsSet() {
+		toSerialize["pin"] = o.Pin.Get()
+	}
 	toSerialize["portal_ids"] = o.PortalIds
-	if o.Schedules != nil {
-		toSerialize["schedules"] = o.Schedules
-	}
-	if o.ValidFrom.IsSet() {
-		toSerialize["valid_from"] = o.ValidFrom.Get()
-	}
-	if o.ValidTo.IsSet() {
-		toSerialize["valid_to"] = o.ValidTo.Get()
-	}
+	toSerialize["schedules"] = o.Schedules
 	return toSerialize, nil
 }
 
@@ -474,6 +782,7 @@ func (o *CreateAccessInviteRequest) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"portal_ids",
+		"schedules",
 	}
 
 	allProperties := make(map[string]interface{})

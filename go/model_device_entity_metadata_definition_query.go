@@ -21,7 +21,7 @@ var _ MappedNullable = &DeviceEntityMetadataDefinitionQuery{}
 
 // DeviceEntityMetadataDefinitionQuery struct for DeviceEntityMetadataDefinitionQuery
 type DeviceEntityMetadataDefinitionQuery struct {
-	EntityType string `json:"entity_type"`
+	EntityType NullableString `json:"entity_type"`
 }
 
 type _DeviceEntityMetadataDefinitionQuery DeviceEntityMetadataDefinitionQuery
@@ -30,7 +30,7 @@ type _DeviceEntityMetadataDefinitionQuery DeviceEntityMetadataDefinitionQuery
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDeviceEntityMetadataDefinitionQuery(entityType string) *DeviceEntityMetadataDefinitionQuery {
+func NewDeviceEntityMetadataDefinitionQuery(entityType NullableString) *DeviceEntityMetadataDefinitionQuery {
 	this := DeviceEntityMetadataDefinitionQuery{}
 	this.EntityType = entityType
 	return &this
@@ -45,32 +45,34 @@ func NewDeviceEntityMetadataDefinitionQueryWithDefaults() *DeviceEntityMetadataD
 }
 
 // GetEntityType returns the EntityType field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *DeviceEntityMetadataDefinitionQuery) GetEntityType() string {
-	if o == nil {
+	if o == nil || o.EntityType.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.EntityType
+	return *o.EntityType.Get()
 }
 
 // GetEntityTypeOk returns a tuple with the EntityType field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *DeviceEntityMetadataDefinitionQuery) GetEntityTypeOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.EntityType, true
+	return o.EntityType.Get(), o.EntityType.IsSet()
 }
 
 // SetEntityType sets field value
 func (o *DeviceEntityMetadataDefinitionQuery) SetEntityType(v string) {
-	o.EntityType = v
+	o.EntityType.Set(&v)
 }
 
 func (o DeviceEntityMetadataDefinitionQuery) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["entity_type"] = o.EntityType
+	toSerialize["entity_type"] = o.EntityType.Get()
 	return toSerialize, nil
 }
 

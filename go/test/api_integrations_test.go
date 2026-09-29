@@ -19,7 +19,7 @@ import (
 
 func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
-	apiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"
+	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })

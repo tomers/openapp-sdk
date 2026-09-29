@@ -5,6 +5,7 @@ All URIs are relative to */api/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**GetPublicInvite**](PublicAccessAPI.md#GetPublicInvite) | **Get** /public/access/invites/{inviteToken} |
+[**GetPublicInvitePhoto**](PublicAccessAPI.md#GetPublicInvitePhoto) | **Get** /public/access/invites/{inviteToken}/photo |
 [**GetPublicPortal**](PublicAccessAPI.md#GetPublicPortal) | **Get** /public/access/portals/{publicPortalId} |
 [**GetPublicPortalReachable**](PublicAccessAPI.md#GetPublicPortalReachable) | **Get** /public/access/portals/{publicPortalId}/reachable |
 [**GetPublicPortalTargets**](PublicAccessAPI.md#GetPublicPortalTargets) | **Get** /public/access/portals/{publicPortalId}/targets |
@@ -12,6 +13,8 @@ Method | HTTP request | Description
 [**GetPublicSessionStreams**](PublicAccessAPI.md#GetPublicSessionStreams) | **Get** /public/access/sessions/{sessionId}/streams |
 [**PostPublicInviteClaim**](PublicAccessAPI.md#PostPublicInviteClaim) | **Post** /public/access/invites/{inviteToken}/claim |
 [**PostPublicInviteExecute**](PublicAccessAPI.md#PostPublicInviteExecute) | **Post** /public/access/invites/{inviteToken}/execute |
+[**PostPublicInviteOtpStart**](PublicAccessAPI.md#PostPublicInviteOtpStart) | **Post** /public/access/invites/{inviteToken}/otp/start |
+[**PostPublicInviteRenewal**](PublicAccessAPI.md#PostPublicInviteRenewal) | **Post** /public/access/invites/{inviteToken}/renewal |
 [**PostPublicInviteSession**](PublicAccessAPI.md#PostPublicInviteSession) | **Post** /public/access/invites/{inviteToken}/session |
 [**PostPublicPortalLights**](PublicAccessAPI.md#PostPublicPortalLights) | **Post** /public/access/portals/{publicPortalId}/lights |
 [**PostPublicPortalOpen**](PublicAccessAPI.md#PostPublicPortalOpen) | **Post** /public/access/portals/{publicPortalId}/open |
@@ -19,14 +22,14 @@ Method | HTTP request | Description
 [**PostPublicSessionCancel**](PublicAccessAPI.md#PostPublicSessionCancel) | **Post** /public/access/sessions/{sessionId}/cancel | Caller hangs up while ringing so callees polling GET session can dismiss incoming UI.
 [**PostPublicSessionDecline**](PublicAccessAPI.md#PostPublicSessionDecline) | **Post** /public/access/sessions/{sessionId}/decline | Callee rejects the ring before answering; caller can observe &#x60;state&#x60; via GET session.
 [**PostPublicSessionLights**](PublicAccessAPI.md#PostPublicSessionLights) | **Post** /public/access/sessions/{sessionId}/lights |
-[**PostPublicSessionNotifyMessage**](PublicAccessAPI.md#PostPublicSessionNotifyMessage) | **Post** /public/access/sessions/{sessionId}/notify-message | Caller notifies apartment residents with the chat message text (Web Push).
+[**PostPublicSessionNotifyMessage**](PublicAccessAPI.md#PostPublicSessionNotifyMessage) | **Post** /public/access/sessions/{sessionId}/notify-message | Caller notifies listing members with the chat message text (Web Push).
 [**PostPublicSessionOpen**](PublicAccessAPI.md#PostPublicSessionOpen) | **Post** /public/access/sessions/{sessionId}/open |
 
 
 
 ## GetPublicInvite
 
-> PublicInviteResponse GetPublicInvite(ctx, inviteToken).Execute()
+> PublicInviteResponse GetPublicInvite(ctx, inviteToken).DeviceId(deviceId).Execute()
 
 
 
@@ -44,14 +47,15 @@ import (
 
 func main() {
 	inviteToken := "inviteToken_example" // string |
+	deviceId := "deviceId_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.PublicAccessAPI.GetPublicInvite(context.Background(), inviteToken).Execute()
+	resp, r, err := apiClient.PublicAccessAPI.GetPublicInvite(context.Background(), inviteToken).DeviceId(deviceId).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `PublicAccessAPI.GetPublicInvite``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -77,10 +81,81 @@ Other parameters are passed through a pointer to a apiGetPublicInviteRequest str
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
+ **deviceId** | **string** |  |
 
 ### Return type
 
 [**PublicInviteResponse**](PublicInviteResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## GetPublicInvitePhoto
+
+> GetPublicInvitePhoto(ctx, inviteToken).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	inviteToken := "inviteToken_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	r, err := apiClient.PublicAccessAPI.GetPublicInvitePhoto(context.Background(), inviteToken).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `PublicAccessAPI.GetPublicInvitePhoto``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**inviteToken** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetPublicInvitePhotoRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+ (empty response body)
 
 ### Authorization
 
@@ -102,6 +177,8 @@ No authorization required
 
 
 
+
+
 ### Example
 
 ```go
@@ -117,7 +194,7 @@ import (
 func main() {
 	publicPortalId := "publicPortalId_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -189,7 +266,7 @@ import (
 func main() {
 	publicPortalId := "publicPortalId_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -261,7 +338,7 @@ import (
 func main() {
 	publicPortalId := "publicPortalId_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -334,7 +411,7 @@ func main() {
 	sessionId := "sessionId_example" // string |
 	token := "token_example" // string | Session token (alternative to Bearer when headers stripped) (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -408,7 +485,7 @@ func main() {
 	sessionId := "sessionId_example" // string |
 	token := "token_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -481,7 +558,7 @@ import (
 func main() {
 	inviteToken := "inviteToken_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -536,6 +613,8 @@ No authorization required
 
 
 
+
+
 ### Example
 
 ```go
@@ -552,7 +631,7 @@ func main() {
 	inviteToken := "inviteToken_example" // string |
 	publicInviteExecuteRequest := *openapiclient.NewPublicInviteExecuteRequest("GrantId_example") // PublicInviteExecuteRequest |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -604,9 +683,157 @@ No authorization required
 [[Back to README]](../README.md)
 
 
+## PostPublicInviteOtpStart
+
+> PublicInviteOtpStartResponse PostPublicInviteOtpStart(ctx, inviteToken).PublicInviteOtpStartRequest(publicInviteOtpStartRequest).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	inviteToken := "inviteToken_example" // string |
+	publicInviteOtpStartRequest := *openapiclient.NewPublicInviteOtpStartRequest() // PublicInviteOtpStartRequest |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.PublicAccessAPI.PostPublicInviteOtpStart(context.Background(), inviteToken).PublicInviteOtpStartRequest(publicInviteOtpStartRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `PublicAccessAPI.PostPublicInviteOtpStart``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `PostPublicInviteOtpStart`: PublicInviteOtpStartResponse
+	fmt.Fprintf(os.Stdout, "Response from `PublicAccessAPI.PostPublicInviteOtpStart`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**inviteToken** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPostPublicInviteOtpStartRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **publicInviteOtpStartRequest** | [**PublicInviteOtpStartRequest**](PublicInviteOtpStartRequest.md) |  |
+
+### Return type
+
+[**PublicInviteOtpStartResponse**](PublicInviteOtpStartResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## PostPublicInviteRenewal
+
+> PublicInviteRenewalResponse PostPublicInviteRenewal(ctx, inviteToken).PublicInviteRenewalRequest(publicInviteRenewalRequest).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	inviteToken := "inviteToken_example" // string |
+	publicInviteRenewalRequest := *openapiclient.NewPublicInviteRenewalRequest() // PublicInviteRenewalRequest |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.PublicAccessAPI.PostPublicInviteRenewal(context.Background(), inviteToken).PublicInviteRenewalRequest(publicInviteRenewalRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `PublicAccessAPI.PostPublicInviteRenewal``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `PostPublicInviteRenewal`: PublicInviteRenewalResponse
+	fmt.Fprintf(os.Stdout, "Response from `PublicAccessAPI.PostPublicInviteRenewal`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**inviteToken** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPostPublicInviteRenewalRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **publicInviteRenewalRequest** | [**PublicInviteRenewalRequest**](PublicInviteRenewalRequest.md) |  |
+
+### Return type
+
+[**PublicInviteRenewalResponse**](PublicInviteRenewalResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## PostPublicInviteSession
 
-> PostPublicInviteSession(ctx, inviteToken).Execute()
+> PublicInviteSessionResponse PostPublicInviteSession(ctx, inviteToken).Execute()
 
 
 
@@ -625,17 +852,19 @@ import (
 func main() {
 	inviteToken := "inviteToken_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	r, err := apiClient.PublicAccessAPI.PostPublicInviteSession(context.Background(), inviteToken).Execute()
+	resp, r, err := apiClient.PublicAccessAPI.PostPublicInviteSession(context.Background(), inviteToken).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `PublicAccessAPI.PostPublicInviteSession``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
+	// response from `PostPublicInviteSession`: PublicInviteSessionResponse
+	fmt.Fprintf(os.Stdout, "Response from `PublicAccessAPI.PostPublicInviteSession`: %v\n", resp)
 }
 ```
 
@@ -658,7 +887,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
- (empty response body)
+[**PublicInviteSessionResponse**](PublicInviteSessionResponse.md)
 
 ### Authorization
 
@@ -695,7 +924,7 @@ import (
 func main() {
 	publicPortalId := "publicPortalId_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -750,6 +979,8 @@ No authorization required
 
 
 
+
+
 ### Example
 
 ```go
@@ -765,7 +996,7 @@ import (
 func main() {
 	publicPortalId := "publicPortalId_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -820,6 +1051,8 @@ No authorization required
 
 
 
+
+
 ### Example
 
 ```go
@@ -836,7 +1069,7 @@ func main() {
 	publicPortalId := "publicPortalId_example" // string |
 	publicPortalCreateSessionRequest := *openapiclient.NewPublicPortalCreateSessionRequest("Mode_example", "TargetEntityId_example") // PublicPortalCreateSessionRequest |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -910,7 +1143,7 @@ func main() {
 	sessionId := "sessionId_example" // string |
 	token := "token_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -982,7 +1215,7 @@ func main() {
 	sessionId := "sessionId_example" // string |
 	token := "token_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -1054,7 +1287,7 @@ func main() {
 	sessionId := "sessionId_example" // string |
 	token := "token_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -1108,7 +1341,7 @@ No authorization required
 
 > PostPublicSessionNotifyMessage(ctx, sessionId).NotifyPortalMessageBody(notifyPortalMessageBody).Token(token).Execute()
 
-Caller notifies apartment residents with the chat message text (Web Push).
+Caller notifies listing members with the chat message text (Web Push).
 
 ### Example
 
@@ -1127,7 +1360,7 @@ func main() {
 	notifyPortalMessageBody := *openapiclient.NewNotifyPortalMessageBody("Text_example") // NotifyPortalMessageBody |
 	token := "token_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -1184,6 +1417,8 @@ No authorization required
 
 
 
+
+
 ### Example
 
 ```go
@@ -1200,7 +1435,7 @@ func main() {
 	sessionId := "sessionId_example" // string |
 	token := "token_example" // string |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)

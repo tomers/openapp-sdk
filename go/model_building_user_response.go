@@ -21,11 +21,11 @@ var _ MappedNullable = &BuildingUserResponse{}
 
 // BuildingUserResponse struct for BuildingUserResponse
 type BuildingUserResponse struct {
-	Apartments []string       `json:"apartments"`
-	Role       string         `json:"role"`
-	UserEmail  NullableString `json:"user_email,omitempty"`
-	UserId     string         `json:"user_id"`
-	UserName   interface{}    `json:"user_name,omitempty"`
+	Listings  []string       `json:"listings"`
+	Role      NullableString `json:"role"`
+	UserEmail NullableString `json:"user_email,omitempty"`
+	UserId    NullableString `json:"user_id"`
+	UserName  interface{}    `json:"user_name,omitempty"`
 }
 
 type _BuildingUserResponse BuildingUserResponse
@@ -34,9 +34,9 @@ type _BuildingUserResponse BuildingUserResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBuildingUserResponse(apartments []string, role string, userId string) *BuildingUserResponse {
+func NewBuildingUserResponse(listings []string, role NullableString, userId NullableString) *BuildingUserResponse {
 	this := BuildingUserResponse{}
-	this.Apartments = apartments
+	this.Listings = listings
 	this.Role = role
 	this.UserId = userId
 	return &this
@@ -50,52 +50,54 @@ func NewBuildingUserResponseWithDefaults() *BuildingUserResponse {
 	return &this
 }
 
-// GetApartments returns the Apartments field value
-func (o *BuildingUserResponse) GetApartments() []string {
+// GetListings returns the Listings field value
+func (o *BuildingUserResponse) GetListings() []string {
 	if o == nil {
 		var ret []string
 		return ret
 	}
 
-	return o.Apartments
+	return o.Listings
 }
 
-// GetApartmentsOk returns a tuple with the Apartments field value
+// GetListingsOk returns a tuple with the Listings field value
 // and a boolean to check if the value has been set.
-func (o *BuildingUserResponse) GetApartmentsOk() ([]string, bool) {
+func (o *BuildingUserResponse) GetListingsOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Apartments, true
+	return o.Listings, true
 }
 
-// SetApartments sets field value
-func (o *BuildingUserResponse) SetApartments(v []string) {
-	o.Apartments = v
+// SetListings sets field value
+func (o *BuildingUserResponse) SetListings(v []string) {
+	o.Listings = v
 }
 
 // GetRole returns the Role field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *BuildingUserResponse) GetRole() string {
-	if o == nil {
+	if o == nil || o.Role.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.Role
+	return *o.Role.Get()
 }
 
 // GetRoleOk returns a tuple with the Role field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *BuildingUserResponse) GetRoleOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Role, true
+	return o.Role.Get(), o.Role.IsSet()
 }
 
 // SetRole sets field value
 func (o *BuildingUserResponse) SetRole(v string) {
-	o.Role = v
+	o.Role.Set(&v)
 }
 
 // GetUserEmail returns the UserEmail field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -142,27 +144,29 @@ func (o *BuildingUserResponse) UnsetUserEmail() {
 }
 
 // GetUserId returns the UserId field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *BuildingUserResponse) GetUserId() string {
-	if o == nil {
+	if o == nil || o.UserId.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.UserId
+	return *o.UserId.Get()
 }
 
 // GetUserIdOk returns a tuple with the UserId field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *BuildingUserResponse) GetUserIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.UserId, true
+	return o.UserId.Get(), o.UserId.IsSet()
 }
 
 // SetUserId sets field value
 func (o *BuildingUserResponse) SetUserId(v string) {
-	o.UserId = v
+	o.UserId.Set(&v)
 }
 
 // GetUserName returns the UserName field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -200,12 +204,12 @@ func (o *BuildingUserResponse) SetUserName(v interface{}) {
 
 func (o BuildingUserResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["apartments"] = o.Apartments
-	toSerialize["role"] = o.Role
+	toSerialize["listings"] = o.Listings
+	toSerialize["role"] = o.Role.Get()
 	if o.UserEmail.IsSet() {
 		toSerialize["user_email"] = o.UserEmail.Get()
 	}
-	toSerialize["user_id"] = o.UserId
+	toSerialize["user_id"] = o.UserId.Get()
 	if o.UserName != nil {
 		toSerialize["user_name"] = o.UserName
 	}
@@ -217,7 +221,7 @@ func (o *BuildingUserResponse) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"apartments",
+		"listings",
 		"role",
 		"user_id",
 	}

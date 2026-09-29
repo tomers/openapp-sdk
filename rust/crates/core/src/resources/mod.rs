@@ -12,11 +12,12 @@
 //! [`crate::transport::Transport::request_json`] through the bridge and layers its
 //! own Pydantic-typed wrappers on top.
 
-mod apartment_residents;
+mod agents;
 mod api_keys;
 mod auth;
 mod billing;
 mod devices;
+mod directory_listing_members;
 mod entities;
 mod eula;
 mod integrations;
@@ -29,11 +30,12 @@ mod status;
 mod users;
 mod zones;
 
-pub use apartment_residents::ApartmentResidentsClient;
+pub use agents::AgentsClient;
 pub use api_keys::ApiKeysClient;
 pub use auth::AuthClient;
 pub use billing::BillingClient;
 pub use devices::DevicesClient;
+pub use directory_listing_members::DirectoryListingMembersClient;
 pub use entities::EntitiesClient;
 pub use eula::EulaClient;
 pub use integrations::IntegrationsClient;
@@ -41,7 +43,7 @@ pub use lan_agent::LanAgentClient;
 pub use me::MeClient;
 pub use orgs::OrgsClient;
 pub use public_access::PublicAccessClient;
-pub use scripting::ScriptingClient;
+pub use scripting::{PollSchedule, ScriptingClient};
 pub use status::StatusClient;
 pub use users::UsersClient;
 pub use zones::ZonesClient;

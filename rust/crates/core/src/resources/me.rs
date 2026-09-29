@@ -20,11 +20,21 @@ impl MeClient {
         Self { transport }
     }
 
-    pub async fn apartments(&self) -> Result<types::MeApartmentsResponse, SdkError> {
+    pub async fn profile(&self) -> Result<types::MeProfileResponse, SdkError> {
         self.transport
-            .request_json::<(), types::MeApartmentsResponse>(RequestSpec {
+            .request_json::<(), types::MeProfileResponse>(RequestSpec {
                 method: Method::GET,
-                path: "/me/apartments",
+                path: "/me/profile",
+                ..Default::default()
+            })
+            .await
+    }
+
+    pub async fn directory_listings(&self) -> Result<types::MeListingsResponse, SdkError> {
+        self.transport
+            .request_json::<(), types::MeListingsResponse>(RequestSpec {
+                method: Method::GET,
+                path: "/me/directory-listings",
                 ..Default::default()
             })
             .await

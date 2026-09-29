@@ -2,13 +2,22 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+import asyncio
+from collections.abc import Sequence
 from types import SimpleNamespace
 from typing import Any
 
 import httpx
 import pytest
-from openapp_sdk import ApiError, AsyncClient, AuthError, Client, HttpError
+from openapp_sdk import (
+    ApiError,
+    AsyncClient,
+    AuthError,
+    Client,
+    HttpError,
+    SdkError,
+    TransportError,
+)
 from openapp_sdk.bridge.base import BridgeClient, BridgeRequest
 
 BASE = "https://api.test"
@@ -26,8 +35,15 @@ def _routes(monkeypatch: pytest.MonkeyPatch) -> _FakeBridge:
 
 
 class _RecordedRequest:
-    def __init__(self, *, headers: dict[str, str], content: bytes) -> None:
+    def __init__(
+        self,
+        *,
+        headers: dict[str, str],
+        content: bytes,
+        query: Sequence[tuple[str, str | None]],
+    ) -> None:
         self.headers = headers
+        self.query = tuple(query)
         self._content = content
 
     def read(self) -> bytes:
@@ -53,21 +69,40 @@ class _FakeRoute:
 
 
 class _FakeBridgeClient(BridgeClient):
-    def __init__(self, bridge: _FakeBridge, *, api_key: str, base_url: str) -> None:
+    def __init__(
+        self,
+        bridge: _FakeBridge,
+        *,
+        api_key: str,
+        base_url: str,
+        org: str | None = None,
+    ) -> None:
         self._bridge = bridge
         self._api_key = api_key
         self.base_url = base_url
+        self._org = org
+
+    def with_org(self, org: str) -> BridgeClient:
+        return _FakeBridgeClient(
+            self._bridge, api_key=self._api_key, base_url=self.base_url, org=org
+        )
 
     async def request(self, req: BridgeRequest) -> Any:
         route = self._bridge.routes[(req.method.upper(), req.path)]
-        headers = {"authorization": f"Bearer {self._api_key}"}
+        headers = {"x-api-key": self._api_key}
+        if self._org is not None:
+            headers["x-org"] = self._org
         body = b""
         if req.multipart is None and req.body_json is not None:
             body = req.body_json.encode()
         if req.multipart is not None:
             headers["content-type"] = "multipart/form-data; boundary=openapp-test"
 
-        route.calls.append(SimpleNamespace(request=_RecordedRequest(headers=headers, content=body)))
+        route.calls.append(
+            SimpleNamespace(
+                request=_RecordedRequest(headers=headers, content=body, query=req.query)
+            )
+        )
         response = route._response
         assert response is not None
         if response.status_code >= 400:
@@ -92,6 +127,9 @@ class _FakeBridge:
     def post(self, path: str) -> _FakeRoute:
         return _FakeRoute(self, "POST", path)
 
+    def delete(self, path: str) -> _FakeRoute:
+        return _FakeRoute(self, "DELETE", path)
+
     def new_client(
         self,
         *,
@@ -100,6 +138,7 @@ class _FakeBridge:
         user_agent: str,
         timeout_secs: float,
         max_retries: int,
+        org: str | None = None,
     ) -> BridgeClient:
         return _FakeBridgeClient(self, api_key=api_key, base_url=base_url)
 
@@ -139,6 +178,18 @@ async def test_status_get(_routes: _FakeBridge) -> None:
         assert body == {"backend": "ok"}
     finally:
         await client.close()
+
+
+@pytest.mark.asyncio
+async def test_with_org_scopes_requests(_routes: _FakeBridge) -> None:
+    route = _routes.get("/status").mock(return_value=httpx.Response(200, json={"backend": "ok"}))
+    client = await _connect()
+    scoped = client.with_org("org_1")
+    try:
+        await scoped.status.get()
+    finally:
+        await client.close()
+    assert route.calls[0].request.headers["x-org"] == "org_1"
 
 
 @pytest.mark.tier_0
@@ -267,6 +318,22 @@ async def test_entity_handle_aliases_map_to_actions(
 
 
 @pytest.mark.asyncio
+async def test_device_channel_count_refresh_posts_to_device_action(
+    _routes: _FakeBridge,
+) -> None:
+    route = _routes.post("/devices/dev_1/channel-count/refresh").mock(
+        return_value=httpx.Response(200, json={"channel_count": 2})
+    )
+    client = await _connect()
+    try:
+        result = await client.devices.refresh_channel_count("dev_1")
+        assert result == {"channel_count": 2}
+        assert route.called
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
 async def test_device_upload_image_sends_multipart(_routes: _FakeBridge) -> None:
     route = _routes.post("/devices/dev_1/image").mock(
         return_value=httpx.Response(
@@ -357,6 +424,25 @@ async def test_org_upload_image_sends_multipart(_routes: _FakeBridge) -> None:
 
 
 @pytest.mark.asyncio
+async def test_integration_channel_count_refresh_posts_to_discovery_action(
+    _routes: _FakeBridge,
+) -> None:
+    route = _routes.post("/integrations/int_1/discovered-devices/refresh-channel-counts").mock(
+        return_value=httpx.Response(
+            200,
+            json={"updated_devices": 1, "devices": [{"external_id": "shelly-1"}]},
+        )
+    )
+    client = await _connect()
+    try:
+        response = await client.integrations.refresh_device_channel_counts("int_1")
+        assert response["updated_devices"] == 1
+        assert route.called
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
 async def test_integration_upload_image_sends_multipart(_routes: _FakeBridge) -> None:
     route = _routes.post("/integrations/int_1/image").mock(
         return_value=httpx.Response(
@@ -413,17 +499,94 @@ async def test_upload_image_from_url_rejects_non_http(_routes: _FakeBridge) -> N
         await client.close()
 
 
+async def _no_sleep(_delay: float) -> None:
+    return None
+
+
 @pytest.mark.asyncio
-async def test_scripting_execute_sends_script_body(_routes: _FakeBridge) -> None:
-    route = _routes.post("/scripting/execute").mock(
-        return_value=httpx.Response(200, json={"result": None})
+async def test_scripting_create_execution_posts_script(_routes: _FakeBridge) -> None:
+    route = _routes.post("/scripting/executions").mock(
+        return_value=httpx.Response(202, json={"id": "exec_1", "status": "pending"})
+    )
+    client = await _connect()
+    try:
+        job = await client.scripting.create_execution(script="1 + 1")
+        assert job == {"id": "exec_1", "status": "pending"}
+        assert route.called
+        assert route.calls[0].request.read().decode() == '{"script": "1 + 1"}'
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_scripting_get_execution_reads_by_id(_routes: _FakeBridge) -> None:
+    route = _routes.get("/scripting/executions/exec_1").mock(
+        return_value=httpx.Response(200, json={"id": "exec_1", "status": "succeeded", "result": 2})
+    )
+    client = await _connect()
+    try:
+        job = await client.scripting.get_execution("exec_1")
+        assert job["result"] == 2
+        assert route.called
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_scripting_list_executions_passes_limit(_routes: _FakeBridge) -> None:
+    route = _routes.get("/scripting/executions").mock(
+        return_value=httpx.Response(200, json=[{"id": "exec_1", "status": "succeeded"}])
+    )
+    client = await _connect()
+    try:
+        jobs = await client.scripting.list_executions(limit=5)
+        assert jobs == [{"id": "exec_1", "status": "succeeded"}]
+        assert route.calls[0].request.query == (("limit", "5"),)
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_scripting_list_executions_omits_absent_limit(_routes: _FakeBridge) -> None:
+    route = _routes.get("/scripting/executions").mock(return_value=httpx.Response(200, json=[]))
+    client = await _connect()
+    try:
+        assert await client.scripting.list_executions() == []
+        assert route.calls[0].request.query == ()
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_scripting_cancel_execution_deletes(_routes: _FakeBridge) -> None:
+    route = _routes.delete("/scripting/executions/exec_1").mock(return_value=httpx.Response(204))
+    client = await _connect()
+    try:
+        await client.scripting.cancel_execution("exec_1")
+        assert route.called
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_scripting_execute_sends_script_body(
+    _routes: _FakeBridge, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(asyncio, "sleep", _no_sleep)
+    route = _routes.post("/scripting/executions").mock(
+        return_value=httpx.Response(202, json={"id": "exec_1", "status": "pending"})
+    )
+    _routes.get("/scripting/executions/exec_1").mock(
+        return_value=httpx.Response(
+            200, json={"id": "exec_1", "status": "succeeded", "result": None}
+        )
     )
     client = await _connect()
     try:
         result = await client.scripting.execute(
             script='upload_image("entity", "ent_1", "https://x");'
         )
-        assert result == {"result": None}
+        assert result is None
         assert route.called
         request = route.calls[0].request
         assert (
@@ -435,28 +598,42 @@ async def test_scripting_execute_sends_script_body(_routes: _FakeBridge) -> None
 
 
 @pytest.mark.asyncio
-async def test_scripting_execute_file_sends_file_contents(
-    _routes: _FakeBridge, tmp_path: Path
+async def test_scripting_execute_raises_on_failed_job(
+    _routes: _FakeBridge, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    route = _routes.post("/scripting/execute").mock(
-        return_value=httpx.Response(200, json={"result": {"state": "open"}})
+    monkeypatch.setattr(asyncio, "sleep", _no_sleep)
+    _routes.post("/scripting/executions").mock(
+        return_value=httpx.Response(202, json={"id": "exec_1", "status": "pending"})
     )
-    script_path = tmp_path / "open-door.openapp"
-    script_path.write_text(
-        'entity_action("01J00000000000000000000000", "switchable.open", #{});\n',
-        encoding="utf-8",
+    _routes.get("/scripting/executions/exec_1").mock(
+        return_value=httpx.Response(200, json={"id": "exec_1", "status": "failed", "error": "boom"})
     )
     client = await _connect()
     try:
-        result = await client.scripting.execute_file(script_path)
-        assert result == {"result": {"state": "open"}}
-        assert route.called
-        request = route.calls[0].request
-        assert (
-            request.read().decode()
-            == '{"script": "entity_action(\\"01J00000000000000000000000\\", '
-            '\\"switchable.open\\", #{});\\n"}'
-        )
+        with pytest.raises(SdkError, match="script execution failed: boom"):
+            await client.scripting.execute(script="nope")
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_scripting_execute_gives_up_when_not_terminal(
+    _routes: _FakeBridge, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(asyncio, "sleep", _no_sleep)
+    import openapp_sdk.resources.scripting as scripting_module
+
+    monkeypatch.setattr(scripting_module, "_EXECUTION_TIMEOUT", 0.0)
+    _routes.post("/scripting/executions").mock(
+        return_value=httpx.Response(202, json={"id": "exec_1", "status": "pending"})
+    )
+    _routes.get("/scripting/executions/exec_1").mock(
+        return_value=httpx.Response(200, json={"id": "exec_1", "status": "running"})
+    )
+    client = await _connect()
+    try:
+        with pytest.raises(TransportError, match="exec_1 did not finish"):
+            await client.scripting.execute(script="sleep(60)")
     finally:
         await client.close()
 
@@ -486,7 +663,20 @@ def test_sync_entity_handle_alias(_routes: _FakeBridge) -> None:
         client.close()
 
 
-def test_bearer_header_sent(_routes: _FakeBridge) -> None:
+@pytest.mark.asyncio
+async def test_me_profile_gets_profile_route(_routes: _FakeBridge) -> None:
+    route = _routes.get("/me/profile").mock(
+        return_value=httpx.Response(200, json={"email": "a@example.com"})
+    )
+    client = await _connect()
+    try:
+        assert await client.me.profile() == {"email": "a@example.com"}
+        assert route.called
+    finally:
+        await client.close()
+
+
+def test_full_api_key_is_passed_to_bridge(_routes: _FakeBridge) -> None:
     route = _routes.get("/status").mock(return_value=httpx.Response(200, json={"backend": "ok"}))
     client = Client.connect(api_key=TOKEN, skip_status_probe=True)
     try:
@@ -494,7 +684,26 @@ def test_bearer_header_sent(_routes: _FakeBridge) -> None:
     finally:
         client.close()
     request = route.calls[0].request
-    assert request.headers["authorization"] == f"Bearer {TOKEN}"
+    assert request.headers["x-api-key"] == TOKEN
+    assert "authorization" not in request.headers
+
+
+def test_base_url_is_derived_as_origin_plus_api_prefix(_routes: _FakeBridge) -> None:
+    client = Client.connect(api_key=TOKEN, skip_status_probe=True)
+    try:
+        assert client.config.base_url == f"{BASE}/api/v1"
+    finally:
+        client.close()
+
+
+def test_explicit_base_url_overrides_derived_root(_routes: _FakeBridge) -> None:
+    client = Client.connect(
+        api_key=TOKEN, base_url="http://localhost:4455/api/v1/", skip_status_probe=True
+    )
+    try:
+        assert client.config.base_url == "http://localhost:4455/api/v1"
+    finally:
+        client.close()
 
 
 def test_connect_rejects_malformed_token() -> None:

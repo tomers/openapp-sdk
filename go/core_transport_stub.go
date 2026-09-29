@@ -11,3 +11,9 @@ func NewAPIClient(apiKey string) (*APIClient, error) {
 	_ = apiKey
 	return nil, errors.New("openapp-sdk: NewAPIClient requires CGO and openapp-sdk-core-c-bridge; this build has cgo disabled")
 }
+
+// NewAPIClientWithBaseURL is unavailable without CGO; see [NewAPIClient].
+func NewAPIClientWithBaseURL(apiKey, baseURL string) (*APIClient, error) {
+	_, _ = apiKey, baseURL
+	return nil, errors.New("openapp-sdk: NewAPIClientWithBaseURL requires CGO and openapp-sdk-core-c-bridge; this build has cgo disabled")
+}

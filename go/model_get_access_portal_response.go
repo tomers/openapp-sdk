@@ -22,13 +22,17 @@ var _ MappedNullable = &GetAccessPortalResponse{}
 // GetAccessPortalResponse Response for get access portal by ID (includes integration_id for navigation).
 type GetAccessPortalResponse struct {
 	CreatedAt *string `json:"created_at,omitempty"`
-	// Device external_id (same integration): portal links to virtual_access_portal device by standard external identity.
-	DeviceExternalId *string         `json:"device_external_id,omitempty"`
-	Id               string          `json:"id"`
-	Name             LocalizedString `json:"name"`
-	PublicId         string          `json:"public_id"`
-	UpdatedAt        *string         `json:"updated_at,omitempty"`
-	IntegrationId    string          `json:"integration_id"`
+	// When set, the portal is soft-deleted (kept for restore).
+	DeletedAt *string `json:"deleted_at,omitempty"`
+	// Door device id (virtual_access_portal in this integration). Canonical portal link key.
+	DeviceId *string `json:"device_id,omitempty"`
+	// Directory device id (virtual_access_directory in this integration).
+	DirectoryId   *string         `json:"directory_id,omitempty"`
+	Id            string          `json:"id"`
+	Name          LocalizedString `json:"name"`
+	PublicId      string          `json:"public_id"`
+	UpdatedAt     *string         `json:"updated_at,omitempty"`
+	IntegrationId string          `json:"integration_id"`
 }
 
 type _GetAccessPortalResponse GetAccessPortalResponse
@@ -86,36 +90,100 @@ func (o *GetAccessPortalResponse) SetCreatedAt(v string) {
 	o.CreatedAt = &v
 }
 
-// GetDeviceExternalId returns the DeviceExternalId field value if set, zero value otherwise.
-func (o *GetAccessPortalResponse) GetDeviceExternalId() string {
-	if o == nil || IsNil(o.DeviceExternalId) {
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *GetAccessPortalResponse) GetDeletedAt() string {
+	if o == nil || IsNil(o.DeletedAt) {
 		var ret string
 		return ret
 	}
-	return *o.DeviceExternalId
+	return *o.DeletedAt
 }
 
-// GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field value if set, nil otherwise
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GetAccessPortalResponse) GetDeviceExternalIdOk() (*string, bool) {
-	if o == nil || IsNil(o.DeviceExternalId) {
+func (o *GetAccessPortalResponse) GetDeletedAtOk() (*string, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
 		return nil, false
 	}
-	return o.DeviceExternalId, true
+	return o.DeletedAt, true
 }
 
-// HasDeviceExternalId returns a boolean if a field has been set.
-func (o *GetAccessPortalResponse) HasDeviceExternalId() bool {
-	if o != nil && !IsNil(o.DeviceExternalId) {
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *GetAccessPortalResponse) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
 		return true
 	}
 
 	return false
 }
 
-// SetDeviceExternalId gets a reference to the given string and assigns it to the DeviceExternalId field.
-func (o *GetAccessPortalResponse) SetDeviceExternalId(v string) {
-	o.DeviceExternalId = &v
+// SetDeletedAt gets a reference to the given string and assigns it to the DeletedAt field.
+func (o *GetAccessPortalResponse) SetDeletedAt(v string) {
+	o.DeletedAt = &v
+}
+
+// GetDeviceId returns the DeviceId field value if set, zero value otherwise.
+func (o *GetAccessPortalResponse) GetDeviceId() string {
+	if o == nil || IsNil(o.DeviceId) {
+		var ret string
+		return ret
+	}
+	return *o.DeviceId
+}
+
+// GetDeviceIdOk returns a tuple with the DeviceId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GetAccessPortalResponse) GetDeviceIdOk() (*string, bool) {
+	if o == nil || IsNil(o.DeviceId) {
+		return nil, false
+	}
+	return o.DeviceId, true
+}
+
+// HasDeviceId returns a boolean if a field has been set.
+func (o *GetAccessPortalResponse) HasDeviceId() bool {
+	if o != nil && !IsNil(o.DeviceId) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeviceId gets a reference to the given string and assigns it to the DeviceId field.
+func (o *GetAccessPortalResponse) SetDeviceId(v string) {
+	o.DeviceId = &v
+}
+
+// GetDirectoryId returns the DirectoryId field value if set, zero value otherwise.
+func (o *GetAccessPortalResponse) GetDirectoryId() string {
+	if o == nil || IsNil(o.DirectoryId) {
+		var ret string
+		return ret
+	}
+	return *o.DirectoryId
+}
+
+// GetDirectoryIdOk returns a tuple with the DirectoryId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *GetAccessPortalResponse) GetDirectoryIdOk() (*string, bool) {
+	if o == nil || IsNil(o.DirectoryId) {
+		return nil, false
+	}
+	return o.DirectoryId, true
+}
+
+// HasDirectoryId returns a boolean if a field has been set.
+func (o *GetAccessPortalResponse) HasDirectoryId() bool {
+	if o != nil && !IsNil(o.DirectoryId) {
+		return true
+	}
+
+	return false
+}
+
+// SetDirectoryId gets a reference to the given string and assigns it to the DirectoryId field.
+func (o *GetAccessPortalResponse) SetDirectoryId(v string) {
+	o.DirectoryId = &v
 }
 
 // GetId returns the Id field value
@@ -251,8 +319,14 @@ func (o GetAccessPortalResponse) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.CreatedAt) {
 		toSerialize["created_at"] = o.CreatedAt
 	}
-	if !IsNil(o.DeviceExternalId) {
-		toSerialize["device_external_id"] = o.DeviceExternalId
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.DeviceId) {
+		toSerialize["device_id"] = o.DeviceId
+	}
+	if !IsNil(o.DirectoryId) {
+		toSerialize["directory_id"] = o.DirectoryId
 	}
 	toSerialize["id"] = o.Id
 	toSerialize["name"] = o.Name

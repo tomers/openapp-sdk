@@ -23,8 +23,6 @@ var _ MappedNullable = &SingleResourceOutputOptions{}
 type SingleResourceOutputOptions struct {
 	// If true, include soft-deleted items in results.
 	IncludeDeleted bool `json:"include_deleted"`
-	// If true, include storage metadata (e.g. created_at, deleted_at) in results.
-	IncludeMetadata bool `json:"include_metadata"`
 }
 
 type _SingleResourceOutputOptions SingleResourceOutputOptions
@@ -33,10 +31,9 @@ type _SingleResourceOutputOptions SingleResourceOutputOptions
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSingleResourceOutputOptions(includeDeleted bool, includeMetadata bool) *SingleResourceOutputOptions {
+func NewSingleResourceOutputOptions(includeDeleted bool) *SingleResourceOutputOptions {
 	this := SingleResourceOutputOptions{}
 	this.IncludeDeleted = includeDeleted
-	this.IncludeMetadata = includeMetadata
 	return &this
 }
 
@@ -72,34 +69,9 @@ func (o *SingleResourceOutputOptions) SetIncludeDeleted(v bool) {
 	o.IncludeDeleted = v
 }
 
-// GetIncludeMetadata returns the IncludeMetadata field value
-func (o *SingleResourceOutputOptions) GetIncludeMetadata() bool {
-	if o == nil {
-		var ret bool
-		return ret
-	}
-
-	return o.IncludeMetadata
-}
-
-// GetIncludeMetadataOk returns a tuple with the IncludeMetadata field value
-// and a boolean to check if the value has been set.
-func (o *SingleResourceOutputOptions) GetIncludeMetadataOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IncludeMetadata, true
-}
-
-// SetIncludeMetadata sets field value
-func (o *SingleResourceOutputOptions) SetIncludeMetadata(v bool) {
-	o.IncludeMetadata = v
-}
-
 func (o SingleResourceOutputOptions) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["include_deleted"] = o.IncludeDeleted
-	toSerialize["include_metadata"] = o.IncludeMetadata
 	return toSerialize, nil
 }
 
@@ -109,7 +81,6 @@ func (o *SingleResourceOutputOptions) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"include_deleted",
-		"include_metadata",
 	}
 
 	allProperties := make(map[string]interface{})

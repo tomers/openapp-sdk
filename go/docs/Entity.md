@@ -4,6 +4,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**CreatedAt** | Pointer to **time.Time** |  | [optional]
+**DeletedAt** | Pointer to **time.Time** |  | [optional]
+**HardDeleteAt** | Pointer to **time.Time** |  | [optional]
+**PurgeAt** | Pointer to **time.Time** |  | [optional]
+**UpdatedAt** | Pointer to **time.Time** |  | [optional]
 **DeviceId** | **string** | Parent device ID. |
 **EntityType** | [**EntityType**](EntityType.md) | Entity type (switch, light, sensor). |
 **ExternalId** | Pointer to **NullableString** | External ID from the integration. | [optional]
@@ -30,6 +35,131 @@ will change when the set of required properties is changed
 NewEntityWithDefaults instantiates a new Entity object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetCreatedAt
+
+`func (o *Entity) GetCreatedAt() time.Time`
+
+GetCreatedAt returns the CreatedAt field if non-nil, zero value otherwise.
+
+### GetCreatedAtOk
+
+`func (o *Entity) GetCreatedAtOk() (*time.Time, bool)`
+
+GetCreatedAtOk returns a tuple with the CreatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCreatedAt
+
+`func (o *Entity) SetCreatedAt(v time.Time)`
+
+SetCreatedAt sets CreatedAt field to given value.
+
+### HasCreatedAt
+
+`func (o *Entity) HasCreatedAt() bool`
+
+HasCreatedAt returns a boolean if a field has been set.
+
+### GetDeletedAt
+
+`func (o *Entity) GetDeletedAt() time.Time`
+
+GetDeletedAt returns the DeletedAt field if non-nil, zero value otherwise.
+
+### GetDeletedAtOk
+
+`func (o *Entity) GetDeletedAtOk() (*time.Time, bool)`
+
+GetDeletedAtOk returns a tuple with the DeletedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeletedAt
+
+`func (o *Entity) SetDeletedAt(v time.Time)`
+
+SetDeletedAt sets DeletedAt field to given value.
+
+### HasDeletedAt
+
+`func (o *Entity) HasDeletedAt() bool`
+
+HasDeletedAt returns a boolean if a field has been set.
+
+### GetHardDeleteAt
+
+`func (o *Entity) GetHardDeleteAt() time.Time`
+
+GetHardDeleteAt returns the HardDeleteAt field if non-nil, zero value otherwise.
+
+### GetHardDeleteAtOk
+
+`func (o *Entity) GetHardDeleteAtOk() (*time.Time, bool)`
+
+GetHardDeleteAtOk returns a tuple with the HardDeleteAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHardDeleteAt
+
+`func (o *Entity) SetHardDeleteAt(v time.Time)`
+
+SetHardDeleteAt sets HardDeleteAt field to given value.
+
+### HasHardDeleteAt
+
+`func (o *Entity) HasHardDeleteAt() bool`
+
+HasHardDeleteAt returns a boolean if a field has been set.
+
+### GetPurgeAt
+
+`func (o *Entity) GetPurgeAt() time.Time`
+
+GetPurgeAt returns the PurgeAt field if non-nil, zero value otherwise.
+
+### GetPurgeAtOk
+
+`func (o *Entity) GetPurgeAtOk() (*time.Time, bool)`
+
+GetPurgeAtOk returns a tuple with the PurgeAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPurgeAt
+
+`func (o *Entity) SetPurgeAt(v time.Time)`
+
+SetPurgeAt sets PurgeAt field to given value.
+
+### HasPurgeAt
+
+`func (o *Entity) HasPurgeAt() bool`
+
+HasPurgeAt returns a boolean if a field has been set.
+
+### GetUpdatedAt
+
+`func (o *Entity) GetUpdatedAt() time.Time`
+
+GetUpdatedAt returns the UpdatedAt field if non-nil, zero value otherwise.
+
+### GetUpdatedAtOk
+
+`func (o *Entity) GetUpdatedAtOk() (*time.Time, bool)`
+
+GetUpdatedAtOk returns a tuple with the UpdatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUpdatedAt
+
+`func (o *Entity) SetUpdatedAt(v time.Time)`
+
+SetUpdatedAt sets UpdatedAt field to given value.
+
+### HasUpdatedAt
+
+`func (o *Entity) HasUpdatedAt() bool`
+
+HasUpdatedAt returns a boolean if a field has been set.
 
 ### GetDeviceId
 

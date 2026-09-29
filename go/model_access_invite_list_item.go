@@ -21,26 +21,46 @@ var _ MappedNullable = &AccessInviteListItem{}
 
 // AccessInviteListItem struct for AccessInviteListItem
 type AccessInviteListItem struct {
-	CreatedAt             NullableString                `json:"created_at,omitempty"`
-	DisabledJustification NullableString                `json:"disabled_justification,omitempty"`
-	GrantedPortals        []AccessInviteGrantedPortal   `json:"granted_portals"`
-	Id                    string                        `json:"id"`
-	InviteRecurrence      interface{}                   `json:"invite_recurrence,omitempty"`
-	InviteeMessage        interface{}                   `json:"invitee_message,omitempty"`
-	IsEnabled             bool                          `json:"is_enabled"`
-	LastUsedAt            NullableString                `json:"last_used_at,omitempty"`
-	MaxUses               NullableInt32                 `json:"max_uses,omitempty"`
-	Name                  NullableString                `json:"name,omitempty"`
-	RevokedAt             NullableString                `json:"revoked_at,omitempty"`
-	Schedule              InviteScheduleSnapshot        `json:"schedule"`
-	ScheduleCombined      InviteScheduleCombined        `json:"schedule_combined"`
-	ScheduleEntries       []InviteScheduleEntrySnapshot `json:"schedule_entries"`
-	ScheduleKind          InviteScheduleKind            `json:"schedule_kind"`
-	State                 string                        `json:"state"`
-	UpdatedAt             NullableString                `json:"updated_at,omitempty"`
-	Uses                  int32                         `json:"uses"`
-	ValidFrom             NullableString                `json:"valid_from,omitempty"`
-	ValidTo               NullableString                `json:"valid_to,omitempty"`
+	CreatedAt NullableString `json:"created_at,omitempty"`
+	// User who created this invite or share. Omitted when the row has no creator.
+	CreatedByUserId       NullableString `json:"created_by_user_id,omitempty"`
+	CreationJustification NullableString `json:"creation_justification,omitempty"`
+	// Admin-only emergency exception: skip invitation curfew at redemption.
+	CurfewExempt          *bool          `json:"curfew_exempt,omitempty"`
+	DevicesCount          NullableInt32  `json:"devices_count,omitempty"`
+	DisabledJustification NullableString `json:"disabled_justification,omitempty"`
+	// External system-of-record correlation, when this invitation is driven by an adapter.
+	ExternalRef      NullableExternalReferenceResponse `json:"external_ref,omitempty"`
+	GrantedPortals   []AccessInviteGrantedPortal       `json:"granted_portals"`
+	Id               string                            `json:"id"`
+	InviteRecurrence interface{}                       `json:"invite_recurrence,omitempty"`
+	InviteeMessage   interface{}                       `json:"invitee_message,omitempty"`
+	IsEnabled        bool                              `json:"is_enabled"`
+	Kind             *AccessInviteKind                 `json:"kind,omitempty"`
+	LastSharedAt     NullableString                    `json:"last_shared_at,omitempty"`
+	LastUsedAt       NullableString                    `json:"last_used_at,omitempty"`
+	// Resolved event location for this invite (see `location_mode`): the invite's own location when `explicit`, the building location when `inherit`, or absent when `none`.
+	Location NullableLocationResponse `json:"location,omitempty"`
+	// How the event location is resolved: `none`, `explicit`, or `inherit` (building).
+	LocationMode        LocationBindingMode `json:"location_mode"`
+	MaxDevices          NullableInt32       `json:"max_devices,omitempty"`
+	MaxUses             NullableInt32       `json:"max_uses,omitempty"`
+	Name                NullableString      `json:"name,omitempty"`
+	PendingRenewalCount NullableInt32       `json:"pending_renewal_count,omitempty"`
+	// Presigned URL for the `thumb` rendition of the invite photo, for avatar-sized renders. Absent when the source is already thumb-sized; fall back to `photo_url`.
+	PhotoThumbUrl NullableString `json:"photo_thumb_url,omitempty"`
+	// Presigned URL for the invite's main photo (best-effort).
+	PhotoUrl         NullableString                `json:"photo_url,omitempty"`
+	RevokedAt        NullableString                `json:"revoked_at,omitempty"`
+	Schedule         InviteScheduleSnapshot        `json:"schedule"`
+	ScheduleCombined InviteScheduleCombined        `json:"schedule_combined"`
+	ScheduleEntries  []InviteScheduleEntrySnapshot `json:"schedule_entries"`
+	ScheduleKind     InviteScheduleKind            `json:"schedule_kind"`
+	State            string                        `json:"state"`
+	UpdatedAt        NullableString                `json:"updated_at,omitempty"`
+	Uses             int32                         `json:"uses"`
+	ValidFrom        NullableString                `json:"valid_from,omitempty"`
+	ValidTo          NullableString                `json:"valid_to,omitempty"`
 }
 
 type _AccessInviteListItem AccessInviteListItem
@@ -49,11 +69,12 @@ type _AccessInviteListItem AccessInviteListItem
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAccessInviteListItem(grantedPortals []AccessInviteGrantedPortal, id string, isEnabled bool, schedule InviteScheduleSnapshot, scheduleCombined InviteScheduleCombined, scheduleEntries []InviteScheduleEntrySnapshot, scheduleKind InviteScheduleKind, state string, uses int32) *AccessInviteListItem {
+func NewAccessInviteListItem(grantedPortals []AccessInviteGrantedPortal, id string, isEnabled bool, locationMode LocationBindingMode, schedule InviteScheduleSnapshot, scheduleCombined InviteScheduleCombined, scheduleEntries []InviteScheduleEntrySnapshot, scheduleKind InviteScheduleKind, state string, uses int32) *AccessInviteListItem {
 	this := AccessInviteListItem{}
 	this.GrantedPortals = grantedPortals
 	this.Id = id
 	this.IsEnabled = isEnabled
+	this.LocationMode = locationMode
 	this.Schedule = schedule
 	this.ScheduleCombined = scheduleCombined
 	this.ScheduleEntries = scheduleEntries
@@ -114,6 +135,167 @@ func (o *AccessInviteListItem) UnsetCreatedAt() {
 	o.CreatedAt.Unset()
 }
 
+// GetCreatedByUserId returns the CreatedByUserId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetCreatedByUserId() string {
+	if o == nil || IsNil(o.CreatedByUserId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.CreatedByUserId.Get()
+}
+
+// GetCreatedByUserIdOk returns a tuple with the CreatedByUserId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetCreatedByUserIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CreatedByUserId.Get(), o.CreatedByUserId.IsSet()
+}
+
+// HasCreatedByUserId returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasCreatedByUserId() bool {
+	if o != nil && o.CreatedByUserId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedByUserId gets a reference to the given NullableString and assigns it to the CreatedByUserId field.
+func (o *AccessInviteListItem) SetCreatedByUserId(v string) {
+	o.CreatedByUserId.Set(&v)
+}
+
+// SetCreatedByUserIdNil sets the value for CreatedByUserId to be an explicit nil
+func (o *AccessInviteListItem) SetCreatedByUserIdNil() {
+	o.CreatedByUserId.Set(nil)
+}
+
+// UnsetCreatedByUserId ensures that no value is present for CreatedByUserId, not even an explicit nil
+func (o *AccessInviteListItem) UnsetCreatedByUserId() {
+	o.CreatedByUserId.Unset()
+}
+
+// GetCreationJustification returns the CreationJustification field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetCreationJustification() string {
+	if o == nil || IsNil(o.CreationJustification.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.CreationJustification.Get()
+}
+
+// GetCreationJustificationOk returns a tuple with the CreationJustification field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetCreationJustificationOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CreationJustification.Get(), o.CreationJustification.IsSet()
+}
+
+// HasCreationJustification returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasCreationJustification() bool {
+	if o != nil && o.CreationJustification.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCreationJustification gets a reference to the given NullableString and assigns it to the CreationJustification field.
+func (o *AccessInviteListItem) SetCreationJustification(v string) {
+	o.CreationJustification.Set(&v)
+}
+
+// SetCreationJustificationNil sets the value for CreationJustification to be an explicit nil
+func (o *AccessInviteListItem) SetCreationJustificationNil() {
+	o.CreationJustification.Set(nil)
+}
+
+// UnsetCreationJustification ensures that no value is present for CreationJustification, not even an explicit nil
+func (o *AccessInviteListItem) UnsetCreationJustification() {
+	o.CreationJustification.Unset()
+}
+
+// GetCurfewExempt returns the CurfewExempt field value if set, zero value otherwise.
+func (o *AccessInviteListItem) GetCurfewExempt() bool {
+	if o == nil || IsNil(o.CurfewExempt) {
+		var ret bool
+		return ret
+	}
+	return *o.CurfewExempt
+}
+
+// GetCurfewExemptOk returns a tuple with the CurfewExempt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *AccessInviteListItem) GetCurfewExemptOk() (*bool, bool) {
+	if o == nil || IsNil(o.CurfewExempt) {
+		return nil, false
+	}
+	return o.CurfewExempt, true
+}
+
+// HasCurfewExempt returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasCurfewExempt() bool {
+	if o != nil && !IsNil(o.CurfewExempt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCurfewExempt gets a reference to the given bool and assigns it to the CurfewExempt field.
+func (o *AccessInviteListItem) SetCurfewExempt(v bool) {
+	o.CurfewExempt = &v
+}
+
+// GetDevicesCount returns the DevicesCount field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetDevicesCount() int32 {
+	if o == nil || IsNil(o.DevicesCount.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesCount.Get()
+}
+
+// GetDevicesCountOk returns a tuple with the DevicesCount field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetDevicesCountOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DevicesCount.Get(), o.DevicesCount.IsSet()
+}
+
+// HasDevicesCount returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasDevicesCount() bool {
+	if o != nil && o.DevicesCount.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesCount gets a reference to the given NullableInt32 and assigns it to the DevicesCount field.
+func (o *AccessInviteListItem) SetDevicesCount(v int32) {
+	o.DevicesCount.Set(&v)
+}
+
+// SetDevicesCountNil sets the value for DevicesCount to be an explicit nil
+func (o *AccessInviteListItem) SetDevicesCountNil() {
+	o.DevicesCount.Set(nil)
+}
+
+// UnsetDevicesCount ensures that no value is present for DevicesCount, not even an explicit nil
+func (o *AccessInviteListItem) UnsetDevicesCount() {
+	o.DevicesCount.Unset()
+}
+
 // GetDisabledJustification returns the DisabledJustification field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *AccessInviteListItem) GetDisabledJustification() string {
 	if o == nil || IsNil(o.DisabledJustification.Get()) {
@@ -155,6 +337,49 @@ func (o *AccessInviteListItem) SetDisabledJustificationNil() {
 // UnsetDisabledJustification ensures that no value is present for DisabledJustification, not even an explicit nil
 func (o *AccessInviteListItem) UnsetDisabledJustification() {
 	o.DisabledJustification.Unset()
+}
+
+// GetExternalRef returns the ExternalRef field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetExternalRef() ExternalReferenceResponse {
+	if o == nil || IsNil(o.ExternalRef.Get()) {
+		var ret ExternalReferenceResponse
+		return ret
+	}
+	return *o.ExternalRef.Get()
+}
+
+// GetExternalRefOk returns a tuple with the ExternalRef field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetExternalRefOk() (*ExternalReferenceResponse, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ExternalRef.Get(), o.ExternalRef.IsSet()
+}
+
+// HasExternalRef returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasExternalRef() bool {
+	if o != nil && o.ExternalRef.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetExternalRef gets a reference to the given NullableExternalReferenceResponse and assigns it to the ExternalRef field.
+func (o *AccessInviteListItem) SetExternalRef(v ExternalReferenceResponse) {
+	o.ExternalRef.Set(&v)
+}
+
+// SetExternalRefNil sets the value for ExternalRef to be an explicit nil
+func (o *AccessInviteListItem) SetExternalRefNil() {
+	o.ExternalRef.Set(nil)
+}
+
+// UnsetExternalRef ensures that no value is present for ExternalRef, not even an explicit nil
+func (o *AccessInviteListItem) UnsetExternalRef() {
+	o.ExternalRef.Unset()
 }
 
 // GetGrantedPortals returns the GrantedPortals field value
@@ -295,6 +520,81 @@ func (o *AccessInviteListItem) SetIsEnabled(v bool) {
 	o.IsEnabled = v
 }
 
+// GetKind returns the Kind field value if set, zero value otherwise.
+func (o *AccessInviteListItem) GetKind() AccessInviteKind {
+	if o == nil || IsNil(o.Kind) {
+		var ret AccessInviteKind
+		return ret
+	}
+	return *o.Kind
+}
+
+// GetKindOk returns a tuple with the Kind field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *AccessInviteListItem) GetKindOk() (*AccessInviteKind, bool) {
+	if o == nil || IsNil(o.Kind) {
+		return nil, false
+	}
+	return o.Kind, true
+}
+
+// HasKind returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasKind() bool {
+	if o != nil && !IsNil(o.Kind) {
+		return true
+	}
+
+	return false
+}
+
+// SetKind gets a reference to the given AccessInviteKind and assigns it to the Kind field.
+func (o *AccessInviteListItem) SetKind(v AccessInviteKind) {
+	o.Kind = &v
+}
+
+// GetLastSharedAt returns the LastSharedAt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetLastSharedAt() string {
+	if o == nil || IsNil(o.LastSharedAt.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.LastSharedAt.Get()
+}
+
+// GetLastSharedAtOk returns a tuple with the LastSharedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetLastSharedAtOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.LastSharedAt.Get(), o.LastSharedAt.IsSet()
+}
+
+// HasLastSharedAt returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasLastSharedAt() bool {
+	if o != nil && o.LastSharedAt.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLastSharedAt gets a reference to the given NullableString and assigns it to the LastSharedAt field.
+func (o *AccessInviteListItem) SetLastSharedAt(v string) {
+	o.LastSharedAt.Set(&v)
+}
+
+// SetLastSharedAtNil sets the value for LastSharedAt to be an explicit nil
+func (o *AccessInviteListItem) SetLastSharedAtNil() {
+	o.LastSharedAt.Set(nil)
+}
+
+// UnsetLastSharedAt ensures that no value is present for LastSharedAt, not even an explicit nil
+func (o *AccessInviteListItem) UnsetLastSharedAt() {
+	o.LastSharedAt.Unset()
+}
+
 // GetLastUsedAt returns the LastUsedAt field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *AccessInviteListItem) GetLastUsedAt() string {
 	if o == nil || IsNil(o.LastUsedAt.Get()) {
@@ -336,6 +636,116 @@ func (o *AccessInviteListItem) SetLastUsedAtNil() {
 // UnsetLastUsedAt ensures that no value is present for LastUsedAt, not even an explicit nil
 func (o *AccessInviteListItem) UnsetLastUsedAt() {
 	o.LastUsedAt.Unset()
+}
+
+// GetLocation returns the Location field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetLocation() LocationResponse {
+	if o == nil || IsNil(o.Location.Get()) {
+		var ret LocationResponse
+		return ret
+	}
+	return *o.Location.Get()
+}
+
+// GetLocationOk returns a tuple with the Location field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetLocationOk() (*LocationResponse, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Location.Get(), o.Location.IsSet()
+}
+
+// HasLocation returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasLocation() bool {
+	if o != nil && o.Location.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocation gets a reference to the given NullableLocationResponse and assigns it to the Location field.
+func (o *AccessInviteListItem) SetLocation(v LocationResponse) {
+	o.Location.Set(&v)
+}
+
+// SetLocationNil sets the value for Location to be an explicit nil
+func (o *AccessInviteListItem) SetLocationNil() {
+	o.Location.Set(nil)
+}
+
+// UnsetLocation ensures that no value is present for Location, not even an explicit nil
+func (o *AccessInviteListItem) UnsetLocation() {
+	o.Location.Unset()
+}
+
+// GetLocationMode returns the LocationMode field value
+func (o *AccessInviteListItem) GetLocationMode() LocationBindingMode {
+	if o == nil {
+		var ret LocationBindingMode
+		return ret
+	}
+
+	return o.LocationMode
+}
+
+// GetLocationModeOk returns a tuple with the LocationMode field value
+// and a boolean to check if the value has been set.
+func (o *AccessInviteListItem) GetLocationModeOk() (*LocationBindingMode, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.LocationMode, true
+}
+
+// SetLocationMode sets field value
+func (o *AccessInviteListItem) SetLocationMode(v LocationBindingMode) {
+	o.LocationMode = v
+}
+
+// GetMaxDevices returns the MaxDevices field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetMaxDevices() int32 {
+	if o == nil || IsNil(o.MaxDevices.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.MaxDevices.Get()
+}
+
+// GetMaxDevicesOk returns a tuple with the MaxDevices field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetMaxDevicesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MaxDevices.Get(), o.MaxDevices.IsSet()
+}
+
+// HasMaxDevices returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasMaxDevices() bool {
+	if o != nil && o.MaxDevices.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMaxDevices gets a reference to the given NullableInt32 and assigns it to the MaxDevices field.
+func (o *AccessInviteListItem) SetMaxDevices(v int32) {
+	o.MaxDevices.Set(&v)
+}
+
+// SetMaxDevicesNil sets the value for MaxDevices to be an explicit nil
+func (o *AccessInviteListItem) SetMaxDevicesNil() {
+	o.MaxDevices.Set(nil)
+}
+
+// UnsetMaxDevices ensures that no value is present for MaxDevices, not even an explicit nil
+func (o *AccessInviteListItem) UnsetMaxDevices() {
+	o.MaxDevices.Unset()
 }
 
 // GetMaxUses returns the MaxUses field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -422,6 +832,135 @@ func (o *AccessInviteListItem) SetNameNil() {
 // UnsetName ensures that no value is present for Name, not even an explicit nil
 func (o *AccessInviteListItem) UnsetName() {
 	o.Name.Unset()
+}
+
+// GetPendingRenewalCount returns the PendingRenewalCount field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetPendingRenewalCount() int32 {
+	if o == nil || IsNil(o.PendingRenewalCount.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.PendingRenewalCount.Get()
+}
+
+// GetPendingRenewalCountOk returns a tuple with the PendingRenewalCount field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetPendingRenewalCountOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PendingRenewalCount.Get(), o.PendingRenewalCount.IsSet()
+}
+
+// HasPendingRenewalCount returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasPendingRenewalCount() bool {
+	if o != nil && o.PendingRenewalCount.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPendingRenewalCount gets a reference to the given NullableInt32 and assigns it to the PendingRenewalCount field.
+func (o *AccessInviteListItem) SetPendingRenewalCount(v int32) {
+	o.PendingRenewalCount.Set(&v)
+}
+
+// SetPendingRenewalCountNil sets the value for PendingRenewalCount to be an explicit nil
+func (o *AccessInviteListItem) SetPendingRenewalCountNil() {
+	o.PendingRenewalCount.Set(nil)
+}
+
+// UnsetPendingRenewalCount ensures that no value is present for PendingRenewalCount, not even an explicit nil
+func (o *AccessInviteListItem) UnsetPendingRenewalCount() {
+	o.PendingRenewalCount.Unset()
+}
+
+// GetPhotoThumbUrl returns the PhotoThumbUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetPhotoThumbUrl() string {
+	if o == nil || IsNil(o.PhotoThumbUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhotoThumbUrl.Get()
+}
+
+// GetPhotoThumbUrlOk returns a tuple with the PhotoThumbUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetPhotoThumbUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhotoThumbUrl.Get(), o.PhotoThumbUrl.IsSet()
+}
+
+// HasPhotoThumbUrl returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasPhotoThumbUrl() bool {
+	if o != nil && o.PhotoThumbUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhotoThumbUrl gets a reference to the given NullableString and assigns it to the PhotoThumbUrl field.
+func (o *AccessInviteListItem) SetPhotoThumbUrl(v string) {
+	o.PhotoThumbUrl.Set(&v)
+}
+
+// SetPhotoThumbUrlNil sets the value for PhotoThumbUrl to be an explicit nil
+func (o *AccessInviteListItem) SetPhotoThumbUrlNil() {
+	o.PhotoThumbUrl.Set(nil)
+}
+
+// UnsetPhotoThumbUrl ensures that no value is present for PhotoThumbUrl, not even an explicit nil
+func (o *AccessInviteListItem) UnsetPhotoThumbUrl() {
+	o.PhotoThumbUrl.Unset()
+}
+
+// GetPhotoUrl returns the PhotoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessInviteListItem) GetPhotoUrl() string {
+	if o == nil || IsNil(o.PhotoUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhotoUrl.Get()
+}
+
+// GetPhotoUrlOk returns a tuple with the PhotoUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessInviteListItem) GetPhotoUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhotoUrl.Get(), o.PhotoUrl.IsSet()
+}
+
+// HasPhotoUrl returns a boolean if a field has been set.
+func (o *AccessInviteListItem) HasPhotoUrl() bool {
+	if o != nil && o.PhotoUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhotoUrl gets a reference to the given NullableString and assigns it to the PhotoUrl field.
+func (o *AccessInviteListItem) SetPhotoUrl(v string) {
+	o.PhotoUrl.Set(&v)
+}
+
+// SetPhotoUrlNil sets the value for PhotoUrl to be an explicit nil
+func (o *AccessInviteListItem) SetPhotoUrlNil() {
+	o.PhotoUrl.Set(nil)
+}
+
+// UnsetPhotoUrl ensures that no value is present for PhotoUrl, not even an explicit nil
+func (o *AccessInviteListItem) UnsetPhotoUrl() {
+	o.PhotoUrl.Unset()
 }
 
 // GetRevokedAt returns the RevokedAt field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -745,8 +1284,23 @@ func (o AccessInviteListItem) ToMap() (map[string]interface{}, error) {
 	if o.CreatedAt.IsSet() {
 		toSerialize["created_at"] = o.CreatedAt.Get()
 	}
+	if o.CreatedByUserId.IsSet() {
+		toSerialize["created_by_user_id"] = o.CreatedByUserId.Get()
+	}
+	if o.CreationJustification.IsSet() {
+		toSerialize["creation_justification"] = o.CreationJustification.Get()
+	}
+	if !IsNil(o.CurfewExempt) {
+		toSerialize["curfew_exempt"] = o.CurfewExempt
+	}
+	if o.DevicesCount.IsSet() {
+		toSerialize["devices_count"] = o.DevicesCount.Get()
+	}
 	if o.DisabledJustification.IsSet() {
 		toSerialize["disabled_justification"] = o.DisabledJustification.Get()
+	}
+	if o.ExternalRef.IsSet() {
+		toSerialize["external_ref"] = o.ExternalRef.Get()
 	}
 	toSerialize["granted_portals"] = o.GrantedPortals
 	toSerialize["id"] = o.Id
@@ -757,14 +1311,36 @@ func (o AccessInviteListItem) ToMap() (map[string]interface{}, error) {
 		toSerialize["invitee_message"] = o.InviteeMessage
 	}
 	toSerialize["is_enabled"] = o.IsEnabled
+	if !IsNil(o.Kind) {
+		toSerialize["kind"] = o.Kind
+	}
+	if o.LastSharedAt.IsSet() {
+		toSerialize["last_shared_at"] = o.LastSharedAt.Get()
+	}
 	if o.LastUsedAt.IsSet() {
 		toSerialize["last_used_at"] = o.LastUsedAt.Get()
+	}
+	if o.Location.IsSet() {
+		toSerialize["location"] = o.Location.Get()
+	}
+	toSerialize["location_mode"] = o.LocationMode
+	if o.MaxDevices.IsSet() {
+		toSerialize["max_devices"] = o.MaxDevices.Get()
 	}
 	if o.MaxUses.IsSet() {
 		toSerialize["max_uses"] = o.MaxUses.Get()
 	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
+	}
+	if o.PendingRenewalCount.IsSet() {
+		toSerialize["pending_renewal_count"] = o.PendingRenewalCount.Get()
+	}
+	if o.PhotoThumbUrl.IsSet() {
+		toSerialize["photo_thumb_url"] = o.PhotoThumbUrl.Get()
+	}
+	if o.PhotoUrl.IsSet() {
+		toSerialize["photo_url"] = o.PhotoUrl.Get()
 	}
 	if o.RevokedAt.IsSet() {
 		toSerialize["revoked_at"] = o.RevokedAt.Get()
@@ -795,6 +1371,7 @@ func (o *AccessInviteListItem) UnmarshalJSON(data []byte) (err error) {
 		"granted_portals",
 		"id",
 		"is_enabled",
+		"location_mode",
 		"schedule",
 		"schedule_combined",
 		"schedule_entries",

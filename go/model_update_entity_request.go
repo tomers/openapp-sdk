@@ -23,11 +23,14 @@ type UpdateEntityRequest struct {
 	EntityType   NullableString `json:"entity_type,omitempty"`
 	ExternalId   NullableString `json:"external_id,omitempty"`
 	// Update (replace) persisted entity metadata.  - `None`: no change - `Some(None)`: clear metadata - `Some(Some(map))`: replace with provided map
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
 	// Update entity name.  - `None`: no change - `Some(None)`: clear - `Some(Some(name))`: set (trimmed; empty becomes clear)
-	Name   NullableString `json:"name,omitempty"`
-	ZoneId NullableString `json:"zone_id,omitempty"`
+	Name                 *string        `json:"name,omitempty"`
+	ZoneId               NullableString `json:"zone_id,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _UpdateEntityRequest UpdateEntityRequest
 
 // NewUpdateEntityRequest instantiates a new UpdateEntityRequest object
 // This constructor will assign default values to properties that have it defined,
@@ -181,14 +184,14 @@ func (o *UpdateEntityRequest) GetMetadata() map[string]interface{} {
 		var ret map[string]interface{}
 		return ret
 	}
-	return o.Metadata
+	return *o.Metadata
 }
 
 // GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UpdateEntityRequest) GetMetadataOk() (map[string]interface{}, bool) {
+func (o *UpdateEntityRequest) GetMetadataOk() (*map[string]interface{}, bool) {
 	if o == nil || IsNil(o.Metadata) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
 	return o.Metadata, true
 }
@@ -204,50 +207,39 @@ func (o *UpdateEntityRequest) HasMetadata() bool {
 
 // SetMetadata gets a reference to the given map[string]interface{} and assigns it to the Metadata field.
 func (o *UpdateEntityRequest) SetMetadata(v map[string]interface{}) {
-	o.Metadata = v
+	o.Metadata = &v
 }
 
-// GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetName returns the Name field value if set, zero value otherwise.
 func (o *UpdateEntityRequest) GetName() string {
-	if o == nil || IsNil(o.Name.Get()) {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
-	return *o.Name.Get()
+	return *o.Name
 }
 
 // GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *UpdateEntityRequest) GetNameOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
-	return o.Name.Get(), o.Name.IsSet()
+	return o.Name, true
 }
 
 // HasName returns a boolean if a field has been set.
 func (o *UpdateEntityRequest) HasName() bool {
-	if o != nil && o.Name.IsSet() {
+	if o != nil && !IsNil(o.Name) {
 		return true
 	}
 
 	return false
 }
 
-// SetName gets a reference to the given NullableString and assigns it to the Name field.
+// SetName gets a reference to the given string and assigns it to the Name field.
 func (o *UpdateEntityRequest) SetName(v string) {
-	o.Name.Set(&v)
-}
-
-// SetNameNil sets the value for Name to be an explicit nil
-func (o *UpdateEntityRequest) SetNameNil() {
-	o.Name.Set(nil)
-}
-
-// UnsetName ensures that no value is present for Name, not even an explicit nil
-func (o *UpdateEntityRequest) UnsetName() {
-	o.Name.Unset()
+	o.Name = &v
 }
 
 // GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -307,13 +299,44 @@ func (o UpdateEntityRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Metadata) {
 		toSerialize["metadata"] = o.Metadata
 	}
-	if o.Name.IsSet() {
-		toSerialize["name"] = o.Name.Get()
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
 	}
 	if o.ZoneId.IsSet() {
 		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *UpdateEntityRequest) UnmarshalJSON(data []byte) (err error) {
+	varUpdateEntityRequest := _UpdateEntityRequest{}
+
+	err = json.Unmarshal(data, &varUpdateEntityRequest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UpdateEntityRequest(varUpdateEntityRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "channel_index")
+		delete(additionalProperties, "entity_type")
+		delete(additionalProperties, "external_id")
+		delete(additionalProperties, "metadata")
+		delete(additionalProperties, "name")
+		delete(additionalProperties, "zone_id")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableUpdateEntityRequest struct {

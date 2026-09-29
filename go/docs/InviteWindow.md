@@ -4,14 +4,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**From** | **string** |  |
-**To** | **string** |  |
+**From** | **NullableString** |  |
+**To** | **NullableString** |  |
 
 ## Methods
 
 ### NewInviteWindow
 
-`func NewInviteWindow(from string, to string, ) *InviteWindow`
+`func NewInviteWindow(from NullableString, to NullableString, ) *InviteWindow`
 
 NewInviteWindow instantiates a new InviteWindow object
 This constructor will assign default values to properties that have it defined,
@@ -46,6 +46,16 @@ and a boolean to check if the value has been set.
 SetFrom sets From field to given value.
 
 
+### SetFromNil
+
+`func (o *InviteWindow) SetFromNil(b bool)`
+
+ SetFromNil sets the value for From to be an explicit nil
+
+### UnsetFrom
+`func (o *InviteWindow) UnsetFrom()`
+
+UnsetFrom ensures that no value is present for From, not even an explicit nil
 ### GetTo
 
 `func (o *InviteWindow) GetTo() string`
@@ -66,5 +76,15 @@ and a boolean to check if the value has been set.
 SetTo sets To field to given value.
 
 
+### SetToNil
+
+`func (o *InviteWindow) SetToNil(b bool)`
+
+ SetToNil sets the value for To to be an explicit nil
+
+### UnsetTo
+`func (o *InviteWindow) UnsetTo()`
+
+UnsetTo ensures that no value is present for To, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

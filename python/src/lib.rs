@@ -15,7 +15,7 @@ use std::time::Duration;
 
 use ::openapp_sdk_core::{
     transport::{MultipartRequestSpec, RequestSpec, Transport},
-    Client as CoreClient, SdkError,
+    Client as CoreClient, NameMatch, SdkError,
 };
 use once_cell::sync::OnceCell;
 use pyo3::{IntoPyObjectExt, exceptions::PyValueError, prelude::*, types::PyDict};
@@ -71,13 +71,14 @@ impl Client {
     /// Build a client from an API key. The base URL is derived from the token when
     /// not explicitly supplied.
     #[new]
-    #[pyo3(signature = (api_key, base_url = None, user_agent = None, timeout_secs = None, max_retries = None))]
+    #[pyo3(signature = (api_key, base_url = None, user_agent = None, timeout_secs = None, max_retries = None, org = None))]
     fn new(
         api_key: &str,
         base_url: Option<&str>,
         user_agent: Option<String>,
         timeout_secs: Option<f64>,
         max_retries: Option<u32>,
+        org: Option<String>,
     ) -> PyResult<Self> {
         init_tracing();
 
@@ -100,12 +101,22 @@ impl Client {
             };
             builder = builder.retry_policy(policy);
         }
+        if let Some(org_id) = org {
+            builder = builder.org(org_id);
+        }
 
         let core = builder
             .build()
             .map_err(|e| PyValueError::new_err(e.to_string()))?;
         let transport = core.transport();
         Ok(Self { core, transport })
+    }
+
+    /// Return a client scoped to a different organization (`X-Org` header).
+    fn with_org(&self, org: String) -> Self {
+        let core = self.core.with_org(org);
+        let transport = core.transport();
+        Self { core, transport }
     }
 
     /// Base URL the client is pinned to.
@@ -177,6 +188,7 @@ impl Client {
         query = None,
         timeout_secs = None,
     ))]
+    #[allow(clippy::too_many_arguments)]
     fn multipart_post<'py>(
         &self,
         py: Python<'py>,
@@ -214,6 +226,106 @@ impl Client {
             translate(result)
         })
     }
+
+    #[pyo3(signature = (name, match_mode = "exact", provider_type = None))]
+    fn integrations_get_by_name<'py>(
+        &self,
+        py: Python<'py>,
+        name: String,
+        match_mode: &str,
+        provider_type: Option<String>,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let mode = parse_name_match(match_mode)?;
+        let core = self.core.clone();
+        future_into_py(py, async move {
+            translate(
+                core.integrations()
+                    .get_by_name(&name, mode, provider_type.as_deref())
+                    .await,
+            )
+        })
+    }
+
+    #[pyo3(signature = (integration_id, name, match_mode = "exact"))]
+    fn integrations_get_access_portal_by_name<'py>(
+        &self,
+        py: Python<'py>,
+        integration_id: String,
+        name: String,
+        match_mode: &str,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let mode = parse_name_match(match_mode)?;
+        let core = self.core.clone();
+        future_into_py(py, async move {
+            translate(
+                core.integrations()
+                    .get_access_portal_by_name(&integration_id, &name, mode)
+                    .await,
+            )
+        })
+    }
+
+    #[pyo3(signature = (name, match_mode = "exact", integration_id = None))]
+    fn devices_get_by_name<'py>(
+        &self,
+        py: Python<'py>,
+        name: String,
+        match_mode: &str,
+        integration_id: Option<String>,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let mode = parse_name_match(match_mode)?;
+        let core = self.core.clone();
+        future_into_py(py, async move {
+            translate(
+                core.devices()
+                    .get_by_name(&name, mode, integration_id.as_deref())
+                    .await,
+            )
+        })
+    }
+
+    #[pyo3(signature = (integration_id, name, match_mode = "exact"))]
+    fn zones_get_by_name<'py>(
+        &self,
+        py: Python<'py>,
+        integration_id: String,
+        name: String,
+        match_mode: &str,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let mode = parse_name_match(match_mode)?;
+        let core = self.core.clone();
+        future_into_py(py, async move {
+            translate(
+                core.zones()
+                    .get_by_name(&integration_id, &name, mode)
+                    .await,
+            )
+        })
+    }
+
+    #[pyo3(signature = (name, match_mode = "exact"))]
+    fn orgs_get_by_name<'py>(
+        &self,
+        py: Python<'py>,
+        name: String,
+        match_mode: &str,
+    ) -> PyResult<Bound<'py, PyAny>> {
+        let mode = parse_name_match(match_mode)?;
+        let core = self.core.clone();
+        future_into_py(py, async move {
+            translate(core.orgs().get_by_name(&name, mode).await)
+        })
+    }
+}
+
+fn parse_name_match(mode: &str) -> PyResult<NameMatch> {
+    match mode.to_ascii_lowercase().as_str() {
+        "exact" => Ok(NameMatch::Exact),
+        "fuzzy" => Ok(NameMatch::Fuzzy),
+        other => Err(PyValueError::new_err(format!(
+            "match must be 'exact' or 'fuzzy', got {other:?}"
+        ))),
+    }
 }
 
 /// Convert `Result<T, SdkError>` into a Python-friendly result, preserving the
@@ -242,6 +354,8 @@ fn sdk_error_to_py(py: Python<'_>, err: &SdkError) -> PyErr {
         SdkError::Deserialize(_) => "deserialize",
         SdkError::Config(_) => "config",
         SdkError::Serialize(_) => "serialize",
+        SdkError::ResourceNotFound { .. } => "resource_not_found",
+        SdkError::AmbiguousResource { .. } => "ambiguous_resource",
         SdkError::Other(_) => "other",
         _ => "other",
     };
@@ -262,6 +376,26 @@ fn sdk_error_to_py(py: Python<'_>, err: &SdkError) -> PyErr {
         if let Some(details) = &body.details {
             let _ = payload.set_item("details_json", details.to_string());
         }
+    }
+    if let SdkError::ResourceNotFound {
+        resource_type,
+        name,
+    } = err
+    {
+        let _ = payload.set_item("resource_type", *resource_type);
+        let _ = payload.set_item("name", name);
+    }
+    if let SdkError::AmbiguousResource {
+        resource_type,
+        name,
+        matches,
+        ..
+    } = err
+    {
+        let _ = payload.set_item("resource_type", *resource_type);
+        let _ = payload.set_item("name", name);
+        let matches_json = serde_json::to_string(matches).unwrap_or_else(|_| "[]".to_owned());
+        let _ = payload.set_item("matches_json", matches_json);
     }
     PyValueError::new_err(payload.unbind())
 }

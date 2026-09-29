@@ -1,7 +1,8 @@
 # Local SDK builds for tomers/openapp-sdk.
 # Repo root is mounted at /workspace (rust/, python/, go/, tests/ at top level).
 #
-# From repo root: `just docker python` or `docker compose -f tests/docker/compose.yaml run --rm sdk-python`
+# RUST_VERSION / RUST_DEBIAN: from rust-pin.env (kept in sync with OpenApp config.toml
+# `[rust]` by `just maintenance rust-pin-sync`). Pass `--env-file tests/docker/rust-pin.env`.
 
 name: openapp-sdk
 
@@ -10,38 +11,59 @@ services:
     build:
       context: .
       dockerfile: rust/Dockerfile
+      args:
+        RUST_VERSION: ${RUST_VERSION:?set RUST_VERSION from rust-pin.env}
+        RUST_DEBIAN: ${RUST_DEBIAN:?set RUST_DEBIAN from rust-pin.env}
     volumes:
       - ../..:/workspace
       - openapp-sdk-cargo-registry:/usr/local/cargo/registry
       - openapp-sdk-cargo-git:/usr/local/cargo/git
+      - openapp-sdk-rustup:/usr/local/rustup
     working_dir: /workspace/rust
     user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
     environment:
       HOME: /tmp
+      CARGO_HOME: /usr/local/cargo
+      RUSTUP_HOME: /usr/local/rustup
+      RUSTUP_AUTO_INSTALL: "0"
 
   sdk-python:
     build:
       context: .
       dockerfile: python/Dockerfile
+      args:
+        RUST_VERSION: ${RUST_VERSION:?set RUST_VERSION from rust-pin.env}
     volumes:
       - ../..:/workspace
       - openapp-sdk-python-venv:/workspace/python/.venv
+      - openapp-sdk-cargo-registry:/usr/local/cargo/registry
+      - openapp-sdk-cargo-git:/usr/local/cargo/git
+      - openapp-sdk-rustup:/usr/local/rustup
     working_dir: /workspace/python
     user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
     environment:
       HOME: /tmp
+      CARGO_HOME: /usr/local/cargo
+      RUSTUP_HOME: /usr/local/rustup
+      RUSTUP_AUTO_INSTALL: "0"
       UV_LINK_MODE: copy
 
   sdk-go:
     build:
       context: ../..
       dockerfile: tests/docker/go/Dockerfile
+      args:
+        RUST_VERSION: ${RUST_VERSION:?set RUST_VERSION from rust-pin.env}
+        RUST_DEBIAN: ${RUST_DEBIAN:?set RUST_DEBIAN from rust-pin.env}
     volumes:
       - ../..:/workspace
     working_dir: /workspace/go
     user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
     environment:
       HOME: /tmp
+      # On the bind mount so caches survive `compose run --rm`. Host recipes mkdir
+      # these paths as the invoking user first; creating them inside the container
+      # as root leaves go/.gocache and go/.gomodcache undeletable.
       GOCACHE: /workspace/go/.gocache
       GOMODCACHE: /workspace/go/.gomodcache
       CGO_ENABLED: "1"
@@ -50,4 +72,5 @@ services:
 volumes:
   openapp-sdk-cargo-registry:
   openapp-sdk-cargo-git:
+  openapp-sdk-rustup:
   openapp-sdk-python-venv:

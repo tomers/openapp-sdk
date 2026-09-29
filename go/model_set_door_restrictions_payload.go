@@ -21,7 +21,7 @@ var _ MappedNullable = &SetDoorRestrictionsPayload{}
 
 // SetDoorRestrictionsPayload struct for SetDoorRestrictionsPayload
 type SetDoorRestrictionsPayload struct {
-	ApartmentEntityIds []string `json:"apartment_entity_ids"`
+	ListingEntityIds []string `json:"listing_entity_ids"`
 }
 
 type _SetDoorRestrictionsPayload SetDoorRestrictionsPayload
@@ -30,9 +30,9 @@ type _SetDoorRestrictionsPayload SetDoorRestrictionsPayload
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSetDoorRestrictionsPayload(apartmentEntityIds []string) *SetDoorRestrictionsPayload {
+func NewSetDoorRestrictionsPayload(listingEntityIds []string) *SetDoorRestrictionsPayload {
 	this := SetDoorRestrictionsPayload{}
-	this.ApartmentEntityIds = apartmentEntityIds
+	this.ListingEntityIds = listingEntityIds
 	return &this
 }
 
@@ -44,33 +44,33 @@ func NewSetDoorRestrictionsPayloadWithDefaults() *SetDoorRestrictionsPayload {
 	return &this
 }
 
-// GetApartmentEntityIds returns the ApartmentEntityIds field value
-func (o *SetDoorRestrictionsPayload) GetApartmentEntityIds() []string {
+// GetListingEntityIds returns the ListingEntityIds field value
+func (o *SetDoorRestrictionsPayload) GetListingEntityIds() []string {
 	if o == nil {
 		var ret []string
 		return ret
 	}
 
-	return o.ApartmentEntityIds
+	return o.ListingEntityIds
 }
 
-// GetApartmentEntityIdsOk returns a tuple with the ApartmentEntityIds field value
+// GetListingEntityIdsOk returns a tuple with the ListingEntityIds field value
 // and a boolean to check if the value has been set.
-func (o *SetDoorRestrictionsPayload) GetApartmentEntityIdsOk() ([]string, bool) {
+func (o *SetDoorRestrictionsPayload) GetListingEntityIdsOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.ApartmentEntityIds, true
+	return o.ListingEntityIds, true
 }
 
-// SetApartmentEntityIds sets field value
-func (o *SetDoorRestrictionsPayload) SetApartmentEntityIds(v []string) {
-	o.ApartmentEntityIds = v
+// SetListingEntityIds sets field value
+func (o *SetDoorRestrictionsPayload) SetListingEntityIds(v []string) {
+	o.ListingEntityIds = v
 }
 
 func (o SetDoorRestrictionsPayload) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["apartment_entity_ids"] = o.ApartmentEntityIds
+	toSerialize["listing_entity_ids"] = o.ListingEntityIds
 	return toSerialize, nil
 }
 
@@ -79,7 +79,7 @@ func (o *SetDoorRestrictionsPayload) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"apartment_entity_ids",
+		"listing_entity_ids",
 	}
 
 	allProperties := make(map[string]interface{})

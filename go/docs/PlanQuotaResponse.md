@@ -7,12 +7,13 @@ Name | Type | Description | Notes
 **LimitValue** | Pointer to **NullableInt64** |  | [optional]
 **Period** | **string** |  |
 **QuotaKey** | **string** |  |
+**Unit** | **string** | Machine-readable unit of &#x60;limit_value&#x60; (e.g. &#x60;count&#x60;, &#x60;seconds&#x60;). Empty when &#x60;quota_key&#x60; is not a recognized &#x60;QuotaKey&#x60;. |
 
 ## Methods
 
 ### NewPlanQuotaResponse
 
-`func NewPlanQuotaResponse(period string, quotaKey string, ) *PlanQuotaResponse`
+`func NewPlanQuotaResponse(period string, quotaKey string, unit string, ) *PlanQuotaResponse`
 
 NewPlanQuotaResponse instantiates a new PlanQuotaResponse object
 This constructor will assign default values to properties that have it defined,
@@ -100,6 +101,26 @@ and a boolean to check if the value has been set.
 `func (o *PlanQuotaResponse) SetQuotaKey(v string)`
 
 SetQuotaKey sets QuotaKey field to given value.
+
+
+### GetUnit
+
+`func (o *PlanQuotaResponse) GetUnit() string`
+
+GetUnit returns the Unit field if non-nil, zero value otherwise.
+
+### GetUnitOk
+
+`func (o *PlanQuotaResponse) GetUnitOk() (*string, bool)`
+
+GetUnitOk returns a tuple with the Unit field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUnit
+
+`func (o *PlanQuotaResponse) SetUnit(v string)`
+
+SetUnit sets Unit field to given value.
 
 
 

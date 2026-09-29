@@ -23,7 +23,7 @@ var _ MappedNullable = &PublicSessionResponse{}
 type PublicSessionResponse struct {
 	BuildingDisplayName   interface{} `json:"building_display_name,omitempty"`
 	CallTargetDisplayName interface{} `json:"call_target_display_name,omitempty"`
-	// Single line for apartment + floor (e.g. \"3 · Floor 2\").
+	// Single line for listing + floor (e.g. \"3 · Floor 2\").
 	CallTargetLocationLine NullableString `json:"call_target_location_line,omitempty"`
 	CalleePeerId           string         `json:"callee_peer_id"`
 	// Whether at least one callee received a push notification. Caller uses this to skip peer-unavailable retries when false.

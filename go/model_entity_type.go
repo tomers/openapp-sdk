@@ -15,21 +15,21 @@ import (
 	"fmt"
 )
 
-// EntityType Entity type (apartment, switch, light, sensor...).
+// EntityType Entity type (directory_listing, switch, light, sensor...).
 type EntityType string
 
 // List of EntityType
 const (
-	APARTMENT EntityType = "apartment"
-	DOOR      EntityType = "door"
-	LIGHT     EntityType = "light"
-	SENSOR    EntityType = "sensor"
-	SWITCH    EntityType = "switch"
+	ENTITYTYPE_DIRECTORY_LISTING EntityType = "directory_listing"
+	ENTITYTYPE_DOOR              EntityType = "door"
+	ENTITYTYPE_LIGHT             EntityType = "light"
+	ENTITYTYPE_SENSOR            EntityType = "sensor"
+	ENTITYTYPE_SWITCH            EntityType = "switch"
 )
 
 // All allowed values of EntityType enum
 var AllowedEntityTypeEnumValues = []EntityType{
-	"apartment",
+	"directory_listing",
 	"door",
 	"light",
 	"sensor",

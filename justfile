@@ -2,6 +2,7 @@
 
 _compose := source_directory() / "tests/docker/compose.yaml"
 _root := source_directory()
+_pin_env := source_directory() / "tests/docker/rust-pin.env"
 
 _default:
     @just --list
@@ -31,7 +32,11 @@ test:
     cd "${root}/rust"
     cargo build -p openapp-sdk-core-c-bridge --release
     cd "${root}/go"
+    if [[ ! -d ../core ]] && [[ -d ../rust ]]; then
+      perl -pi -e 's|\$\{SRCDIR\}/\.\./\.\./core/target|\$\{SRCDIR\}/../../rust/target|g' bridge/bridge.go
+    fi
     export CGO_ENABLED=1
+    export CGO_LDFLAGS="-L${root}/rust/target/release/deps -L${root}/rust/target/release"
     export LD_LIBRARY_PATH="${root}/rust/target/release/deps${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
     mkdir -p .tmp/sdk-reports
     go vet ./...
@@ -62,22 +67,24 @@ behave:
 
 docker-core:
     SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" \
-      docker compose -f {{ _compose }} run --rm sdk-core \
+      docker compose --env-file {{ _pin_env }} -f {{ _compose }} run --rm sdk-core \
       sh -euxc 'cargo fmt --all -- --check && cargo clippy --workspace --all-targets --all-features -- -D warnings && cargo test --workspace'
 
 docker-python:
     SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" \
-      docker compose -f {{ _compose }} run --rm sdk-python \
+      docker compose --env-file {{ _pin_env }} -f {{ _compose }} run --rm sdk-python \
       sh -euxc 'uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && uv run pytest -v tests/unit tests/contract'
 
 docker-go:
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{ _root }}"
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" \
-      docker compose -f tests/docker/compose.yaml build sdk-go
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" \
-      docker compose -f tests/docker/compose.yaml run --rm sdk-go \
+    export SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}"
+    export SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}"
+    mkdir -p go/.gocache go/.gomodcache
+    docker compose --env-file "{{ _pin_env }}" -f tests/docker/compose.yaml build sdk-go
+    docker compose --env-file "{{ _pin_env }}" -f tests/docker/compose.yaml run --rm \
+      --user "${SDK_DOCKER_UID}:${SDK_DOCKER_GID}" sdk-go \
       sh -euxc 'go vet ./... && go build ./... && go test ./...'
 
 # Merge Allure inputs and generate HTML (after `just test`).

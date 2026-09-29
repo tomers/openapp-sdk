@@ -21,7 +21,8 @@ var _ MappedNullable = &CreateUserRequest{}
 
 // CreateUserRequest struct for CreateUserRequest
 type CreateUserRequest struct {
-	Email string `json:"email"`
+	// Login email. Omit for phone-only provisioning (Kratos uses `traits.phone` only; OpenApp stores a synthetic `{id}@phone.openapp.local` placeholder in `users.email`).
+	Email NullableString `json:"email,omitempty"`
 	// Given name stored on the Kratos identity (`traits.name.first`) when creating the account.
 	FirstName NullableString `json:"first_name,omitempty"`
 	// Optional ID parameter (admin-only, not documented in API docs) This field is intentionally not included in OpenAPI documentation
@@ -31,6 +32,8 @@ type CreateUserRequest struct {
 	Name     LocalizedString `json:"name"`
 	// Optional password for Kratos identity (provisioning only; same permission as id). When set, the Kratos identity is created with this password so the user can log in immediately.
 	Password NullableString `json:"password,omitempty"`
+	// E.164 phone (`+[country][digits]`). When set, must satisfy the same pattern as Kratos.
+	Phone NullableString `json:"phone,omitempty"`
 	// Org ID (string) to list of role names. Optional.
 	Roles map[string]interface{} `json:"roles,omitempty"`
 }
@@ -41,9 +44,8 @@ type _CreateUserRequest CreateUserRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateUserRequest(email string, name LocalizedString) *CreateUserRequest {
+func NewCreateUserRequest(name LocalizedString) *CreateUserRequest {
 	this := CreateUserRequest{}
-	this.Email = email
 	this.Name = name
 	return &this
 }
@@ -56,28 +58,47 @@ func NewCreateUserRequestWithDefaults() *CreateUserRequest {
 	return &this
 }
 
-// GetEmail returns the Email field value
+// GetEmail returns the Email field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *CreateUserRequest) GetEmail() string {
-	if o == nil {
+	if o == nil || IsNil(o.Email.Get()) {
 		var ret string
 		return ret
 	}
-
-	return o.Email
+	return *o.Email.Get()
 }
 
-// GetEmailOk returns a tuple with the Email field value
+// GetEmailOk returns a tuple with the Email field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *CreateUserRequest) GetEmailOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Email, true
+	return o.Email.Get(), o.Email.IsSet()
 }
 
-// SetEmail sets field value
+// HasEmail returns a boolean if a field has been set.
+func (o *CreateUserRequest) HasEmail() bool {
+	if o != nil && o.Email.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetEmail gets a reference to the given NullableString and assigns it to the Email field.
 func (o *CreateUserRequest) SetEmail(v string) {
-	o.Email = v
+	o.Email.Set(&v)
+}
+
+// SetEmailNil sets the value for Email to be an explicit nil
+func (o *CreateUserRequest) SetEmailNil() {
+	o.Email.Set(nil)
+}
+
+// UnsetEmail ensures that no value is present for Email, not even an explicit nil
+func (o *CreateUserRequest) UnsetEmail() {
+	o.Email.Unset()
 }
 
 // GetFirstName returns the FirstName field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -276,6 +297,49 @@ func (o *CreateUserRequest) UnsetPassword() {
 	o.Password.Unset()
 }
 
+// GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateUserRequest) GetPhone() string {
+	if o == nil || IsNil(o.Phone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Phone.Get()
+}
+
+// GetPhoneOk returns a tuple with the Phone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateUserRequest) GetPhoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Phone.Get(), o.Phone.IsSet()
+}
+
+// HasPhone returns a boolean if a field has been set.
+func (o *CreateUserRequest) HasPhone() bool {
+	if o != nil && o.Phone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhone gets a reference to the given NullableString and assigns it to the Phone field.
+func (o *CreateUserRequest) SetPhone(v string) {
+	o.Phone.Set(&v)
+}
+
+// SetPhoneNil sets the value for Phone to be an explicit nil
+func (o *CreateUserRequest) SetPhoneNil() {
+	o.Phone.Set(nil)
+}
+
+// UnsetPhone ensures that no value is present for Phone, not even an explicit nil
+func (o *CreateUserRequest) UnsetPhone() {
+	o.Phone.Unset()
+}
+
 // GetRoles returns the Roles field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *CreateUserRequest) GetRoles() map[string]interface{} {
 	if o == nil {
@@ -311,7 +375,9 @@ func (o *CreateUserRequest) SetRoles(v map[string]interface{}) {
 
 func (o CreateUserRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["email"] = o.Email
+	if o.Email.IsSet() {
+		toSerialize["email"] = o.Email.Get()
+	}
 	if o.FirstName.IsSet() {
 		toSerialize["first_name"] = o.FirstName.Get()
 	}
@@ -325,6 +391,9 @@ func (o CreateUserRequest) ToMap() (map[string]interface{}, error) {
 	if o.Password.IsSet() {
 		toSerialize["password"] = o.Password.Get()
 	}
+	if o.Phone.IsSet() {
+		toSerialize["phone"] = o.Phone.Get()
+	}
 	if o.Roles != nil {
 		toSerialize["roles"] = o.Roles
 	}
@@ -336,7 +405,6 @@ func (o *CreateUserRequest) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"email",
 		"name",
 	}
 

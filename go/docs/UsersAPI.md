@@ -10,6 +10,7 @@ Method | HTTP request | Description
 [**DeleteUser**](UsersAPI.md#DeleteUser) | **Delete** /users/{id} | Soft-delete a user.
 [**GetUser**](UsersAPI.md#GetUser) | **Get** /users/{id} | Get a user by ID.
 [**HardDeleteUser**](UsersAPI.md#HardDeleteUser) | **Delete** /users/{id}/purge | Permanently delete (purge) a user.
+[**OrgProposeAccountMerge**](UsersAPI.md#OrgProposeAccountMerge) | **Post** /orgs/{org_id}/account-merges |
 [**SearchUsers**](UsersAPI.md#SearchUsers) | **Get** /users/search | Search users by name/email. Requires &#x60;users:list&#x60; in the org (&#x60;X-Org&#x60; or &#x60;org_id&#x60;), or on the root org when &#x60;scope&#x3D;all&#x60;.
 [**UpdateUser**](UsersAPI.md#UpdateUser) | **Put** /users/{id} | Update a user by ID.
 
@@ -20,6 +21,8 @@ Method | HTTP request | Description
 > UserResponse AddRoles(ctx, id).XOrg(xOrg).RequestBody(requestBody).Execute()
 
 Add roles to a user. Requires users:create (or admin) in each org where roles are added.
+
+
 
 ### Example
 
@@ -38,7 +41,7 @@ func main() {
 	xOrg := "xOrg_example" // string |
 	requestBody := map[string][]string{"key": []string{"Inner_example"}} // map[string][]string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -79,7 +82,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -93,9 +96,11 @@ Name | Type | Description  | Notes
 
 ## CreateUser
 
-> UserResponse CreateUser(ctx).XOrg(xOrg).CreateUserRequest(createUserRequest).IncludeDeleted(includeDeleted).OnlyDeleted(onlyDeleted).IncludeMetadata(includeMetadata).Execute()
+> UserResponse CreateUser(ctx).XOrg(xOrg).CreateUserRequest(createUserRequest).IncludeDeleted(includeDeleted).OnlyDeleted(onlyDeleted).Execute()
 
 Create a user in the organization context.
+
+
 
 ### Example
 
@@ -111,18 +116,17 @@ import (
 
 func main() {
 	xOrg := "xOrg_example" // string |
-	createUserRequest := *openapiclient.NewCreateUserRequest("Email_example", *openapiclient.NewLocalizedString(map[string]string{"key": "Inner_example"})) // CreateUserRequest |
+	createUserRequest := *openapiclient.NewCreateUserRequest(*openapiclient.NewLocalizedString(map[string]string{"key": "Inner_example"})) // CreateUserRequest |
 	includeDeleted := true // bool |  (optional)
 	onlyDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.CreateUser(context.Background()).XOrg(xOrg).CreateUserRequest(createUserRequest).IncludeDeleted(includeDeleted).OnlyDeleted(onlyDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.UsersAPI.CreateUser(context.Background()).XOrg(xOrg).CreateUserRequest(createUserRequest).IncludeDeleted(includeDeleted).OnlyDeleted(onlyDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.CreateUser``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -147,7 +151,6 @@ Name | Type | Description  | Notes
  **createUserRequest** | [**CreateUserRequest**](CreateUserRequest.md) |  |
  **includeDeleted** | **bool** |  |
  **onlyDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -155,7 +158,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -190,7 +193,7 @@ func main() {
 	xOrg := "xOrg_example" // string |
 	requestBody := map[string][]string{"key": []string{"Inner_example"}} // map[string][]string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -231,7 +234,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -245,7 +248,7 @@ Name | Type | Description  | Notes
 
 ## DeleteUser
 
-> UserResponse DeleteUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> UserResponse DeleteUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
 Soft-delete a user.
 
@@ -265,15 +268,14 @@ func main() {
 	id := "id_example" // string |
 	xOrg := "xOrg_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.DeleteUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.UsersAPI.DeleteUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.DeleteUser``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -301,7 +303,6 @@ Name | Type | Description  | Notes
 
  **xOrg** | **string** |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -309,7 +310,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -323,9 +324,11 @@ Name | Type | Description  | Notes
 
 ## GetUser
 
-> UserResponse GetUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> UserResponse GetUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
 Get a user by ID.
+
+
 
 ### Example
 
@@ -343,15 +346,14 @@ func main() {
 	id := "id_example" // string |
 	xOrg := "xOrg_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.GetUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.UsersAPI.GetUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.GetUser``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -379,7 +381,6 @@ Name | Type | Description  | Notes
 
  **xOrg** | **string** |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -387,7 +388,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -401,7 +402,7 @@ Name | Type | Description  | Notes
 
 ## HardDeleteUser
 
-> UserResponse HardDeleteUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> UserResponse HardDeleteUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
 Permanently delete (purge) a user.
 
@@ -421,15 +422,14 @@ func main() {
 	id := "id_example" // string |
 	xOrg := "xOrg_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.HardDeleteUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.UsersAPI.HardDeleteUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.HardDeleteUser``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -457,7 +457,6 @@ Name | Type | Description  | Notes
 
  **xOrg** | **string** |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -465,11 +464,85 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## OrgProposeAccountMerge
+
+> OrgProposeMergeResponse OrgProposeAccountMerge(ctx, orgId).OrgProposeMergeRequest(orgProposeMergeRequest).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	orgId := "orgId_example" // string |
+	orgProposeMergeRequest := *openapiclient.NewOrgProposeMergeRequest("OrgUserId_example") // OrgProposeMergeRequest |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.UsersAPI.OrgProposeAccountMerge(context.Background(), orgId).OrgProposeMergeRequest(orgProposeMergeRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.OrgProposeAccountMerge``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `OrgProposeAccountMerge`: OrgProposeMergeResponse
+	fmt.Fprintf(os.Stdout, "Response from `UsersAPI.OrgProposeAccountMerge`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**orgId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiOrgProposeAccountMergeRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **orgProposeMergeRequest** | [**OrgProposeMergeRequest**](OrgProposeMergeRequest.md) |  |
+
+### Return type
+
+[**OrgProposeMergeResponse**](OrgProposeMergeResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
@@ -503,7 +576,7 @@ func main() {
 	offset := int32(56) // int32 |  (optional)
 	excludeIds := "excludeIds_example" // string | Comma-separated user IDs to exclude (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -543,7 +616,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -557,7 +630,7 @@ Name | Type | Description  | Notes
 
 ## UpdateUser
 
-> UserResponse UpdateUser(ctx, id).XOrg(xOrg).UpdateUserRequest(updateUserRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> UserResponse UpdateUser(ctx, id).XOrg(xOrg).UpdateUserRequest(updateUserRequest).IncludeDeleted(includeDeleted).Execute()
 
 Update a user by ID.
 
@@ -578,15 +651,14 @@ func main() {
 	xOrg := "xOrg_example" // string |
 	updateUserRequest := *openapiclient.NewUpdateUserRequest() // UpdateUserRequest |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.UpdateUser(context.Background(), id).XOrg(xOrg).UpdateUserRequest(updateUserRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.UsersAPI.UpdateUser(context.Background(), id).XOrg(xOrg).UpdateUserRequest(updateUserRequest).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.UpdateUser``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -615,7 +687,6 @@ Name | Type | Description  | Notes
  **xOrg** | **string** |  |
  **updateUserRequest** | [**UpdateUserRequest**](UpdateUserRequest.md) |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -623,7 +694,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 

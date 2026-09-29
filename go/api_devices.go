@@ -28,7 +28,6 @@ type ApiCreateDeviceRequest struct {
 	xOrg                *string
 	createDeviceRequest *CreateDeviceRequest
 	includeDeleted      *bool
-	includeMetadata     *bool
 }
 
 // Organization context (required)
@@ -47,17 +46,14 @@ func (r ApiCreateDeviceRequest) IncludeDeleted(includeDeleted bool) ApiCreateDev
 	return r
 }
 
-func (r ApiCreateDeviceRequest) IncludeMetadata(includeMetadata bool) ApiCreateDeviceRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiCreateDeviceRequest) Execute() (*DeviceResponse, *http.Response, error) {
 	return r.ApiService.CreateDeviceExecute(r)
 }
 
 /*
 CreateDevice Create a device in an organization.
+
+Create a device. Quota: consumes 1 from `devices` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateDeviceRequest
@@ -99,9 +95,6 @@ func (a *DevicesAPIService) CreateDeviceExecute(r ApiCreateDeviceRequest) (*Devi
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -215,13 +208,12 @@ func (a *DevicesAPIService) CreateDeviceExecute(r ApiCreateDeviceRequest) (*Devi
 }
 
 type ApiDeleteDeviceRequest struct {
-	ctx             context.Context
-	ApiService      *DevicesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
-	recursive       *bool
+	ctx            context.Context
+	ApiService     *DevicesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
+	recursive      *bool
 }
 
 func (r ApiDeleteDeviceRequest) XOrg(xOrg string) ApiDeleteDeviceRequest {
@@ -231,11 +223,6 @@ func (r ApiDeleteDeviceRequest) XOrg(xOrg string) ApiDeleteDeviceRequest {
 
 func (r ApiDeleteDeviceRequest) IncludeDeleted(includeDeleted bool) ApiDeleteDeviceRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiDeleteDeviceRequest) IncludeMetadata(includeMetadata bool) ApiDeleteDeviceRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -292,9 +279,6 @@ func (a *DevicesAPIService) DeleteDeviceExecute(r ApiDeleteDeviceRequest) (*Devi
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	if r.recursive != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "recursive", r.recursive, "form", "")
@@ -605,6 +589,129 @@ func (a *DevicesAPIService) GetDeviceExecute(r ApiGetDeviceRequest) (*DeviceResp
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetDeviceHoldRequest struct {
+	ctx        context.Context
+	ApiService *DevicesAPIService
+	id         string
+}
+
+func (r ApiGetDeviceHoldRequest) Execute() (*DoorHoldResponse, *http.Response, error) {
+	return r.ApiService.GetDeviceHoldExecute(r)
+}
+
+/*
+GetDeviceHold Method for GetDeviceHold
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiGetDeviceHoldRequest
+*/
+func (a *DevicesAPIService) GetDeviceHold(ctx context.Context, id string) ApiGetDeviceHoldRequest {
+	return ApiGetDeviceHoldRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return DoorHoldResponse
+func (a *DevicesAPIService) GetDeviceHoldExecute(r ApiGetDeviceHoldRequest) (*DoorHoldResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *DoorHoldResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DevicesAPIService.GetDeviceHold")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/devices/{id}/hold"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiGetDeviceMetadataDefinitionRequest struct {
 	ctx        context.Context
 	ApiService *DevicesAPIService
@@ -728,7 +835,7 @@ func (r ApiGetDoorRestrictionsRequest) Execute() (*DoorRestrictionsResponse, *ht
 }
 
 /*
-GetDoorRestrictions GET /devices/{id}/door-restrictions — list apartment entity IDs allowed to open this door. Empty = no restrictions (all building residents can open). Only for virtual_access_portal devices.
+GetDoorRestrictions GET /devices/{id}/door-restrictions — list listing entity IDs allowed to open this door. Empty = no restrictions (all building members can open). Only for virtual_access_portal devices.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -820,13 +927,12 @@ func (a *DevicesAPIService) GetDoorRestrictionsExecute(r ApiGetDoorRestrictionsR
 }
 
 type ApiHardDeleteDeviceRequest struct {
-	ctx             context.Context
-	ApiService      *DevicesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
-	recursive       *bool
+	ctx            context.Context
+	ApiService     *DevicesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
+	recursive      *bool
 }
 
 func (r ApiHardDeleteDeviceRequest) XOrg(xOrg string) ApiHardDeleteDeviceRequest {
@@ -836,11 +942,6 @@ func (r ApiHardDeleteDeviceRequest) XOrg(xOrg string) ApiHardDeleteDeviceRequest
 
 func (r ApiHardDeleteDeviceRequest) IncludeDeleted(includeDeleted bool) ApiHardDeleteDeviceRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiHardDeleteDeviceRequest) IncludeMetadata(includeMetadata bool) ApiHardDeleteDeviceRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -897,9 +998,6 @@ func (a *DevicesAPIService) HardDeleteDeviceExecute(r ApiHardDeleteDeviceRequest
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	if r.recursive != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "recursive", r.recursive, "form", "")
@@ -1034,6 +1132,8 @@ type ApiListDevicesRequest struct {
 	deviceKind       *string
 	externalId       *string
 	q                *string
+	sort             *string
+	locale           *string
 	hasExternalId    *bool
 	hasGo2rtcChannel *bool
 	includeStale     *bool
@@ -1075,6 +1175,18 @@ func (r ApiListDevicesRequest) ExternalId(externalId string) ApiListDevicesReque
 // Case-insensitive substring match on localized device name (JSON). Best-effort when &#x60;integration_id&#x60; is set (SQL ILIKE).
 func (r ApiListDevicesRequest) Q(q string) ApiListDevicesRequest {
 	r.q = &q
+	return r
+}
+
+// Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;integration_id&#x60; is set. Defaults to insertion order when omitted.
+func (r ApiListDevicesRequest) Sort(sort string) ApiListDevicesRequest {
+	r.sort = &sort
+	return r
+}
+
+// Locale used to resolve the localized &#x60;name&#x60; when sorting by name (e.g. &#x60;en&#x60;). Defaults to &#x60;en&#x60;.
+func (r ApiListDevicesRequest) Locale(locale string) ApiListDevicesRequest {
+	r.locale = &locale
 	return r
 }
 
@@ -1157,6 +1269,12 @@ func (a *DevicesAPIService) ListDevicesExecute(r ApiListDevicesRequest) ([]Devic
 	}
 	if r.q != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
+	}
+	if r.sort != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "sort", r.sort, "form", "")
+	}
+	if r.locale != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "locale", r.locale, "form", "")
 	}
 	if r.hasExternalId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "has_external_id", r.hasExternalId, "form", "")
@@ -1254,13 +1372,527 @@ func (a *DevicesAPIService) ListDevicesExecute(r ApiListDevicesRequest) ([]Devic
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiPostRefreshDeviceChannelCountRequest struct {
+	ctx        context.Context
+	ApiService *DevicesAPIService
+	id         string
+	xOrg       *string
+}
+
+func (r ApiPostRefreshDeviceChannelCountRequest) XOrg(xOrg string) ApiPostRefreshDeviceChannelCountRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiPostRefreshDeviceChannelCountRequest) Execute() (interface{}, *http.Response, error) {
+	return r.ApiService.PostRefreshDeviceChannelCountExecute(r)
+}
+
+/*
+PostRefreshDeviceChannelCount Refresh the provider-reported channel count for one linked device.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPostRefreshDeviceChannelCountRequest
+*/
+func (a *DevicesAPIService) PostRefreshDeviceChannelCount(ctx context.Context, id string) ApiPostRefreshDeviceChannelCountRequest {
+	return ApiPostRefreshDeviceChannelCountRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return interface{}
+func (a *DevicesAPIService) PostRefreshDeviceChannelCountExecute(r ApiPostRefreshDeviceChannelCountRequest) (interface{}, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue interface{}
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DevicesAPIService.PostRefreshDeviceChannelCount")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/devices/{id}/channel-count/refresh"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 501 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 502 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPostVirtualAccessOpenRequest struct {
+	ctx        context.Context
+	ApiService *DevicesAPIService
+	id         string
+}
+
+func (r ApiPostVirtualAccessOpenRequest) Execute() (*VirtualAccessOpenResponse, *http.Response, error) {
+	return r.ApiService.PostVirtualAccessOpenExecute(r)
+}
+
+/*
+PostVirtualAccessOpen POST /devices/{id}/virtual-access/open — open all configured openers on a portal device.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPostVirtualAccessOpenRequest
+*/
+func (a *DevicesAPIService) PostVirtualAccessOpen(ctx context.Context, id string) ApiPostVirtualAccessOpenRequest {
+	return ApiPostVirtualAccessOpenRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return VirtualAccessOpenResponse
+func (a *DevicesAPIService) PostVirtualAccessOpenExecute(r ApiPostVirtualAccessOpenRequest) (*VirtualAccessOpenResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *VirtualAccessOpenResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DevicesAPIService.PostVirtualAccessOpen")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/devices/{id}/virtual-access/open"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPutDeviceHoldRequest struct {
+	ctx            context.Context
+	ApiService     *DevicesAPIService
+	id             string
+	putHoldRequest *PutHoldRequest
+}
+
+func (r ApiPutDeviceHoldRequest) PutHoldRequest(putHoldRequest PutHoldRequest) ApiPutDeviceHoldRequest {
+	r.putHoldRequest = &putHoldRequest
+	return r
+}
+
+func (r ApiPutDeviceHoldRequest) Execute() (*DoorHoldResponse, *http.Response, error) {
+	return r.ApiService.PutDeviceHoldExecute(r)
+}
+
+/*
+PutDeviceHold Method for PutDeviceHold
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPutDeviceHoldRequest
+*/
+func (a *DevicesAPIService) PutDeviceHold(ctx context.Context, id string) ApiPutDeviceHoldRequest {
+	return ApiPutDeviceHoldRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return DoorHoldResponse
+func (a *DevicesAPIService) PutDeviceHoldExecute(r ApiPutDeviceHoldRequest) (*DoorHoldResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *DoorHoldResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DevicesAPIService.PutDeviceHold")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/devices/{id}/hold"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.putHoldRequest == nil {
+		return localVarReturnValue, nil, reportError("putHoldRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.putHoldRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPutDoorRestrictionsRequest struct {
+	ctx                        context.Context
+	ApiService                 *DevicesAPIService
+	id                         string
+	setDoorRestrictionsPayload *SetDoorRestrictionsPayload
+}
+
+func (r ApiPutDoorRestrictionsRequest) SetDoorRestrictionsPayload(setDoorRestrictionsPayload SetDoorRestrictionsPayload) ApiPutDoorRestrictionsRequest {
+	r.setDoorRestrictionsPayload = &setDoorRestrictionsPayload
+	return r
+}
+
+func (r ApiPutDoorRestrictionsRequest) Execute() (*DoorRestrictionsResponse, *http.Response, error) {
+	return r.ApiService.PutDoorRestrictionsExecute(r)
+}
+
+/*
+PutDoorRestrictions PUT /devices/{id}/door-restrictions — set which listings can open this door. Empty array = no restrictions (all building residents). Only for virtual_access_portal devices.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPutDoorRestrictionsRequest
+*/
+func (a *DevicesAPIService) PutDoorRestrictions(ctx context.Context, id string) ApiPutDoorRestrictionsRequest {
+	return ApiPutDoorRestrictionsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return DoorRestrictionsResponse
+func (a *DevicesAPIService) PutDoorRestrictionsExecute(r ApiPutDoorRestrictionsRequest) (*DoorRestrictionsResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *DoorRestrictionsResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DevicesAPIService.PutDoorRestrictions")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/devices/{id}/door-restrictions"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.setDoorRestrictionsPayload == nil {
+		return localVarReturnValue, nil, reportError("setDoorRestrictionsPayload is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.setDoorRestrictionsPayload
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiRestoreDeviceRequest struct {
-	ctx             context.Context
-	ApiService      *DevicesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *DevicesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiRestoreDeviceRequest) XOrg(xOrg string) ApiRestoreDeviceRequest {
@@ -1270,11 +1902,6 @@ func (r ApiRestoreDeviceRequest) XOrg(xOrg string) ApiRestoreDeviceRequest {
 
 func (r ApiRestoreDeviceRequest) IncludeDeleted(includeDeleted bool) ApiRestoreDeviceRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiRestoreDeviceRequest) IncludeMetadata(includeMetadata bool) ApiRestoreDeviceRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1325,9 +1952,6 @@ func (a *DevicesAPIService) RestoreDeviceExecute(r ApiRestoreDeviceRequest) (*De
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1456,7 +2080,6 @@ type ApiUpdateDeviceRequest struct {
 	xOrg                *string
 	updateDeviceRequest *UpdateDeviceRequest
 	includeDeleted      *bool
-	includeMetadata     *bool
 }
 
 func (r ApiUpdateDeviceRequest) XOrg(xOrg string) ApiUpdateDeviceRequest {
@@ -1471,11 +2094,6 @@ func (r ApiUpdateDeviceRequest) UpdateDeviceRequest(updateDeviceRequest UpdateDe
 
 func (r ApiUpdateDeviceRequest) IncludeDeleted(includeDeleted bool) ApiUpdateDeviceRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiUpdateDeviceRequest) IncludeMetadata(includeMetadata bool) ApiUpdateDeviceRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1529,9 +2147,6 @@ func (a *DevicesAPIService) UpdateDeviceExecute(r ApiUpdateDeviceRequest) (*Devi
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

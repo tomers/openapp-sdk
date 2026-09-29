@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **BuildingDisplayName** | Pointer to **interface{}** |  | [optional]
 **CallTargetDisplayName** | Pointer to **interface{}** |  | [optional]
-**CallTargetLocationLine** | Pointer to **NullableString** | Single line for apartment + floor (e.g. \&quot;3 · Floor 2\&quot;). | [optional]
+**CallTargetLocationLine** | Pointer to **NullableString** | Single line for listing + floor (e.g. \&quot;3 · Floor 2\&quot;). | [optional]
 **CalleePeerId** | **string** |  |
 **CalleesNotified** | Pointer to **NullableBool** | Whether at least one callee received a push notification. Caller uses this to skip peer-unavailable retries when false. | [optional]
 **CallerPeerId** | **string** |  |

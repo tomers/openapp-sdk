@@ -75,23 +75,24 @@ the secret.
 
 The full OpenAPI surface is available under `client.<tag>`:
 
-| Attribute                     | OpenAPI tag         |
-|-------------------------------|---------------------|
-| `client.api_keys`             | API Keys            |
-| `client.users`                | Users               |
-| `client.orgs`                 | Orgs                |
-| `client.devices`              | Devices             |
-| `client.entities`             | Entities            |
-| `client.integrations`         | Integrations        |
-| `client.zones`                | Zones               |
-| `client.lan_agent`            | LAN agent           |
-| `client.scripting`            | Scripting           |
-| `client.apartment_residents`  | Apartment Residents |
-| `client.public_access`        | Public Access       |
-| `client.auth`                 | Auth                |
-| `client.me`                   | Me                  |
-| `client.eula`                 | EULA                |
-| `client.status`               | Status              |
+| Attribute                          | OpenAPI tag               |
+| ---------------------------------- | ------------------------- |
+| `client.api_keys`                  | API Keys                  |
+| `client.users`                     | Users                     |
+| `client.orgs`                      | Orgs                      |
+| `client.devices`                   | Devices                   |
+| `client.entities`                  | Entities                  |
+| `client.integrations`              | Integrations              |
+| `client.zones`                     | Zones                     |
+| `client.lan_agent`                 | LAN agent                 |
+| `client.scripting`                 | Scripting                 |
+| `client.site_people`               | Site People               |
+| `client.directory_listing_members` | Directory Listing Members |
+| `client.public_access`             | Public Access             |
+| `client.auth`                      | Auth                      |
+| `client.me`                        | Me                        |
+| `client.eula`                      | EULA                      |
+| `client.status`                    | Status                    |
 
 ## Error handling
 
@@ -140,7 +141,7 @@ MIT
 
 ## Documentation
 
-- [Python SDK docs](https://openapp.house/docs/sdk/python/)
+- [SDK overview](https://openapp.house/docs/sdk/)
 - [API reference](https://openapp.house/docs/api-reference/)
-- [Agents & automation](https://openapp.house/docs/guides/agents/overview/)
-- [Access control by sector](https://openapp.house/docs/guides/access-control-architecture/access-control-model-by-sector/)
+- [Agents & MCP](https://openapp.house/docs/guides/agents/overview/)
+- [AI index (llms.txt)](https://openapp.house/llms.txt)

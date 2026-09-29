@@ -11,9 +11,7 @@ API version: v1
 package openapi
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 // checks if the ListOrgsQuery type satisfies the MappedNullable interface at compile time
@@ -21,26 +19,20 @@ var _ MappedNullable = &ListOrgsQuery{}
 
 // ListOrgsQuery struct for ListOrgsQuery
 type ListOrgsQuery struct {
-	IncludeDeleted  bool `json:"include_deleted"`
-	IncludeMetadata bool `json:"include_metadata"`
-	OnlyDeleted     bool `json:"only_deleted"`
+	IncludeDeleted *bool `json:"include_deleted,omitempty"`
+	OnlyDeleted    *bool `json:"only_deleted,omitempty"`
 	// Number of items per page. Default from config, max 200.
 	Limit *int32 `json:"limit,omitempty"`
 	// Number of items to skip. Default 0.
 	Offset *int32 `json:"offset,omitempty"`
 }
 
-type _ListOrgsQuery ListOrgsQuery
-
 // NewListOrgsQuery instantiates a new ListOrgsQuery object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewListOrgsQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool) *ListOrgsQuery {
+func NewListOrgsQuery() *ListOrgsQuery {
 	this := ListOrgsQuery{}
-	this.IncludeDeleted = includeDeleted
-	this.IncludeMetadata = includeMetadata
-	this.OnlyDeleted = onlyDeleted
 	return &this
 }
 
@@ -52,76 +44,68 @@ func NewListOrgsQueryWithDefaults() *ListOrgsQuery {
 	return &this
 }
 
-// GetIncludeDeleted returns the IncludeDeleted field value
+// GetIncludeDeleted returns the IncludeDeleted field value if set, zero value otherwise.
 func (o *ListOrgsQuery) GetIncludeDeleted() bool {
-	if o == nil {
+	if o == nil || IsNil(o.IncludeDeleted) {
 		var ret bool
 		return ret
 	}
-
-	return o.IncludeDeleted
+	return *o.IncludeDeleted
 }
 
-// GetIncludeDeletedOk returns a tuple with the IncludeDeleted field value
+// GetIncludeDeletedOk returns a tuple with the IncludeDeleted field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *ListOrgsQuery) GetIncludeDeletedOk() (*bool, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.IncludeDeleted) {
 		return nil, false
 	}
-	return &o.IncludeDeleted, true
+	return o.IncludeDeleted, true
 }
 
-// SetIncludeDeleted sets field value
+// HasIncludeDeleted returns a boolean if a field has been set.
+func (o *ListOrgsQuery) HasIncludeDeleted() bool {
+	if o != nil && !IsNil(o.IncludeDeleted) {
+		return true
+	}
+
+	return false
+}
+
+// SetIncludeDeleted gets a reference to the given bool and assigns it to the IncludeDeleted field.
 func (o *ListOrgsQuery) SetIncludeDeleted(v bool) {
-	o.IncludeDeleted = v
+	o.IncludeDeleted = &v
 }
 
-// GetIncludeMetadata returns the IncludeMetadata field value
-func (o *ListOrgsQuery) GetIncludeMetadata() bool {
-	if o == nil {
-		var ret bool
-		return ret
-	}
-
-	return o.IncludeMetadata
-}
-
-// GetIncludeMetadataOk returns a tuple with the IncludeMetadata field value
-// and a boolean to check if the value has been set.
-func (o *ListOrgsQuery) GetIncludeMetadataOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IncludeMetadata, true
-}
-
-// SetIncludeMetadata sets field value
-func (o *ListOrgsQuery) SetIncludeMetadata(v bool) {
-	o.IncludeMetadata = v
-}
-
-// GetOnlyDeleted returns the OnlyDeleted field value
+// GetOnlyDeleted returns the OnlyDeleted field value if set, zero value otherwise.
 func (o *ListOrgsQuery) GetOnlyDeleted() bool {
-	if o == nil {
+	if o == nil || IsNil(o.OnlyDeleted) {
 		var ret bool
 		return ret
 	}
-
-	return o.OnlyDeleted
+	return *o.OnlyDeleted
 }
 
-// GetOnlyDeletedOk returns a tuple with the OnlyDeleted field value
+// GetOnlyDeletedOk returns a tuple with the OnlyDeleted field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *ListOrgsQuery) GetOnlyDeletedOk() (*bool, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.OnlyDeleted) {
 		return nil, false
 	}
-	return &o.OnlyDeleted, true
+	return o.OnlyDeleted, true
 }
 
-// SetOnlyDeleted sets field value
+// HasOnlyDeleted returns a boolean if a field has been set.
+func (o *ListOrgsQuery) HasOnlyDeleted() bool {
+	if o != nil && !IsNil(o.OnlyDeleted) {
+		return true
+	}
+
+	return false
+}
+
+// SetOnlyDeleted gets a reference to the given bool and assigns it to the OnlyDeleted field.
 func (o *ListOrgsQuery) SetOnlyDeleted(v bool) {
-	o.OnlyDeleted = v
+	o.OnlyDeleted = &v
 }
 
 // GetLimit returns the Limit field value if set, zero value otherwise.
@@ -190,9 +174,12 @@ func (o *ListOrgsQuery) SetOffset(v int32) {
 
 func (o ListOrgsQuery) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["include_deleted"] = o.IncludeDeleted
-	toSerialize["include_metadata"] = o.IncludeMetadata
-	toSerialize["only_deleted"] = o.OnlyDeleted
+	if !IsNil(o.IncludeDeleted) {
+		toSerialize["include_deleted"] = o.IncludeDeleted
+	}
+	if !IsNil(o.OnlyDeleted) {
+		toSerialize["only_deleted"] = o.OnlyDeleted
+	}
 	if !IsNil(o.Limit) {
 		toSerialize["limit"] = o.Limit
 	}
@@ -200,45 +187,6 @@ func (o ListOrgsQuery) ToMap() (map[string]interface{}, error) {
 		toSerialize["offset"] = o.Offset
 	}
 	return toSerialize, nil
-}
-
-func (o *ListOrgsQuery) UnmarshalJSON(data []byte) (err error) {
-	// This validates that all required properties are included in the JSON object
-	// by unmarshalling the object into a generic map with string keys and checking
-	// that every required field exists as a key in the generic map.
-	requiredProperties := []string{
-		"include_deleted",
-		"include_metadata",
-		"only_deleted",
-	}
-
-	allProperties := make(map[string]interface{})
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err
-	}
-
-	for _, requiredProperty := range requiredProperties {
-		if _, exists := allProperties[requiredProperty]; !exists {
-			return fmt.Errorf("no value given for required property %v", requiredProperty)
-		}
-	}
-
-	varListOrgsQuery := _ListOrgsQuery{}
-
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varListOrgsQuery)
-
-	if err != nil {
-		return err
-	}
-
-	*o = ListOrgsQuery(varListOrgsQuery)
-
-	return err
 }
 
 type NullableListOrgsQuery struct {

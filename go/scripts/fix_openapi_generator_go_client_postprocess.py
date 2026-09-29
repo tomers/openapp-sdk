@@ -5,12 +5,16 @@ OpenAPI Generator emits `NewAPIClient(cfg *Configuration)` with a default
 from core_transport (cgo). Patches:
 
 - `client.go`: rename constructor, drop DefaultClient fallback, set doc comment.
+- `api_*.go`, `configuration.go`: remove the generator's context-based auth plumbing
+  (`ContextAPIKeys`, `APIKey`, `BasicAuth`). openapp-sdk-core owns authentication and the
+  round tripper never forwards request headers, so those values could never reach the wire.
 - `test/*.go`, `docs/*.md`: examples use `NewAPIClient(apiKey)` + error handling.
 - Strip trailing whitespace and normalize EOF newline so `openapi-check` matches pre-commit.
 """
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -20,7 +24,7 @@ _OLD_TEST_SNIPPET = (
 )
 
 _NEW_TEST_SNIPPET = (
-    '\tapiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"\n'
+    '\tapiKey := "http://127.0.0.1:1_openapp_testsecret"\n'
     "\tapiClient, err := openapiclient.NewAPIClient(apiKey)\n"
     "\trequire.NoError(t, err)\n"
     "\tt.Cleanup(func() { _ = apiClient.Close() })\n"
@@ -32,7 +36,7 @@ _OLD_DOC_SNIPPET = (
 )
 
 _NEW_DOC_SNIPPET = (
-    '\tapiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")\n'
+    '\tapiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")\n'
     "\tif err != nil {\n"
     '\t\tfmt.Fprintf(os.Stderr, "NewAPIClient: %v\\n", err)\n'
     "\t\tos.Exit(1)\n"
@@ -75,6 +79,51 @@ def _patch_client_go(text: str) -> tuple[str, bool]:
     return out, True
 
 
+_CONTEXT_API_KEY_BLOCK = re.compile(
+    r"\n\tif r\.ctx != nil \{\n"
+    r"\t\t// API Key Authentication\n"
+    r"\t\tif auth, ok := r\.ctx\.Value\(ContextAPIKeys\)\.\(map\[string\]APIKey\); ok \{\n"
+    r".*?\n\t\t\}\n\t\}\n",
+    re.S,
+)
+
+_CONFIGURATION_AUTH_DECLS = (
+    "\t// ContextAPIKeys takes a string apikey as authentication for the request\n"
+    '\tContextAPIKeys = contextKey("apiKeys")\n\n',
+    "// BasicAuth provides basic http authentication to a request passed via context using ContextBasicAuth\n"
+    "type BasicAuth struct {\n"
+    '\tUserName string `json:"userName,omitempty"`\n'
+    '\tPassword string `json:"password,omitempty"`\n'
+    "}\n\n",
+    "// APIKey provides API key based authentication to a request passed via context using ContextAPIKey\n"
+    "type APIKey struct {\n"
+    "\tKey    string\n"
+    "\tPrefix string\n"
+    "}\n\n",
+)
+
+
+def _strip_context_auth(root: Path) -> None:
+    for path in sorted(root.glob("api_*.go")):
+        text = path.read_text(encoding="utf-8")
+        stripped = _CONTEXT_API_KEY_BLOCK.sub("\n", text)
+        if "ContextAPIKeys" in stripped:
+            raise SystemExit(f"unrecognized ContextAPIKeys block left in {path.name}")
+        if stripped != text:
+            path.write_text(stripped, encoding="utf-8")
+
+    configuration = root / "configuration.go"
+    text = configuration.read_text(encoding="utf-8")
+    for decl in _CONFIGURATION_AUTH_DECLS:
+        text = text.replace(decl, "")
+    for leftover in ("ContextAPIKeys", "type APIKey ", "type BasicAuth "):
+        if leftover in text:
+            raise SystemExit(
+                f"unrecognized {leftover.strip()} declaration left in configuration.go"
+            )
+    configuration.write_text(text, encoding="utf-8")
+
+
 def _patch_examples(path: Path, text: str) -> tuple[str, bool]:
     if path.suffix == ".go":
         old, new = _OLD_TEST_SNIPPET, _NEW_TEST_SNIPPET
@@ -83,6 +132,21 @@ def _patch_examples(path: Path, text: str) -> tuple[str, bool]:
     if old not in text:
         return text, False
     return text.replace(old, new), True
+
+
+def _ensure_os_import_for_file_uploads(root: Path) -> None:
+    """Generator sometimes omits `os` when only `[]*os.File` appears (e.g. multipart arrays)."""
+    for path in sorted(root.glob("api_*.go")):
+        text = path.read_text(encoding="utf-8")
+        if "os.File" not in text or re.search(r'^\s+"os"\s*$', text, re.MULTILINE):
+            continue
+        marker = '\t"net/url"\n'
+        if marker not in text:
+            print(
+                f"skip os import fix: no net/url block in {path.name}", file=sys.stderr
+            )
+            continue
+        path.write_text(text.replace(marker, marker + '\t"os"\n', 1), encoding="utf-8")
 
 
 def _normalize_generated_whitespace(root: Path) -> None:
@@ -120,6 +184,8 @@ def main() -> None:
             if ch:
                 path.write_text(nt)
 
+    _strip_context_auth(root)
+    _ensure_os_import_for_file_uploads(root)
     _normalize_generated_whitespace(root)
 
 

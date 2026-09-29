@@ -47,6 +47,8 @@ func (r ApiAddRolesRequest) Execute() (*UserResponse, *http.Response, error) {
 /*
 AddRoles Add roles to a user. Requires users:create (or admin) in each org where roles are added.
 
+Grant org roles to a user. Quota: adding a user to a new org consumes 1 from that org's `org_users` (unit: count, lifetime capacity) — capacity-checked first (429 `quota_exceeded` when full).
+
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
 	@return ApiAddRolesRequest
@@ -152,7 +154,6 @@ type ApiCreateUserRequest struct {
 	createUserRequest *CreateUserRequest
 	includeDeleted    *bool
 	onlyDeleted       *bool
-	includeMetadata   *bool
 }
 
 func (r ApiCreateUserRequest) XOrg(xOrg string) ApiCreateUserRequest {
@@ -175,17 +176,14 @@ func (r ApiCreateUserRequest) OnlyDeleted(onlyDeleted bool) ApiCreateUserRequest
 	return r
 }
 
-func (r ApiCreateUserRequest) IncludeMetadata(includeMetadata bool) ApiCreateUserRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiCreateUserRequest) Execute() (*UserResponse, *http.Response, error) {
 	return r.ApiService.CreateUserExecute(r)
 }
 
 /*
 CreateUser Create a user in the organization context.
+
+Create a user. Ordinary organization administrators must use `POST /orgs/{id}/invitations` for email/phone contacts. Direct creation is limited to platform administration and initial provisioning. Quota: each org the user is added to consumes 1 from that org's `org_users` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateUserRequest
@@ -230,9 +228,6 @@ func (a *UsersAPIService) CreateUserExecute(r ApiCreateUserRequest) (*UserRespon
 	}
 	if r.onlyDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "only_deleted", r.onlyDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -480,12 +475,11 @@ func (a *UsersAPIService) DeleteRolesExecute(r ApiDeleteRolesRequest) (*UserResp
 }
 
 type ApiDeleteUserRequest struct {
-	ctx             context.Context
-	ApiService      *UsersAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *UsersAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiDeleteUserRequest) XOrg(xOrg string) ApiDeleteUserRequest {
@@ -495,11 +489,6 @@ func (r ApiDeleteUserRequest) XOrg(xOrg string) ApiDeleteUserRequest {
 
 func (r ApiDeleteUserRequest) IncludeDeleted(includeDeleted bool) ApiDeleteUserRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiDeleteUserRequest) IncludeMetadata(includeMetadata bool) ApiDeleteUserRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -550,9 +539,6 @@ func (a *UsersAPIService) DeleteUserExecute(r ApiDeleteUserRequest) (*UserRespon
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -686,12 +672,11 @@ func (a *UsersAPIService) DeleteUserExecute(r ApiDeleteUserRequest) (*UserRespon
 }
 
 type ApiGetUserRequest struct {
-	ctx             context.Context
-	ApiService      *UsersAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *UsersAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiGetUserRequest) XOrg(xOrg string) ApiGetUserRequest {
@@ -704,17 +689,14 @@ func (r ApiGetUserRequest) IncludeDeleted(includeDeleted bool) ApiGetUserRequest
 	return r
 }
 
-func (r ApiGetUserRequest) IncludeMetadata(includeMetadata bool) ApiGetUserRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiGetUserRequest) Execute() (*UserResponse, *http.Response, error) {
 	return r.ApiService.GetUserExecute(r)
 }
 
 /*
 GetUser Get a user by ID.
+
+Get a user. `roles` is scoped to the `X-Org` context: the request org, its descendants, and its ancestors. Roles in unrelated orgs are omitted.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -756,9 +738,6 @@ func (a *UsersAPIService) GetUserExecute(r ApiGetUserRequest) (*UserResponse, *h
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -870,12 +849,11 @@ func (a *UsersAPIService) GetUserExecute(r ApiGetUserRequest) (*UserResponse, *h
 }
 
 type ApiHardDeleteUserRequest struct {
-	ctx             context.Context
-	ApiService      *UsersAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *UsersAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiHardDeleteUserRequest) XOrg(xOrg string) ApiHardDeleteUserRequest {
@@ -885,11 +863,6 @@ func (r ApiHardDeleteUserRequest) XOrg(xOrg string) ApiHardDeleteUserRequest {
 
 func (r ApiHardDeleteUserRequest) IncludeDeleted(includeDeleted bool) ApiHardDeleteUserRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiHardDeleteUserRequest) IncludeMetadata(includeMetadata bool) ApiHardDeleteUserRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -940,9 +913,6 @@ func (a *UsersAPIService) HardDeleteUserExecute(r ApiHardDeleteUserRequest) (*Us
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1059,6 +1029,119 @@ func (a *UsersAPIService) HardDeleteUserExecute(r ApiHardDeleteUserRequest) (*Us
 			}
 			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiOrgProposeAccountMergeRequest struct {
+	ctx                    context.Context
+	ApiService             *UsersAPIService
+	orgId                  string
+	orgProposeMergeRequest *OrgProposeMergeRequest
+}
+
+func (r ApiOrgProposeAccountMergeRequest) OrgProposeMergeRequest(orgProposeMergeRequest OrgProposeMergeRequest) ApiOrgProposeAccountMergeRequest {
+	r.orgProposeMergeRequest = &orgProposeMergeRequest
+	return r
+}
+
+func (r ApiOrgProposeAccountMergeRequest) Execute() (*OrgProposeMergeResponse, *http.Response, error) {
+	return r.ApiService.OrgProposeAccountMergeExecute(r)
+}
+
+/*
+OrgProposeAccountMerge Method for OrgProposeAccountMerge
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param orgId
+	@return ApiOrgProposeAccountMergeRequest
+*/
+func (a *UsersAPIService) OrgProposeAccountMerge(ctx context.Context, orgId string) ApiOrgProposeAccountMergeRequest {
+	return ApiOrgProposeAccountMergeRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgId:      orgId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return OrgProposeMergeResponse
+func (a *UsersAPIService) OrgProposeAccountMergeExecute(r ApiOrgProposeAccountMergeRequest) (*OrgProposeMergeResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *OrgProposeMergeResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersAPIService.OrgProposeAccountMerge")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{org_id}/account-merges"
+	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.orgProposeMergeRequest == nil {
+		return localVarReturnValue, nil, reportError("orgProposeMergeRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.orgProposeMergeRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -1281,7 +1364,6 @@ type ApiUpdateUserRequest struct {
 	xOrg              *string
 	updateUserRequest *UpdateUserRequest
 	includeDeleted    *bool
-	includeMetadata   *bool
 }
 
 func (r ApiUpdateUserRequest) XOrg(xOrg string) ApiUpdateUserRequest {
@@ -1296,11 +1378,6 @@ func (r ApiUpdateUserRequest) UpdateUserRequest(updateUserRequest UpdateUserRequ
 
 func (r ApiUpdateUserRequest) IncludeDeleted(includeDeleted bool) ApiUpdateUserRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiUpdateUserRequest) IncludeMetadata(includeMetadata bool) ApiUpdateUserRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1354,9 +1431,6 @@ func (a *UsersAPIService) UpdateUserExecute(r ApiUpdateUserRequest) (*UserRespon
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

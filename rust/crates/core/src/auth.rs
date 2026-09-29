@@ -3,23 +3,52 @@
 //! The SDK ships a single [`TokenProvider`] trait so higher layers (bridge, Python
 //! wrappers) can plug in custom auth — session cookies, JWT, Vault-minted tokens —
 //! without breaking the rest of the client. The v1 default is [`StaticApiKey`], which
-//! forwards the parsed `OpenApp` API key as an `Authorization: Bearer` header.
+//! sends the `OpenApp` API key in the [`API_KEY_HEADER`] header.
+//!
+//! The gateway (Oathkeeper) reads API keys only from `X-API-Key`; `Authorization:
+//! Bearer` is its JWT channel, so an API key sent there is never validated. See
+//! `notes/contracts/api-key-authentication.md`.
 
 use std::sync::Arc;
 
 use async_trait::async_trait;
 use openapp_sdk_common::ApiKey;
+use reqwest::header::{AUTHORIZATION, HeaderName};
 
 use crate::error::SdkError;
 
-/// Credentials returned by a [`TokenProvider`] for a single outgoing request.
-#[derive(Debug, Clone)]
+/// Header the gateway reads `OpenApp` API keys from.
+pub const API_KEY_HEADER: HeaderName = HeaderName::from_static("x-api-key");
+
+/// Credentials returned by a [`TokenProvider`] for a single outgoing request: the
+/// header to set and its full value.
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthToken {
-    /// Full value of the `Authorization` header (typically `Bearer <token>`).
-    pub authorization: String,
+    pub header: HeaderName,
+    pub value: String,
 }
 
-/// Produces the `Authorization` header for every outgoing SDK request.
+impl AuthToken {
+    /// An `OpenApp` API key, sent verbatim in [`API_KEY_HEADER`].
+    #[must_use]
+    pub fn api_key(token: impl Into<String>) -> Self {
+        Self {
+            header: API_KEY_HEADER,
+            value: token.into(),
+        }
+    }
+
+    /// A bearer credential (for example a JWT), sent as `Authorization: Bearer <token>`.
+    #[must_use]
+    pub fn bearer(token: impl AsRef<str>) -> Self {
+        Self {
+            header: AUTHORIZATION,
+            value: format!("Bearer {}", token.as_ref()),
+        }
+    }
+}
+
+/// Produces the credential header for every outgoing SDK request.
 #[async_trait]
 pub trait TokenProvider: Send + Sync + std::fmt::Debug {
     /// Return the credentials to attach to the next request. May be called on the hot
@@ -58,9 +87,7 @@ impl StaticApiKey {
 #[async_trait]
 impl TokenProvider for StaticApiKey {
     async fn token(&self) -> Result<AuthToken, SdkError> {
-        Ok(AuthToken {
-            authorization: format!("Bearer {}", self.key.as_bearer()),
-        })
+        Ok(AuthToken::api_key(self.key.as_str()))
     }
 }
 
@@ -69,13 +96,17 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn static_provider_emits_bearer() {
-        let provider =
-            StaticApiKey::from_raw("https://api.openapp.house/api/v1_openapp_SECRET").unwrap();
+    async fn static_provider_emits_x_api_key_with_full_token() {
+        let provider = StaticApiKey::from_raw("https://openapp.house_openapp_SECRET").unwrap();
         let token = provider.token().await.unwrap();
-        assert_eq!(
-            token.authorization,
-            "Bearer https://api.openapp.house/api/v1_openapp_SECRET"
-        );
+        assert_eq!(token.header.as_str(), "x-api-key");
+        assert_eq!(token.value, "https://openapp.house_openapp_SECRET");
+    }
+
+    #[test]
+    fn bearer_token_uses_authorization_header() {
+        let token = AuthToken::bearer("jwt.payload.sig");
+        assert_eq!(token.header, AUTHORIZATION);
+        assert_eq!(token.value, "Bearer jwt.payload.sig");
     }
 }

@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from .._image_from_url import fetch_image_for_upload
 from ._base import _BaseResource
+from ._resolve import _bridge_get_by_name
+
+MatchMode = Literal["exact", "fuzzy"]
 
 
 class DevicesClient(_BaseResource):
@@ -17,25 +20,46 @@ class DevicesClient(_BaseResource):
         org_id: str | None = None,
         integration_id: str | None = None,
         zone_id: str | None = None,
+        q: str | None = None,
         include_deleted: bool | None = None,
         limit: int | None = None,
         cursor: str | None = None,
     ) -> dict[str, Any]:
-        q = self._query(
+        q_params = self._query(
             orgId=org_id,
             integrationId=integration_id,
             zoneId=zone_id,
+            q=q,
             includeDeleted=include_deleted,
             limit=limit,
             cursor=cursor,
         )
-        return await self._client._request("GET", "/devices", query=q)
+        return await self._client._request("GET", "/devices", query=q_params)
+
+    async def get_by_name(
+        self,
+        name: str,
+        *,
+        match: MatchMode = "exact",
+        integration_id: str | None = None,
+    ) -> dict[str, Any]:
+        return await _bridge_get_by_name(
+            self._client,
+            "devices_get_by_name",
+            name,
+            match=match,
+            integration_id=integration_id,
+        )
 
     async def create(self, **body: Any) -> dict[str, Any]:
         return await self._client._request("POST", "/devices", body=body)
 
     async def get(self, device_id: str) -> dict[str, Any]:
         return await self._client._request("GET", f"/devices/{device_id}")
+
+    async def refresh_channel_count(self, device_id: str) -> dict[str, Any]:
+        """Refresh the provider-reported channel count for a linked device."""
+        return await self._client._request("POST", f"/devices/{device_id}/channel-count/refresh")
 
     async def update(self, device_id: str, **patch: Any) -> dict[str, Any]:
         return await self._client._request("PUT", f"/devices/{device_id}", body=patch)

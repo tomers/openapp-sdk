@@ -4,14 +4,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IntegrationId** | **string** |  |
-**MinIntervalMs** | **int64** |  |
+**IntegrationId** | **NullableString** |  |
+**MinIntervalMs** | **int64** | Enforced minimum milliseconds between &#x60;switchable.open&#x60; calls on this integration. |
 
 ## Methods
 
 ### NewPublicPortalOpenRateLimit
 
-`func NewPublicPortalOpenRateLimit(integrationId string, minIntervalMs int64, ) *PublicPortalOpenRateLimit`
+`func NewPublicPortalOpenRateLimit(integrationId NullableString, minIntervalMs int64, ) *PublicPortalOpenRateLimit`
 
 NewPublicPortalOpenRateLimit instantiates a new PublicPortalOpenRateLimit object
 This constructor will assign default values to properties that have it defined,
@@ -46,6 +46,16 @@ and a boolean to check if the value has been set.
 SetIntegrationId sets IntegrationId field to given value.
 
 
+### SetIntegrationIdNil
+
+`func (o *PublicPortalOpenRateLimit) SetIntegrationIdNil(b bool)`
+
+ SetIntegrationIdNil sets the value for IntegrationId to be an explicit nil
+
+### UnsetIntegrationId
+`func (o *PublicPortalOpenRateLimit) UnsetIntegrationId()`
+
+UnsetIntegrationId ensures that no value is present for IntegrationId, not even an explicit nil
 ### GetMinIntervalMs
 
 `func (o *PublicPortalOpenRateLimit) GetMinIntervalMs() int64`

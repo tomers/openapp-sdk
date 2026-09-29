@@ -24,7 +24,7 @@ type BillingEvent struct {
 	ExternalCustomerId     NullableString   `json:"external_customer_id,omitempty"`
 	ExternalSubscriptionId NullableString   `json:"external_subscription_id,omitempty"`
 	Kind                   BillingEventKind `json:"kind"`
-	Provider               string           `json:"provider"`
+	Provider               NullableString   `json:"provider"`
 	Raw                    interface{}      `json:"raw"`
 	Status                 NullableString   `json:"status,omitempty"`
 	TierSlug               NullableString   `json:"tier_slug,omitempty"`
@@ -36,7 +36,7 @@ type _BillingEvent BillingEvent
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBillingEvent(kind BillingEventKind, provider string, raw interface{}) *BillingEvent {
+func NewBillingEvent(kind BillingEventKind, provider NullableString, raw interface{}) *BillingEvent {
 	this := BillingEvent{}
 	this.Kind = kind
 	this.Provider = provider
@@ -163,27 +163,29 @@ func (o *BillingEvent) SetKind(v BillingEventKind) {
 }
 
 // GetProvider returns the Provider field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *BillingEvent) GetProvider() string {
-	if o == nil {
+	if o == nil || o.Provider.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.Provider
+	return *o.Provider.Get()
 }
 
 // GetProviderOk returns a tuple with the Provider field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *BillingEvent) GetProviderOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Provider, true
+	return o.Provider.Get(), o.Provider.IsSet()
 }
 
 // SetProvider sets field value
 func (o *BillingEvent) SetProvider(v string) {
-	o.Provider = v
+	o.Provider.Set(&v)
 }
 
 // GetRaw returns the Raw field value
@@ -307,7 +309,7 @@ func (o BillingEvent) ToMap() (map[string]interface{}, error) {
 		toSerialize["external_subscription_id"] = o.ExternalSubscriptionId.Get()
 	}
 	toSerialize["kind"] = o.Kind
-	toSerialize["provider"] = o.Provider
+	toSerialize["provider"] = o.Provider.Get()
 	if o.Raw != nil {
 		toSerialize["raw"] = o.Raw
 	}

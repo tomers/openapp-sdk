@@ -21,21 +21,48 @@ var _ MappedNullable = &PublicInviteResponse{}
 
 // PublicInviteResponse struct for PublicInviteResponse
 type PublicInviteResponse struct {
-	AlreadyClaimed NullableBool        `json:"already_claimed,omitempty"`
-	Branding       interface{}         `json:"branding,omitempty"`
-	Building       interface{}         `json:"building,omitempty"`
-	Grants         []PublicInviteGrant `json:"grants"`
-	InviteToken    string              `json:"invite_token"`
-	InviteeMessage interface{}         `json:"invitee_message,omitempty"`
+	// Access-control integration summary (building name, address, photo).
+	AccessControl   NullablePublicPortalAccessControl `json:"access_control,omitempty"`
+	AllowedWeekdays []int32                           `json:"allowed_weekdays,omitempty"`
+	AlreadyClaimed  NullableBool                      `json:"already_claimed,omitempty"`
+	// Whether anyone holding the link may use the invitation, or only the named contacts.
+	Audience      string      `json:"audience"`
+	BlackoutDates []string    `json:"blackout_dates,omitempty"`
+	Building      interface{} `json:"building,omitempty"`
+	// True when the bearer must prove they are one of the named contacts before the invitation can be used. Which contact was matched is never echoed back, so this cannot be used to enumerate who an invitation is for.
+	ContactChallengeRequired *bool `json:"contact_challenge_required,omitempty"`
+	// The display name of the contact this token resolved to, when it resolved to one.
+	ContactDisplayName NullableString `json:"contact_display_name,omitempty"`
+	// Effective forbidden hour windows for invitation access (informational).
+	CurfewWindows []CurfewWindowResponse `json:"curfew_windows,omitempty"`
+	DevicesCount  NullableInt32          `json:"devices_count,omitempty"`
+	// Event location (address / map-picked coordinates) owned by this invite, distinct from the building/portal location surfaced via `access_control`.
+	EventLocation NullableLocationResponse `json:"event_location,omitempty"`
+	Grants        []PublicInviteGrant      `json:"grants"`
+	InviteToken   string                   `json:"invite_token"`
+	// Guest-facing invite URL (shareable link for SMS/email).
+	InviteUrl      string      `json:"invite_url"`
+	InviteeMessage interface{} `json:"invitee_message,omitempty"`
+	// How the invite resolves its event location: `none` (hide all location, including the building address), `explicit` (own location), or `inherit` (building location). Lets the guest UI suppress the building address when the invite opts out of location entirely.
+	LocationMode LocationBindingMode `json:"location_mode"`
+	MaxDevices   NullableInt32       `json:"max_devices,omitempty"`
 	// Optional admin-defined label (management UI \"name\"); exposed for link previews and guests who already know the invite by name.
-	Name             NullableString                 `json:"name,omitempty"`
-	Schedule         NullableInviteScheduleSnapshot `json:"schedule,omitempty"`
-	ScheduleCombined NullableInviteScheduleCombined `json:"schedule_combined,omitempty"`
-	ScheduleEntries  []InviteScheduleEntrySnapshot  `json:"schedule_entries,omitempty"`
-	ScheduleKind     NullableInviteScheduleKind     `json:"schedule_kind,omitempty"`
-	State            PublicInviteState              `json:"state"`
-	ValidFrom        NullableString                 `json:"valid_from,omitempty"`
-	ValidTo          NullableString                 `json:"valid_to,omitempty"`
+	Name NullableString `json:"name,omitempty"`
+	// Presigned URL for the invite's main photo (best-effort).
+	PhotoUrl NullableString `json:"photo_url,omitempty"`
+	// True when the authenticated requester already submitted a pending renewal request.
+	RenewalRequested     NullableBool                   `json:"renewal_requested,omitempty"`
+	RequirePin           *bool                          `json:"require_pin,omitempty"`
+	RequireVerifiedPhone *bool                          `json:"require_verified_phone,omitempty"`
+	Schedule             NullableInviteScheduleSnapshot `json:"schedule,omitempty"`
+	ScheduleCombined     NullableInviteScheduleCombined `json:"schedule_combined,omitempty"`
+	ScheduleEntries      []InviteScheduleEntrySnapshot  `json:"schedule_entries,omitempty"`
+	ScheduleKind         NullableInviteScheduleKind     `json:"schedule_kind,omitempty"`
+	State                PublicInviteState              `json:"state"`
+	// Org IANA timezone used to evaluate invitation curfews (`UTC` when unset).
+	Timezone  NullableString `json:"timezone,omitempty"`
+	ValidFrom NullableString `json:"valid_from,omitempty"`
+	ValidTo   NullableString `json:"valid_to,omitempty"`
 }
 
 type _PublicInviteResponse PublicInviteResponse
@@ -44,10 +71,13 @@ type _PublicInviteResponse PublicInviteResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicInviteResponse(grants []PublicInviteGrant, inviteToken string, state PublicInviteState) *PublicInviteResponse {
+func NewPublicInviteResponse(audience string, grants []PublicInviteGrant, inviteToken string, inviteUrl string, locationMode LocationBindingMode, state PublicInviteState) *PublicInviteResponse {
 	this := PublicInviteResponse{}
+	this.Audience = audience
 	this.Grants = grants
 	this.InviteToken = inviteToken
+	this.InviteUrl = inviteUrl
+	this.LocationMode = locationMode
 	this.State = state
 	return &this
 }
@@ -58,6 +88,82 @@ func NewPublicInviteResponse(grants []PublicInviteGrant, inviteToken string, sta
 func NewPublicInviteResponseWithDefaults() *PublicInviteResponse {
 	this := PublicInviteResponse{}
 	return &this
+}
+
+// GetAccessControl returns the AccessControl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetAccessControl() PublicPortalAccessControl {
+	if o == nil || IsNil(o.AccessControl.Get()) {
+		var ret PublicPortalAccessControl
+		return ret
+	}
+	return *o.AccessControl.Get()
+}
+
+// GetAccessControlOk returns a tuple with the AccessControl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetAccessControlOk() (*PublicPortalAccessControl, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AccessControl.Get(), o.AccessControl.IsSet()
+}
+
+// HasAccessControl returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasAccessControl() bool {
+	if o != nil && o.AccessControl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAccessControl gets a reference to the given NullablePublicPortalAccessControl and assigns it to the AccessControl field.
+func (o *PublicInviteResponse) SetAccessControl(v PublicPortalAccessControl) {
+	o.AccessControl.Set(&v)
+}
+
+// SetAccessControlNil sets the value for AccessControl to be an explicit nil
+func (o *PublicInviteResponse) SetAccessControlNil() {
+	o.AccessControl.Set(nil)
+}
+
+// UnsetAccessControl ensures that no value is present for AccessControl, not even an explicit nil
+func (o *PublicInviteResponse) UnsetAccessControl() {
+	o.AccessControl.Unset()
+}
+
+// GetAllowedWeekdays returns the AllowedWeekdays field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetAllowedWeekdays() []int32 {
+	if o == nil {
+		var ret []int32
+		return ret
+	}
+	return o.AllowedWeekdays
+}
+
+// GetAllowedWeekdaysOk returns a tuple with the AllowedWeekdays field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetAllowedWeekdaysOk() ([]int32, bool) {
+	if o == nil || IsNil(o.AllowedWeekdays) {
+		return nil, false
+	}
+	return o.AllowedWeekdays, true
+}
+
+// HasAllowedWeekdays returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasAllowedWeekdays() bool {
+	if o != nil && !IsNil(o.AllowedWeekdays) {
+		return true
+	}
+
+	return false
+}
+
+// SetAllowedWeekdays gets a reference to the given []int32 and assigns it to the AllowedWeekdays field.
+func (o *PublicInviteResponse) SetAllowedWeekdays(v []int32) {
+	o.AllowedWeekdays = v
 }
 
 // GetAlreadyClaimed returns the AlreadyClaimed field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -103,37 +209,61 @@ func (o *PublicInviteResponse) UnsetAlreadyClaimed() {
 	o.AlreadyClaimed.Unset()
 }
 
-// GetBranding returns the Branding field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PublicInviteResponse) GetBranding() interface{} {
+// GetAudience returns the Audience field value
+func (o *PublicInviteResponse) GetAudience() string {
 	if o == nil {
-		var ret interface{}
+		var ret string
 		return ret
 	}
-	return o.Branding
+
+	return o.Audience
 }
 
-// GetBrandingOk returns a tuple with the Branding field value if set, nil otherwise
+// GetAudienceOk returns a tuple with the Audience field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PublicInviteResponse) GetBrandingOk() (*interface{}, bool) {
-	if o == nil || IsNil(o.Branding) {
+func (o *PublicInviteResponse) GetAudienceOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return &o.Branding, true
+	return &o.Audience, true
 }
 
-// HasBranding returns a boolean if a field has been set.
-func (o *PublicInviteResponse) HasBranding() bool {
-	if o != nil && !IsNil(o.Branding) {
+// SetAudience sets field value
+func (o *PublicInviteResponse) SetAudience(v string) {
+	o.Audience = v
+}
+
+// GetBlackoutDates returns the BlackoutDates field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetBlackoutDates() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+	return o.BlackoutDates
+}
+
+// GetBlackoutDatesOk returns a tuple with the BlackoutDates field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetBlackoutDatesOk() ([]string, bool) {
+	if o == nil || IsNil(o.BlackoutDates) {
+		return nil, false
+	}
+	return o.BlackoutDates, true
+}
+
+// HasBlackoutDates returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasBlackoutDates() bool {
+	if o != nil && !IsNil(o.BlackoutDates) {
 		return true
 	}
 
 	return false
 }
 
-// SetBranding gets a reference to the given interface{} and assigns it to the Branding field.
-func (o *PublicInviteResponse) SetBranding(v interface{}) {
-	o.Branding = v
+// SetBlackoutDates gets a reference to the given []string and assigns it to the BlackoutDates field.
+func (o *PublicInviteResponse) SetBlackoutDates(v []string) {
+	o.BlackoutDates = v
 }
 
 // GetBuilding returns the Building field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -167,6 +297,200 @@ func (o *PublicInviteResponse) HasBuilding() bool {
 // SetBuilding gets a reference to the given interface{} and assigns it to the Building field.
 func (o *PublicInviteResponse) SetBuilding(v interface{}) {
 	o.Building = v
+}
+
+// GetContactChallengeRequired returns the ContactChallengeRequired field value if set, zero value otherwise.
+func (o *PublicInviteResponse) GetContactChallengeRequired() bool {
+	if o == nil || IsNil(o.ContactChallengeRequired) {
+		var ret bool
+		return ret
+	}
+	return *o.ContactChallengeRequired
+}
+
+// GetContactChallengeRequiredOk returns a tuple with the ContactChallengeRequired field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicInviteResponse) GetContactChallengeRequiredOk() (*bool, bool) {
+	if o == nil || IsNil(o.ContactChallengeRequired) {
+		return nil, false
+	}
+	return o.ContactChallengeRequired, true
+}
+
+// HasContactChallengeRequired returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasContactChallengeRequired() bool {
+	if o != nil && !IsNil(o.ContactChallengeRequired) {
+		return true
+	}
+
+	return false
+}
+
+// SetContactChallengeRequired gets a reference to the given bool and assigns it to the ContactChallengeRequired field.
+func (o *PublicInviteResponse) SetContactChallengeRequired(v bool) {
+	o.ContactChallengeRequired = &v
+}
+
+// GetContactDisplayName returns the ContactDisplayName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetContactDisplayName() string {
+	if o == nil || IsNil(o.ContactDisplayName.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ContactDisplayName.Get()
+}
+
+// GetContactDisplayNameOk returns a tuple with the ContactDisplayName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetContactDisplayNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ContactDisplayName.Get(), o.ContactDisplayName.IsSet()
+}
+
+// HasContactDisplayName returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasContactDisplayName() bool {
+	if o != nil && o.ContactDisplayName.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetContactDisplayName gets a reference to the given NullableString and assigns it to the ContactDisplayName field.
+func (o *PublicInviteResponse) SetContactDisplayName(v string) {
+	o.ContactDisplayName.Set(&v)
+}
+
+// SetContactDisplayNameNil sets the value for ContactDisplayName to be an explicit nil
+func (o *PublicInviteResponse) SetContactDisplayNameNil() {
+	o.ContactDisplayName.Set(nil)
+}
+
+// UnsetContactDisplayName ensures that no value is present for ContactDisplayName, not even an explicit nil
+func (o *PublicInviteResponse) UnsetContactDisplayName() {
+	o.ContactDisplayName.Unset()
+}
+
+// GetCurfewWindows returns the CurfewWindows field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetCurfewWindows() []CurfewWindowResponse {
+	if o == nil {
+		var ret []CurfewWindowResponse
+		return ret
+	}
+	return o.CurfewWindows
+}
+
+// GetCurfewWindowsOk returns a tuple with the CurfewWindows field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetCurfewWindowsOk() ([]CurfewWindowResponse, bool) {
+	if o == nil || IsNil(o.CurfewWindows) {
+		return nil, false
+	}
+	return o.CurfewWindows, true
+}
+
+// HasCurfewWindows returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasCurfewWindows() bool {
+	if o != nil && !IsNil(o.CurfewWindows) {
+		return true
+	}
+
+	return false
+}
+
+// SetCurfewWindows gets a reference to the given []CurfewWindowResponse and assigns it to the CurfewWindows field.
+func (o *PublicInviteResponse) SetCurfewWindows(v []CurfewWindowResponse) {
+	o.CurfewWindows = v
+}
+
+// GetDevicesCount returns the DevicesCount field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetDevicesCount() int32 {
+	if o == nil || IsNil(o.DevicesCount.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.DevicesCount.Get()
+}
+
+// GetDevicesCountOk returns a tuple with the DevicesCount field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetDevicesCountOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DevicesCount.Get(), o.DevicesCount.IsSet()
+}
+
+// HasDevicesCount returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasDevicesCount() bool {
+	if o != nil && o.DevicesCount.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDevicesCount gets a reference to the given NullableInt32 and assigns it to the DevicesCount field.
+func (o *PublicInviteResponse) SetDevicesCount(v int32) {
+	o.DevicesCount.Set(&v)
+}
+
+// SetDevicesCountNil sets the value for DevicesCount to be an explicit nil
+func (o *PublicInviteResponse) SetDevicesCountNil() {
+	o.DevicesCount.Set(nil)
+}
+
+// UnsetDevicesCount ensures that no value is present for DevicesCount, not even an explicit nil
+func (o *PublicInviteResponse) UnsetDevicesCount() {
+	o.DevicesCount.Unset()
+}
+
+// GetEventLocation returns the EventLocation field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetEventLocation() LocationResponse {
+	if o == nil || IsNil(o.EventLocation.Get()) {
+		var ret LocationResponse
+		return ret
+	}
+	return *o.EventLocation.Get()
+}
+
+// GetEventLocationOk returns a tuple with the EventLocation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetEventLocationOk() (*LocationResponse, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.EventLocation.Get(), o.EventLocation.IsSet()
+}
+
+// HasEventLocation returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasEventLocation() bool {
+	if o != nil && o.EventLocation.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetEventLocation gets a reference to the given NullableLocationResponse and assigns it to the EventLocation field.
+func (o *PublicInviteResponse) SetEventLocation(v LocationResponse) {
+	o.EventLocation.Set(&v)
+}
+
+// SetEventLocationNil sets the value for EventLocation to be an explicit nil
+func (o *PublicInviteResponse) SetEventLocationNil() {
+	o.EventLocation.Set(nil)
+}
+
+// UnsetEventLocation ensures that no value is present for EventLocation, not even an explicit nil
+func (o *PublicInviteResponse) UnsetEventLocation() {
+	o.EventLocation.Unset()
 }
 
 // GetGrants returns the Grants field value
@@ -217,6 +541,30 @@ func (o *PublicInviteResponse) SetInviteToken(v string) {
 	o.InviteToken = v
 }
 
+// GetInviteUrl returns the InviteUrl field value
+func (o *PublicInviteResponse) GetInviteUrl() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.InviteUrl
+}
+
+// GetInviteUrlOk returns a tuple with the InviteUrl field value
+// and a boolean to check if the value has been set.
+func (o *PublicInviteResponse) GetInviteUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.InviteUrl, true
+}
+
+// SetInviteUrl sets field value
+func (o *PublicInviteResponse) SetInviteUrl(v string) {
+	o.InviteUrl = v
+}
+
 // GetInviteeMessage returns the InviteeMessage field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicInviteResponse) GetInviteeMessage() interface{} {
 	if o == nil {
@@ -248,6 +596,73 @@ func (o *PublicInviteResponse) HasInviteeMessage() bool {
 // SetInviteeMessage gets a reference to the given interface{} and assigns it to the InviteeMessage field.
 func (o *PublicInviteResponse) SetInviteeMessage(v interface{}) {
 	o.InviteeMessage = v
+}
+
+// GetLocationMode returns the LocationMode field value
+func (o *PublicInviteResponse) GetLocationMode() LocationBindingMode {
+	if o == nil {
+		var ret LocationBindingMode
+		return ret
+	}
+
+	return o.LocationMode
+}
+
+// GetLocationModeOk returns a tuple with the LocationMode field value
+// and a boolean to check if the value has been set.
+func (o *PublicInviteResponse) GetLocationModeOk() (*LocationBindingMode, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.LocationMode, true
+}
+
+// SetLocationMode sets field value
+func (o *PublicInviteResponse) SetLocationMode(v LocationBindingMode) {
+	o.LocationMode = v
+}
+
+// GetMaxDevices returns the MaxDevices field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetMaxDevices() int32 {
+	if o == nil || IsNil(o.MaxDevices.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.MaxDevices.Get()
+}
+
+// GetMaxDevicesOk returns a tuple with the MaxDevices field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetMaxDevicesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MaxDevices.Get(), o.MaxDevices.IsSet()
+}
+
+// HasMaxDevices returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasMaxDevices() bool {
+	if o != nil && o.MaxDevices.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMaxDevices gets a reference to the given NullableInt32 and assigns it to the MaxDevices field.
+func (o *PublicInviteResponse) SetMaxDevices(v int32) {
+	o.MaxDevices.Set(&v)
+}
+
+// SetMaxDevicesNil sets the value for MaxDevices to be an explicit nil
+func (o *PublicInviteResponse) SetMaxDevicesNil() {
+	o.MaxDevices.Set(nil)
+}
+
+// UnsetMaxDevices ensures that no value is present for MaxDevices, not even an explicit nil
+func (o *PublicInviteResponse) UnsetMaxDevices() {
+	o.MaxDevices.Unset()
 }
 
 // GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -291,6 +706,156 @@ func (o *PublicInviteResponse) SetNameNil() {
 // UnsetName ensures that no value is present for Name, not even an explicit nil
 func (o *PublicInviteResponse) UnsetName() {
 	o.Name.Unset()
+}
+
+// GetPhotoUrl returns the PhotoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetPhotoUrl() string {
+	if o == nil || IsNil(o.PhotoUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhotoUrl.Get()
+}
+
+// GetPhotoUrlOk returns a tuple with the PhotoUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetPhotoUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhotoUrl.Get(), o.PhotoUrl.IsSet()
+}
+
+// HasPhotoUrl returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasPhotoUrl() bool {
+	if o != nil && o.PhotoUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhotoUrl gets a reference to the given NullableString and assigns it to the PhotoUrl field.
+func (o *PublicInviteResponse) SetPhotoUrl(v string) {
+	o.PhotoUrl.Set(&v)
+}
+
+// SetPhotoUrlNil sets the value for PhotoUrl to be an explicit nil
+func (o *PublicInviteResponse) SetPhotoUrlNil() {
+	o.PhotoUrl.Set(nil)
+}
+
+// UnsetPhotoUrl ensures that no value is present for PhotoUrl, not even an explicit nil
+func (o *PublicInviteResponse) UnsetPhotoUrl() {
+	o.PhotoUrl.Unset()
+}
+
+// GetRenewalRequested returns the RenewalRequested field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetRenewalRequested() bool {
+	if o == nil || IsNil(o.RenewalRequested.Get()) {
+		var ret bool
+		return ret
+	}
+	return *o.RenewalRequested.Get()
+}
+
+// GetRenewalRequestedOk returns a tuple with the RenewalRequested field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetRenewalRequestedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.RenewalRequested.Get(), o.RenewalRequested.IsSet()
+}
+
+// HasRenewalRequested returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasRenewalRequested() bool {
+	if o != nil && o.RenewalRequested.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetRenewalRequested gets a reference to the given NullableBool and assigns it to the RenewalRequested field.
+func (o *PublicInviteResponse) SetRenewalRequested(v bool) {
+	o.RenewalRequested.Set(&v)
+}
+
+// SetRenewalRequestedNil sets the value for RenewalRequested to be an explicit nil
+func (o *PublicInviteResponse) SetRenewalRequestedNil() {
+	o.RenewalRequested.Set(nil)
+}
+
+// UnsetRenewalRequested ensures that no value is present for RenewalRequested, not even an explicit nil
+func (o *PublicInviteResponse) UnsetRenewalRequested() {
+	o.RenewalRequested.Unset()
+}
+
+// GetRequirePin returns the RequirePin field value if set, zero value otherwise.
+func (o *PublicInviteResponse) GetRequirePin() bool {
+	if o == nil || IsNil(o.RequirePin) {
+		var ret bool
+		return ret
+	}
+	return *o.RequirePin
+}
+
+// GetRequirePinOk returns a tuple with the RequirePin field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicInviteResponse) GetRequirePinOk() (*bool, bool) {
+	if o == nil || IsNil(o.RequirePin) {
+		return nil, false
+	}
+	return o.RequirePin, true
+}
+
+// HasRequirePin returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasRequirePin() bool {
+	if o != nil && !IsNil(o.RequirePin) {
+		return true
+	}
+
+	return false
+}
+
+// SetRequirePin gets a reference to the given bool and assigns it to the RequirePin field.
+func (o *PublicInviteResponse) SetRequirePin(v bool) {
+	o.RequirePin = &v
+}
+
+// GetRequireVerifiedPhone returns the RequireVerifiedPhone field value if set, zero value otherwise.
+func (o *PublicInviteResponse) GetRequireVerifiedPhone() bool {
+	if o == nil || IsNil(o.RequireVerifiedPhone) {
+		var ret bool
+		return ret
+	}
+	return *o.RequireVerifiedPhone
+}
+
+// GetRequireVerifiedPhoneOk returns a tuple with the RequireVerifiedPhone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicInviteResponse) GetRequireVerifiedPhoneOk() (*bool, bool) {
+	if o == nil || IsNil(o.RequireVerifiedPhone) {
+		return nil, false
+	}
+	return o.RequireVerifiedPhone, true
+}
+
+// HasRequireVerifiedPhone returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasRequireVerifiedPhone() bool {
+	if o != nil && !IsNil(o.RequireVerifiedPhone) {
+		return true
+	}
+
+	return false
+}
+
+// SetRequireVerifiedPhone gets a reference to the given bool and assigns it to the RequireVerifiedPhone field.
+func (o *PublicInviteResponse) SetRequireVerifiedPhone(v bool) {
+	o.RequireVerifiedPhone = &v
 }
 
 // GetSchedule returns the Schedule field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -479,6 +1044,49 @@ func (o *PublicInviteResponse) SetState(v PublicInviteState) {
 	o.State = v
 }
 
+// GetTimezone returns the Timezone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetTimezone() string {
+	if o == nil || IsNil(o.Timezone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Timezone.Get()
+}
+
+// GetTimezoneOk returns a tuple with the Timezone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetTimezoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Timezone.Get(), o.Timezone.IsSet()
+}
+
+// HasTimezone returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasTimezone() bool {
+	if o != nil && o.Timezone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetTimezone gets a reference to the given NullableString and assigns it to the Timezone field.
+func (o *PublicInviteResponse) SetTimezone(v string) {
+	o.Timezone.Set(&v)
+}
+
+// SetTimezoneNil sets the value for Timezone to be an explicit nil
+func (o *PublicInviteResponse) SetTimezoneNil() {
+	o.Timezone.Set(nil)
+}
+
+// UnsetTimezone ensures that no value is present for Timezone, not even an explicit nil
+func (o *PublicInviteResponse) UnsetTimezone() {
+	o.Timezone.Unset()
+}
+
 // GetValidFrom returns the ValidFrom field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicInviteResponse) GetValidFrom() string {
 	if o == nil || IsNil(o.ValidFrom.Get()) {
@@ -567,22 +1175,61 @@ func (o *PublicInviteResponse) UnsetValidTo() {
 
 func (o PublicInviteResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.AccessControl.IsSet() {
+		toSerialize["access_control"] = o.AccessControl.Get()
+	}
+	if o.AllowedWeekdays != nil {
+		toSerialize["allowed_weekdays"] = o.AllowedWeekdays
+	}
 	if o.AlreadyClaimed.IsSet() {
 		toSerialize["already_claimed"] = o.AlreadyClaimed.Get()
 	}
-	if o.Branding != nil {
-		toSerialize["branding"] = o.Branding
+	toSerialize["audience"] = o.Audience
+	if o.BlackoutDates != nil {
+		toSerialize["blackout_dates"] = o.BlackoutDates
 	}
 	if o.Building != nil {
 		toSerialize["building"] = o.Building
 	}
+	if !IsNil(o.ContactChallengeRequired) {
+		toSerialize["contact_challenge_required"] = o.ContactChallengeRequired
+	}
+	if o.ContactDisplayName.IsSet() {
+		toSerialize["contact_display_name"] = o.ContactDisplayName.Get()
+	}
+	if o.CurfewWindows != nil {
+		toSerialize["curfew_windows"] = o.CurfewWindows
+	}
+	if o.DevicesCount.IsSet() {
+		toSerialize["devices_count"] = o.DevicesCount.Get()
+	}
+	if o.EventLocation.IsSet() {
+		toSerialize["event_location"] = o.EventLocation.Get()
+	}
 	toSerialize["grants"] = o.Grants
 	toSerialize["invite_token"] = o.InviteToken
+	toSerialize["invite_url"] = o.InviteUrl
 	if o.InviteeMessage != nil {
 		toSerialize["invitee_message"] = o.InviteeMessage
 	}
+	toSerialize["location_mode"] = o.LocationMode
+	if o.MaxDevices.IsSet() {
+		toSerialize["max_devices"] = o.MaxDevices.Get()
+	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
+	}
+	if o.PhotoUrl.IsSet() {
+		toSerialize["photo_url"] = o.PhotoUrl.Get()
+	}
+	if o.RenewalRequested.IsSet() {
+		toSerialize["renewal_requested"] = o.RenewalRequested.Get()
+	}
+	if !IsNil(o.RequirePin) {
+		toSerialize["require_pin"] = o.RequirePin
+	}
+	if !IsNil(o.RequireVerifiedPhone) {
+		toSerialize["require_verified_phone"] = o.RequireVerifiedPhone
 	}
 	if o.Schedule.IsSet() {
 		toSerialize["schedule"] = o.Schedule.Get()
@@ -597,6 +1244,9 @@ func (o PublicInviteResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["schedule_kind"] = o.ScheduleKind.Get()
 	}
 	toSerialize["state"] = o.State
+	if o.Timezone.IsSet() {
+		toSerialize["timezone"] = o.Timezone.Get()
+	}
 	if o.ValidFrom.IsSet() {
 		toSerialize["valid_from"] = o.ValidFrom.Get()
 	}
@@ -611,8 +1261,11 @@ func (o *PublicInviteResponse) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"audience",
 		"grants",
 		"invite_token",
+		"invite_url",
+		"location_mode",
 		"state",
 	}
 

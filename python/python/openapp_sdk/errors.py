@@ -25,10 +25,12 @@ from dataclasses import dataclass
 from typing import Any
 
 __all__ = [
+    "AmbiguousResourceError",
     "ApiError",
     "AuthError",
     "ConfigError",
     "HttpError",
+    "ResourceNotFoundError",
     "SdkError",
     "SerializationError",
     "TransportError",
@@ -95,6 +97,38 @@ class SerializationError(SdkError):
     """Caller-supplied data could not be serialized into the request body."""
 
 
+@dataclass
+class ResourceNotFoundError(SdkError):
+    """No resource matched the requested localized display name."""
+
+    resource_type: str
+    name: str
+    message: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.message:
+            self.message = f"no {self.resource_type} named {self.name!r}"
+        Exception.__init__(self, self.message)
+
+
+@dataclass
+class AmbiguousResourceError(SdkError):
+    """Multiple resources matched the same localized display name."""
+
+    resource_type: str
+    name: str
+    matches: list[Any]
+    message: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.message:
+            self.message = (
+                f"{self.resource_type} name {self.name!r} is ambiguous "
+                f"({len(self.matches)} matches)"
+            )
+        Exception.__init__(self, self.message)
+
+
 # ---------------------------------------------------------------------------
 # Bridge → typed-exception translation
 # ---------------------------------------------------------------------------
@@ -143,9 +177,35 @@ def from_bridge_payload(payload: Mapping[str, Any]) -> SdkError:
         return ValidationError(message) if kind == "deserialize" else SerializationError(message)
     if kind == "config":
         return ConfigError(message)
+    if kind == "resource_not_found":
+        return ResourceNotFoundError(
+            message=message,
+            resource_type=str(payload.get("resource_type", "")),
+            name=str(payload.get("name", "")),
+        )
+    if kind == "ambiguous_resource":
+        matches: Any = []
+        matches_json = payload.get("matches_json")
+        if isinstance(matches_json, str) and matches_json:
+            import json
+
+            try:
+                matches = json.loads(matches_json)
+            except ValueError:
+                matches = []
+        elif isinstance(payload.get("matches"), list):
+            matches = payload.get("matches")
+        return AmbiguousResourceError(
+            message=message,
+            resource_type=str(payload.get("resource_type", "")),
+            name=str(payload.get("name", "")),
+            matches=matches,
+        )
     return SdkError(message)
 
 
 # Expose the common fields symmetry-friendly for library users.
+AmbiguousResourceError.__module__ = __name__
+ResourceNotFoundError.__module__ = __name__
 ApiError.__module__ = __name__
 HttpError.__module__ = __name__

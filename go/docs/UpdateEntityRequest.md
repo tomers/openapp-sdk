@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **EntityType** | Pointer to **NullableString** |  | [optional]
 **ExternalId** | Pointer to **NullableString** |  | [optional]
 **Metadata** | Pointer to **map[string]interface{}** | Update (replace) persisted entity metadata.  - &#x60;None&#x60;: no change - &#x60;Some(None)&#x60;: clear metadata - &#x60;Some(Some(map))&#x60;: replace with provided map | [optional]
-**Name** | Pointer to **NullableString** | Update entity name.  - &#x60;None&#x60;: no change - &#x60;Some(None)&#x60;: clear - &#x60;Some(Some(name))&#x60;: set (trimmed; empty becomes clear) | [optional]
+**Name** | Pointer to **string** | Update entity name.  - &#x60;None&#x60;: no change - &#x60;Some(None)&#x60;: clear - &#x60;Some(Some(name))&#x60;: set (trimmed; empty becomes clear) | [optional]
 **ZoneId** | Pointer to **NullableString** |  | [optional]
 
 ## Methods
@@ -185,16 +185,6 @@ SetName sets Name field to given value.
 
 HasName returns a boolean if a field has been set.
 
-### SetNameNil
-
-`func (o *UpdateEntityRequest) SetNameNil(b bool)`
-
- SetNameNil sets the value for Name to be an explicit nil
-
-### UnsetName
-`func (o *UpdateEntityRequest) UnsetName()`
-
-UnsetName ensures that no value is present for Name, not even an explicit nil
 ### GetZoneId
 
 `func (o *UpdateEntityRequest) GetZoneId() string`

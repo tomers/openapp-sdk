@@ -130,7 +130,13 @@ func (w *gherkinWorld) close() {
 }
 
 func (w *gherkinWorld) serveHTTP(rw http.ResponseWriter, req *http.Request) {
-	route := w.routes[req.Method+" "+req.URL.Path]
+	// Feature files name API-relative paths ("/orgs"); the core resolves them against
+	// {origin}/api/v1, so only requests under that root can match a route.
+	apiPath, ok := strings.CutPrefix(req.URL.Path, "/api/v1")
+	var route *gherkinRoute
+	if ok {
+		route = w.routes[req.Method+" "+apiPath]
+	}
 	if route == nil {
 		http.Error(rw, "unexpected route", http.StatusNotFound)
 		return
@@ -185,7 +191,7 @@ func (w *gherkinWorld) request(method, apiPath string, body []byte) error {
 	if w.client == nil {
 		return fmt.Errorf("client is not connected")
 	}
-	req, err := http.NewRequestWithContext(context.Background(), method, w.server.URL+apiPath, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(context.Background(), method, apiPath, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}

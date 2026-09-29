@@ -4,13 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**EntityType** | **string** |  |
+**EntityType** | **NullableString** |  |
 
 ## Methods
 
 ### NewDeviceEntityMetadataDefinitionQuery
 
-`func NewDeviceEntityMetadataDefinitionQuery(entityType string, ) *DeviceEntityMetadataDefinitionQuery`
+`func NewDeviceEntityMetadataDefinitionQuery(entityType NullableString, ) *DeviceEntityMetadataDefinitionQuery`
 
 NewDeviceEntityMetadataDefinitionQuery instantiates a new DeviceEntityMetadataDefinitionQuery object
 This constructor will assign default values to properties that have it defined,
@@ -45,5 +45,15 @@ and a boolean to check if the value has been set.
 SetEntityType sets EntityType field to given value.
 
 
+### SetEntityTypeNil
+
+`func (o *DeviceEntityMetadataDefinitionQuery) SetEntityTypeNil(b bool)`
+
+ SetEntityTypeNil sets the value for EntityType to be an explicit nil
+
+### UnsetEntityType
+`func (o *DeviceEntityMetadataDefinitionQuery) UnsetEntityType()`
+
+UnsetEntityType ensures that no value is present for EntityType, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

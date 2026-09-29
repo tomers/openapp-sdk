@@ -11,7 +11,6 @@ API version: v1
 package openapi
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -22,14 +21,15 @@ var _ MappedNullable = &CreateEntityRequest{}
 // CreateEntityRequest struct for CreateEntityRequest
 type CreateEntityRequest struct {
 	ChannelIndex NullableInt32  `json:"channel_index,omitempty"`
-	DeviceId     string         `json:"device_id"`
-	EntityType   string         `json:"entity_type"`
+	DeviceId     NullableString `json:"device_id"`
+	EntityType   NullableString `json:"entity_type"`
 	ExternalId   NullableString `json:"external_id,omitempty"`
 	// Arbitrary, persisted entity metadata (integration-specific).  For example, MQTT entities can store: - `command_topic` - `toggle_payload`  Values are converted to strings (non-strings are JSON-stringified) to match `domain::Metadata`.
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
 	// Optional friendly name for the entity.
-	Name   NullableString `json:"name,omitempty"`
-	ZoneId NullableString `json:"zone_id,omitempty"`
+	Name                 *string        `json:"name,omitempty"`
+	ZoneId               NullableString `json:"zone_id,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateEntityRequest CreateEntityRequest
@@ -38,7 +38,7 @@ type _CreateEntityRequest CreateEntityRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateEntityRequest(deviceId string, entityType string) *CreateEntityRequest {
+func NewCreateEntityRequest(deviceId NullableString, entityType NullableString) *CreateEntityRequest {
 	this := CreateEntityRequest{}
 	this.DeviceId = deviceId
 	this.EntityType = entityType
@@ -97,51 +97,55 @@ func (o *CreateEntityRequest) UnsetChannelIndex() {
 }
 
 // GetDeviceId returns the DeviceId field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *CreateEntityRequest) GetDeviceId() string {
-	if o == nil {
+	if o == nil || o.DeviceId.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.DeviceId
+	return *o.DeviceId.Get()
 }
 
 // GetDeviceIdOk returns a tuple with the DeviceId field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *CreateEntityRequest) GetDeviceIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.DeviceId, true
+	return o.DeviceId.Get(), o.DeviceId.IsSet()
 }
 
 // SetDeviceId sets field value
 func (o *CreateEntityRequest) SetDeviceId(v string) {
-	o.DeviceId = v
+	o.DeviceId.Set(&v)
 }
 
 // GetEntityType returns the EntityType field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *CreateEntityRequest) GetEntityType() string {
-	if o == nil {
+	if o == nil || o.EntityType.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.EntityType
+	return *o.EntityType.Get()
 }
 
 // GetEntityTypeOk returns a tuple with the EntityType field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *CreateEntityRequest) GetEntityTypeOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.EntityType, true
+	return o.EntityType.Get(), o.EntityType.IsSet()
 }
 
 // SetEntityType sets field value
 func (o *CreateEntityRequest) SetEntityType(v string) {
-	o.EntityType = v
+	o.EntityType.Set(&v)
 }
 
 // GetExternalId returns the ExternalId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -193,14 +197,14 @@ func (o *CreateEntityRequest) GetMetadata() map[string]interface{} {
 		var ret map[string]interface{}
 		return ret
 	}
-	return o.Metadata
+	return *o.Metadata
 }
 
 // GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateEntityRequest) GetMetadataOk() (map[string]interface{}, bool) {
+func (o *CreateEntityRequest) GetMetadataOk() (*map[string]interface{}, bool) {
 	if o == nil || IsNil(o.Metadata) {
-		return map[string]interface{}{}, false
+		return nil, false
 	}
 	return o.Metadata, true
 }
@@ -216,50 +220,39 @@ func (o *CreateEntityRequest) HasMetadata() bool {
 
 // SetMetadata gets a reference to the given map[string]interface{} and assigns it to the Metadata field.
 func (o *CreateEntityRequest) SetMetadata(v map[string]interface{}) {
-	o.Metadata = v
+	o.Metadata = &v
 }
 
-// GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetName returns the Name field value if set, zero value otherwise.
 func (o *CreateEntityRequest) GetName() string {
-	if o == nil || IsNil(o.Name.Get()) {
+	if o == nil || IsNil(o.Name) {
 		var ret string
 		return ret
 	}
-	return *o.Name.Get()
+	return *o.Name
 }
 
 // GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *CreateEntityRequest) GetNameOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Name) {
 		return nil, false
 	}
-	return o.Name.Get(), o.Name.IsSet()
+	return o.Name, true
 }
 
 // HasName returns a boolean if a field has been set.
 func (o *CreateEntityRequest) HasName() bool {
-	if o != nil && o.Name.IsSet() {
+	if o != nil && !IsNil(o.Name) {
 		return true
 	}
 
 	return false
 }
 
-// SetName gets a reference to the given NullableString and assigns it to the Name field.
+// SetName gets a reference to the given string and assigns it to the Name field.
 func (o *CreateEntityRequest) SetName(v string) {
-	o.Name.Set(&v)
-}
-
-// SetNameNil sets the value for Name to be an explicit nil
-func (o *CreateEntityRequest) SetNameNil() {
-	o.Name.Set(nil)
-}
-
-// UnsetName ensures that no value is present for Name, not even an explicit nil
-func (o *CreateEntityRequest) UnsetName() {
-	o.Name.Unset()
+	o.Name = &v
 }
 
 // GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -310,20 +303,25 @@ func (o CreateEntityRequest) ToMap() (map[string]interface{}, error) {
 	if o.ChannelIndex.IsSet() {
 		toSerialize["channel_index"] = o.ChannelIndex.Get()
 	}
-	toSerialize["device_id"] = o.DeviceId
-	toSerialize["entity_type"] = o.EntityType
+	toSerialize["device_id"] = o.DeviceId.Get()
+	toSerialize["entity_type"] = o.EntityType.Get()
 	if o.ExternalId.IsSet() {
 		toSerialize["external_id"] = o.ExternalId.Get()
 	}
 	if !IsNil(o.Metadata) {
 		toSerialize["metadata"] = o.Metadata
 	}
-	if o.Name.IsSet() {
-		toSerialize["name"] = o.Name.Get()
+	if !IsNil(o.Name) {
+		toSerialize["name"] = o.Name
 	}
 	if o.ZoneId.IsSet() {
 		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -352,15 +350,26 @@ func (o *CreateEntityRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateEntityRequest := _CreateEntityRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateEntityRequest)
+	err = json.Unmarshal(data, &varCreateEntityRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateEntityRequest(varCreateEntityRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "channel_index")
+		delete(additionalProperties, "device_id")
+		delete(additionalProperties, "entity_type")
+		delete(additionalProperties, "external_id")
+		delete(additionalProperties, "metadata")
+		delete(additionalProperties, "name")
+		delete(additionalProperties, "zone_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

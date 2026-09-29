@@ -64,7 +64,7 @@ class _FakeBridgeClient(BridgeClient):
 
     async def request(self, req: BridgeRequest) -> Any:
         route = self._bridge.routes[(req.method.upper(), req.path)]
-        headers = {"authorization": f"Bearer {self._api_key}"}
+        headers = {"x-api-key": self._api_key}
         content = b""
         if req.multipart is None and req.body_json is not None:
             content = req.body_json.encode()
@@ -112,6 +112,7 @@ class _FakeBridge:
         user_agent: str,
         timeout_secs: float,
         max_retries: int,
+        org: str | None = None,
     ) -> BridgeClient:
         return _FakeBridgeClient(
             self, api_key=api_key, base_url=base_url, max_retries=max_retries

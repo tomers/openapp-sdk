@@ -15,7 +15,7 @@ import (
 
 func TestCoreRoundTripper_JSONAcceptUsesJSONPath(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/v1/x", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/api/v1/x", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"ok":true}`))
 	})
@@ -31,7 +31,7 @@ func TestCoreRoundTripper_JSONAcceptUsesJSONPath(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = cli.Close() })
 
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, srv.URL+"/v1/x", nil)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/x", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func TestCoreRoundTripper_JSONAcceptUsesJSONPath(t *testing.T) {
 
 func TestCoreRoundTripper_AcceptEventStreamUsesStreamPath(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/sse", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/api/v1/sse", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
 		_, _ = w.Write([]byte("event: ping\ndata: hi\n\n"))
 	})
@@ -75,7 +75,7 @@ func TestCoreRoundTripper_AcceptEventStreamUsesStreamPath(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = cli.Close() })
 
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, srv.URL+"/sse", nil)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/sse", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func TestCoreRoundTripper_AcceptEventStreamUsesStreamPath(t *testing.T) {
 
 func TestCoreRoundTripper_StreamOptInHeaderOverJSONAccept(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/bin", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/api/v1/bin", func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte{0, 1, 2, 3})
 	})
 	srv := httptest.NewServer(mux)
@@ -119,7 +119,7 @@ func TestCoreRoundTripper_StreamOptInHeaderOverJSONAccept(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = cli.Close() })
 
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, srv.URL+"/bin", nil)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/bin", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -148,7 +148,7 @@ func TestCoreRoundTripper_StreamOptInHeaderOverJSONAccept(t *testing.T) {
 
 func TestCoreRoundTripper_MultipartUsesRawPath(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v1/upload", func(w http.ResponseWriter, r *http.Request) {
 		ct := r.Header.Get("Content-Type")
 		if !strings.Contains(strings.ToLower(ct), "multipart/") {
 			http.Error(w, "want multipart", http.StatusBadRequest)
@@ -177,7 +177,7 @@ func TestCoreRoundTripper_MultipartUsesRawPath(t *testing.T) {
 	if err := mw.Close(); err != nil {
 		t.Fatal(err)
 	}
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, srv.URL+"/upload", &buf)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "/upload", &buf)
 	if err != nil {
 		t.Fatal(err)
 	}

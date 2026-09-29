@@ -22,27 +22,24 @@ var _ MappedNullable = &IntegrationResponse{}
 
 // IntegrationResponse struct for IntegrationResponse
 type IntegrationResponse struct {
-	Config interface{} `json:"config,omitempty"`
-	// User-controlled flag: if false, this integration will not be used for actions/ops.
+	CreatedAt    *time.Time  `json:"created_at,omitempty"`
+	DeletedAt    *time.Time  `json:"deleted_at,omitempty"`
+	HardDeleteAt *time.Time  `json:"hard_delete_at,omitempty"`
+	PurgeAt      *time.Time  `json:"purge_at,omitempty"`
+	UpdatedAt    *time.Time  `json:"updated_at,omitempty"`
+	Config       interface{} `json:"config,omitempty"`
+	// Pause switch for hardware connectors. Always true for site providers.
 	Enabled bool `json:"enabled"`
-	// Backend-controlled health marker (ok/error).
+	// Backend-controlled health marker (ok/reduced/error).
 	Health IntegrationHealth `json:"health"`
 	// Unique identifier (ULID).
-	Id       string            `json:"id"`
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Id string `json:"id"`
 	// Human-friendly name for this integration (distinguishes multiple integrations of same provider).
 	Name LocalizedString `json:"name"`
 	// Organization that owns this integration.
 	OrgId string `json:"org_id"`
 	// Provider type (e.g. homeassistant, shelly_cloud).
-	ProviderType ProviderType  `json:"provider_type"`
-	CacheHit     NullableBool  `json:"cache_hit,omitempty"`
-	CacheTtl     NullableInt64 `json:"cache_ttl,omitempty"`
-	CreatedAt    NullableTime  `json:"created_at,omitempty"`
-	DeletedAt    NullableTime  `json:"deleted_at,omitempty"`
-	HardDeleteAt NullableTime  `json:"hard_delete_at,omitempty"`
-	PurgeAt      NullableTime  `json:"purge_at,omitempty"`
-	UpdatedAt    NullableTime  `json:"updated_at,omitempty"`
+	ProviderType ProviderType `json:"provider_type"`
 	// Human-friendly provider type name(s), keyed by locale.
 	ProviderTypeName LocalizedString `json:"provider_type_name"`
 }
@@ -71,6 +68,166 @@ func NewIntegrationResponse(enabled bool, health IntegrationHealth, id string, n
 func NewIntegrationResponseWithDefaults() *IntegrationResponse {
 	this := IntegrationResponse{}
 	return &this
+}
+
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *IntegrationResponse) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *IntegrationResponse) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *IntegrationResponse) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *IntegrationResponse) SetCreatedAt(v time.Time) {
+	o.CreatedAt = &v
+}
+
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *IntegrationResponse) GetDeletedAt() time.Time {
+	if o == nil || IsNil(o.DeletedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.DeletedAt
+}
+
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *IntegrationResponse) GetDeletedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
+		return nil, false
+	}
+	return o.DeletedAt, true
+}
+
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *IntegrationResponse) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeletedAt gets a reference to the given time.Time and assigns it to the DeletedAt field.
+func (o *IntegrationResponse) SetDeletedAt(v time.Time) {
+	o.DeletedAt = &v
+}
+
+// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise.
+func (o *IntegrationResponse) GetHardDeleteAt() time.Time {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.HardDeleteAt
+}
+
+// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *IntegrationResponse) GetHardDeleteAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		return nil, false
+	}
+	return o.HardDeleteAt, true
+}
+
+// HasHardDeleteAt returns a boolean if a field has been set.
+func (o *IntegrationResponse) HasHardDeleteAt() bool {
+	if o != nil && !IsNil(o.HardDeleteAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetHardDeleteAt gets a reference to the given time.Time and assigns it to the HardDeleteAt field.
+func (o *IntegrationResponse) SetHardDeleteAt(v time.Time) {
+	o.HardDeleteAt = &v
+}
+
+// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise.
+func (o *IntegrationResponse) GetPurgeAt() time.Time {
+	if o == nil || IsNil(o.PurgeAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.PurgeAt
+}
+
+// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *IntegrationResponse) GetPurgeAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.PurgeAt) {
+		return nil, false
+	}
+	return o.PurgeAt, true
+}
+
+// HasPurgeAt returns a boolean if a field has been set.
+func (o *IntegrationResponse) HasPurgeAt() bool {
+	if o != nil && !IsNil(o.PurgeAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPurgeAt gets a reference to the given time.Time and assigns it to the PurgeAt field.
+func (o *IntegrationResponse) SetPurgeAt(v time.Time) {
+	o.PurgeAt = &v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *IntegrationResponse) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *IntegrationResponse) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *IntegrationResponse) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *IntegrationResponse) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = &v
 }
 
 // GetConfig returns the Config field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -178,38 +335,6 @@ func (o *IntegrationResponse) SetId(v string) {
 	o.Id = v
 }
 
-// GetMetadata returns the Metadata field value if set, zero value otherwise.
-func (o *IntegrationResponse) GetMetadata() map[string]string {
-	if o == nil || IsNil(o.Metadata) {
-		var ret map[string]string
-		return ret
-	}
-	return o.Metadata
-}
-
-// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *IntegrationResponse) GetMetadataOk() (map[string]string, bool) {
-	if o == nil || IsNil(o.Metadata) {
-		return map[string]string{}, false
-	}
-	return o.Metadata, true
-}
-
-// HasMetadata returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasMetadata() bool {
-	if o != nil && !IsNil(o.Metadata) {
-		return true
-	}
-
-	return false
-}
-
-// SetMetadata gets a reference to the given map[string]string and assigns it to the Metadata field.
-func (o *IntegrationResponse) SetMetadata(v map[string]string) {
-	o.Metadata = v
-}
-
 // GetName returns the Name field value
 func (o *IntegrationResponse) GetName() LocalizedString {
 	if o == nil {
@@ -282,307 +407,6 @@ func (o *IntegrationResponse) SetProviderType(v ProviderType) {
 	o.ProviderType = v
 }
 
-// GetCacheHit returns the CacheHit field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetCacheHit() bool {
-	if o == nil || IsNil(o.CacheHit.Get()) {
-		var ret bool
-		return ret
-	}
-	return *o.CacheHit.Get()
-}
-
-// GetCacheHitOk returns a tuple with the CacheHit field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetCacheHitOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CacheHit.Get(), o.CacheHit.IsSet()
-}
-
-// HasCacheHit returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasCacheHit() bool {
-	if o != nil && o.CacheHit.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheHit gets a reference to the given NullableBool and assigns it to the CacheHit field.
-func (o *IntegrationResponse) SetCacheHit(v bool) {
-	o.CacheHit.Set(&v)
-}
-
-// SetCacheHitNil sets the value for CacheHit to be an explicit nil
-func (o *IntegrationResponse) SetCacheHitNil() {
-	o.CacheHit.Set(nil)
-}
-
-// UnsetCacheHit ensures that no value is present for CacheHit, not even an explicit nil
-func (o *IntegrationResponse) UnsetCacheHit() {
-	o.CacheHit.Unset()
-}
-
-// GetCacheTtl returns the CacheTtl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetCacheTtl() int64 {
-	if o == nil || IsNil(o.CacheTtl.Get()) {
-		var ret int64
-		return ret
-	}
-	return *o.CacheTtl.Get()
-}
-
-// GetCacheTtlOk returns a tuple with the CacheTtl field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetCacheTtlOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CacheTtl.Get(), o.CacheTtl.IsSet()
-}
-
-// HasCacheTtl returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasCacheTtl() bool {
-	if o != nil && o.CacheTtl.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheTtl gets a reference to the given NullableInt64 and assigns it to the CacheTtl field.
-func (o *IntegrationResponse) SetCacheTtl(v int64) {
-	o.CacheTtl.Set(&v)
-}
-
-// SetCacheTtlNil sets the value for CacheTtl to be an explicit nil
-func (o *IntegrationResponse) SetCacheTtlNil() {
-	o.CacheTtl.Set(nil)
-}
-
-// UnsetCacheTtl ensures that no value is present for CacheTtl, not even an explicit nil
-func (o *IntegrationResponse) UnsetCacheTtl() {
-	o.CacheTtl.Unset()
-}
-
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.CreatedAt.Get()
-}
-
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CreatedAt.Get(), o.CreatedAt.IsSet()
-}
-
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasCreatedAt() bool {
-	if o != nil && o.CreatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given NullableTime and assigns it to the CreatedAt field.
-func (o *IntegrationResponse) SetCreatedAt(v time.Time) {
-	o.CreatedAt.Set(&v)
-}
-
-// SetCreatedAtNil sets the value for CreatedAt to be an explicit nil
-func (o *IntegrationResponse) SetCreatedAtNil() {
-	o.CreatedAt.Set(nil)
-}
-
-// UnsetCreatedAt ensures that no value is present for CreatedAt, not even an explicit nil
-func (o *IntegrationResponse) UnsetCreatedAt() {
-	o.CreatedAt.Unset()
-}
-
-// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetDeletedAt() time.Time {
-	if o == nil || IsNil(o.DeletedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.DeletedAt.Get()
-}
-
-// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetDeletedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.DeletedAt.Get(), o.DeletedAt.IsSet()
-}
-
-// HasDeletedAt returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasDeletedAt() bool {
-	if o != nil && o.DeletedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetDeletedAt gets a reference to the given NullableTime and assigns it to the DeletedAt field.
-func (o *IntegrationResponse) SetDeletedAt(v time.Time) {
-	o.DeletedAt.Set(&v)
-}
-
-// SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
-func (o *IntegrationResponse) SetDeletedAtNil() {
-	o.DeletedAt.Set(nil)
-}
-
-// UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
-func (o *IntegrationResponse) UnsetDeletedAt() {
-	o.DeletedAt.Unset()
-}
-
-// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetHardDeleteAt() time.Time {
-	if o == nil || IsNil(o.HardDeleteAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.HardDeleteAt.Get()
-}
-
-// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetHardDeleteAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.HardDeleteAt.Get(), o.HardDeleteAt.IsSet()
-}
-
-// HasHardDeleteAt returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasHardDeleteAt() bool {
-	if o != nil && o.HardDeleteAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetHardDeleteAt gets a reference to the given NullableTime and assigns it to the HardDeleteAt field.
-func (o *IntegrationResponse) SetHardDeleteAt(v time.Time) {
-	o.HardDeleteAt.Set(&v)
-}
-
-// SetHardDeleteAtNil sets the value for HardDeleteAt to be an explicit nil
-func (o *IntegrationResponse) SetHardDeleteAtNil() {
-	o.HardDeleteAt.Set(nil)
-}
-
-// UnsetHardDeleteAt ensures that no value is present for HardDeleteAt, not even an explicit nil
-func (o *IntegrationResponse) UnsetHardDeleteAt() {
-	o.HardDeleteAt.Unset()
-}
-
-// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetPurgeAt() time.Time {
-	if o == nil || IsNil(o.PurgeAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.PurgeAt.Get()
-}
-
-// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetPurgeAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.PurgeAt.Get(), o.PurgeAt.IsSet()
-}
-
-// HasPurgeAt returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasPurgeAt() bool {
-	if o != nil && o.PurgeAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetPurgeAt gets a reference to the given NullableTime and assigns it to the PurgeAt field.
-func (o *IntegrationResponse) SetPurgeAt(v time.Time) {
-	o.PurgeAt.Set(&v)
-}
-
-// SetPurgeAtNil sets the value for PurgeAt to be an explicit nil
-func (o *IntegrationResponse) SetPurgeAtNil() {
-	o.PurgeAt.Set(nil)
-}
-
-// UnsetPurgeAt ensures that no value is present for PurgeAt, not even an explicit nil
-func (o *IntegrationResponse) UnsetPurgeAt() {
-	o.PurgeAt.Unset()
-}
-
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *IntegrationResponse) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.UpdatedAt.Get()
-}
-
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *IntegrationResponse) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.UpdatedAt.Get(), o.UpdatedAt.IsSet()
-}
-
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *IntegrationResponse) HasUpdatedAt() bool {
-	if o != nil && o.UpdatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given NullableTime and assigns it to the UpdatedAt field.
-func (o *IntegrationResponse) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt.Set(&v)
-}
-
-// SetUpdatedAtNil sets the value for UpdatedAt to be an explicit nil
-func (o *IntegrationResponse) SetUpdatedAtNil() {
-	o.UpdatedAt.Set(nil)
-}
-
-// UnsetUpdatedAt ensures that no value is present for UpdatedAt, not even an explicit nil
-func (o *IntegrationResponse) UnsetUpdatedAt() {
-	o.UpdatedAt.Unset()
-}
-
 // GetProviderTypeName returns the ProviderTypeName field value
 func (o *IntegrationResponse) GetProviderTypeName() LocalizedString {
 	if o == nil {
@@ -609,39 +433,30 @@ func (o *IntegrationResponse) SetProviderTypeName(v LocalizedString) {
 
 func (o IntegrationResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.HardDeleteAt) {
+		toSerialize["hard_delete_at"] = o.HardDeleteAt
+	}
+	if !IsNil(o.PurgeAt) {
+		toSerialize["purge_at"] = o.PurgeAt
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
 	if o.Config != nil {
 		toSerialize["config"] = o.Config
 	}
 	toSerialize["enabled"] = o.Enabled
 	toSerialize["health"] = o.Health
 	toSerialize["id"] = o.Id
-	if !IsNil(o.Metadata) {
-		toSerialize["metadata"] = o.Metadata
-	}
 	toSerialize["name"] = o.Name
 	toSerialize["org_id"] = o.OrgId
 	toSerialize["provider_type"] = o.ProviderType
-	if o.CacheHit.IsSet() {
-		toSerialize["cache_hit"] = o.CacheHit.Get()
-	}
-	if o.CacheTtl.IsSet() {
-		toSerialize["cache_ttl"] = o.CacheTtl.Get()
-	}
-	if o.CreatedAt.IsSet() {
-		toSerialize["created_at"] = o.CreatedAt.Get()
-	}
-	if o.DeletedAt.IsSet() {
-		toSerialize["deleted_at"] = o.DeletedAt.Get()
-	}
-	if o.HardDeleteAt.IsSet() {
-		toSerialize["hard_delete_at"] = o.HardDeleteAt.Get()
-	}
-	if o.PurgeAt.IsSet() {
-		toSerialize["purge_at"] = o.PurgeAt.Get()
-	}
-	if o.UpdatedAt.IsSet() {
-		toSerialize["updated_at"] = o.UpdatedAt.Get()
-	}
 	toSerialize["provider_type_name"] = o.ProviderTypeName
 	return toSerialize, nil
 }

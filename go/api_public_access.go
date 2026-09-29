@@ -26,6 +26,12 @@ type ApiGetPublicInviteRequest struct {
 	ctx         context.Context
 	ApiService  *PublicAccessAPIService
 	inviteToken string
+	deviceId    *string
+}
+
+func (r ApiGetPublicInviteRequest) DeviceId(deviceId string) ApiGetPublicInviteRequest {
+	r.deviceId = &deviceId
+	return r
 }
 
 func (r ApiGetPublicInviteRequest) Execute() (*PublicInviteResponse, *http.Response, error) {
@@ -70,6 +76,9 @@ func (a *PublicAccessAPIService) GetPublicInviteExecute(r ApiGetPublicInviteRequ
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.deviceId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "device_id", r.deviceId, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -134,6 +143,117 @@ func (a *PublicAccessAPIService) GetPublicInviteExecute(r ApiGetPublicInviteRequ
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetPublicInvitePhotoRequest struct {
+	ctx         context.Context
+	ApiService  *PublicAccessAPIService
+	inviteToken string
+}
+
+func (r ApiGetPublicInvitePhotoRequest) Execute() (*http.Response, error) {
+	return r.ApiService.GetPublicInvitePhotoExecute(r)
+}
+
+/*
+GetPublicInvitePhoto Method for GetPublicInvitePhoto
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param inviteToken
+	@return ApiGetPublicInvitePhotoRequest
+*/
+func (a *PublicAccessAPIService) GetPublicInvitePhoto(ctx context.Context, inviteToken string) ApiGetPublicInvitePhotoRequest {
+	return ApiGetPublicInvitePhotoRequest{
+		ApiService:  a,
+		ctx:         ctx,
+		inviteToken: inviteToken,
+	}
+}
+
+// Execute executes the request
+func (a *PublicAccessAPIService) GetPublicInvitePhotoExecute(r ApiGetPublicInvitePhotoRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodGet
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PublicAccessAPIService.GetPublicInvitePhoto")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/public/access/invites/{inviteToken}/photo"
+	localVarPath = strings.Replace(localVarPath, "{"+"inviteToken"+"}", url.PathEscape(parameterValueToString(r.inviteToken, "inviteToken")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
 type ApiGetPublicPortalRequest struct {
 	ctx            context.Context
 	ApiService     *PublicAccessAPIService
@@ -146,6 +266,8 @@ func (r ApiGetPublicPortalRequest) Execute() (*PublicPortalResponse, *http.Respo
 
 /*
 GetPublicPortal Method for GetPublicPortal
+
+Fetch a public portal's config. Quota: consumes 1 from `portal_views` (unit: count, per day).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param publicPortalId
@@ -865,6 +987,8 @@ func (r ApiPostPublicInviteExecuteRequest) Execute() (*PublicInviteExecuteRespon
 /*
 PostPublicInviteExecute Method for PostPublicInviteExecute
 
+Execute an access invite action (e.g. open a door). Quota: a door open consumes 1 from `door_opens` (unit: count, per day and per month). May be delayed (response carries a `degradation` warning) when the org is over capacity, but never blocked.
+
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param inviteToken
 	@return ApiPostPublicInviteExecuteRequest
@@ -964,6 +1088,296 @@ func (a *PublicAccessAPIService) PostPublicInviteExecuteExecute(r ApiPostPublicI
 			}
 			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPostPublicInviteOtpStartRequest struct {
+	ctx                         context.Context
+	ApiService                  *PublicAccessAPIService
+	inviteToken                 string
+	publicInviteOtpStartRequest *PublicInviteOtpStartRequest
+}
+
+func (r ApiPostPublicInviteOtpStartRequest) PublicInviteOtpStartRequest(publicInviteOtpStartRequest PublicInviteOtpStartRequest) ApiPostPublicInviteOtpStartRequest {
+	r.publicInviteOtpStartRequest = &publicInviteOtpStartRequest
+	return r
+}
+
+func (r ApiPostPublicInviteOtpStartRequest) Execute() (*PublicInviteOtpStartResponse, *http.Response, error) {
+	return r.ApiService.PostPublicInviteOtpStartExecute(r)
+}
+
+/*
+PostPublicInviteOtpStart Method for PostPublicInviteOtpStart
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param inviteToken
+	@return ApiPostPublicInviteOtpStartRequest
+*/
+func (a *PublicAccessAPIService) PostPublicInviteOtpStart(ctx context.Context, inviteToken string) ApiPostPublicInviteOtpStartRequest {
+	return ApiPostPublicInviteOtpStartRequest{
+		ApiService:  a,
+		ctx:         ctx,
+		inviteToken: inviteToken,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PublicInviteOtpStartResponse
+func (a *PublicAccessAPIService) PostPublicInviteOtpStartExecute(r ApiPostPublicInviteOtpStartRequest) (*PublicInviteOtpStartResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PublicInviteOtpStartResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PublicAccessAPIService.PostPublicInviteOtpStart")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/public/access/invites/{inviteToken}/otp/start"
+	localVarPath = strings.Replace(localVarPath, "{"+"inviteToken"+"}", url.PathEscape(parameterValueToString(r.inviteToken, "inviteToken")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.publicInviteOtpStartRequest == nil {
+		return localVarReturnValue, nil, reportError("publicInviteOtpStartRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.publicInviteOtpStartRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPostPublicInviteRenewalRequest struct {
+	ctx                        context.Context
+	ApiService                 *PublicAccessAPIService
+	inviteToken                string
+	publicInviteRenewalRequest *PublicInviteRenewalRequest
+}
+
+func (r ApiPostPublicInviteRenewalRequest) PublicInviteRenewalRequest(publicInviteRenewalRequest PublicInviteRenewalRequest) ApiPostPublicInviteRenewalRequest {
+	r.publicInviteRenewalRequest = &publicInviteRenewalRequest
+	return r
+}
+
+func (r ApiPostPublicInviteRenewalRequest) Execute() (*PublicInviteRenewalResponse, *http.Response, error) {
+	return r.ApiService.PostPublicInviteRenewalExecute(r)
+}
+
+/*
+PostPublicInviteRenewal Method for PostPublicInviteRenewal
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param inviteToken
+	@return ApiPostPublicInviteRenewalRequest
+*/
+func (a *PublicAccessAPIService) PostPublicInviteRenewal(ctx context.Context, inviteToken string) ApiPostPublicInviteRenewalRequest {
+	return ApiPostPublicInviteRenewalRequest{
+		ApiService:  a,
+		ctx:         ctx,
+		inviteToken: inviteToken,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PublicInviteRenewalResponse
+func (a *PublicAccessAPIService) PostPublicInviteRenewalExecute(r ApiPostPublicInviteRenewalRequest) (*PublicInviteRenewalResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PublicInviteRenewalResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PublicAccessAPIService.PostPublicInviteRenewal")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/public/access/invites/{inviteToken}/renewal"
+	localVarPath = strings.Replace(localVarPath, "{"+"inviteToken"+"}", url.PathEscape(parameterValueToString(r.inviteToken, "inviteToken")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.publicInviteRenewalRequest == nil {
+		return localVarReturnValue, nil, reportError("publicInviteRenewalRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.publicInviteRenewalRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -986,7 +1400,7 @@ type ApiPostPublicInviteSessionRequest struct {
 	inviteToken string
 }
 
-func (r ApiPostPublicInviteSessionRequest) Execute() (*http.Response, error) {
+func (r ApiPostPublicInviteSessionRequest) Execute() (*PublicInviteSessionResponse, *http.Response, error) {
 	return r.ApiService.PostPublicInviteSessionExecute(r)
 }
 
@@ -1006,16 +1420,19 @@ func (a *PublicAccessAPIService) PostPublicInviteSession(ctx context.Context, in
 }
 
 // Execute executes the request
-func (a *PublicAccessAPIService) PostPublicInviteSessionExecute(r ApiPostPublicInviteSessionRequest) (*http.Response, error) {
+//
+//	@return PublicInviteSessionResponse
+func (a *PublicAccessAPIService) PostPublicInviteSessionExecute(r ApiPostPublicInviteSessionRequest) (*PublicInviteSessionResponse, *http.Response, error) {
 	var (
-		localVarHTTPMethod = http.MethodPost
-		localVarPostBody   interface{}
-		formFiles          []formFile
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PublicInviteSessionResponse
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "PublicAccessAPIService.PostPublicInviteSession")
 	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/public/access/invites/{inviteToken}/session"
@@ -1044,19 +1461,19 @@ func (a *PublicAccessAPIService) PostPublicInviteSessionExecute(r ApiPostPublicI
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
@@ -1069,15 +1486,24 @@ func (a *PublicAccessAPIService) PostPublicInviteSessionExecute(r ApiPostPublicI
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 			newErr.model = v
 		}
-		return localVarHTTPResponse, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarHTTPResponse, nil
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiPostPublicPortalLightsRequest struct {
@@ -1193,6 +1619,8 @@ func (r ApiPostPublicPortalOpenRequest) Execute() (*http.Response, error) {
 /*
 PostPublicPortalOpen Method for PostPublicPortalOpen
 
+Open a door via a public portal. Quota: consumes 1 from `door_opens` (unit: count, per day and per month). When the org is over capacity the open may be delayed (response carries a `degradation` warning) but is never blocked.
+
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param publicPortalId
 	@return ApiPostPublicPortalOpenRequest
@@ -1273,6 +1701,17 @@ func (a *PublicAccessAPIService) PostPublicPortalOpenExecute(r ApiPostPublicPort
 			}
 			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 			newErr.model = v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
 		}
 		return localVarHTTPResponse, newErr
 	}
@@ -1298,6 +1737,8 @@ func (r ApiPostPublicPortalSessionsRequest) Execute() (*PublicPortalCreateSessio
 
 /*
 PostPublicPortalSessions Method for PostPublicPortalSessions
+
+Start a live video access session. Quota: consumes 1 from `video_sessions` (unit: count, per month); session call time accrues against `video_session_duration_seconds` (unit: seconds, per session — shown to users as video chat minutes).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param publicPortalId
@@ -1808,7 +2249,7 @@ func (r ApiPostPublicSessionNotifyMessageRequest) Execute() (*http.Response, err
 }
 
 /*
-PostPublicSessionNotifyMessage Caller notifies apartment residents with the chat message text (Web Push).
+PostPublicSessionNotifyMessage Caller notifies listing members with the chat message text (Web Push).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param sessionId
@@ -1946,6 +2387,8 @@ func (r ApiPostPublicSessionOpenRequest) Execute() (*http.Response, error) {
 /*
 PostPublicSessionOpen Method for PostPublicSessionOpen
 
+Open a door from within a live session. Quota: consumes 1 from `door_opens` (unit: count, per day and per month). May be delayed (response carries a `degradation` warning) when the org is over capacity, but never blocked.
+
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param sessionId
 	@return ApiPostPublicSessionOpenRequest
@@ -2032,6 +2475,17 @@ func (a *PublicAccessAPIService) PostPublicSessionOpenExecute(r ApiPostPublicSes
 			return localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

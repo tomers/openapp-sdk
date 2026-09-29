@@ -20,11 +20,11 @@ type QuotaPeriod string
 
 // List of QuotaPeriod
 const (
-	LIFETIME    QuotaPeriod = "lifetime"
-	DAY         QuotaPeriod = "day"
-	WEEK        QuotaPeriod = "week"
-	MONTH       QuotaPeriod = "month"
-	PER_SESSION QuotaPeriod = "per_session"
+	QUOTAPERIOD_LIFETIME    QuotaPeriod = "lifetime"
+	QUOTAPERIOD_DAY         QuotaPeriod = "day"
+	QUOTAPERIOD_WEEK        QuotaPeriod = "week"
+	QUOTAPERIOD_MONTH       QuotaPeriod = "month"
+	QUOTAPERIOD_PER_SESSION QuotaPeriod = "per_session"
 )
 
 // All allowed values of QuotaPeriod enum

@@ -4,15 +4,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IncludeDeleted** | **bool** |  |
-**IncludeMetadata** | **bool** |  |
-**OnlyDeleted** | **bool** |  |
+**IncludeDeleted** | Pointer to **bool** |  | [optional]
+**OnlyDeleted** | Pointer to **bool** |  | [optional]
 
 ## Methods
 
 ### NewMultiResourceOutputOptionsQuery
 
-`func NewMultiResourceOutputOptionsQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool, ) *MultiResourceOutputOptionsQuery`
+`func NewMultiResourceOutputOptionsQuery() *MultiResourceOutputOptionsQuery`
 
 NewMultiResourceOutputOptionsQuery instantiates a new MultiResourceOutputOptionsQuery object
 This constructor will assign default values to properties that have it defined,
@@ -46,26 +45,11 @@ and a boolean to check if the value has been set.
 
 SetIncludeDeleted sets IncludeDeleted field to given value.
 
+### HasIncludeDeleted
 
-### GetIncludeMetadata
+`func (o *MultiResourceOutputOptionsQuery) HasIncludeDeleted() bool`
 
-`func (o *MultiResourceOutputOptionsQuery) GetIncludeMetadata() bool`
-
-GetIncludeMetadata returns the IncludeMetadata field if non-nil, zero value otherwise.
-
-### GetIncludeMetadataOk
-
-`func (o *MultiResourceOutputOptionsQuery) GetIncludeMetadataOk() (*bool, bool)`
-
-GetIncludeMetadataOk returns a tuple with the IncludeMetadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIncludeMetadata
-
-`func (o *MultiResourceOutputOptionsQuery) SetIncludeMetadata(v bool)`
-
-SetIncludeMetadata sets IncludeMetadata field to given value.
-
+HasIncludeDeleted returns a boolean if a field has been set.
 
 ### GetOnlyDeleted
 
@@ -86,6 +70,11 @@ and a boolean to check if the value has been set.
 
 SetOnlyDeleted sets OnlyDeleted field to given value.
 
+### HasOnlyDeleted
+
+`func (o *MultiResourceOutputOptionsQuery) HasOnlyDeleted() bool`
+
+HasOnlyDeleted returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

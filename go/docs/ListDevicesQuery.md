@@ -4,9 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IncludeDeleted** | **bool** |  |
-**IncludeMetadata** | **bool** |  |
-**OnlyDeleted** | **bool** |  |
+**IncludeDeleted** | Pointer to **bool** |  | [optional]
+**OnlyDeleted** | Pointer to **bool** |  | [optional]
 **Limit** | Pointer to **int32** | Number of items per page. Default from config, max 200. | [optional]
 **Offset** | Pointer to **int32** | Number of items to skip. Default 0. | [optional]
 **DeviceKind** | Pointer to **NullableString** | Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id. Filtering done at SQL level. | [optional]
@@ -15,13 +14,15 @@ Name | Type | Description | Notes
 **HasGo2rtcChannel** | Pointer to **NullableBool** | When true, only devices whose metadata JSON has a non-empty &#x60;channel&#x60; (go2rtc cameras). Requires &#x60;integration_id&#x60;. | [optional]
 **IncludeStale** | Pointer to **NullableBool** | When true with &#x60;integration_id&#x60;, include &#x60;stale&#x60; per device when the provider supports it. | [optional]
 **IntegrationId** | Pointer to **NullableString** | Optional filter: only devices belonging to this integration. | [optional]
+**Locale** | Pointer to **NullableString** | Locale used to resolve the localized &#x60;name&#x60; when sorting by name (e.g. &#x60;en&#x60;). Defaults to &#x60;en&#x60;. | [optional]
 **Q** | Pointer to **NullableString** | Case-insensitive substring match on localized device name (JSON). Best-effort when &#x60;integration_id&#x60; is set (SQL ILIKE). | [optional]
+**Sort** | Pointer to **NullableString** | Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;integration_id&#x60; is set. Defaults to insertion order when omitted. | [optional]
 
 ## Methods
 
 ### NewListDevicesQuery
 
-`func NewListDevicesQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool, ) *ListDevicesQuery`
+`func NewListDevicesQuery() *ListDevicesQuery`
 
 NewListDevicesQuery instantiates a new ListDevicesQuery object
 This constructor will assign default values to properties that have it defined,
@@ -55,26 +56,11 @@ and a boolean to check if the value has been set.
 
 SetIncludeDeleted sets IncludeDeleted field to given value.
 
+### HasIncludeDeleted
 
-### GetIncludeMetadata
+`func (o *ListDevicesQuery) HasIncludeDeleted() bool`
 
-`func (o *ListDevicesQuery) GetIncludeMetadata() bool`
-
-GetIncludeMetadata returns the IncludeMetadata field if non-nil, zero value otherwise.
-
-### GetIncludeMetadataOk
-
-`func (o *ListDevicesQuery) GetIncludeMetadataOk() (*bool, bool)`
-
-GetIncludeMetadataOk returns a tuple with the IncludeMetadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIncludeMetadata
-
-`func (o *ListDevicesQuery) SetIncludeMetadata(v bool)`
-
-SetIncludeMetadata sets IncludeMetadata field to given value.
-
+HasIncludeDeleted returns a boolean if a field has been set.
 
 ### GetOnlyDeleted
 
@@ -95,6 +81,11 @@ and a boolean to check if the value has been set.
 
 SetOnlyDeleted sets OnlyDeleted field to given value.
 
+### HasOnlyDeleted
+
+`func (o *ListDevicesQuery) HasOnlyDeleted() bool`
+
+HasOnlyDeleted returns a boolean if a field has been set.
 
 ### GetLimit
 
@@ -356,6 +347,41 @@ HasIntegrationId returns a boolean if a field has been set.
 `func (o *ListDevicesQuery) UnsetIntegrationId()`
 
 UnsetIntegrationId ensures that no value is present for IntegrationId, not even an explicit nil
+### GetLocale
+
+`func (o *ListDevicesQuery) GetLocale() string`
+
+GetLocale returns the Locale field if non-nil, zero value otherwise.
+
+### GetLocaleOk
+
+`func (o *ListDevicesQuery) GetLocaleOk() (*string, bool)`
+
+GetLocaleOk returns a tuple with the Locale field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetLocale
+
+`func (o *ListDevicesQuery) SetLocale(v string)`
+
+SetLocale sets Locale field to given value.
+
+### HasLocale
+
+`func (o *ListDevicesQuery) HasLocale() bool`
+
+HasLocale returns a boolean if a field has been set.
+
+### SetLocaleNil
+
+`func (o *ListDevicesQuery) SetLocaleNil(b bool)`
+
+ SetLocaleNil sets the value for Locale to be an explicit nil
+
+### UnsetLocale
+`func (o *ListDevicesQuery) UnsetLocale()`
+
+UnsetLocale ensures that no value is present for Locale, not even an explicit nil
 ### GetQ
 
 `func (o *ListDevicesQuery) GetQ() string`
@@ -391,5 +417,40 @@ HasQ returns a boolean if a field has been set.
 `func (o *ListDevicesQuery) UnsetQ()`
 
 UnsetQ ensures that no value is present for Q, not even an explicit nil
+### GetSort
+
+`func (o *ListDevicesQuery) GetSort() string`
+
+GetSort returns the Sort field if non-nil, zero value otherwise.
+
+### GetSortOk
+
+`func (o *ListDevicesQuery) GetSortOk() (*string, bool)`
+
+GetSortOk returns a tuple with the Sort field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSort
+
+`func (o *ListDevicesQuery) SetSort(v string)`
+
+SetSort sets Sort field to given value.
+
+### HasSort
+
+`func (o *ListDevicesQuery) HasSort() bool`
+
+HasSort returns a boolean if a field has been set.
+
+### SetSortNil
+
+`func (o *ListDevicesQuery) SetSortNil(b bool)`
+
+ SetSortNil sets the value for Sort to be an explicit nil
+
+### UnsetSort
+`func (o *ListDevicesQuery) UnsetSort()`
+
+UnsetSort ensures that no value is present for Sort, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

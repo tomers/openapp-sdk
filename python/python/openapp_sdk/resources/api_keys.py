@@ -12,8 +12,8 @@ class ApiKeysClient(_BaseResource):
     """Manage the API keys issued to the caller's org.
 
     Tokens returned by :meth:`create` follow the format
-    ``{base_url}_openapp_{secret}``. The SDK can auto-derive the base URL from
-    such a token; see :class:`openapp_sdk.ApiKey`.
+    ``{origin}_openapp_{secret}``. The SDK derives the API root
+    (``{origin}/api/v1``) from such a token; see :class:`openapp_sdk.ApiKey`.
     """
 
     async def list(self) -> _list[dict[str, Any]]:

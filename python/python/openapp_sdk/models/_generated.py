@@ -4,47 +4,194 @@
 #   filename:  openapi.json
 
 from __future__ import annotations
-from pydantic import AwareDatetime, BaseModel, Field, RootModel
 from typing import Annotated, Any, Literal
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, RootModel
 from enum import Enum
 
 
-class AcceptEulaRequest(BaseModel):
+class AccessInviteContactInput(BaseModel):
     """
-    Request to accept EULA and provision user
-    """
+    One contact named by an invitation.
 
-    accepted: bool
-
-
-class AcceptEulaResponse(BaseModel):
-    """
-    Response after accepting EULA
+    Exactly one of `email`, `phone`, `user_id`, and `group_id` is set, and it must match
+    `contact_kind`. Free-form contacts are normalized on write: a phone becomes E.164 using
+    `phone_region` when it is not already international.
     """
 
-    message: str
-    user_id: str
-    workspace_id: Annotated[
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    contact_kind: Annotated[
+        str, Field(description="`email`, `phone`, `user`, or `group`.")
+    ]
+    display_name: str | None = None
+    email: str | None = None
+    group_id: str | None = None
+    phone: Annotated[
+        str | None,
+        Field(description="E.164, or national format when `phone_region` is supplied."),
+    ] = None
+    phone_region: Annotated[
         str | None,
         Field(
-            description="Personal Workspace org id auto-created on self-signup. Absent for existing users\nbeing linked to Kratos credentials."
+            description="ISO 3166-1 alpha-2 region used to normalize a national-format phone."
         ),
     ] = None
+    user_id: str | None = None
+
+
+class AccessInviteKind(Enum):
+    invitation = "invitation"
+    share = "share"
+
+
+class AccessInviteMessageMediaResponse(BaseModel):
+    expires_in_seconds: Annotated[int, Field(ge=0)]
+    slot: str
+    url: str
+
+
+class AccessInviteRenewalRequestItem(BaseModel):
+    created_at: str | None = None
+    id: str
+    note: str | None = None
+    requester_name: str | None = None
+    requester_user_id: str
+
+
+class AddBillingMemberRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    can_charge: bool | None = None
+    user_id: str
 
 
 class AddBuildingUserPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     role: str
     user_id: str
 
 
-class ApartmentFloorSummary(BaseModel):
+class AddDirectoryListingMemberPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    date_of_birth: Annotated[
+        str | None,
+        Field(
+            description="Parent-declared date of birth (`YYYY-MM-DD`). Required when `is_child` is true."
+        ),
+    ] = None
+    is_child: Annotated[
+        bool | None,
+        Field(
+            description="When true, this household member is a child; date of birth is required."
+        ),
+    ] = None
+    receives_calls: Annotated[
+        bool | None,
+        Field(
+            description="When omitted, defaults to false for minors and true for adults."
+        ),
+    ] = None
+    role: str | None = None
+    user_id: str
+
+
+class AddGroupMemberPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    role: str | None = None
+    user_id: str
+
+
+class AdmissionDecisionPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    admitted: Annotated[
+        bool,
+        Field(
+            description="true admits the member, false denies them. A denial is durable, so it does not resurface\nin the approval queue on every sync."
+        ),
+    ]
+
+
+class AdmissionResponse(BaseModel):
     """
-    One distinct floor row for a directory device (apartment entities).
+    One row of the admission ledger, including members who were removed.
     """
 
-    floor: Any
-    floor_number: int | None = None
-    key: str
+    admission_count: int
+    admitted_at: str | None = None
+    denied_at: str | None = None
+    display_name: Any | None = None
+    first_seen_at: str | None = None
+    member_ref: str
+    removed_at: str | None = None
+    status: str
+
+
+class AffectedCounts(BaseModel):
+    """
+    Per-resource counts of the rows a transfer affects. Used both for the preview endpoint and to
+    gate target-org quota before any write happens.
+    """
+
+    access_portals: int
+    devices: int
+    directory_listing_members: int
+    entities: int
+    invite_claims: Annotated[
+        int,
+        Field(
+            description="Ephemeral runtime rows; relevant to MOVE only (DUPLICATE does not clone them)."
+        ),
+    ]
+    invite_links: int
+    renewal_requests: int
+    sessions: int
+    zones: int
+
+
+class AgeClass(Enum):
+    """
+    Derived age class for call/portal limits. Not a marketing segment.
+    """
+
+    under_13 = "under_13"
+    field_13_to_15 = "13_to_15"
+    adult = "adult"
+
+
+class AgentResponse(BaseModel):
+    allowed_entity_ids: list[str] | None = None
+    allowed_portal_ids: list[str] | None = None
+    allowed_tool_names: list[str] | None = None
+    confirmation_mode: str
+    created_at: str | None = None
+    expires_at: str | None = None
+    id: str
+    last_used_at: str | None = None
+    name: str
+    org_id: str
+    owner_user_id: str
+    purpose: str | None = None
+    revoked_at: str | None = None
+    updated_at: str | None = None
+
+
+class AliasResponse(BaseModel):
+    alias: str
+    created_at: str | None = None
+    id: str
+    org_id: str
+    resource_id: str
+    resource_type: str
 
 
 class ApiErrorResponse(BaseModel):
@@ -52,6 +199,12 @@ class ApiErrorResponse(BaseModel):
     A minimal, user-facing error body for public API responses.
     """
 
+    correlationId: Annotated[
+        str | None,
+        Field(
+            description="Server-generated correlation id that ties this error to the request trace and the\nmatching audit event (see the audit log). Present when the request carried one."
+        ),
+    ] = None
     error_code: Annotated[
         str | None,
         Field(
@@ -59,6 +212,12 @@ class ApiErrorResponse(BaseModel):
         ),
     ] = None
     message: str
+    preview_token: Annotated[
+        str | None,
+        Field(
+            description="Present when `error_code` is `confirmation_required` (retry with `X-OpenApp-Confirm`)."
+        ),
+    ] = None
 
 
 class ApiKeyListItem(BaseModel):
@@ -79,11 +238,99 @@ class ApiKeyListItem(BaseModel):
     updated_at: str | None = None
 
 
+class ApprovalDecisionResponse(BaseModel):
+    approve_count: Annotated[int | None, Field(ge=0)] = None
+    id: str
+    required_count: Annotated[int | None, Field(ge=0)] = None
+    status: str
+
+
+class ApprovalRequestResponse(BaseModel):
+    approve_count: Annotated[int | None, Field(ge=0)] = None
+    created_at: str | None = None
+    id: str
+    note: str | None = None
+    org_id: str
+    policy_id: str
+    requester_user_id: str
+    required_count: Annotated[int | None, Field(ge=0)] = None
+    status: str | None = None
+    subject_kind: Annotated[
+        str | None, Field(description="What the request is about, e.g. `invite`.")
+    ] = None
+    subject_label: Annotated[
+        str | None,
+        Field(
+            description="Human-readable subject (invite name), not the raw kind/ref."
+        ),
+    ] = None
+    subject_ref: Annotated[
+        str | None,
+        Field(
+            description="Id of the subject (e.g. the disabled invite link awaiting approval)."
+        ),
+    ] = None
+
+
+class AuditExportJob(BaseModel):
+    completed_at: str | None = None
+    created_at: str | None = None
+    download_url: Annotated[
+        str | None,
+        Field(
+            description="Signed download URL, present only when `status = completed`."
+        ),
+    ] = None
+    error_message: str | None = None
+    format: str
+    id: str
+    occurred_after: str | None = None
+    occurred_before: str | None = None
+    org_id: str
+    row_count: int | None = None
+    status: str
+
+
+class AuditOutcome(Enum):
+    """
+    Outcome of an audited action. `denied` (permission/quota refusal) is recorded too —
+    it is critical for security investigations.
+    """
+
+    succeeded = "succeeded"
+    failed = "failed"
+    denied = "denied"
+
+
+class AuditSource(Enum):
+    """
+    Surface that originated the action.
+    """
+
+    api = "api"
+    dashboard = "dashboard"
+    public_access = "public_access"
+    smarthome = "smarthome"
+    scripting = "scripting"
+    system = "system"
+
+
 class BackendStatus(BaseModel):
     environment: Annotated[
         str, Field(description="Runtime environment (e.g. development, production).")
     ]
     version: Annotated[str, Field(description="Application version from Cargo.")]
+
+
+class BillingAccountMember(BaseModel):
+    """
+    A user attached to a billing account. `can_charge` allows charging the account.
+    """
+
+    account_id: str
+    can_charge: bool
+    created_at: str | None = None
+    user_id: str
 
 
 class BillingEventKind(Enum):
@@ -101,33 +348,117 @@ class BillingPlanResponse(BaseModel):
     tier_id: str | None = None
 
 
-class BillingWebhookPayload(RootModel[bytes]):
-    root: bytes
-
-
 class BuildingUserResponse(BaseModel):
-    apartments: list[str]
+    listings: list[str]
     role: str
     user_email: str | None = None
     user_id: str
     user_name: Any | None = None
 
 
+class CapacityResource(Enum):
+    """
+    A capacity-tracked resource type that participates in the lifecycle. (Org members are
+    intentionally excluded — they are never auto-deleted.)
+    """
+
+    integrations = "integrations"
+    devices = "devices"
+    zones = "zones"
+    entities = "entities"
+    api_keys = "api_keys"
+
+
 class CheckoutRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     tier_slug: str
+
+
+class ConflictingInviteResponse(BaseModel):
+    id: str
+    name: str | None = None
+
+
+class CopilotChatRequest(BaseModel):
+    message: str
+
+
+class CopilotCommitResponse(BaseModel):
+    correlation_id: str
+    results: list[Any]
+
+
+class CopilotProposedAction(BaseModel):
+    args: dict[str, Any]
+    preview: str | None = None
+    tool: str
+
+
+class CopyDeviceImageRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    source_device_id: str
+
+
+class CopyEntityImageRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    source_entity_id: str
+
+
+class CopyIntegrationImageRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    source_integration_id: str
+
+
+class CreateAgentCredentialRequest(BaseModel):
+    expires_at: str | None = None
+    expires_in: str | None = None
+    name: str | None = None
+
+
+class CreateAgentCredentialResponse(BaseModel):
+    agent_id: str
+    api_key_id: str
+    expires_at: str
+    token: str
+    token_suffix: str
+
+
+class CreateAgentRequest(BaseModel):
+    allowed_entity_ids: list[str] | None = None
+    allowed_portal_ids: list[str] | None = None
+    allowed_tool_names: list[str] | None = None
+    confirmation_mode: str | None = None
+    expires_at: str | None = None
+    expires_in: str | None = None
+    name: str
+    purpose: str | None = None
+
+
+class CreateAliasRequest(BaseModel):
+    alias: str
+    resource_id: str
+    resource_type: str
 
 
 class CreateApiKeyRequest(BaseModel):
     expires_at: Annotated[
         str | None,
         Field(
-            description="RFC3339 absolute expiration timestamp. Mutually exclusive with expires_in."
+            description="[RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) absolute expiration timestamp (UTC). Mutually exclusive with `expires_in`."
         ),
     ] = None
     expires_in: Annotated[
         str | None,
         Field(
-            description='Duration from now, e.g. "1d", "2w", "90d", "P30D". Mutually exclusive with expires_at.'
+            description="Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Mutually exclusive with `expires_at`."
         ),
     ] = None
     name: str
@@ -151,7 +482,29 @@ class CreateApiKeyResponse(BaseModel):
     token_suffix: str
 
 
+class CreateAuditExportRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    format: Annotated[
+        str | None, Field(description="Output format: `jsonl` (default) or `csv`.")
+    ] = None
+    occurred_after: Annotated[
+        str | None,
+        Field(
+            description="RFC 3339 lower bound (inclusive). Defaults to the start of retention."
+        ),
+    ] = None
+    occurred_before: Annotated[
+        str | None,
+        Field(description="RFC 3339 upper bound (inclusive). Defaults to now."),
+    ] = None
+
+
 class CreateEntityRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     channel_index: int | None = None
     device_id: str
     entity_type: str
@@ -166,6 +519,145 @@ class CreateEntityRequest(BaseModel):
         str | None, Field(description="Optional friendly name for the entity.")
     ] = None
     zone_id: str | None = None
+
+
+class CreateGroupPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    description: Any | None = None
+    kind: str | None = None
+    name: Any
+
+
+class CreateGroupShareOfferPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    expires_in_hours: Annotated[
+        int | None,
+        Field(
+            description="Hours until the offer expires. Bounded so an offer cannot outlive the reason for it."
+        ),
+    ] = None
+
+
+class CreateHouseholdInvitation(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    email: str | None = None
+    phone: str | None = None
+
+
+class CreateHouseholdPayload(BaseModel):
+    """
+    Payload for creating a household.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    name: Annotated[
+        str | None,
+        Field(
+            description="Household name. Omit it to use the default derived from the caller."
+        ),
+    ] = None
+
+
+class CreateInventoryRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    is_active: bool | None = None
+    price_cents: int
+    product_id: str
+    stock_quantity: int | None = None
+
+
+class CreatePmsConnectorRequest(BaseModel):
+    name: str
+    provider: str | None = None
+
+
+class CreatePmsConnectorResponse(BaseModel):
+    id: str
+    name: str
+    provider: str
+    webhook_secret: str
+    webhook_url_path: str
+
+
+class CreatePolicyRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    capability: Annotated[
+        str | None,
+        Field(
+            description="Optional capability scoping (e.g. `switchable`, `users_admin`)."
+        ),
+    ] = None
+    config: Annotated[
+        dict[str, Any],
+        Field(
+            description="Typed-per-`policy_type` configuration document. For the documented typed\nshapes, see `RequireStepUpPolicyConfig` and `ApprovalThresholdPolicyConfig`."
+        ),
+    ]
+    enabled: Annotated[bool | None, Field(description="Defaults to true.")] = None
+    enforcement: Annotated[
+        str | None,
+        Field(description="`enforce` (default) | `require_approval` | `audit_only`."),
+    ] = None
+    policy_type: Annotated[
+        str, Field(description="e.g. `invitation_curfew`, `user_sharing`.")
+    ]
+
+
+class CreateScriptingExecutionRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    script: str
+
+
+class CreateWebhookRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    description: str | None = None
+    event_types: Annotated[
+        list[str] | None,
+        Field(description="Event-type filter; omit or empty for all events."),
+    ] = None
+    url: str
+
+
+class CurfewWindowResponse(BaseModel):
+    end: Annotated[
+        str,
+        Field(
+            description="Local clock `HH:MM`. Inclusive; may be earlier than `start` (midnight wrap)."
+        ),
+    ]
+    start: Annotated[str, Field(description="Local clock `HH:MM`.")]
+
+
+class DegradationStage(Enum):
+    """
+    Lifecycle position of an org's over-capacity remediation.
+    """
+
+    none = "none"
+    warned = "warned"
+    degraded = "degraded"
+    marked_for_delete = "marked_for_delete"
+
+
+class DeletionRequestResponse(BaseModel):
+    message: str
+    status: str
 
 
 class DeviceEntityMetadataDefinitionQuery(BaseModel):
@@ -190,8 +682,157 @@ class DeviceMetadataDefinitionResponse(BaseModel):
     ]
 
 
+class DevicePhysicalStatusResponse(BaseModel):
+    admin_status: Annotated[
+        str | None,
+        Field(
+            description="Verified hardware-admin status of the integration's linked account: `admin` | `non_admin` |\nnull (unknown / unverifiable / stale)."
+        ),
+    ] = None
+    can_claim: Annotated[
+        bool,
+        Field(
+            description="Whether the requester may claim/keep stewardship (verified admin + provider supports it +\nnot held by someone else)."
+        ),
+    ]
+    hardware_id: Annotated[
+        str | None,
+        Field(
+            description="Server-derived hardware identity of the device (controller-level), if any."
+        ),
+    ] = None
+    has_steward: Annotated[
+        bool,
+        Field(
+            description="Whether some user currently holds the steward slot for this physical device."
+        ),
+    ]
+    is_primary_instance: Annotated[
+        bool,
+        Field(
+            description="Whether this OpenApp device record is the canonical (primary) instance for the hardware."
+        ),
+    ]
+    is_steward: Annotated[
+        bool,
+        Field(
+            description="Whether the requesting user currently holds the steward slot."
+        ),
+    ]
+    physical_device_id: Annotated[
+        str | None,
+        Field(
+            description="The physical-device registry id, once the device has been registered/claimed."
+        ),
+    ] = None
+    provider_supports_steward: Annotated[
+        bool,
+        Field(
+            description="Whether the provider supports the device-steward authority tier at all."
+        ),
+    ]
+
+
+class DirectoryFloorSummary(BaseModel):
+    """
+    One distinct floor row for a directory device (directory listing entities).
+    """
+
+    floor: Any
+    floor_number: int | None = None
+    key: str
+
+
+class DirectoryListingEnrichRequest(BaseModel):
+    """
+    Documented multipart body (`integration_id` plus `images`, `images[]`, or `file`).
+    """
+
+    images: Annotated[
+        list[bytes], Field(description="One or more door / intercom photos.")
+    ]
+    integration_id: Annotated[
+        str, Field(description="Virtual access integration ULID.")
+    ]
+
+
+class DirectoryListingMemberResponse(BaseModel):
+    created_at: str | None = None
+    entity_id: str
+    integration_id: str
+    org_id: str
+    receives_calls: bool
+    role: str
+    updated_at: str | None = None
+    user_id: str
+
+
+class DirectoryListingMemberWithUserResponse(BaseModel):
+    age_class: AgeClass | None = None
+    date_of_birth: Annotated[
+        str | None,
+        Field(description="Calendar date `YYYY-MM-DD`. Only set for listing managers."),
+    ] = None
+    member: DirectoryListingMemberResponse
+    user_email: str | None = None
+    user_name: Any | None = None
+
+
 class DoorRestrictionsResponse(BaseModel):
-    apartment_entity_ids: list[str]
+    listing_entity_ids: list[str]
+
+
+class AllowedWeekday(RootModel[int]):
+    root: Annotated[int, Field(ge=0)]
+
+
+class EffectivePoliciesResponse(BaseModel):
+    allowed_creator_roles: list[str] | None = None
+    allowed_entry_kinds: list[str] | None = None
+    allowed_portal_ids: Annotated[
+        list[str] | None,
+        Field(
+            description="Present on integration effective-policies when listing-restrict binds this requester."
+        ),
+    ] = None
+    allowed_weekdays: list[AllowedWeekday] | None = None
+    blackout_dates: list[str] | None = None
+    curfew_windows: list[CurfewWindowResponse]
+    max_active_per_user: Annotated[int | None, Field(ge=0)] = None
+    max_doors: Annotated[int | None, Field(ge=0)] = None
+    max_duration_seconds: Annotated[int | None, Field(ge=0)] = None
+    max_uses: Annotated[int | None, Field(ge=0)] = None
+    no_reshare: bool | None = None
+    no_transitive_delegation: bool | None = None
+    prohibited_master_door_ids: list[str] | None = None
+    require_expiry: bool | None = None
+    require_justification: bool | None = None
+    require_photo: bool | None = None
+    require_pin: bool | None = None
+    require_verified_phone: bool | None = None
+    restrict_to_own_listing_doors: bool | None = None
+    share_allow_unlimited: bool | None = None
+    share_default_max_uses: Annotated[int | None, Field(ge=0)] = None
+    share_max_duration_seconds: Annotated[
+        int | None,
+        Field(
+            description="Share-specific TTL cap in seconds. `86400` (1 day) when `share_max_duration` is unset.\nOrg policy may raise this up to `31536000` (365d). Authoring uses the min of this and\n`max_duration_seconds`.",
+            ge=0,
+        ),
+    ] = None
+    share_max_uses: Annotated[int | None, Field(ge=0)] = None
+    timezone: Annotated[
+        str,
+        Field(
+            description='IANA timezone used to evaluate curfews, or `"UTC"` when unset.'
+        ),
+    ]
+    user_sharing_mode: Annotated[
+        str,
+        Field(
+            description="Effective `user_sharing` mode: `none` | `admin_only` | `approval_required` | `all`."
+        ),
+    ]
 
 
 class EntityMetadataDefinitionResponse(BaseModel):
@@ -214,31 +855,268 @@ class EntityMetadataDefinitionResponse(BaseModel):
 
 class EntityType(Enum):
     """
-    Entity type (apartment, switch, light, sensor...).
+    Entity type (directory_listing, switch, light, sensor...).
     """
 
-    apartment = "apartment"
+    directory_listing = "directory_listing"
     door = "door"
     light = "light"
     sensor = "sensor"
     switch = "switch"
 
 
-class EulaResponse(BaseModel):
+class ExecutionStatus(Enum):
+    pending = "pending"
+    running = "running"
+    succeeded = "succeeded"
+    failed = "failed"
+    canceled = "canceled"
+
+
+class ExternalReferenceInput(BaseModel):
     """
-    EULA content response
+    Correlation to a record in an external system of record.
+
+    The pair (`source`, `record_id`) is the addressable key: one live invitation per pair per
+    integration. `revision` is the source's own monotonic version of the record and is the
+    precondition that keeps a late event from overwriting a newer one.
     """
 
-    content: str
-    version: str
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    record_id: Annotated[
+        str,
+        Field(
+            description="Identifier of the record inside that system (reservation, work order, enrolment). Opaque to\nOpenApp; up to 128 characters."
+        ),
+    ]
+    revision: Annotated[
+        int | None,
+        Field(
+            description="Monotonic revision of the external record. When present, OpenApp rejects any later write\ncarrying a lower revision with `external_revision_stale`."
+        ),
+    ] = None
+    source: Annotated[
+        str,
+        Field(
+            description="Slug naming the external system, e.g. `mews`, `opera`, `custom-pms`. Lowercase letters,\ndigits, `.`, `_`, and `-`; up to 64 characters."
+        ),
+    ]
 
 
-class ExecuteScriptingRequest(BaseModel):
-    script: str
+class ExternalReferenceResponse(BaseModel):
+    """
+    External correlation as returned by the invitation API.
+    """
+
+    correlation_id: Annotated[
+        str | None,
+        Field(
+            description="Correlation id of the request that last wrote this reference."
+        ),
+    ] = None
+    record_id: str
+    revision: int | None = None
+    source: str
 
 
-class ExecuteScriptingResponse(BaseModel):
-    result: Any
+class GenerateListingsPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    listing_kind: str | None = None
+    naming_pattern: str | None = None
+    source_group_ids: list[str]
+
+
+class GeneratePlanEntry(BaseModel):
+    display_name: str | None = None
+    group_id: str
+    listing_id: str | None = None
+    reason: str | None = None
+
+
+class GeneratePlanResponse(BaseModel):
+    create: list[GeneratePlanEntry]
+    skipped: list[GeneratePlanEntry]
+    unchanged: list[GeneratePlanEntry]
+    update: list[GeneratePlanEntry]
+
+
+class GeocodingProviderId(Enum):
+    """
+    Issuer of a place id. Place ids are opaque to OpenApp and are only interpretable by the provider
+    that minted them, so every stored or transported place id names its issuer.
+    """
+
+    google = "google"
+    mapbox = "mapbox"
+
+
+class GroupLinkResponse(BaseModel):
+    """
+    A group's link into an org.
+    """
+
+    admission_mode: str
+    group_id: str
+    is_home: bool
+    org_id: str
+    status: str
+
+
+class GroupMemberResponse(BaseModel):
+    """
+    A member as a requesting org may see them.
+
+    Contact details are absent by design: a referencing org may see who can enter its building but
+    not how to reach them.
+    """
+
+    display_name: Any | None = None
+    member_ref: str
+    role: str
+
+
+class GroupProposalResponse(BaseModel):
+    """
+    One household's proposal state at one org.
+    """
+
+    group_id: str
+    org_id: str
+    pending_members: Annotated[
+        int, Field(description="Members waiting for this org to admit them.", ge=0)
+    ]
+    status: Annotated[str, Field(description="pending, active, or revoked.")]
+
+
+class GroupResponse(BaseModel):
+    """
+    A group as returned by the API.
+    """
+
+    description: Any | None = None
+    home_org_id: str
+    id: str
+    kind: str
+    name: Any
+    shareable: bool
+
+
+class GroupShareOfferResponse(BaseModel):
+    expires_at: str
+    group_id: str
+    offer_id: str
+    token: Annotated[
+        str | None,
+        Field(
+            description="The one-time token. Returned only by create; redemption never echoes it back."
+        ),
+    ] = None
+
+
+class GroupSiteRef(BaseModel):
+    """
+    A site a household grants access to.
+    """
+
+    id: str
+    name: Annotated[
+        Any,
+        Field(
+            description="Localized site name, so the dashboard never has to render the integration id."
+        ),
+    ]
+
+
+class HoldKind(Enum):
+    permanent = "permanent"
+    temporary = "temporary"
+    recurring = "recurring"
+
+
+class HoldMode(Enum):
+    normal = "normal"
+    hold_open = "hold_open"
+    hold_closed = "hold_closed"
+
+
+class HoldWindowView(BaseModel):
+    from_: Annotated[str, Field(alias="from")]
+    to: str
+
+
+class HouseholdAdmissionStatus(BaseModel):
+    member_name: Any | None = None
+    member_ref: str | None = None
+    org_name: Any
+    status: str
+
+
+class HouseholdInvitationPreview(BaseModel):
+    channel: str
+    expires_at: str
+    household_name: Any
+    invited_by_name: Any | None = None
+    target_masked: str
+
+
+class HouseholdInvitationResponse(BaseModel):
+    channel: str
+    created_at: str
+    expires_at: str
+    group_id: str
+    id: str
+    invited_by_user_id: str
+    last_sent_at: str | None = None
+    recipient_email: str | None = None
+    recipient_phone: str | None = None
+    responded_at: str | None = None
+    sent_count: int
+    status: str
+
+
+class HouseholdManagerTransferView(BaseModel):
+    declined: bool
+    expires_at: str
+    nominee_user_id: str
+
+
+class HouseholdMemberResponse(BaseModel):
+    """
+    A household member as a fellow member may see them.
+    """
+
+    manager_eligible: Annotated[
+        bool,
+        Field(
+            description="Missing age data is treated as adult; only an explicit under-16 classification is ineligible."
+        ),
+    ]
+    role: str
+    user_id: str
+    user_name: Annotated[
+        Any | None,
+        Field(
+            description="Localized display name, so the roster never renders the transport id."
+        ),
+    ] = None
+
+
+class IdpLinkResponse(BaseModel):
+    is_primary: bool
+    provider: str
+
+
+class ImageUploadForm(BaseModel):
+    """
+    Multipart form body for image uploads. Documents the `file` field for the
+    generated OpenAPI spec / SDKs; the handler reads the multipart stream directly.
+    """
+
+    file: Annotated[bytes, Field(description="Image file bytes (JPEG, PNG, or WebP).")]
 
 
 class IntegrationDeviceMetadataSchemaResponse(BaseModel):
@@ -258,11 +1136,118 @@ class IntegrationDeviceMetadataSchemaResponse(BaseModel):
 
 class IntegrationHealth(Enum):
     """
-    Integration status (active, disabled, error).
+    Integration health marker (backend-controlled).
     """
 
     ok = "ok"
+    reduced = "reduced"
     error = "error"
+
+
+class IntegrationUserItem(BaseModel):
+    display_name: str | None = None
+    email: str | None = None
+    external_id: str
+    is_admin: bool | None = None
+    last_seen_at: str | None = None
+    openapp_user_id: Annotated[
+        str | None,
+        Field(
+            description="Present when `status == linked`. ULID string of the OpenApp user."
+        ),
+    ] = None
+    pending_invitation_id: Annotated[
+        str | None,
+        Field(
+            description="Present when `status == invited`. ULID string of the matching `user_invitations` row."
+        ),
+    ] = None
+    phone: str | None = None
+    status: Annotated[str, Field(description="`linked` | `invited` | `unlinked`.")]
+    unmanaged: Annotated[
+        bool,
+        Field(
+            description="True when the vendor user is on the gate but not linked to an OpenApp user (flag only)."
+        ),
+    ]
+
+
+class IntegrationUsersResponse(BaseModel):
+    directory_limited: Annotated[
+        bool | None,
+        Field(
+            description="When true, the upstream provider did not return the full user directory\n(e.g. linked credentials lack upstream admin rights). Provider-agnostic;\nsee provider-specific endpoints for role details."
+        ),
+    ] = None
+    integration_id: str
+    items: list[IntegrationUserItem]
+    unmanaged_count: Annotated[
+        int,
+        Field(
+            description="Count of vendor users not linked to OpenApp (status `unlinked`). Informational only."
+        ),
+    ]
+
+
+class Weekday(RootModel[int]):
+    root: Annotated[int, Field(ge=0)]
+
+
+class InvitationEntryKind(Enum):
+    door = "door"
+    gate = "gate"
+    boom_gate = "boom-gate"
+
+
+class InvitationListingGrant(BaseModel):
+    entity_id: str
+    role: str
+
+
+class InvitationPreviewRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    token: str
+
+
+class InvitationPreviewResponse(BaseModel):
+    channel: str
+    expires_at: str
+    org_id: str
+    status: str
+    target_masked: Annotated[
+        str,
+        Field(
+            description='Masked destination so the redeem page can confirm "we\'ll send the code to +9725…78".'
+        ),
+    ]
+
+
+class InvitationSiteAccessDto(BaseModel):
+    integration_id: str
+    listing: InvitationListingGrant | None = None
+    role: str
+
+
+class InvitationTokenRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    token: str
+
+
+class InviteAudience(Enum):
+    """
+    Who an invitation may be used by.
+
+    `anyone_with_link` is the historical behaviour: the bearer of the link may use it. `listed_contacts`
+    requires the bearer to resolve to one of the invitation's named contacts, which is what stops a
+    credential being passed around.
+    """
+
+    anyone_with_link = "anyone_with_link"
+    listed_contacts = "listed_contacts"
 
 
 class InviteRecurrenceSeriesEnd1(BaseModel):
@@ -288,6 +1273,7 @@ class InviteRecurrenceSeriesEnd3(BaseModel):
     """
 
     kind: Literal["count"]
+    last_window_to: str | None = None
     total: Annotated[int, Field(ge=0)]
 
 
@@ -298,12 +1284,34 @@ class InviteScheduleCombined(BaseModel):
 
 
 class InviteScheduleEntryInput(BaseModel):
+    expires_in: Annotated[
+        str | None,
+        Field(
+            description="Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Measured from resolved `valid_from`. Mutually exclusive with `valid_to`."
+        ),
+    ] = None
     id: str | None = None
     invite_recurrence: Any | None = None
     is_enabled: bool | None = None
     name: str | None = None
-    valid_from: str
-    valid_to: str
+    starts_in: Annotated[
+        str | None,
+        Field(
+            description="Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Mutually exclusive with `valid_from`."
+        ),
+    ] = None
+    valid_from: Annotated[
+        str | None,
+        Field(
+            description="[RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) start (UTC). Mutually exclusive with `starts_in`."
+        ),
+    ] = None
+    valid_to: Annotated[
+        str | None,
+        Field(
+            description="[RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) end (UTC). Mutually exclusive with `expires_in`."
+        ),
+    ] = None
 
 
 class InviteScheduleKind(Enum):
@@ -317,43 +1325,17 @@ class InviteWindow(BaseModel):
     to: str
 
 
-class LanAgentBootstrapTokenRequest(BaseModel):
-    api_base_url: Annotated[
-        str,
-        Field(
-            description="Browser-visible API base (e.g. `https://app.example.com/api/v1`)."
-        ),
-    ]
-    device_id: str | None = None
-    integration_id: Annotated[
-        str | None,
-        Field(description="Required for one-shot Waveshare tasks; omit for `serve`."),
-    ] = None
-    task_id: str
-
-
-class LanAgentBootstrapTokenResponse(BaseModel):
-    bootstrap_key: Annotated[
-        str, Field(description="ULID for `GET /lan-agent/cli/bootstrap.sh?key=…`.")
-    ]
-    expires_in: Annotated[int, Field(ge=0)]
-
-
-class LanAgentCliTokenResponse(BaseModel):
-    access_token: str
-    expires_in: Annotated[int, Field(ge=0)]
-    token_type: str
-
-
-class LanAgentMetaResponse(BaseModel):
-    lan_protocol_version: Annotated[int, Field(ge=0)]
-    latest_agent_version: str | None = None
-    min_supported_agent_version: str | None = None
-    tasks_catalog: Any
-    upgrade_download_url: str | None = None
+class JsonRpcResponse(BaseModel):
+    error: Any | None = None
+    id: Any | None = None
+    jsonrpc: str
+    result: Any | None = None
 
 
 class LanAgentTaskSpecRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     lan_protocol_version: Annotated[int, Field(ge=0)]
     payload: Any
     task_id: str
@@ -363,6 +1345,15 @@ class LanAgentTaskSpecResponse(BaseModel):
     lan_protocol_version: Annotated[int, Field(ge=0)]
     spec: Any
     task_id: str
+
+
+class LifeSafetyClass(Enum):
+    not_applicable = "not_applicable"
+    ingress_only = "ingress_only"
+    vehicle_gate = "vehicle_gate"
+    special_locking_listed_local = "special_locking_listed_local"
+    means_of_egress = "means_of_egress"
+    fire_door_assembly = "fire_door_assembly"
 
 
 class LimitSource1(BaseModel):
@@ -392,6 +1383,80 @@ class LimitSource3(BaseModel):
     kind: Literal["default"]
 
 
+class ListAccessInviteRenewalRequestsResponse(BaseModel):
+    requests: list[AccessInviteRenewalRequestItem]
+
+
+class ListAuditEventsQuery(BaseModel):
+    actor_guest_id: Annotated[
+        str | None,
+        Field(
+            description="Filter to a single guest fingerprint. Disjoint from `actor_user_id`."
+        ),
+    ] = None
+    actor_kind: str | None = None
+    actor_user_id: str | None = None
+    correlation_id: str | None = None
+    cursor: Annotated[
+        str | None,
+        Field(description="Opaque cursor from a previous page's `next_cursor`."),
+    ] = None
+    door_name: Annotated[
+        str | None,
+        Field(
+            description='Case-insensitive substring match on the snapshotted door name\n(`details.door_name`), e.g. `lobby`. Lets the Activity table answer "who opened\nthis door" across every event that names it.'
+        ),
+    ] = None
+    event_type: str | None = None
+    limit: Annotated[
+        int | None, Field(description="Page size (default 50, max 200).", ge=0)
+    ] = None
+    occurred_after: Annotated[
+        str | None,
+        Field(
+            description="RFC 3339 lower bound (inclusive). Must be within the 30-day hot window."
+        ),
+    ] = None
+    occurred_before: Annotated[
+        str | None, Field(description="RFC 3339 upper bound (inclusive).")
+    ] = None
+    org_scope: Annotated[
+        str | None,
+        Field(
+            description="Organization scope for resource events. Descendants are included by default."
+        ),
+    ] = None
+    outcome: str | None = None
+    resource_id: str | None = None
+    resource_name: Annotated[
+        str | None,
+        Field(
+            description="Case-insensitive substring match on the resource's snapshotted display name\n(`details.resource_name`), e.g. `shelly`."
+        ),
+    ] = None
+    resource_type: str | None = None
+    target_id: Annotated[
+        str | None,
+        Field(
+            description="Exact match against the snapshotted portal target ID (`details.public_portal_id`)."
+        ),
+    ] = None
+
+
+class ListScriptingExecutionsQuery(BaseModel):
+    limit: Annotated[
+        int | None,
+        Field(
+            description="Maximum number of executions to return (1-100, default 20)."
+        ),
+    ] = None
+
+
+class LocaleContentTranslation(BaseModel):
+    body: str
+    title: str
+
+
 class LocalizedString(BaseModel):
     """
     Localized string dictionary.
@@ -411,9 +1476,48 @@ class LocalizedString(BaseModel):
     ]
 
 
-class MeApartmentAsset(BaseModel):
-    apartment_label: Any | None = None
-    apartment_number: int | None = None
+class LocationBindingMode(Enum):
+    inherit = "inherit"
+    explicit = "explicit"
+    none = "none"
+
+
+class LocationBindingResponse(BaseModel):
+    location_id: str | None = None
+    mode: LocationBindingMode
+
+
+class LocationKind(Enum):
+    address = "address"
+    coordinates = "coordinates"
+
+
+class LocationSource(BaseModel):
+    owner_id: str
+    owner_kind: str
+
+
+class ManagerTransferPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    nominee_user_id: str
+
+
+class MeCallBlockItem(BaseModel):
+    created_at: str
+    public_portal_id: str
+
+
+class MeCallBlocksResponse(BaseModel):
+    blocks: list[MeCallBlockItem]
+
+
+class MeCallSafetyOkResponse(BaseModel):
+    ok: bool
+
+
+class MeListingAsset(BaseModel):
     building_name: Any | None = None
     call_eligible: Annotated[
         bool,
@@ -425,58 +1529,69 @@ class MeApartmentAsset(BaseModel):
     dnd_enabled: Annotated[
         bool | None,
         Field(
-            description="True when calls are silenced for this apartment (global DND or per-apartment DND)."
+            description="True when calls are silenced for this listing (global DND or per-listing DND)."
         ),
     ] = None
     entity_id: str
     floor: Any | None = None
     floor_number: int | None = None
+    image_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the listing photo, for small renders.\nAbsent when the source is already thumb-sized; fall back to `image_url`."
+        ),
+    ] = None
+    image_url: Annotated[
+        str | None,
+        Field(description="Presigned listing (entity) photo URL (best-effort)."),
+    ] = None
     integration_id: str
+    listing_label: Any | None = None
+    listing_number: int | None = None
     org_id: str
+    org_name: Annotated[
+        Any | None, Field(description="Organization display name (best-effort).")
+    ] = None
     receives_calls: bool
     role: str
 
 
-class MeApartmentsResponse(BaseModel):
-    apartments: list[MeApartmentAsset]
+class MeListingsResponse(BaseModel):
+    age_class: Annotated[
+        AgeClass,
+        Field(
+            description="Derived from parent-declared date of birth. `adult` when unset."
+        ),
+    ]
     dnd_global: Annotated[
         bool | None,
         Field(
             description="True when user has global DND enabled (all calls silenced)."
         ),
     ] = None
-
-
-class MeInvitationAsset(BaseModel):
-    building_name: Any | None = None
-    claimed_at: str | None = None
-    integration_id: str
-    invite_link_id: str
-    last_used_at: str | None = None
-    max_uses: int | None = None
-    org_id: str
-    portal_ids: Annotated[
-        list[str],
-        Field(
-            description='Portal IDs the invite grants (for display: "Scan portal QR to open").'
-        ),
-    ]
-    state: str
-    uses: Annotated[int, Field(description="Number of times the invite has been used.")]
-    valid_from: str | None = None
-    valid_to: str | None = None
-
-
-class MeInvitationsResponse(BaseModel):
-    invitations: list[MeInvitationAsset]
+    listings: list[MeListingAsset]
 
 
 class MePushSubscriptionStatusResponse(BaseModel):
-    has_subscription: bool
+    has_any_notification_channel: Annotated[
+        bool, Field(description="Convenience: `has_subscription || has_device_token`.")
+    ]
+    has_device_token: Annotated[
+        bool,
+        Field(
+            description="True when at least one native device token (APNs / FCM) is registered."
+        ),
+    ]
+    has_subscription: Annotated[
+        bool,
+        Field(
+            description="True when at least one Web Push subscription exists for this browser/device flow."
+        ),
+    ]
     push_configured: Annotated[
         bool,
         Field(
-            description="True when VAPID is configured; false means call notifications cannot be sent."
+            description="True when VAPID is configured; false means Web Push call notifications cannot be sent."
         ),
     ]
 
@@ -485,23 +1600,239 @@ class MePushVapidPublicKeyResponse(BaseModel):
     public_key: str
 
 
+class MeShareAuthoringPortal(BaseModel):
+    id: str
+    integration_id: str
+    label: Any
+    org_id: str
+    public_id: str
+
+
+class MeShareAuthoringResponse(BaseModel):
+    allow_unlimited: bool
+    blocked_reason: str | None = None
+    default_max_uses: int
+    integration_id: str
+    max_duration_seconds: Annotated[
+        int,
+        Field(
+            description="Effective share TTL cap (seconds): min of invitation max duration and share max\n(system default 86400 when `share_max_duration` is unset).",
+            ge=0,
+        ),
+    ]
+    max_uses: Annotated[int | None, Field(ge=0)] = None
+    org_id: str
+    portals: list[MeShareAuthoringPortal]
+    require_justification: bool
+    uses_editable: bool
+
+
+class MemberCatalogItem(BaseModel):
+    external_url: str | None = None
+    image_media_asset_id: str | None = None
+    inventory_id: str
+    name: LocalizedString
+    price_cents: int
+    product_id: str
+    stock_quantity: int | None = None
+
+
+class MergeOfferDto(BaseModel):
+    candidate_has_avatar: bool
+    candidate_user_id: str
+    claim_email: str | None = None
+    claim_phone: str | None = None
+    expires_at: str
+    id: str
+    proof_complete: Annotated[
+        bool,
+        Field(
+            description="False for an org-admin request until the resident proves the other identifier."
+        ),
+    ]
+    requesting_has_avatar: bool
+    requesting_user_id: str
+    session_will_remap: bool
+    survivor_user_id: str
+    trigger_kind: str
+    trigger_masked: str
+
+
 class MultiResourceOutputOptionsQuery(BaseModel):
-    include_deleted: bool
-    include_metadata: bool
-    only_deleted: bool
+    include_deleted: bool | None = None
+    only_deleted: bool | None = None
+
+
+class MyGroupResponse(GroupResponse):
+    """
+    A group the caller belongs to, with the sites it grants access to.
+    """
+
+    manager_transfer: HouseholdManagerTransferView | None = None
+    my_role: Annotated[str, Field(description="The caller's role within the group.")]
+    sites: Annotated[
+        list[GroupSiteRef],
+        Field(
+            description="Sites where this group is linked and the caller is admitted."
+        ),
+    ]
 
 
 class NotifyPortalMessageBody(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     text: str
 
 
 class OrgPermissionsResponse(BaseModel):
     """
     Permissions the current user has in this org (for UI: gray out / tooltips).
-    Returns a list of permission keys (e.g. "users:create", "users:list") that the user is granted.
+    Returns permission keys (e.g. `users:create`, `admin`) granted directly or via inheritance.
     """
 
     permissions: list[str]
+
+
+class OrgPrivacySettingsResponse(BaseModel):
+    audit_retention_days: int
+    audit_retention_days_max: int
+    audit_retention_days_min: int
+
+
+class OrgProposeMergeRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    org_user_id: str
+    other_email: str | None = None
+    other_phone: str | None = None
+
+
+class OrgProposeMergeResponse(BaseModel):
+    expires_at: str
+    id: str
+
+
+class OrgTimezoneResponse(BaseModel):
+    timezone: Annotated[
+        str | None,
+        Field(
+            description="IANA timezone (e.g. `Asia/Jerusalem`). `null` means UTC fallback at evaluation."
+        ),
+    ] = None
+
+
+class Item1(BaseModel):
+    created_at: str | None = None
+    deleted_at: Annotated[
+        str | None,
+        Field(description="When set, the portal is soft-deleted (kept for restore)."),
+    ] = None
+    device_id: Annotated[
+        str | None,
+        Field(
+            description="Door device id (virtual_access_portal in this integration). Canonical portal link key."
+        ),
+    ] = None
+    directory_id: Annotated[
+        str | None,
+        Field(
+            description="Directory device id (virtual_access_directory in this integration)."
+        ),
+    ] = None
+    id: str
+    name: LocalizedString
+    public_id: str
+    updated_at: str | None = None
+
+
+class PaginatedResponseAccessPortalListItem(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item1]
+    total: Annotated[int, Field(ge=0)]
+
+
+class Item2(BaseModel):
+    allowed_entity_ids: list[str] | None = None
+    allowed_portal_ids: list[str] | None = None
+    allowed_tool_names: list[str] | None = None
+    confirmation_mode: str
+    created_at: str | None = None
+    expires_at: str | None = None
+    id: str
+    last_used_at: str | None = None
+    name: str
+    org_id: str
+    owner_user_id: str
+    purpose: str | None = None
+    revoked_at: str | None = None
+    updated_at: str | None = None
+
+
+class PaginatedResponseAgentResponse(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item2]
+    total: Annotated[int, Field(ge=0)]
+
+
+class Item3(BaseModel):
+    """
+    Response for API key list item (no token).
+    """
+
+    base_url: str
+    created_at: str | None = None
+    expires_at: str
+    id: str
+    last_used_at: str | None = None
+    name: str
+    revoked_at: str | None = None
+    scoped_entity_ids: list[str] | None = None
+    scoped_roles: list[str] | None = None
+    token_suffix: str
+    updated_at: str | None = None
+
+
+class PaginatedResponseApiKeyListItem(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item3]
+    total: Annotated[int, Field(ge=0)]
+
+
+class Item7(BaseModel):
+    """
+    Org-scoped catalog product. Soft-deleted products are retained (`purge_at`) so historical
+    statements and audit stay readable.
+    """
+
+    created_at: str | None = None
+    deleted_at: str | None = None
+    external_url: str | None = None
+    id: str
+    image_media_asset_id: str | None = None
+    name: LocalizedString
+    org_id: str
+    purge_at: str | None = None
+    updated_at: str | None = None
+
+
+class PaginatedResponseStoreProduct(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item7]
+    total: Annotated[int, Field(ge=0)]
 
 
 class PaginationQuery(BaseModel):
@@ -521,17 +1852,94 @@ class PaginationQuery(BaseModel):
     ] = None
 
 
+class PalgateLinkedAccountProbeDto(BaseModel):
+    can_open_output1: bool
+    can_open_output2: bool
+    device_id: str
+    is_admin: bool
+    linked_device_permitted: bool
+    phone: str
+    probed_at: str
+    relay_mode_permitted: bool
+
+
+class PalgateProbeLinkedAccountRequest(BaseModel):
+    """
+    Standalone probe for wizard (before integration exists).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    config: Any
+    device_id: str
+    org_id: str
+    secrets: Any
+
+
+class PalgateProbeLinkedAccountResponse(BaseModel):
+    linked_account_admin_mode: str
+    probe: PalgateLinkedAccountProbeDto
+
+
 class PatchEntityRequest(BaseModel):
     """
     Shallow-merge into existing `entity_metadata` (PATCH). Does not replace the whole map.
     """
 
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     metadata: Annotated[
         dict[str, Any],
         Field(
             description="Keys to merge into persisted metadata. Omitted keys are left unchanged.\nJSON `null` removes a key (e.g. clear `floor` when setting `floor_number`)."
         ),
     ]
+
+
+class PatchLocationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    city: LocalizedString | None = None
+    country: LocalizedString | None = None
+    formatted_address: LocalizedString | None = None
+    geocode: bool | None = None
+    geocoding_provider: GeocodingProviderId | None = None
+    kind: LocationKind | None = None
+    lat: float | None = None
+    lng: float | None = None
+    locale: Annotated[
+        str | None,
+        Field(
+            description="Preferred locale (app code or BCP-47) for geocoding (see `CreateLocationRequest::locale`)."
+        ),
+    ] = None
+    notes: LocalizedString | None = None
+    provider_place_id: Annotated[
+        str | None,
+        Field(
+            description="Replaces the stored place reference. Both fields must be sent together (see\n`CreateLocationRequest::provider_place_id`)."
+        ),
+    ] = None
+
+
+class PatchMeDndPayload(BaseModel):
+    dnd_global: bool | None = None
+
+
+class PatchMeListingDndPayload(BaseModel):
+    availability_hours: Any | None = None
+    dnd_enabled: bool | None = None
+    quiet_hours: Any | None = None
+
+
+class PatchOrgPrivacySettingsRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    audit_retention_days: int
 
 
 class PeerJsConfig(BaseModel):
@@ -541,10 +1949,40 @@ class PeerJsConfig(BaseModel):
     secure: bool
 
 
+class PendingSharingApprovalResponse(BaseModel):
+    id: str
+    status: str
+    subject_kind: str
+
+
+class PerceptionActionResponse(BaseModel):
+    credential_id: str
+    kind: str
+    result: Any
+
+
+class PerceptionLprRequest(BaseModel):
+    entity_id: str
+    evidence: Any | None = None
+    plate: str
+
+
+class PerceptionVisitorRequest(BaseModel):
+    entity_id: str
+    evidence: Any | None = None
+    portal_id: str | None = None
+
+
 class PlanQuotaResponse(BaseModel):
     limit_value: int | None = None
     period: str
     quota_key: str
+    unit: Annotated[
+        str,
+        Field(
+            description="Machine-readable unit of `limit_value` (e.g. `count`, `seconds`). Empty\nwhen `quota_key` is not a recognized `QuotaKey`."
+        ),
+    ]
 
 
 class PlanResponse(BaseModel):
@@ -561,12 +1999,80 @@ class PlansResponse(BaseModel):
     plans: list[PlanResponse]
 
 
+class PmsInboundPayload(BaseModel):
+    event: str
+    reservation_id: str | None = None
+
+
+class PolicyPrincipalKind(Enum):
+    agent = "agent"
+    api_key = "api_key"
+    invitation = "invitation"
+    member = "member"
+    resident = "resident"
+    admin = "admin"
+    all = "all"
+
+
+class PolicyResponse(BaseModel):
+    capability: str | None = None
+    config: dict[str, Any]
+    conflict_report: Annotated[
+        list[ConflictingInviteResponse] | None,
+        Field(
+            description="Informational: currently valid invites that this curfew will constrain (never mutated)."
+        ),
+    ] = None
+    created_at: str | None = None
+    created_by: str | None = None
+    enabled: bool
+    enforcement: str
+    id: str
+    integration_id: str | None = None
+    org_id: str | None = None
+    physical_device_id: str | None = None
+    policy_type: str
+    scope: Annotated[str, Field(description="`org` | `integration` | `device`.")]
+    updated_at: str | None = None
+
+
 class PortalRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     return_url: str
 
 
 class PortalResponse(BaseModel):
     url: str
+
+
+class PostMeCallBlockPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    public_portal_id: str
+
+
+class PostMeCallReportPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    details: str | None = None
+    public_portal_id: str | None = None
+    reason: str
+    session_id: str
+
+
+class PostMeDeviceTokenPayload(BaseModel):
+    platform: Annotated[
+        str, Field(description="One of: `ios_voip`, `ios_alert`, `android`.")
+    ]
+    token: str
+
+
+class PostMeDeviceTokenResponse(BaseModel):
+    id: str
 
 
 class PostMePushSubscriptionPayload(BaseModel):
@@ -575,57 +2081,120 @@ class PostMePushSubscriptionPayload(BaseModel):
     p256dh: str
 
 
+class PowerFailBehavior(Enum):
+    fail_safe = "fail_safe"
+    fail_secure = "fail_secure"
+    mechanical_always = "mechanical_always"
+
+
+class PrivacyExportResponse(BaseModel):
+    account: Any
+    device_tokens: list[Any]
+    dnd: Any
+    eula: Any
+    exported_at: str
+    invitations: list[Any]
+    listings: list[Any]
+    memberships: list[Any]
+
+
+class ProductRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    external_url: str | None = None
+    image_media_asset_id: str | None = None
+    name: LocalizedString
+
+
+class ProfileSourceRequest(Enum):
+    idp = "idp"
+    openapp = "openapp"
+
+
+class ProfileSourcesResponse(BaseModel):
+    email: str
+    image: str
+    locale: str
+    name: str
+    phone: str
+
+
+class ProhibitMasterDoorInvitesPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `prohibit_master_door_invites`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    master_door_ids: list[str]
+    output: str | int | None = None
+
+
+class ProposeGroupPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    disclosure_acknowledged: bool
+    integration_id: Annotated[
+        str, Field(description="The site (integration) to propose the household to.")
+    ]
+
+
 class ProviderType(Enum):
     """
     Integration provider type (e.g. homeassistant, knx, mqtt).
     """
 
     go2rtc = "go2rtc"
-    home_assistant = "home_assistant"
+    homeassistant = "homeassistant"
     knx = "knx"
     mqtt = "mqtt"
     palgate_cloud = "palgate_cloud"
     shelly_cloud = "shelly_cloud"
     shelly_websocket = "shelly_websocket"
-    virtual_budget = "virtual_budget"
     virtual_access = "virtual_access"
     virtual_demo = "virtual_demo"
     waveshare = "waveshare"
+    tasmota = "tasmota"
+
+
+class PublicCatalogItem(BaseModel):
+    external_url: str | None = None
+    image_media_asset_id: str | None = None
+    inventory_id: str
+    name: LocalizedString
+    price_cents: int
+    product_id: str
+    stock_quantity: int | None = None
+
+
+class PublicHoldView(BaseModel):
+    mode: HoldMode
+    reason: str | None = None
 
 
 class PublicInviteExecuteRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     grant_id: str
+    otp_challenge_id: str | None = None
+    otp_code: str | None = None
+    pin: str | None = None
 
 
 class PublicInviteExecuteResponse(BaseModel):
+    degradation: Annotated[
+        Any | None,
+        Field(
+            description="Present when an over-capacity org slowed this open; clients show a readable warning."
+        ),
+    ] = None
     door_auto_close_duration: Annotated[int | None, Field(ge=0)] = None
+    door_open_duration_seconds: Annotated[int | None, Field(ge=0)] = None
     lights_auto_off_duration: dict[str, int] | None = None
     message: str | None = None
     ok: bool
-
-
-class PublicInviteGrant1(BaseModel):
-    door_image_url: Annotated[
-        str | None,
-        Field(
-            description="Presigned URL for door image (loaded asynchronously as card background)."
-        ),
-    ] = None
-    has_lights: Annotated[
-        bool,
-        Field(
-            description="Whether the portal has light devices configured (controls light button visibility)."
-        ),
-    ]
-    id: str
-    kind: Literal["portal_open"]
-    label: Annotated[
-        Any | None,
-        Field(
-            description='Localized portal name: string or object { "en": "...", "he": "..." }.'
-        ),
-    ] = None
-    public_portal_id: str
 
 
 class PublicInviteGrant2(BaseModel):
@@ -637,6 +2206,55 @@ class PublicInviteGrant2(BaseModel):
     payload: Any | None = None
 
 
+class PublicInviteOtpStartRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    channel: Annotated[
+        str | None,
+        Field(
+            description="`sms` (default) or `email`. The destination is the matching contact on the invitation."
+        ),
+    ] = None
+
+
+class PublicInviteOtpStartResponse(BaseModel):
+    challenge_id: str
+    expires_at: str
+
+
+class PublicInviteQuery(BaseModel):
+    device_id: str | None = None
+
+
+class PublicInviteRenewalRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    note: str | None = None
+
+
+class PublicInviteRenewalResponse(BaseModel):
+    already_requested: bool | None = None
+    ok: bool
+
+
+class PublicInviteSessionResponse(BaseModel):
+    guest_id: Annotated[
+        str,
+        Field(
+            description="Stable per-device guest fingerprint (ULID). Either the one supplied by the client (cookie\nor `X-Guest-Id`) or a freshly minted one. Echoed so native clients can persist it and send\nit back via `X-Guest-Id` on subsequent public-access calls. Used only for audit\nattribution — it confers no access."
+        ),
+    ]
+    invite_id: Annotated[
+        str,
+        Field(
+            description="ULID of the invite (= value of the `oa_access_invite` cookie). Echoed\nin the body so non-browser clients can construct the cookie without\nrelying on a platform cookie jar for `HttpOnly` `Set-Cookie` responses."
+        ),
+    ]
+    ok: bool
+
+
 class PublicInviteState(Enum):
     active = "active"
     expired = "expired"
@@ -644,9 +2262,58 @@ class PublicInviteState(Enum):
     scheduled = "scheduled"
     disabled = "disabled"
     not_found = "not_found"
+    max_devices_reached = "max_devices_reached"
+
+
+class PublicPortalAccessControl(BaseModel):
+    city: Any | None = None
+    country: Any | None = None
+    formatted_address: Annotated[
+        Any | None, Field(description="Normalized street address (localized JSON).")
+    ] = None
+    geocoding_provider: GeocodingProviderId | None = None
+    image_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the same photo, for small renders.\nAbsent when the source is already thumb-sized; fall back to `image_url`."
+        ),
+    ] = None
+    image_url: Annotated[
+        str | None,
+        Field(description="Presigned URL for the integration or location photo."),
+    ] = None
+    lat: float | None = None
+    lng: float | None = None
+    message: Annotated[
+        Any | None,
+        Field(description="Admin-authored text for `disabled`, as localized JSON."),
+    ] = None
+    name: Annotated[
+        Any, Field(description="Integration / building name (localized JSON).")
+    ]
+    notes: Any | None = None
+    provider_place_id: Annotated[
+        str | None,
+        Field(
+            description="Opaque place id for the address, when it was resolved by a maps provider, together with the\nprovider that issued it. Clients that recognize the provider can link to the place itself\n(e.g. Google Maps URLs `query_place_id`) instead of a bare coordinate; the rest fall back to\nthe address text. Both fields are present together or not at all."
+        ),
+    ] = None
+    status: Annotated[
+        str | None,
+        Field(
+            description="Directory status when this summary describes the visitor directory: one of `ready`,\n`empty`, `not_configured`, `disabled`. Absent for the access-control summary."
+        ),
+    ] = None
 
 
 class PublicPortalCreateSessionRequest(BaseModel):
+    """
+    Map of light entity ULID to auto-off duration in seconds (re-exported for OpenAPI).
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     mode: str
     target_entity_id: str
 
@@ -680,7 +2347,13 @@ class PublicPortalMode(Enum):
 
 class PublicPortalOpenRateLimit(BaseModel):
     integration_id: str
-    min_interval_ms: Annotated[int, Field(ge=0)]
+    min_interval_ms: Annotated[
+        int,
+        Field(
+            description="Enforced minimum milliseconds between `switchable.open` calls on this integration.",
+            ge=0,
+        ),
+    ]
 
 
 class PublicPortalReachableResponse(BaseModel):
@@ -688,6 +2361,8 @@ class PublicPortalReachableResponse(BaseModel):
 
 
 class PublicPortalResponse(BaseModel):
+    access_control: PublicPortalAccessControl | None = None
+    access_directory: PublicPortalAccessControl | None = None
     branding: Any | None = None
     door_effective_auto_off_duration: Annotated[int | None, Field(ge=0)] = None
     door_image_url: Annotated[
@@ -696,6 +2371,13 @@ class PublicPortalResponse(BaseModel):
             description="Image URL for the door (presigned S3 URL from media service)."
         ),
     ] = None
+    entry_kind: Annotated[
+        str,
+        Field(
+            description="Entry type from linked portal device (`virtual_access.entry_kind`). Default `door`."
+        ),
+    ]
+    hold: PublicHoldView | None = None
     lights: list[PublicPortalLight] | None = None
     mode: PublicPortalMode
     name: LocalizedString | None = None
@@ -705,18 +2387,24 @@ class PublicPortalResponse(BaseModel):
 
 class PublicPortalTarget(BaseModel):
     allowed_actions: list[str]
-    apartment_label: Any | None = None
-    apartment_number: int | None = None
     call_available: Annotated[
         bool | None,
         Field(
             description="True when at least one resident (receives_calls) exists. When false, voice/video are excluded from allowed_actions."
         ),
     ] = None
+    denial_reasons: Annotated[
+        list[str] | None,
+        Field(
+            description="Why this entry cannot be called: `no_callees`, `dnd`, or `guest_disabled`.\n\nThe server already computes each of these to decide `allowed_actions`; publishing them\nmeans the client can explain a greyed-out call button instead of leaving the visitor to\nguess."
+        ),
+    ] = None
     display_name: Any
     floor: Any
     floor_number: int | None = None
     image: str | None = None
+    listing_label: Any | None = None
+    listing_number: int | None = None
     require_video: bool | None = None
     target_id: str
 
@@ -728,6 +2416,18 @@ class PublicPortalTargetsResponse(BaseModel):
             description="Building `floor_order` from virtual_access integration config (canonical keys)."
         ),
     ] = None
+    message: Annotated[
+        Any | None,
+        Field(
+            description="Admin-authored text for `disabled`. Absent for every other status, because the shipped\ncopy for those is owned by the client and must not be duplicated here."
+        ),
+    ] = None
+    status: Annotated[
+        str,
+        Field(
+            description="One of `ready`, `empty`, `not_configured`, `disabled`. Each carries its own visitor\ncopy, so a building with no occupants reads differently from an intercom that was never\nset up."
+        ),
+    ]
     targets: list[PublicPortalTarget]
 
 
@@ -745,6 +2445,78 @@ class PublicSessionStreamsResponse(BaseModel):
     ]
 
 
+class PublicStoreResponse(BaseModel):
+    currency: str
+    is_member: Annotated[
+        bool,
+        Field(
+            description="Whether the authenticated caller (if any) is already an active member."
+        ),
+    ]
+    items: list[PublicCatalogItem]
+    name: LocalizedString
+    public_id: str
+    registration_requested: Annotated[
+        bool,
+        Field(
+            description="Whether the authenticated caller (if any) already has a pending registration request."
+        ),
+    ]
+    store_id: str
+
+
+class PurchaseRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    billing_account_id: Annotated[
+        str | None,
+        Field(
+            description="Optional billing account to charge (must be chargeable by the buyer). Defaults to the\nmember's account."
+        ),
+    ] = None
+    inventory_id: str
+    quantity: int | None = None
+
+
+class PutHoldRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    include_lights: bool | None = None
+    kind: str | None = None
+    mode: str
+    reason: str | None = None
+    recurrence: dict[str, Any] | None = None
+    until: str | None = None
+
+
+class PutLocationBindingRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    location_id: str | None = None
+    mode: LocationBindingMode
+
+
+class QuietHoursPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `quiet_hours`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    end: Annotated[
+        str,
+        Field(
+            description="Inclusive local end of the window, in `HH:MM`; a later end wraps midnight."
+        ),
+    ]
+    output: str | int | None = None
+    start: Annotated[
+        str, Field(description="Inclusive local start of the window, in `HH:MM`.")
+    ]
+
+
 class QuotaKey(Enum):
     """
     A metered resource. Lifetime keys count current rows in their source-of-truth
@@ -754,19 +2526,26 @@ class QuotaKey(Enum):
     """
 
     org_users = "org_users"
+    organizations = "organizations"
     integrations = "integrations"
     devices = "devices"
     entities = "entities"
     zones = "zones"
     api_keys = "api_keys"
     door_opens = "door_opens"
+    voice_invocations = "voice_invocations"
     portal_views = "portal_views"
     video_sessions = "video_sessions"
     video_session_duration_seconds = "video_session_duration_seconds"
     scripting_executions = "scripting_executions"
+    ai_requests = "ai_requests"
+    geocoding_requests = "geocoding_requests"
 
 
 class QuotaOverrideRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     expires_at: str | None = None
     limit_value: int
     period: str | None = None
@@ -789,11 +2568,282 @@ class QuotaPeriod(Enum):
     per_session = "per_session"
 
 
+class QuotaUnit(Enum):
+    """
+    Machine-readable unit for a quota quantity. `Count` is a plain integer of the
+    key's noun (door opens, devices, …); `Seconds` is a duration clients may render
+    in larger units (e.g. minutes for video chat).
+    """
+
+    count = "count"
+    seconds = "seconds"
+
+
+class ReadinessIssueCode(Enum):
+    site_no_openers = "site_no_openers"
+    site_no_doors = "site_no_doors"
+    site_no_door_with_opener = "site_no_door_with_opener"
+    site_no_portals = "site_no_portals"
+    site_no_portal_with_usable_door = "site_no_portal_with_usable_door"
+    site_no_intercom_directory = "site_no_intercom_directory"
+    door_no_opener = "door_no_opener"
+    door_opener_unresolved = "door_opener_unresolved"
+    door_life_safety_incomplete = "door_life_safety_incomplete"
+    door_no_portal = "door_no_portal"
+    portal_no_door = "portal_no_door"
+    portal_door_missing = "portal_door_missing"
+    portal_door_no_opener = "portal_door_no_opener"
+    portal_no_directory = "portal_no_directory"
+    intercom_no_listings = "intercom_no_listings"
+    listing_no_members = "listing_no_members"
+    intercom_directory_draft = "intercom_directory_draft"
+    site_multiple_intercom_directories = "site_multiple_intercom_directories"
+    site_no_people = "site_no_people"
+
+
+class ReadinessSection(Enum):
+    doors = "doors"
+    portals = "portals"
+    virtual_intercom = "virtual_intercom"
+    people = "people"
+
+
+class ReadinessSeverity(Enum):
+    """
+    Ordered from least to most severe; `Ord` is used to roll sections up.
+    """
+
+    ok = "ok"
+    incomplete = "incomplete"
+    partial = "partial"
+    blocking = "blocking"
+
+
+class ReadinessSubjectKind(Enum):
+    door = "door"
+    portal = "portal"
+    listing = "listing"
+    directory = "directory"
+
+
+class ReconcileAction(Enum):
+    """
+    What a reconcile actually did.
+    """
+
+    created = "created"
+    updated = "updated"
+    restored = "restored"
+    revoked = "revoked"
+    unchanged = "unchanged"
+
+
+class ReconcileInviteState(Enum):
+    """
+    Desired lifecycle state of the invitation that serves an external record.
+    """
+
+    active = "active"
+    revoked = "revoked"
+
+
+class RedeemGroupShareOfferPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    token: str
+
+
+class RedeemHouseholdInvitationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    pin: str
+    token: str
+
+
+class RedeemHouseholdInvitationResponse(BaseModel):
+    group_id: str
+
+
+class RedeemInvitationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    pin: str
+    token: str
+
+
+class RedeemInvitationResponse(BaseModel):
+    default_roles: list[str]
+    merge: MergeOfferDto | None = None
+    org_id: str
+    user_id: str
+
+
+class RegenerateAccessInviteTokenResponse(BaseModel):
+    invite_token: str
+    invite_url: Annotated[
+        str,
+        Field(description="Guest-facing invite URL (shareable link for SMS/email)."),
+    ]
+    last_shared_at: str
+
+
+class RegistrationStatus(Enum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+
+
+class RequireStepUpPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `require_step_up`.
+    """
+
+    applies_to: Annotated[
+        list[PolicyPrincipalKind] | None,
+        Field(
+            description="Principal kinds requiring confirmation; unknown and empty values are rejected."
+        ),
+    ] = None
+    output: str | int | None = None
+
+
+class ResolveCandidate(BaseModel):
+    entity_type: str | None = None
+    id: str
+    label: str
+    resource_type: str
+    score: float
+    why: str | None = None
+
+
+class ResolveRequest(BaseModel):
+    query: str
+    resource_type: str | None = None
+
+
+class ResolveResponse(BaseModel):
+    ambiguous: bool
+    candidates: list[ResolveCandidate]
+    query: str
+
+
+class ResourceImageUrlResponse(BaseModel):
+    """
+    Resource-scoped image URL response (does not expose asset_id).
+    When no image is uploaded, returns 204 No Content (not 404).
+    """
+
+    expires_in_seconds: Annotated[int, Field(ge=0)]
+    url: str
+
+
+class ResourceLifecycle(BaseModel):
+    """
+    Soft-delete and audit timestamps on a persisted resource.
+
+    Flattened onto HTTP JSON so `created_at` sits next to `id` / `name`. Absent
+    fields are omitted (`None`).
+    """
+
+    created_at: AwareDatetime | None = None
+    deleted_at: AwareDatetime | None = None
+    hard_delete_at: AwareDatetime | None = None
+    purge_at: AwareDatetime | None = None
+    updated_at: AwareDatetime | None = None
+
+
+class ResourceState(Enum):
+    """
+    Per-resource degradation state (mirrors the `degradation_state` column).
+    """
+
+    active = "active"
+    flagged = "flagged"
+    degraded = "degraded"
+    marked_for_delete = "marked_for_delete"
+
+
+class ReverseGeocodeRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    lat: float
+    lng: float
+    locale: Annotated[
+        str | None,
+        Field(
+            description="Preferred locale (app code or BCP-47) for the resolved text. Defaults to `en`."
+        ),
+    ] = None
+
+
+class ReverseGeocodeResponse(BaseModel):
+    """
+    Resolved address for a map-picked point. Text fields are single-locale (the requested
+    `locale`), ready for the client to wrap under its current locale. Empty strings mean the point
+    has no address (e.g. open water); the coordinates are always echoed back.
+    """
+
+    city: str
+    country: str
+    formatted_address: str
+    geocoding_provider: GeocodingProviderId | None = None
+    lat: float
+    lng: float
+    provider_place_id: Annotated[
+        str | None,
+        Field(
+            description="Opaque place id issued by `geocoding_provider`, when the point resolved to a known place.\nBoth fields are present together or not at all."
+        ),
+    ] = None
+
+
 class Role(RootModel[str]):
     root: Annotated[
         str,
         Field(
             description="A role name (e.g. admin, users:read) assigned to a user in an org."
+        ),
+    ]
+
+
+class ScriptingExecution(BaseModel):
+    completed_at: AwareDatetime | None = None
+    created_at: AwareDatetime
+    error: Annotated[
+        str | None,
+        Field(description="Present only when `status` is `failed` or `canceled`."),
+    ] = None
+    id: str
+    result: Annotated[
+        Any | None, Field(description="Present only when `status` is `succeeded`.")
+    ] = None
+    started_at: AwareDatetime | None = None
+    status: ExecutionStatus
+
+
+class ScriptingExecutionSummary(BaseModel):
+    """
+    List projection: identical to [`ScriptingExecution`] minus `result`, so listing executions
+    does not pull every stored result body.
+    """
+
+    completed_at: AwareDatetime | None = None
+    created_at: AwareDatetime
+    error: str | None = None
+    id: str
+    started_at: AwareDatetime | None = None
+    status: ExecutionStatus
+
+
+class SearchOrgsQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
+    q: Annotated[
+        str,
+        Field(
+            description="Free-text query matched as a case-insensitive substring of the org name, or as an exact\n(case-insensitive) org ID."
         ),
     ]
 
@@ -819,8 +2869,61 @@ class SearchUsersQuery(BaseModel):
     ] = None
 
 
+class SelectionPolicy(Enum):
+    """
+    How excess resources are chosen when the admin has not pinned survivors via `quota_keep`.
+    """
+
+    newest_first = "newest_first"
+    oldest_first = "oldest_first"
+    least_recently_used = "least_recently_used"
+    manual = "manual"
+
+
 class SetDoorRestrictionsPayload(BaseModel):
-    apartment_entity_ids: list[str]
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    listing_entity_ids: list[str]
+
+
+class SetOrgTimezoneRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    timezone: Annotated[
+        str | None,
+        Field(description="IANA timezone. Empty or null clears to UTC fallback."),
+    ] = None
+
+
+class SetResourceKeepRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    keep: Annotated[
+        bool,
+        Field(
+            description="`true` pins the resource (kept within cap); `false` lets it be flagged as excess."
+        ),
+    ]
+    resource: Annotated[
+        CapacityResource,
+        Field(description="Which capacity resource the row belongs to."),
+    ]
+    resource_id: Annotated[str, Field(description="The resource id to pin or unpin.")]
+
+
+class SetSelectionPolicyRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    policy: Annotated[
+        SelectionPolicy,
+        Field(
+            description="How excess resources are chosen for the lifecycle: `newest_first`, `oldest_first`,\n`least_recently_used`, or `manual`."
+        ),
+    ]
 
 
 class SingleResourceOutputOptions(BaseModel):
@@ -832,12 +2935,6 @@ class SingleResourceOutputOptions(BaseModel):
     include_deleted: Annotated[
         bool, Field(description="If true, include soft-deleted items in results.")
     ]
-    include_metadata: Annotated[
-        bool,
-        Field(
-            description="If true, include storage metadata (e.g. created_at, deleted_at) in results."
-        ),
-    ]
 
 
 class SingleResourceOutputOptionsQuery(BaseModel):
@@ -846,18 +2943,177 @@ class SingleResourceOutputOptionsQuery(BaseModel):
     Omits `only_deleted` since it only applies to list endpoints.
     """
 
-    include_deleted: bool
-    include_metadata: bool
+    include_deleted: bool | None = None
 
 
-class StorageFeatures(BaseModel):
-    cache_hit: bool | None = None
-    cache_ttl: Annotated[int | None, Field(ge=0)] = None
-    created_at: AwareDatetime | None = None
-    deleted_at: AwareDatetime | None = None
-    hard_delete_at: AwareDatetime | None = None
-    purge_at: AwareDatetime | None = None
-    updated_at: AwareDatetime | None = None
+class SiteAccessDeviceRole(Enum):
+    """
+    Which door-side list put a device in a section.
+    """
+
+    opener = "opener"
+    light = "light"
+    camera = "camera"
+
+
+class SiteAccessDoorLifeSafety(BaseModel):
+    """
+    A door's life-safety classification, passed through verbatim.
+
+    The open-block rule lives in the dashboard (`lifeSafetyOpenBlock`) and is
+    already enforced there for entity tables. Returning the raw fields keeps one
+    rule instead of a second copy of the policy in Rust.
+    """
+
+    attestation: Any | None = None
+    class_: Annotated[str | None, Field(alias="class")] = None
+
+
+class SiteAccessOverviewDevices(BaseModel):
+    cameras: Annotated[int, Field(ge=0)]
+    lights: Annotated[int, Field(ge=0)]
+    openers: Annotated[int, Field(ge=0)]
+    total: Annotated[int, Field(ge=0)]
+    unresolved: Annotated[int, Field(ge=0)]
+
+
+class SiteAccessOverviewPortal(BaseModel):
+    device_id: str | None = None
+    id: str
+
+
+class SiteAccessUnresolvedReason(Enum):
+    """
+    Why a door's reference has no device to show.
+    """
+
+    entity_missing = "entity_missing"
+    device_missing = "device_missing"
+
+
+class SkillStep(BaseModel):
+    args: Any | None = None
+    tool: str
+
+
+class Store(BaseModel):
+    """
+    A storefront. Many stores may exist per org.
+    """
+
+    branding_overrides: dict[str, Any] | None = None
+    created_at: str | None = None
+    currency: Annotated[
+        str, Field(description="ISO 4217 currency code for prices/statements.")
+    ]
+    deleted_at: str | None = None
+    id: str
+    name: LocalizedString
+    org_id: str
+    timezone: Annotated[
+        str, Field(description="IANA timezone used to derive monthly billing cycles.")
+    ]
+    updated_at: str | None = None
+
+
+class StoreInventory(BaseModel):
+    """
+    Per-store listing of a catalog product. `stock_quantity` `None` means untracked (no
+    enforcement); `Some(n)` is enforced and decremented on purchase.
+    """
+
+    created_at: str | None = None
+    deleted_at: str | None = None
+    id: str
+    is_active: bool
+    price_cents: int
+    product_id: str
+    stock_quantity: int | None = None
+    store_id: str
+    updated_at: str | None = None
+
+
+class StoreMemberRole(Enum):
+    admin = "admin"
+    member = "member"
+
+
+class StoreMemberStatus(Enum):
+    pending = "pending"
+    active = "active"
+    removed = "removed"
+
+
+class StorePortal(BaseModel):
+    """
+    Logical QR portal for a store (stable for printed QR codes). Mirrors the access portal.
+    """
+
+    branding_overrides: dict[str, Any] | None = None
+    created_at: str | None = None
+    deleted_at: str | None = None
+    id: str
+    name: LocalizedString
+    org_id: str
+    public_id: str
+    store_id: str
+    updated_at: str | None = None
+
+
+class StoreProduct(BaseModel):
+    """
+    Org-scoped catalog product. Soft-deleted products are retained (`purge_at`) so historical
+    statements and audit stay readable.
+    """
+
+    created_at: str | None = None
+    deleted_at: str | None = None
+    external_url: str | None = None
+    id: str
+    image_media_asset_id: str | None = None
+    name: LocalizedString
+    org_id: str
+    purge_at: str | None = None
+    updated_at: str | None = None
+
+
+class StorePurchase(BaseModel):
+    """
+    Immutable purchase ledger row (system of record for billing/statements).
+    """
+
+    billing_account_id: str | None = None
+    buyer_user_id: str | None = None
+    created_at: str
+    currency: str
+    id: str
+    inventory_id: str | None = None
+    org_id: str
+    product_id: str | None = None
+    product_name_snapshot: Annotated[
+        LocalizedString,
+        Field(description="Localized product name captured at purchase time."),
+    ]
+    quantity: int
+    store_id: str
+    total_cents: int
+    unit_price_cents: int
+
+
+class StoreRegistrationRequest(BaseModel):
+    """
+    Pending store registration awaiting admin approval.
+    """
+
+    created_at: str | None = None
+    decided_at: str | None = None
+    decided_by: str | None = None
+    id: str
+    note: str | None = None
+    org_id: str
+    status: RegistrationStatus
+    store_id: str
+    user_id: str
 
 
 class SubscriptionRef(BaseModel):
@@ -871,58 +3127,200 @@ class SubscriptionRef(BaseModel):
     tier_slug: str
 
 
+class TasmotaLanProvisionRequest(BaseModel):
+    device_host: str
+
+
+class TasmotaPowerTopic(BaseModel):
+    channel_index: Annotated[int, Field(ge=0)]
+    gpio: Annotated[int, Field(ge=0)]
+    topic: str
+
+
+class TransferModeDto(Enum):
+    move = "move"
+    duplicate = "duplicate"
+
+
+class TransferPreviewResponse(BaseModel):
+    affected: AffectedCounts
+    mode: str
+    notes: Annotated[
+        list[str],
+        Field(
+            description="Informational notes the dashboard should display before transferring. Unlike `warnings`,\nthese never gate `requires_confirmation` — they inform without requiring a confirm step."
+        ),
+    ]
+    requires_confirmation: Annotated[
+        bool,
+        Field(
+            description="When true, `POST /transfer` must be called with `confirm = true`."
+        ),
+    ]
+    source_org_id: str
+    warnings: Annotated[
+        list[str],
+        Field(
+            description="Side-effect warning codes the dashboard should surface before confirming."
+        ),
+    ]
+
+
+class TranslateLocaleContentRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    body: str
+    source_locale: str
+    target_locales: list[str]
+    title: str
+
+
+class TranslateLocaleContentResponse(BaseModel):
+    translations: dict[str, LocaleContentTranslation]
+
+
 class UpdateAccessInviteRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    audience: InviteAudience | None = None
+    contacts: Annotated[
+        list[AccessInviteContactInput] | None,
+        Field(
+            description="When set, replaces the invitation's contacts. Omitted leaves them unchanged."
+        ),
+    ] = None
+    creation_justification: Annotated[
+        str | None,
+        Field(
+            description="Why this invitation was created (required when `invitation_require_justification` applies)."
+        ),
+    ] = None
+    curfew_exempt: Annotated[
+        bool | None,
+        Field(
+            description="Admin-only emergency exception: skip invitation curfew at redemption."
+        ),
+    ] = None
     disabled_justification: str | None = None
-    expires_in: str | None = None
-    invite_recurrence: Any | None = None
+    external_ref: ExternalReferenceInput | None = None
     invitee_message: Any | None = None
     is_enabled: bool | None = None
+    location_id: Annotated[
+        str | None,
+        Field(
+            description="Only consumed when `location_mode` is `explicit`: the reusable org location id to bind.\nWhen the mode is `explicit` and this is absent, the existing bound location is kept."
+        ),
+    ] = None
+    location_mode: LocationBindingMode | None = None
+    max_devices: Annotated[
+        int | None,
+        Field(
+            description="Virtual keycard limit: max unique devices allowed. JSON `null` means unlimited."
+        ),
+    ] = None
     max_uses: int | None = None
     name: str | None = None
-    portal_ids: list[str] | None = None
+    pin: Annotated[
+        str | None,
+        Field(
+            description="Omitted leaves the stored PIN unchanged; JSON `null` clears it."
+        ),
+    ] = None
+    portal_ids: Annotated[
+        list[str] | None,
+        Field(
+            description="When set, replaces portal grants. Array order is the display order on the public invite page."
+        ),
+    ] = None
     schedules: Annotated[
         list[InviteScheduleEntryInput] | None,
         Field(
-            description="When set, replaces all schedule entries. Required when changing times/recurrence on an\ninvite that already has multiple schedule entries."
+            description="When set, replaces all schedule entries. This is the only way to change validity or\nrecurrence."
         ),
     ] = None
-    valid_from: str | None = None
-    valid_to: str | None = None
 
 
 class UpdateAccessPortalRequest(BaseModel):
-    device_external_id: Annotated[
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    device_id: Annotated[
         str | None,
         Field(
-            description="Device external_id. Must be a virtual_access_portal device in this integration. Use null to unlink."
+            description="Door device id. Must be a virtual_access_portal device in this integration. Use null to unlink."
+        ),
+    ] = None
+    directory_id: Annotated[
+        str | None,
+        Field(
+            description="Directory device id. Must be a virtual_access_directory device in this integration. Use null to unlink."
         ),
     ] = None
     name: LocalizedString | None = None
+
+
+class UpdateAgentRequest(BaseModel):
+    allowed_entity_ids: list[str] | None = None
+    allowed_portal_ids: list[str] | None = None
+    allowed_tool_names: list[str] | None = None
+    confirmation_mode: str | None = None
+    expires_at: str | None = None
+    expires_in: str | None = None
+    name: str | None = None
+    purpose: str | None = None
 
 
 class UpdateApiKeyRequest(BaseModel):
     expires_at: Annotated[
         str | None,
         Field(
-            description="RFC3339 absolute expiration timestamp. Mutually exclusive with expires_in. Optional; if omitted, expiry is unchanged."
+            description="[RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) absolute expiration timestamp (UTC). Mutually exclusive with `expires_in`. Optional; if omitted, expiry is unchanged."
         ),
     ] = None
     expires_in: Annotated[
         str | None,
         Field(
-            description='Duration from now, e.g. "1d", "2w", "90d". Mutually exclusive with expires_at. Optional; if omitted, expiry is unchanged.'
+            description="Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Mutually exclusive with `expires_at`. Optional; if omitted, expiry is unchanged."
         ),
     ] = None
     name: str
 
 
 class UpdateDeviceRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     device_metadata: Any | None = None
     external_id: str | None = None
     name: LocalizedString | None = None
 
 
+class UpdateDirectoryConfigPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    allowed_listing_kinds: list[str] | None = None
+    disabled_message: LocalizedString | None = None
+    naming_patterns: dict[str, str] | None = None
+    state: str | None = None
+
+
+class UpdateDirectoryListingMemberPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    date_of_birth: str | None = None
+    is_child: bool | None = None
+    receives_calls: bool | None = None
+    role: str | None = None
+
+
 class UpdateEntityRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     channel_index: int | None = None
     entity_type: str | None = None
     external_id: str | None = None
@@ -941,7 +3339,49 @@ class UpdateEntityRequest(BaseModel):
     zone_id: str | None = None
 
 
+class UpdateGroupLinkPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    admission_mode: Annotated[
+        str | None,
+        Field(
+            description="approve waits for each member to be admitted; auto admits them immediately; pinned holds a\nfixed member set until an explicit re-sync."
+        ),
+    ] = None
+    resync: Annotated[
+        bool | None,
+        Field(
+            description="With pinned mode, re-reads the group's current membership and admits the difference."
+        ),
+    ] = None
+
+
+class UpdateGroupPayload(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    description: Any | None = None
+    kind: str | None = None
+    name: Any | None = None
+    shareable: bool | None = None
+
+
+class UpdateHouseholdPayload(BaseModel):
+    """
+    Payload for renaming a household.
+    """
+
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    name: str
+
+
 class UpdateIntegrationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     config: Annotated[
         Any | None,
         Field(
@@ -959,45 +3399,226 @@ class UpdateIntegrationRequest(BaseModel):
     ] = None
 
 
+class UpdateInventoryRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    is_active: bool | None = None
+    price_cents: int
+    stock_quantity: int | None = None
+
+
+class UpdateMemberRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    billing_account_id: str | None = None
+    role: str | None = None
+    status: str | None = None
+
+
 class UpdateOrganizationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     description: str | None = None
     name: LocalizedString | None = None
+    parent_id: Annotated[
+        str | None,
+        Field(
+            description="Move the org under a new parent (re-parent). When present and different from the current\nparent, the org (and its whole subtree) is moved under `parent_id`. Requires `admin` on the\ndestination parent (or an ancestor) in addition to `update_orgs` on the org being moved."
+        ),
+    ] = None
+
+
+class UpdatePolicyRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    capability: str | None = None
+    config: Annotated[
+        dict[str, Any] | None,
+        Field(
+            description="Omitted preserves the current config; explicit JSON null is rejected rather than\nbeing silently treated as an omitted field."
+        ),
+    ] = None
+    enabled: bool | None = None
+    enforcement: str | None = None
+
+
+class UpdateStoreRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    branding_overrides: dict[str, Any] | None = None
+    currency: str | None = None
+    name: LocalizedString
+    timezone: str | None = None
 
 
 class UpdateUserRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     email: str | None = None
     id: str | None = None
     name: LocalizedString | None = None
+    phone: Annotated[
+        str | None,
+        Field(
+            description="E.164 phone. Send `null` to clear; omit field to leave unchanged. When set,\n`phone_verified_at` is stamped server-side (admin-attested verification)."
+        ),
+    ] = None
+
+
+class UpdateWebhookRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    description: str | None = None
+    enabled: bool | None = None
+    event_types: list[str] | None = None
+    url: str | None = None
 
 
 class UpdateZoneRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     external_id: str | None = None
     name: LocalizedString | None = None
     parent_zone_id: str | None = None
 
 
-class User(BaseModel):
+class UsageActor(BaseModel):
+    """
+    The actor behind a usage entry. Registered users and guests are kept in disjoint fields so the
+    (spoofable) guest fingerprint is never confused with a trusted user identity by the client.
+    """
+
+    guest_id: Annotated[
+        str | None,
+        Field(
+            description='Per-device guest fingerprint. Present only when `kind == "guest"`.'
+        ),
+    ] = None
+    kind: Annotated[
+        str,
+        Field(
+            description="`user`, `guest`, `system`, `api_key`, … (mirrors `audit_events.actor_kind`)."
+        ),
+    ]
+    user_id: Annotated[
+        str | None,
+        Field(
+            description='Trusted registered-user id. Present only when `kind == "user"`.'
+        ),
+    ] = None
+
+
+class User(ResourceLifecycle):
     """
     A provisioned user (identity) in the system.
     """
 
     email: Annotated[
-        str, Field(description="Email address (used for login and provisioning).")
+        str,
+        Field(
+            description="Email address (used for login and provisioning). May be an internal placeholder when no verified email is available."
+        ),
     ]
     id: Annotated[str, Field(description="Unique identifier (ULID).")]
-    metadata: dict[str, str] | None = None
+    merged_into_user_id: Annotated[
+        str | None,
+        Field(
+            description="When set, this row was absorbed into another user. Follow for live identity."
+        ),
+    ] = None
     name: Annotated[LocalizedString, Field(description="Display name.")]
+    phone: Annotated[
+        str | None, Field(description="Verified E.164 phone when set.")
+    ] = None
+    phone_verified_at: str | None = None
 
 
-class UserResponse1(User):
+class UserInvitationDto(BaseModel):
+    accepted_user_id: str | None = None
+    channel: Annotated[str, Field(description="`sms`, `email`, or `both`.")]
+    created_at: str
+    default_roles: list[str]
+    email: str | None = None
+    expires_at: str
+    id: str
+    invited_by_user_id: str
+    last_sent_at: str | None = None
+    org_id: str
+    phone: Annotated[
+        str | None,
+        Field(description="SMS recipient when the invite includes a phone (E.164)."),
+    ] = None
+    sent_count: int
+    site_access: InvitationSiteAccessDto | None = None
+    status: str
+
+
+class UserResponse(User):
+    email_is_synthetic: Annotated[
+        bool,
+        Field(
+            description="True when `email` is an internal placeholder (phone-only account or identity-provider merge claimant) and must not be shown as a mailbox."
+        ),
+    ]
     roles: dict[str, list[str]]
 
 
-class UserResponse2(StorageFeatures, UserResponse1):
-    pass
+class VirtualAccessOpenResponse(BaseModel):
+    door_auto_close_duration: Annotated[int | None, Field(ge=0)] = None
+    door_open_duration_seconds: Annotated[int | None, Field(ge=0)] = None
+    lights_auto_off_duration: dict[str, int] | None = None
+    ok: bool
 
 
-class Zone(BaseModel):
+class WaveshareConnectionConfig(BaseModel):
+    mqtt_client_id: str
+    mqtt_password: str
+    mqtt_publish_topic: str
+    mqtt_subscribe_topic: str
+    mqtt_username: str
+
+
+class WaveshareProvisioningDiffEntry(BaseModel):
+    current: str
+    key: str
+    stored: str
+
+
+class WaveshareProvisioningStatusResponse(BaseModel):
+    current: WaveshareConnectionConfig
+    diff: list[WaveshareProvisioningDiffEntry]
+    stale: bool
+    stored: WaveshareConnectionConfig
+
+
+class WebhookEndpoint(BaseModel):
+    created_at: str | None = None
+    description: str | None = None
+    enabled: bool
+    event_types: list[str] | None = None
+    id: str
+    last_delivery_at: str | None = None
+    last_delivery_status: str | None = None
+    org_id: str
+    updated_at: str | None = None
+    url: str
+
+
+class WebhookTestResponse(BaseModel):
+    delivered: bool
+    error: str | None = None
+    status_code: Annotated[int | None, Field(ge=0)] = None
+
+
+class Zone(ResourceLifecycle):
     """
     A logical or physical space (recursive for hierarchy).
 
@@ -1011,43 +3632,86 @@ class Zone(BaseModel):
     integration_id: Annotated[
         str, Field(description="Integration this zone belongs to.")
     ]
-    metadata: dict[str, str] | None = None
     name: Annotated[LocalizedString, Field(description="Zone name.")]
     parent_zone_id: Annotated[
         str | None, Field(description="Parent zone for hierarchy.")
     ] = None
 
 
-class ZoneResponse1(Zone):
+class ZoneResponse(Zone):
     pass
-
-
-class ZoneResponse2(StorageFeatures, ZoneResponse1):
-    pass
-
-
-class ZoneResponse(RootModel[ZoneResponse2]):
-    root: ZoneResponse2
 
 
 class AccessInviteGrantedPortal(BaseModel):
     id: str
+    is_linked: Annotated[
+        bool,
+        Field(
+            description="Whether the portal currently resolves to a live door device. When false the portal\nis misconfigured/unlinked and the invite UI shows it in a warning state."
+        ),
+    ]
     name: LocalizedString
     public_id: str
 
 
 class AccessPortalListItem(BaseModel):
     created_at: str | None = None
-    device_external_id: Annotated[
+    deleted_at: Annotated[
+        str | None,
+        Field(description="When set, the portal is soft-deleted (kept for restore)."),
+    ] = None
+    device_id: Annotated[
         str | None,
         Field(
-            description="Device external_id (same integration): portal links to virtual_access_portal device by standard external identity."
+            description="Door device id (virtual_access_portal in this integration). Canonical portal link key."
+        ),
+    ] = None
+    directory_id: Annotated[
+        str | None,
+        Field(
+            description="Directory device id (virtual_access_directory in this integration)."
         ),
     ] = None
     id: str
     name: LocalizedString
     public_id: str
     updated_at: str | None = None
+
+
+class AccessUsageEntry(BaseModel):
+    """
+    One friendly usage row.
+    """
+
+    actor: UsageActor
+    door_name: Annotated[
+        Any | None,
+        Field(
+            description="Localized door/action name (plain string or `{ locale: name }`). Set on invite-usage rows."
+        ),
+    ] = None
+    id: Annotated[str, Field(description="Source audit event id (ULID).")]
+    invite_name: Annotated[
+        Any | None,
+        Field(
+            description="Localized invitation name. Set on door-usage rows opened via an invitation."
+        ),
+    ] = None
+    occurred_at: Annotated[str, Field(description="RFC 3339 timestamp of the event.")]
+    outcome: Annotated[str, Field(description="`succeeded` | `failed` | `denied`.")]
+
+
+class AccessUsageResponse(BaseModel):
+    entries: Annotated[list[AccessUsageEntry], Field(description="Newest first.")]
+
+
+class AddMemberRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    display_name: LocalizedString | None = None
+    role: str | None = None
+    user_id: str
 
 
 class AddRolesRequest(RootModel[dict[str, list[str]]]):
@@ -1059,12 +3723,65 @@ class AddRolesRequest(RootModel[dict[str, list[str]]]):
     ]
 
 
-class ApartmentFloorListResponse(BaseModel):
+class ApprovalThresholdPolicyConfig(BaseModel):
     """
-    Distinct apartment floors for a directory device (efficient SQL).
+    Typed `config` shape for `approval_threshold`.
     """
 
-    floors: list[ApartmentFloorSummary]
+    count: Annotated[
+        int,
+        Field(
+            description="Number of distinct organization-admin approve votes required.",
+            ge=1,
+        ),
+    ]
+    output: str | int | None = None
+    scope: Annotated[
+        Literal["org_admins"],
+        Field(description="Only `org_admins` is currently supported."),
+    ]
+
+
+class AuditRecord(BaseModel):
+    """
+    A persisted audit event. Serialized shape doubles as the webhook payload and the pull-API
+    response item.
+    """
+
+    actor_agent_id: str | None = None
+    actor_api_key_id: str | None = None
+    actor_guest_id: Annotated[
+        str | None,
+        Field(
+            description="Stable, client-supplied per-device guest fingerprint (ULID). Deliberately kept in its own\nfield, NEVER `actor_user_id`: a guest id is spoofable and must never be readable as a\ntrusted (registered) user identity, nor collide with the user-id population."
+        ),
+    ] = None
+    actor_kind: str
+    actor_user_id: str | None = None
+    correlation_id: str | None = None
+    details: Any
+    event_type: str
+    id: Annotated[str, Field(description="ULID; also the webhook idempotency key.")]
+    occurred_at: AwareDatetime
+    org_id: str
+    outcome: AuditOutcome
+    resource_id: str | None = None
+    resource_type: str | None = None
+    source: AuditSource
+
+
+class BillingAccount(BaseModel):
+    """
+    The billable entity for purchases. By default each member has a personal account; grouping
+    multiple users into one account lets one user be billed to another's account.
+    """
+
+    created_at: str | None = None
+    deleted_at: str | None = None
+    id: str
+    name: LocalizedString
+    org_id: str
+    updated_at: str | None = None
 
 
 class BillingEvent(BaseModel):
@@ -1082,34 +3799,108 @@ class BillingEvent(BaseModel):
     tier_slug: str | None = None
 
 
-class BillingWebhookResponse(BaseModel):
-    events: list[BillingEvent]
-    provider: str
+class CopilotChatResponse(BaseModel):
+    correlation_id: str
+    proposed_actions: list[CopilotProposedAction]
+    replies: list[str]
+
+
+class CopilotCommitRequest(BaseModel):
+    actions: list[CopilotProposedAction]
 
 
 class CreateAccessInviteRequest(BaseModel):
-    expires_in: str | None = None
-    invite_recurrence: Any | None = None
-    invitee_message: Any | None = None
-    is_enabled: bool | None = None
-    max_uses: int | None = None
-    name: str | None = None
-    portal_ids: list[str]
-    schedules: Annotated[
-        list[InviteScheduleEntryInput] | None,
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    audience: Annotated[
+        InviteAudience | None,
         Field(
-            description="When set (non-empty), defines one or more schedule entries; legacy `valid_from` /\n`valid_to` / `invite_recurrence` are ignored for scheduling."
+            description="Whether anyone holding the link may use the invitation, or only the named contacts."
         ),
     ] = None
-    valid_from: str | None = None
-    valid_to: str | None = None
+    contacts: Annotated[
+        list[AccessInviteContactInput] | None,
+        Field(
+            description="Who the invitation is for. Each contact is either free-form (an email address or a phone\nnumber) or drawn from the organization (a person or a group). Rejected for shares, which\ncarry no invitee identity. Empty when the link is open to anyone."
+        ),
+    ] = None
+    creation_justification: Annotated[
+        str | None,
+        Field(
+            description="Why this invitation is being created (required when `invitation_require_justification` applies)."
+        ),
+    ] = None
+    curfew_exempt: Annotated[
+        bool | None,
+        Field(
+            description="Admin-only emergency exception: skip invitation curfew at redemption."
+        ),
+    ] = None
+    external_ref: ExternalReferenceInput | None = None
+    has_photo: Annotated[
+        bool | None,
+        Field(
+            description="True when the client will upload a photo immediately after create (media is a follow-up POST)."
+        ),
+    ] = None
+    invitee_message: Any | None = None
+    is_enabled: bool | None = None
+    kind: AccessInviteKind | None = None
+    location_id: Annotated[
+        str | None,
+        Field(
+            description="Reusable org-scoped location id to bind, only consumed when `location_mode` is `explicit`.\nCreate the location first via the locations API (which can geocode it), then reference it here."
+        ),
+    ] = None
+    location_mode: LocationBindingMode | None = None
+    max_devices: Annotated[
+        int | None,
+        Field(
+            description="Virtual keycard limit: max unique devices allowed to redeem/use this invite. JSON `null` or omitted means unlimited."
+        ),
+    ] = None
+    max_uses: Annotated[
+        int | None,
+        Field(
+            description="Omit to apply the share default (or leave invitations unlimited). JSON `null` means unlimited."
+        ),
+    ] = None
+    name: str | None = None
+    pin: Annotated[
+        str | None,
+        Field(
+            description="Host-chosen PIN (stored hashed). Required when `invitation_require_identity.require_pin`.\nJSON `null` means no PIN; omission leaves the create default unchanged."
+        ),
+    ] = None
+    portal_ids: Annotated[
+        list[str],
+        Field(
+            description="Portal ULIDs to grant. Array order is the display order on the public invite page."
+        ),
+    ]
+    schedules: Annotated[
+        list[InviteScheduleEntryInput],
+        Field(
+            description="One or more validity windows. A single non-recurring entry is the ordinary case; a share is\nexactly one entry with no explicit start (it opens at request time)."
+        ),
+    ]
 
 
 class CreateAccessPortalRequest(BaseModel):
-    device_external_id: Annotated[
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    device_id: Annotated[
         str | None,
         Field(
-            description="Device external_id (virtual_access_portal device in this integration). Standard way to link portal to device."
+            description="Door device id (virtual_access_portal device in this integration). Links the portal to a door."
+        ),
+    ] = None
+    directory_id: Annotated[
+        str | None,
+        Field(
+            description="Directory device id (virtual_access_directory in this integration)."
         ),
     ] = None
     name: Annotated[
@@ -1121,13 +3912,24 @@ class CreateAccessPortalRequest(BaseModel):
 
 
 class CreateAccessPortalResponse(BaseModel):
-    device_external_id: str | None = None
+    device_id: str | None = None
+    directory_id: str | None = None
     id: str
     name: LocalizedString
     public_id: str
 
 
+class CreateBillingAccountRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    name: LocalizedString
+
+
 class CreateDeviceRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     device_metadata: Any | None = None
     external_id: str | None = None
     integration_id: str
@@ -1136,15 +3938,77 @@ class CreateDeviceRequest(BaseModel):
 
 
 class CreateIntegrationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     config: Any | None = None
     enabled: bool | None = None
     name: LocalizedString | None = None
+    non_admin_acknowledgment: Annotated[
+        Any | None,
+        Field(
+            description="Required when `linked_account_admin` is `warn_and_ack` and the PalGate probe is non-admin."
+        ),
+    ] = None
     org_id: str
     provider_type: str
     secrets: Any | None = None
 
 
+class CreateInvitationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    default_roles: Annotated[
+        list[str] | None,
+        Field(description="Roles to assign on accept (within the inviting org)."),
+    ] = None
+    email: str | None = None
+    phone: str | None = None
+    site_access: InvitationSiteAccessDto | None = None
+
+
+class CreateInvitationResponse(BaseModel):
+    invitation: UserInvitationDto
+    redeem_url: Annotated[
+        str,
+        Field(
+            description="Shareable redeem URL — surfaced once so the inviter can hand it off out-of-band\n(the PIN is never returned here)."
+        ),
+    ]
+
+
+class CreateLocationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    city: LocalizedString | None = None
+    country: LocalizedString | None = None
+    formatted_address: LocalizedString | None = None
+    geocode: bool | None = None
+    geocoding_provider: GeocodingProviderId | None = None
+    kind: LocationKind
+    lat: float | None = None
+    lng: float | None = None
+    locale: Annotated[
+        str | None,
+        Field(
+            description="Preferred locale (app code or BCP-47) for geocoding: controls the language of geocoded\ntext and the locale key it is tagged under. Defaults to `en` when omitted."
+        ),
+    ] = None
+    notes: LocalizedString | None = None
+    provider_place_id: Annotated[
+        str | None,
+        Field(
+            description="Opaque place id issued by `geocoding_provider`. Both fields must be sent together: a place id\ncannot be resolved without naming its issuer."
+        ),
+    ] = None
+
+
 class CreateOrganizationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     description: str | None = None
     id: Annotated[
         str | None,
@@ -1156,8 +4020,42 @@ class CreateOrganizationRequest(BaseModel):
     parent_id: str | None = None
 
 
+class CreatePortalRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    branding_overrides: dict[str, Any] | None = None
+    name: LocalizedString
+
+
+class CreateSkillRequest(BaseModel):
+    agent_id: str
+    enabled: bool | None = None
+    name: str
+    steps: list[SkillStep]
+    trigger_event_types: list[str]
+
+
+class CreateStoreRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    branding_overrides: dict[str, Any] | None = None
+    currency: str | None = None
+    name: LocalizedString
+    timezone: str | None = None
+
+
 class CreateUserRequest(BaseModel):
-    email: str
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    email: Annotated[
+        str | None,
+        Field(
+            description="Login email. Omit for phone-only provisioning (Kratos uses `traits.phone` only; OpenApp\nstores a synthetic `{id}@phone.openapp.local` placeholder in `users.email`)."
+        ),
+    ] = None
     first_name: Annotated[
         str | None,
         Field(
@@ -1183,17 +4081,43 @@ class CreateUserRequest(BaseModel):
             description="Optional password for Kratos identity (provisioning only; same permission as id).\nWhen set, the Kratos identity is created with this password so the user can log in immediately."
         ),
     ] = None
+    phone: Annotated[
+        str | None,
+        Field(
+            description="E.164 phone (`+[country][digits]`). When set, must satisfy the same pattern as Kratos."
+        ),
+    ] = None
     roles: Annotated[
         dict[str, Any] | None,
         Field(description="Org ID (string) to list of role names. Optional."),
     ] = None
 
 
+class CreateWebhookResponse(WebhookEndpoint):
+    signing_secret: Annotated[
+        str,
+        Field(
+            description="The HMAC signing secret, returned exactly once at creation. Store it securely; it is used to\nverify the `X-OpenApp-Signature` header on every delivery and is never returned again."
+        ),
+    ]
+
+
 class CreateZoneRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
     external_id: str | None = None
     integration_id: str
     name: LocalizedString
     parent_zone_id: str | None = None
+
+
+class DecideRegistrationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    decision: Annotated[str, Field(description="`approve` or `reject`.")]
+    display_name: LocalizedString | None = None
 
 
 class DeleteRolesRequest(RootModel[dict[str, list[str]]]):
@@ -1205,7 +4129,7 @@ class DeleteRolesRequest(RootModel[dict[str, list[str]]]):
     ]
 
 
-class Device(BaseModel):
+class Device(ResourceLifecycle):
     """
     A physical or virtual device belonging to an org and integration.
     """
@@ -1224,12 +4148,17 @@ class Device(BaseModel):
         str,
         Field(description="Owning integration (e.g. Shelly Cloud account/connection)."),
     ]
-    metadata: dict[str, str] | None = None
     name: Annotated[LocalizedString, Field(description="Human-readable name.")]
     org_id: Annotated[str, Field(description="Organization that owns this device.")]
 
 
-class DeviceResponse1(Device):
+class DeviceResponse(Device):
+    is_primary_instance: Annotated[
+        bool | None,
+        Field(
+            description="Server-computed, read-only: true when this OpenApp device record is the canonical\n(primary) instance for its physical hardware in the global `physical_devices` registry.\nNever accepted from a request body. See `docs/POLICIES_HDD.md` §6.3."
+        ),
+    ] = None
     stale: Annotated[
         bool | None,
         Field(
@@ -1238,12 +4167,20 @@ class DeviceResponse1(Device):
     ] = None
 
 
-class DeviceResponse2(StorageFeatures, DeviceResponse1):
-    pass
+class DirectoryConfigResponse(BaseModel):
+    allowed_listing_kinds: list[str]
+    device_id: str
+    disabled_message: LocalizedString | None = None
+    naming_patterns: dict[str, str]
+    state: str
 
 
-class DeviceResponse(RootModel[DeviceResponse2]):
-    root: DeviceResponse2
+class DirectoryFloorListResponse(BaseModel):
+    """
+    Distinct directory floors for a directory device (efficient SQL).
+    """
+
+    floors: list[DirectoryFloorSummary]
 
 
 class EffectiveLimit(BaseModel):
@@ -1264,7 +4201,7 @@ class EffectiveLimit(BaseModel):
     ] = None
 
 
-class Entity(BaseModel):
+class Entity(ResourceLifecycle):
     """
     The actual controllable "button" or "sensor".
 
@@ -1288,17 +4225,32 @@ class Entity(BaseModel):
     ] = None
 
 
-class EntityResponse1(Entity):
+class EntityResponse(Entity):
     entity_metadata: dict[str, str] | None = None
-    state: Any | None = None
+    entry_kind: Annotated[
+        str | None,
+        Field(
+            description="Derived, read-only entry kind for switchable entries on Virtual Access devices.\nOmitted when the entity is not an entry or the device has no Virtual Access config."
+        ),
+    ] = None
+    state: Annotated[
+        Any | None,
+        Field(
+            description='Derived, read-only. When local provider config cannot run switchable\nopen/close/toggle, `{ "status": "invalid", "reason": "<message>" }`.'
+        ),
+    ] = None
 
 
-class EntityResponse2(StorageFeatures, EntityResponse1):
-    pass
+class FlaggedResource(BaseModel):
+    """
+    A resource currently flagged in the lifecycle (shown to admins so they can resolve).
+    """
 
-
-class EntityResponse(RootModel[EntityResponse2]):
-    root: EntityResponse2
+    flagged_at: str | None = None
+    id: str
+    marked_at: str | None = None
+    resource: CapacityResource
+    state: ResourceState
 
 
 class GetAccessPortalResponse(AccessPortalListItem):
@@ -1309,7 +4261,45 @@ class GetAccessPortalResponse(AccessPortalListItem):
     integration_id: str
 
 
-class Integration(BaseModel):
+class HoldView(BaseModel):
+    entity_direct: bool
+    held_by_door_ids: list[str]
+    kind: HoldKind
+    mode: HoldMode
+    next_window: HoldWindowView | None = None
+    reason: str | None = None
+    recurrence: Annotated[
+        dict[str, Any] | None,
+        Field(
+            description="Authored recurrence (always `freq: weekly` and an explicit ISO day list)."
+        ),
+    ] = None
+    set_at: str
+    set_by: str | None = None
+    set_by_display_name: str | None = None
+    timezone: Annotated[
+        str,
+        Field(
+            description="IANA timezone for authoring: the spec's zone when recurring, otherwise the org zone\n(`UTC` if the org has none). Never the caller's browser zone."
+        ),
+    ]
+    until: str | None = None
+
+
+class HolidayCalendarPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `holiday_calendar`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    dates: Annotated[
+        list[str],
+        Field(description="Organization-local ISO dates in `YYYY-MM-DD` format."),
+    ]
+    output: str | int | None = None
+
+
+class Integration(ResourceLifecycle):
     """
     Credential/Auth for a specific cloud instance.
 
@@ -1323,15 +4313,14 @@ class Integration(BaseModel):
     enabled: Annotated[
         bool,
         Field(
-            description="User-controlled flag: if false, this integration will not be used for actions/ops."
+            description="Pause switch for hardware connectors. Always true for site providers."
         ),
     ]
     health: Annotated[
         IntegrationHealth,
-        Field(description="Backend-controlled health marker (ok/error)."),
+        Field(description="Backend-controlled health marker (ok/reduced/error)."),
     ]
     id: Annotated[str, Field(description="Unique identifier (ULID).")]
-    metadata: dict[str, str] | None = None
     name: Annotated[
         LocalizedString,
         Field(
@@ -1347,19 +4336,105 @@ class Integration(BaseModel):
     ]
 
 
-class IntegrationResponse1(Integration):
+class IntegrationResponse(Integration):
     provider_type_name: Annotated[
         LocalizedString,
         Field(description="Human-friendly provider type name(s), keyed by locale."),
     ]
 
 
-class IntegrationResponse2(StorageFeatures, IntegrationResponse1):
-    pass
+class InvitationAllowedDaysPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `invitation_allowed_days`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    blackout_dates: Annotated[
+        list[str] | None,
+        Field(description="Organization-local ISO dates that invitations cannot use."),
+    ] = None
+    holiday_calendar: Annotated[
+        bool | None,
+        Field(description="Include dates from applicable `holiday_calendar` rows."),
+    ] = None
+    output: str | int | None = None
+    weekdays: Annotated[
+        list[Weekday] | None,
+        Field(
+            description="Sunday is 0; Saturday is 6. Omit to leave weekdays unrestricted for this row."
+        ),
+    ] = None
 
 
-class IntegrationResponse(RootModel[IntegrationResponse2]):
-    root: IntegrationResponse2
+class InvitationAllowedEntryKindsPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `invitation_allowed_entry_kinds`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    kinds: list[InvitationEntryKind]
+    output: str | int | None = None
+
+
+class InvitationAuthoringPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for empty invitation authoring policies.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    output: str | int | None = None
+
+
+class InvitationCountLimitPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `invitation_max_active_per_user` and `max_doors_per_invite`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    max: Annotated[int, Field(ge=1)]
+    output: str | int | None = None
+
+
+class InvitationIdentityPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for invitation policies that prohibit or require a boolean behavior.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    output: str | int | None = None
+    require_photo: bool | None = None
+    require_pin: bool | None = None
+    require_verified_phone: bool | None = None
+
+
+class InvitationMaxDurationPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `invitation_max_duration`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    max_seconds: Annotated[int, Field(ge=1)]
+    output: str | int | None = None
+
+
+class InvitationMaxUsesPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `invitation_max_uses`.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    max_uses: Annotated[int, Field(ge=1)]
+    output: str | int | None = None
+
+
+class InviteCreatorRolesPolicyConfig(BaseModel):
+    """
+    Typed `config` shape for `invite_creator_roles`.
+    """
+
+    allowed_roles: list[str]
+    applies_to: list[PolicyPrincipalKind] | None = None
+    output: str | int | None = None
 
 
 class InviteScheduleSnapshot(BaseModel):
@@ -1373,6 +4448,30 @@ class InviteScheduleSnapshot(BaseModel):
         | None
     ) = None
     slot_duration_seconds: int
+
+
+class KeyOverage(BaseModel):
+    """
+    One capacity key's overage snapshot.
+    """
+
+    current: Annotated[int, Field(ge=0)]
+    excess: Annotated[int, Field(ge=0)]
+    key: QuotaKey
+    limit: Annotated[int, Field(ge=0)]
+    unit: QuotaUnit
+
+
+class LifeSafetyAttestation(BaseModel):
+    attested_at: AwareDatetime
+    attested_by_user_id: str | None = None
+    entrapment_protection_present: bool | None = None
+    fire_door_listing_unaltered: bool
+    independent_egress: bool
+    installer_name: str
+    listed_local_system: bool | None = None
+    openapp_not_fire_alarm_interface: bool
+    power_fail_behavior: PowerFailBehavior
 
 
 class ListDevicesQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
@@ -1412,10 +4511,22 @@ class ListDevicesQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
             description="Optional filter: only devices belonging to this integration."
         ),
     ] = None
+    locale: Annotated[
+        str | None,
+        Field(
+            description="Locale used to resolve the localized `name` when sorting by name (e.g. `en`). Defaults to `en`."
+        ),
+    ] = None
     q: Annotated[
         str | None,
         Field(
             description="Case-insensitive substring match on localized device name (JSON). Best-effort when `integration_id` is set (SQL ILIKE)."
+        ),
+    ] = None
+    sort: Annotated[
+        str | None,
+        Field(
+            description="Server-side ordering for org-wide lists: `name:asc`, `name:desc`, `created_at:asc`, `created_at:desc`.\nIgnored when `integration_id` is set. Defaults to insertion order when omitted."
         ),
     ] = None
 
@@ -1425,6 +4536,18 @@ class ListEntitiesQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
     List entities for the organization context (X-Org).
     """
 
+    q: Annotated[
+        str | None,
+        Field(
+            description="Case-insensitive substring match on entity `name` (plain text). Applies to org-wide lists."
+        ),
+    ] = None
+    sort: Annotated[
+        str | None,
+        Field(
+            description="Server-side ordering for org-wide lists: `name:asc`, `name:desc`, `created_at:asc`, `created_at:desc`.\nIgnored when `zone_id` is set. Defaults to insertion order when omitted."
+        ),
+    ] = None
     zone_id: Annotated[
         str | None, Field(description="Optional filter: only entities in this zone.")
     ] = None
@@ -1449,12 +4572,64 @@ class ListIntegrationsQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
     ] = None
 
 
+class ListInvitationsResponse(BaseModel):
+    invitations: list[UserInvitationDto]
+
+
+class ListOrgChildrenQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
+    parent_id: Annotated[
+        str | None,
+        Field(
+            description="Parent org id. When omitted, returns the roots of the caller's visible org forest."
+        ),
+    ] = None
+
+
 class ListOrgUsersQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
     recursive: bool | None = None
 
 
 class ListOrgsQuery(MultiResourceOutputOptionsQuery, PaginationQuery):
     pass
+
+
+class LocationResponse(BaseModel):
+    city: LocalizedString | None = None
+    country: LocalizedString | None = None
+    formatted_address: LocalizedString | None = None
+    geocoding_provider: GeocodingProviderId | None = None
+    id: str
+    image_url: str | None = None
+    kind: LocationKind
+    lat: float | None = None
+    lng: float | None = None
+    notes: LocalizedString | None = None
+    provider_place_id: Annotated[
+        str | None,
+        Field(
+            description="Opaque place id issued by `geocoding_provider`. Both fields are present together or not at\nall: a place id cannot be interpreted without knowing who issued it."
+        ),
+    ] = None
+    source: LocationSource | None = None
+
+
+class MeProfileResponse(BaseModel):
+    email: str | None = None
+    email_verified: bool
+    idp_links: list[IdpLinkResponse]
+    image_sync_error: str | None = None
+    image_thumb_url: str | None = None
+    image_url: str | None = None
+    locale: str | None = None
+    name: str | None = None
+    phone: str | None = None
+    phone_verified: bool
+    profile_sources: ProfileSourcesResponse
+
+
+class MemberCatalogResponse(BaseModel):
+    items: list[MemberCatalogItem]
+    store: Store
 
 
 class MultiResourceOutputOptions(BaseModel):
@@ -1485,12 +4660,27 @@ class MultiResourceOutputOptions(BaseModel):
     single: Annotated[
         SingleResourceOutputOptions,
         Field(
-            description="Single-resource options (include_deleted, include_metadata). Accessed flat via `Deref`."
+            description="Single-resource options (`include_deleted`). Accessed flat via `Deref`."
         ),
     ]
 
 
-class Organization(BaseModel):
+class NotificationPolicyConfig(BaseModel):
+    """
+    Shared typed `config` shape for notification policies.
+    """
+
+    applies_to: list[PolicyPrincipalKind] | None = None
+    channels: Annotated[
+        list[Literal["audit"]],
+        Field(
+            description="Notification destinations. Only `audit` is currently supported."
+        ),
+    ]
+    output: str | int | None = None
+
+
+class Organization(ResourceLifecycle):
     """
     An organization (tenant) with optional parent for hierarchy.
     """
@@ -1499,7 +4689,12 @@ class Organization(BaseModel):
         None
     )
     id: Annotated[str, Field(description="Unique identifier (ULID).")]
-    metadata: dict[str, str] | None = None
+    is_personal: Annotated[
+        bool | None,
+        Field(
+            description="True when this org is a personal workspace auto-created for a self-signup user.\n\nCompany / property orgs are `false`. A workspace is the parent a user's own first\nsite is created under, not an operating organization that members are invited into."
+        ),
+    ] = None
     name: Annotated[LocalizedString, Field(description="Organization name.")]
     parent_id: Annotated[
         str | None, Field(description="Parent organization ID for hierarchy.")
@@ -1512,16 +4707,14 @@ class Organization(BaseModel):
     ]
 
 
-class OrganizationResponse1(Organization):
+class OrganizationResponse(Organization):
+    has_children: Annotated[
+        bool | None,
+        Field(
+            description="Whether this org has at least one child visible to the requester.\n\nPopulated only by the tree endpoints (children / search); `None` elsewhere. Lets the org\nselector render an expand affordance without first fetching the node's children."
+        ),
+    ] = None
     parent_name: LocalizedString | None = None
-
-
-class OrganizationResponse2(StorageFeatures, OrganizationResponse1):
-    pass
-
-
-class OrganizationResponse(RootModel[OrganizationResponse2]):
-    root: OrganizationResponse2
 
 
 class PaginatedResponse(BaseModel):
@@ -1529,17 +4722,24 @@ class PaginatedResponse(BaseModel):
     Paginated response body for list endpoints.
     """
 
-    items: list[UserResponse2]
+    items: list[UserResponse]
     total: Annotated[int, Field(ge=0)]
 
 
-class Item1(Entity):
+class Item4(Entity):
     entity_metadata: dict[str, str] | None = None
-    state: Any | None = None
-
-
-class Item2(StorageFeatures, Item1):
-    pass
+    entry_kind: Annotated[
+        str | None,
+        Field(
+            description="Derived, read-only entry kind for switchable entries on Virtual Access devices.\nOmitted when the entity is not an entry or the device has no Virtual Access config."
+        ),
+    ] = None
+    state: Annotated[
+        Any | None,
+        Field(
+            description='Derived, read-only. When local provider config cannot run switchable\nopen/close/toggle, `{ "status": "invalid", "reason": "<message>" }`.'
+        ),
+    ] = None
 
 
 class PaginatedResponseEntityResponse(BaseModel):
@@ -1547,8 +4747,118 @@ class PaginatedResponseEntityResponse(BaseModel):
     Paginated response body for list endpoints.
     """
 
-    items: list[Item2]
+    items: list[Item4]
     total: Annotated[int, Field(ge=0)]
+
+
+class Item5(LocationResponse):
+    is_bound_here: bool | None = None
+    is_relevant: bool | None = None
+    usage_count: Annotated[int | None, Field(ge=0)] = None
+
+
+class PaginatedResponseLocationListItemResponse(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item5]
+    total: Annotated[int, Field(ge=0)]
+
+
+class Item6(BaseModel):
+    """
+    Store membership. `Pending` awaits admin approval; `Removed` keeps the row (history) but
+    blocks purchasing.
+    """
+
+    billing_account_id: Annotated[
+        str | None,
+        Field(
+            description="Account purchases are charged to. `None` falls back to the member's personal account."
+        ),
+    ] = None
+    created_at: str | None = None
+    id: str
+    removed_at: str | None = None
+    role: StoreMemberRole
+    status: StoreMemberStatus
+    store_id: str
+    updated_at: str | None = None
+    user_id: str
+
+
+class PaginatedResponseStoreMember(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item6]
+    total: Annotated[int, Field(ge=0)]
+
+
+class PaginatedResponseZoneResponse(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Zone]
+    total: Annotated[int, Field(ge=0)]
+
+
+class ProfileSourcePatch(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    email: ProfileSourceRequest | None = None
+    image: ProfileSourceRequest | None = None
+    locale: ProfileSourceRequest | None = None
+    name: ProfileSourceRequest | None = None
+    phone: ProfileSourceRequest | None = None
+
+
+class PublicInviteGrant1(BaseModel):
+    door_image_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the door image, for avatar-sized\nrenders. Absent when the source is already thumb-sized; fall back to\n`door_image_url`."
+        ),
+    ] = None
+    door_image_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for door image (loaded asynchronously as card background)."
+        ),
+    ] = None
+    entry_kind: Annotated[
+        str,
+        Field(
+            description="Entry type from linked portal device (`virtual_access.entry_kind`). Default `door`."
+        ),
+    ]
+    has_lights: Annotated[
+        bool,
+        Field(
+            description="Whether the portal has light devices configured (controls light button visibility)."
+        ),
+    ]
+    hold: PublicHoldView | None = None
+    id: str
+    kind: Literal["portal_open"]
+    label: Annotated[
+        Any | None,
+        Field(
+            description='Localized portal name: string or object { "en": "...", "he": "..." }.'
+        ),
+    ] = None
+    open_rate_limit: PublicPortalOpenRateLimit | None = None
+    openable: Annotated[
+        bool,
+        Field(
+            description="Whether the portal is linked to a live door device (i.e. can actually be opened).\nWhen false, the invite UI disables the open action (a misconfigured/unlinked portal)."
+        ),
+    ]
+    public_portal_id: str
 
 
 class PublicSessionResponse(BaseModel):
@@ -1558,12 +4868,12 @@ class PublicSessionResponse(BaseModel):
     call_target_display_name: Annotated[
         Any | None,
         Field(
-            description="Localized apartment / unit title for call UI (caller/callee)."
+            description="Localized listing / unit title for call UI (caller/callee)."
         ),
     ] = None
     call_target_location_line: Annotated[
         str | None,
-        Field(description='Single line for apartment + floor (e.g. "3 · Floor 2").'),
+        Field(description='Single line for listing + floor (e.g. "3 · Floor 2").'),
     ] = None
     callee_peer_id: str
     callees_notified: Annotated[
@@ -1603,7 +4913,10 @@ class QuotaUsage(BaseModel):
     limit: EffectiveLimit
     period: QuotaPeriod
     period_end: Annotated[
-        str | None, Field(description="Window end (RFC3339). `null` for `Lifetime`.")
+        str | None,
+        Field(
+            description="Window end ([RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)). `null` for `Lifetime`."
+        ),
     ] = None
     period_label: Annotated[
         str,
@@ -1612,8 +4925,243 @@ class QuotaUsage(BaseModel):
         ),
     ]
     period_start: Annotated[
-        str | None, Field(description="Window start (RFC3339). `null` for `Lifetime`.")
+        str | None,
+        Field(
+            description="Window start ([RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)). `null` for `Lifetime`."
+        ),
     ] = None
+    unit: Annotated[
+        QuotaUnit,
+        Field(
+            description="Machine-readable unit of `current`/`limit` (e.g. `count`, `seconds`)."
+        ),
+    ]
+
+
+class ReadinessSubject(BaseModel):
+    id: str
+    kind: ReadinessSubjectKind
+
+
+class ReconcileAccessInviteRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    external_ref: Annotated[
+        ExternalReferenceInput,
+        Field(
+            description="The external record this reconcile is about. It identifies the invitation, so the caller\ndoes not need to track OpenApp invitation ids."
+        ),
+    ]
+    invitation: CreateAccessInviteRequest | None = None
+    state: Annotated[
+        ReconcileInviteState | None,
+        Field(description="Desired state for that record. Defaults to `active`."),
+    ] = None
+
+
+class ResolvedLocationResponse(BaseModel):
+    binding: LocationBindingResponse
+    resolved: LocationResponse | None = None
+
+
+class SiteAccessDeviceDoor(BaseModel):
+    """
+    A door (portal device) a device serves.
+    """
+
+    auto_off_config: Annotated[
+        Any | None,
+        Field(
+            description="The door's `auto_off_config` for this light entry. Lights only."
+        ),
+    ] = None
+    door_device_id: str
+    life_safety: SiteAccessDoorLifeSafety | None = None
+    name: LocalizedString
+
+
+class SiteAccessDeviceEntity(BaseModel):
+    """
+    An entity on the device that plays the section's role.
+    """
+
+    doors: Annotated[
+        list[SiteAccessDeviceDoor],
+        Field(
+            description="Doors this entity serves, each carrying that door's light auto-off config."
+        ),
+    ]
+    entity_id: str
+    entity_type: Annotated[
+        str,
+        Field(description="`entity_type` as stored (`switch`, `door`, `light`, …)."),
+    ]
+    label: Annotated[
+        str | None,
+        Field(description="The label the door gave this opener/light, when set."),
+    ] = None
+    name: str
+
+
+class SiteAccessOverviewResponse(BaseModel):
+    devices: SiteAccessOverviewDevices | None = None
+    directory_device_id: str | None = None
+    doors_count: Annotated[int, Field(ge=0)]
+    integration: Annotated[
+        Integration,
+        Field(description="Sanitized integration data used by the setup checklist."),
+    ]
+    invitations_count: Annotated[int, Field(ge=0)]
+    listings_count: Annotated[int, Field(ge=0)]
+    people_count: Annotated[int, Field(ge=0)]
+    policies_count: Annotated[
+        int | None,
+        Field(description="Missing when the requester cannot list policies.", ge=0),
+    ] = None
+    portals: Annotated[
+        list[SiteAccessOverviewPortal],
+        Field(
+            description="Portal-to-door links are used to scope readiness issues on the hub."
+        ),
+    ]
+    portals_count: Annotated[int, Field(ge=0)]
+    visible_listings_count: Annotated[int, Field(ge=0)]
+
+
+class SiteAccessUnresolvedRef(BaseModel):
+    """
+    A door reference with nothing to show.
+    """
+
+    doors: list[SiteAccessDeviceDoor]
+    reason: SiteAccessUnresolvedReason
+    reference: Annotated[
+        str,
+        Field(
+            description="The raw id from the door's metadata (entity id for openers/lights, device id for cameras)."
+        ),
+    ]
+    role: SiteAccessDeviceRole
+
+
+class SkillResponse(BaseModel):
+    agent_id: str
+    enabled: bool
+    id: str
+    name: str
+    org_id: str
+    steps: list[SkillStep]
+    trigger_event_types: list[str]
+    version: int
+
+
+class StatementResponse(BaseModel):
+    currency: str
+    items: list[StorePurchase]
+    month: str
+    purchase_count: Annotated[int, Field(ge=0)]
+    total_cents: int
+
+
+class StoreMember(BaseModel):
+    """
+    Store membership. `Pending` awaits admin approval; `Removed` keeps the row (history) but
+    blocks purchasing.
+    """
+
+    billing_account_id: Annotated[
+        str | None,
+        Field(
+            description="Account purchases are charged to. `None` falls back to the member's personal account."
+        ),
+    ] = None
+    created_at: str | None = None
+    id: str
+    removed_at: str | None = None
+    role: StoreMemberRole
+    status: StoreMemberStatus
+    store_id: str
+    updated_at: str | None = None
+    user_id: str
+
+
+class TasmotaConnectionConfig(BaseModel):
+    command_topic: str
+    mqtt_client_id: str
+    mqtt_host: str
+    mqtt_password: str
+    mqtt_port: Annotated[int, Field(ge=0)]
+    mqtt_tls: bool
+    mqtt_username: str
+    power_topics: list[TasmotaPowerTopic] | None = None
+    web_password: str
+
+
+class TasmotaProvisioningResponse(BaseModel):
+    backlog: str
+    connection: TasmotaConnectionConfig
+    mqtt_ca_pem: str | None = None
+
+
+class TransferIntegrationRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    confirm: Annotated[
+        bool | None,
+        Field(
+            description='Must be `true` when the preview reports side-effect warnings; otherwise the request is\nrejected with `error_code = "confirmation_required"`.'
+        ),
+    ] = None
+    mode: TransferModeDto | None = None
+    target_org_id: Annotated[
+        str,
+        Field(
+            description="Destination organization id (must differ from the integration's current org)."
+        ),
+    ]
+
+
+class TransferIntegrationResponse(IntegrationResponse):
+    affected: AffectedCounts
+    mode: str
+    source_org_id: str
+    target_org_id: str
+    warnings: Annotated[
+        list[str],
+        Field(description="Side-effect warning codes that applied to this transfer."),
+    ]
+
+
+class AuditEventsPage(BaseModel):
+    items: list[AuditRecord]
+    next_cursor: Annotated[
+        str | None,
+        Field(
+            description="Cursor for the next (older) page, or null when the last page was returned."
+        ),
+    ] = None
+
+
+class DegradationStatus(BaseModel):
+    """
+    Full degradation snapshot for an org. Powers the dashboard panel + non-admin friction.
+    """
+
+    degradation_level: float
+    flagged: list[FlaggedResource]
+    org_id: str
+    over_capacity: bool
+    over_capacity_since: str | None = None
+    overages: list[KeyOverage]
+    selection_policy: SelectionPolicy
+    stage: DegradationStage
+
+
+class EntityHoldItem(BaseModel):
+    entity_id: str
+    hold: HoldView
 
 
 class InviteScheduleEntrySnapshot(BaseModel):
@@ -1626,29 +5174,287 @@ class InviteScheduleEntrySnapshot(BaseModel):
     valid_to: str
 
 
+class LocationListItemResponse(LocationResponse):
+    is_bound_here: bool | None = None
+    is_relevant: bool | None = None
+    usage_count: Annotated[int | None, Field(ge=0)] = None
+
+
+class MeInvitationAsset(BaseModel):
+    access_control: PublicPortalAccessControl | None = None
+    building_name: Any | None = None
+    can_read: Annotated[
+        bool,
+        Field(
+            description="True when the requester has `integrations:read` on the invite's org, i.e.\nmay open the invitation's management page. Mirrors the authz check in\n`list_integration_access_invites`."
+        ),
+    ]
+    claimed_at: str | None = None
+    grants: Annotated[
+        list[PublicInviteGrant1 | PublicInviteGrant2],
+        Field(
+            description="One entry per grant in the invite, with label / door image / lights flag\nenriched the same way as `GET /public/access/invites/{token}`. Lets\nclients render multi-door invitations without an extra round trip."
+        ),
+    ]
+    integration_id: str
+    invite_link_id: str
+    invitee_message: Annotated[
+        Any | None,
+        Field(
+            description="Invitee-facing message (mirrors `PublicInviteResponse.invitee_message`).\nSame `LocalizedString` shape as on the public invite endpoint."
+        ),
+    ] = None
+    last_used_at: str | None = None
+    max_uses: int | None = None
+    name: Annotated[
+        str | None,
+        Field(
+            description="Admin-defined invite name (mirrors `PublicInviteResponse.name`)."
+        ),
+    ] = None
+    org_id: str
+    org_image_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the org logo, for small renders.\nAbsent when the source is already thumb-sized; fall back to `org_image_url`."
+        ),
+    ] = None
+    org_image_url: Annotated[
+        str | None, Field(description="Presigned org logo URL (best-effort).")
+    ] = None
+    photo_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the invite photo, for small renders.\nAbsent when the source is already thumb-sized; fall back to `photo_url`."
+        ),
+    ] = None
+    photo_url: Annotated[
+        str | None,
+        Field(description="Presigned URL for the invite's main photo (best-effort)."),
+    ] = None
+    state: str
+    uses: Annotated[int, Field(description="Number of times the invite has been used.")]
+    valid_from: str | None = None
+    valid_to: str | None = None
+
+
+class MeInvitationsResponse(BaseModel):
+    invitations: list[MeInvitationAsset]
+
+
+class Item(BaseModel):
+    created_at: str | None = None
+    created_by_user_id: Annotated[
+        str | None,
+        Field(
+            description="User who created this invite or share. Omitted when the row has no creator."
+        ),
+    ] = None
+    creation_justification: str | None = None
+    curfew_exempt: Annotated[
+        bool | None,
+        Field(
+            description="Admin-only emergency exception: skip invitation curfew at redemption."
+        ),
+    ] = None
+    devices_count: int | None = None
+    disabled_justification: str | None = None
+    external_ref: ExternalReferenceResponse | None = None
+    granted_portals: list[AccessInviteGrantedPortal]
+    id: str
+    invite_recurrence: Any | None = None
+    invitee_message: Any | None = None
+    is_enabled: bool
+    kind: AccessInviteKind | None = None
+    last_shared_at: str | None = None
+    last_used_at: str | None = None
+    location: LocationResponse | None = None
+    location_mode: Annotated[
+        LocationBindingMode,
+        Field(
+            description="How the event location is resolved: `none`, `explicit`, or `inherit` (building)."
+        ),
+    ]
+    max_devices: int | None = None
+    max_uses: int | None = None
+    name: str | None = None
+    pending_renewal_count: int | None = None
+    photo_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the invite photo, for avatar-sized renders.\nAbsent when the source is already thumb-sized; fall back to `photo_url`."
+        ),
+    ] = None
+    photo_url: Annotated[
+        str | None,
+        Field(description="Presigned URL for the invite's main photo (best-effort)."),
+    ] = None
+    revoked_at: str | None = None
+    schedule: InviteScheduleSnapshot
+    schedule_combined: InviteScheduleCombined
+    schedule_entries: list[InviteScheduleEntrySnapshot]
+    schedule_kind: InviteScheduleKind
+    state: str
+    updated_at: str | None = None
+    uses: int
+    valid_from: str | None = None
+    valid_to: str | None = None
+
+
+class PaginatedResponseAccessInviteListItem(BaseModel):
+    """
+    Paginated response body for list endpoints.
+    """
+
+    items: list[Item]
+    total: Annotated[int, Field(ge=0)]
+
+
+class PatchMeProfileRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    locale: str | None = None
+    name: str | None = None
+    profile_sources: ProfileSourcePatch | None = None
+
+
+class PreviewAccessInviteResponse(BaseModel):
+    """
+    Effective plan for a create request, produced without persisting anything.
+
+    Onboarding an external adapter is the main use: it can check that a desired reservation maps to
+    portals it is allowed to grant, that the schedule resolves as expected, and which identity
+    fields organization policy will demand — before any physical access exists.
+    """
+
+    curfew_exempt: bool | None = None
+    curfew_windows: list[CurfewWindowResponse] | None = None
+    external_ref: ExternalReferenceResponse | None = None
+    granted_portals: list[AccessInviteGrantedPortal]
+    is_enabled: bool
+    kind: AccessInviteKind
+    max_devices: int | None = None
+    max_uses: int | None = None
+    pending_approval: Annotated[
+        bool,
+        Field(
+            description="True when creating this invitation would land disabled awaiting admin approval."
+        ),
+    ]
+    required_identity_fields: Annotated[
+        list[str],
+        Field(
+            description="Identity fields organization policy requires for this invitation: `pin`, `invitee_phone`,\nand/or `photo`."
+        ),
+    ]
+    requires_justification: Annotated[
+        bool, Field(description="Whether policy requires `creation_justification`.")
+    ]
+    schedule: InviteScheduleSnapshot
+    schedule_combined: InviteScheduleCombined
+    schedule_entries: list[InviteScheduleEntrySnapshot]
+    schedule_kind: InviteScheduleKind
+    timezone: Annotated[
+        str | None,
+        Field(description="Org IANA timezone used to evaluate invitation curfews."),
+    ] = None
+    unlinked_portal_ids: Annotated[
+        list[str],
+        Field(
+            description="Portals that would be granted but do not currently resolve to a live door device, so the\nguest link would not open them."
+        ),
+    ]
+    valid: Annotated[
+        bool,
+        Field(
+            description="Always true on a 200. A request that would be rejected returns the same status, error code,\nand message that create would return."
+        ),
+    ]
+    valid_from: str
+    valid_to: str
+
+
 class PublicInviteResponse(BaseModel):
+    access_control: PublicPortalAccessControl | None = None
+    allowed_weekdays: list[AllowedWeekday] | None = None
     already_claimed: bool | None = None
-    branding: Any | None = None
+    audience: Annotated[
+        str,
+        Field(
+            description="Whether anyone holding the link may use the invitation, or only the named contacts."
+        ),
+    ]
+    blackout_dates: list[str] | None = None
     building: Annotated[
         Any | None,
         Field(
-            description="Building (integration) summary: `name` (LocalizedString) and optional `location` fields\nfrom integration config (`address`, `city`, `country`)."
+            description="Building (integration) summary: `name` (LocalizedString) and optional `location` fields\nfrom integration config (`formatted_address`, `city`, `country`)."
         ),
     ] = None
+    contact_challenge_required: Annotated[
+        bool | None,
+        Field(
+            description="True when the bearer must prove they are one of the named contacts before the invitation\ncan be used. Which contact was matched is never echoed back, so this cannot be used to\nenumerate who an invitation is for."
+        ),
+    ] = None
+    contact_display_name: Annotated[
+        str | None,
+        Field(
+            description="The display name of the contact this token resolved to, when it resolved to one."
+        ),
+    ] = None
+    curfew_windows: Annotated[
+        list[CurfewWindowResponse] | None,
+        Field(
+            description="Effective forbidden hour windows for invitation access (informational)."
+        ),
+    ] = None
+    devices_count: int | None = None
+    event_location: LocationResponse | None = None
     grants: list[PublicInviteGrant1 | PublicInviteGrant2]
     invite_token: str
+    invite_url: Annotated[
+        str,
+        Field(description="Guest-facing invite URL (shareable link for SMS/email)."),
+    ]
     invitee_message: Any | None = None
+    location_mode: Annotated[
+        LocationBindingMode,
+        Field(
+            description="How the invite resolves its event location: `none` (hide all location, including the\nbuilding address), `explicit` (own location), or `inherit` (building location). Lets the\nguest UI suppress the building address when the invite opts out of location entirely."
+        ),
+    ]
+    max_devices: int | None = None
     name: Annotated[
         str | None,
         Field(
             description='Optional admin-defined label (management UI "name"); exposed for link previews and guests who already know the invite by name.'
         ),
     ] = None
+    photo_url: Annotated[
+        str | None,
+        Field(description="Presigned URL for the invite's main photo (best-effort)."),
+    ] = None
+    renewal_requested: Annotated[
+        bool | None,
+        Field(
+            description="True when the authenticated requester already submitted a pending renewal request."
+        ),
+    ] = None
+    require_pin: bool | None = None
+    require_verified_phone: bool | None = None
     schedule: InviteScheduleSnapshot | None = None
     schedule_combined: InviteScheduleCombined | None = None
     schedule_entries: list[InviteScheduleEntrySnapshot] | None = None
     schedule_kind: InviteScheduleKind | None = None
     state: PublicInviteState
+    timezone: Annotated[
+        str | None,
+        Field(
+            description="Org IANA timezone used to evaluate invitation curfews (`UTC` when unset)."
+        ),
+    ] = None
     valid_from: str | None = None
     valid_to: str | None = None
 
@@ -1658,22 +5464,138 @@ class QuotaReport(BaseModel):
     Full quota report for an org; powers `/dashboard/billing`.
     """
 
+    degradation: DegradationStatus | None = None
     items: list[QuotaUsage]
     org_id: str
     tier_slug: str | None = None
 
 
+class ReadinessIssue(BaseModel):
+    code: ReadinessIssueCode
+    severity: ReadinessSeverity
+    subject: ReadinessSubject | None = None
+
+
+class SectionReadiness(BaseModel):
+    blocking_count: Annotated[
+        int,
+        Field(
+            description="Issues whose subject cannot be used, including site-scoped gaps.",
+            ge=0,
+        ),
+    ]
+    incomplete_count: Annotated[int, Field(ge=0)]
+    issues: list[ReadinessIssue]
+    section: ReadinessSection
+    severity: Annotated[
+        ReadinessSeverity,
+        Field(
+            description="Aggregate severity of the section, not the worst issue severity: see the\nmodule docs for how subject-scoped issues degrade a section to\n[`ReadinessSeverity::Partial`]."
+        ),
+    ]
+
+
+class SiteAccessDevice(BaseModel):
+    """
+    One device in one section. A device may appear in more than one section.
+    """
+
+    created_at: str | None = None
+    deleted: Annotated[
+        bool,
+        Field(
+            description="True when the device is soft-deleted but still referenced by a door."
+        ),
+    ]
+    device_id: str
+    doors: Annotated[
+        list[SiteAccessDeviceDoor],
+        Field(
+            description="Doors this device serves in this role (union of `entities[].doors`)."
+        ),
+    ]
+    entities: Annotated[
+        list[SiteAccessDeviceEntity],
+        Field(
+            description="Entities on this device playing this section's role. Empty for cameras."
+        ),
+    ]
+    external_id: str | None = None
+    integration_id: Annotated[
+        str,
+        Field(
+            description="Owning integration — usually not the site's own integration."
+        ),
+    ]
+    name: LocalizedString
+
+
+class SiteAccessDevicesResponse(BaseModel):
+    cameras: list[SiteAccessDevice]
+    lights: list[SiteAccessDevice]
+    openers: list[SiteAccessDevice]
+    unresolved: Annotated[
+        list[SiteAccessUnresolvedRef],
+        Field(
+            description="Door references that resolve to no device. Never empty-by-omission."
+        ),
+    ]
+
+
+class SiteReadiness(BaseModel):
+    sections: list[SectionReadiness]
+    severity: ReadinessSeverity
+    suppressed_sections: list[ReadinessSection]
+    usable: bool
+
+
 class AccessInviteListItem(BaseModel):
     created_at: str | None = None
+    created_by_user_id: Annotated[
+        str | None,
+        Field(
+            description="User who created this invite or share. Omitted when the row has no creator."
+        ),
+    ] = None
+    creation_justification: str | None = None
+    curfew_exempt: Annotated[
+        bool | None,
+        Field(
+            description="Admin-only emergency exception: skip invitation curfew at redemption."
+        ),
+    ] = None
+    devices_count: int | None = None
     disabled_justification: str | None = None
+    external_ref: ExternalReferenceResponse | None = None
     granted_portals: list[AccessInviteGrantedPortal]
     id: str
     invite_recurrence: Any | None = None
     invitee_message: Any | None = None
     is_enabled: bool
+    kind: AccessInviteKind | None = None
+    last_shared_at: str | None = None
     last_used_at: str | None = None
+    location: LocationResponse | None = None
+    location_mode: Annotated[
+        LocationBindingMode,
+        Field(
+            description="How the event location is resolved: `none`, `explicit`, or `inherit` (building)."
+        ),
+    ]
+    max_devices: int | None = None
     max_uses: int | None = None
     name: str | None = None
+    pending_renewal_count: int | None = None
+    photo_thumb_url: Annotated[
+        str | None,
+        Field(
+            description="Presigned URL for the `thumb` rendition of the invite photo, for avatar-sized renders.\nAbsent when the source is already thumb-sized; fall back to `photo_url`."
+        ),
+    ] = None
+    photo_url: Annotated[
+        str | None,
+        Field(description="Presigned URL for the invite's main photo (best-effort)."),
+    ] = None
     revoked_at: str | None = None
     schedule: InviteScheduleSnapshot
     schedule_combined: InviteScheduleCombined
@@ -1687,22 +5609,122 @@ class AccessInviteListItem(BaseModel):
 
 
 class CreateAccessInviteResponse(BaseModel):
+    creation_justification: str | None = None
+    curfew_exempt: Annotated[
+        bool | None,
+        Field(
+            description="Admin-only emergency exception: skip invitation curfew at redemption."
+        ),
+    ] = None
+    curfew_windows: Annotated[
+        list[CurfewWindowResponse] | None,
+        Field(
+            description="Effective forbidden hour windows (informational; invites are never mutated)."
+        ),
+    ] = None
+    devices_count: int | None = None
+    external_ref: ExternalReferenceResponse | None = None
     granted_portals: list[AccessInviteGrantedPortal]
+    idempotent_replay: Annotated[
+        bool | None,
+        Field(
+            description="True when this body is a replay of an earlier create that carried the same\n`Idempotency-Key`. Nothing was created by this request and the one-time token fields are\nomitted."
+        ),
+    ] = None
     invite_link_id: str
     invite_recurrence: Any | None = None
-    invite_token: str
+    invite_token: Annotated[
+        str | None,
+        Field(
+            description="Guest bearer token, returned **once** by the original create call.\n\nIt is stored only as a hash, never logged, and never cached for idempotent replay, so a\nreplayed create response omits it. Persist it at delivery time or rotate it through\n`POST /access-invites/{id}/regenerate-token`."
+        ),
+    ] = None
+    invite_url: Annotated[
+        str | None,
+        Field(
+            description="Guest-facing invite URL (shareable link for SMS/email). Same one-time visibility as\n`invite_token`, and subject to the same logging restrictions."
+        ),
+    ] = None
     invitee_message: Any | None = None
     is_enabled: bool
+    kind: AccessInviteKind | None = None
+    location: LocationResponse | None = None
+    location_mode: Annotated[
+        LocationBindingMode,
+        Field(
+            description="How the event location is resolved: `none`, `explicit`, or `inherit` (building)."
+        ),
+    ]
+    max_devices: int | None = None
     max_uses: int | None = None
     name: str | None = None
+    pending_approval: Annotated[
+        bool | None,
+        Field(
+            description="True when a `user_sharing` policy required admin approval: the invite was created disabled\nand an approval request is pending. The invite activates once an admin approves it."
+        ),
+    ] = None
     schedule: InviteScheduleSnapshot
     schedule_combined: InviteScheduleCombined
     schedule_entries: list[InviteScheduleEntrySnapshot]
     schedule_kind: InviteScheduleKind
+    timezone: Annotated[
+        str | None,
+        Field(description="Org IANA timezone used to evaluate invitation curfews."),
+    ] = None
     uses: int
     valid_from: str
     valid_to: str
 
 
+class DoorHoldResponse(BaseModel):
+    hold: HoldView | None = None
+    include_lights: bool
+    lights: list[EntityHoldItem]
+    mixed: bool
+    mode: HoldMode | None = None
+    openers: list[EntityHoldItem]
+    timezone: Annotated[
+        str,
+        Field(
+            description="Organization IANA timezone used when authoring a new recurring hold."
+        ),
+    ]
+
+
 class ListIntegrationAccessInvitesResponse(BaseModel):
     invites: list[AccessInviteListItem]
+
+
+class MeAccessInvitesResponse(BaseModel):
+    invites: list[AccessInviteListItem]
+
+
+class ReconcileAccessInviteResponse(BaseModel):
+    action: ReconcileAction
+    external_ref: ExternalReferenceResponse | None = None
+    idempotent_replay: Annotated[
+        bool | None,
+        Field(
+            description="True when this body is a replay of an earlier reconcile carrying the same\n`Idempotency-Key`; nothing was written by this request."
+        ),
+    ] = None
+    invite: AccessInviteListItem | None = None
+    invite_link_id: Annotated[
+        str | None,
+        Field(
+            description="The invitation serving the external record. Absent only when the desired state is `revoked`\nand no invitation exists for the record."
+        ),
+    ] = None
+    invite_token: Annotated[
+        str | None,
+        Field(
+            description="Guest bearer token, returned **once**, only by the call that created the invitation. A\nreplayed reconcile omits it; use `regenerate-token` to obtain a fresh link."
+        ),
+    ] = None
+    invite_url: Annotated[
+        str | None,
+        Field(
+            description="Guest-facing invite URL, with the same one-time visibility as `invite_token`."
+        ),
+    ] = None

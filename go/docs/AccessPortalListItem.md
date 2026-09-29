@@ -5,7 +5,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **CreatedAt** | Pointer to **NullableString** |  | [optional]
-**DeviceExternalId** | Pointer to **NullableString** | Device external_id (same integration): portal links to virtual_access_portal device by standard external identity. | [optional]
+**DeletedAt** | Pointer to **NullableString** | When set, the portal is soft-deleted (kept for restore). | [optional]
+**DeviceId** | Pointer to **NullableString** | Door device id (virtual_access_portal in this integration). Canonical portal link key. | [optional]
+**DirectoryId** | Pointer to **NullableString** | Directory device id (virtual_access_directory in this integration). | [optional]
 **Id** | **string** |  |
 **Name** | [**LocalizedString**](LocalizedString.md) |  |
 **PublicId** | **string** |  |
@@ -65,41 +67,111 @@ HasCreatedAt returns a boolean if a field has been set.
 `func (o *AccessPortalListItem) UnsetCreatedAt()`
 
 UnsetCreatedAt ensures that no value is present for CreatedAt, not even an explicit nil
-### GetDeviceExternalId
+### GetDeletedAt
 
-`func (o *AccessPortalListItem) GetDeviceExternalId() string`
+`func (o *AccessPortalListItem) GetDeletedAt() string`
 
-GetDeviceExternalId returns the DeviceExternalId field if non-nil, zero value otherwise.
+GetDeletedAt returns the DeletedAt field if non-nil, zero value otherwise.
 
-### GetDeviceExternalIdOk
+### GetDeletedAtOk
 
-`func (o *AccessPortalListItem) GetDeviceExternalIdOk() (*string, bool)`
+`func (o *AccessPortalListItem) GetDeletedAtOk() (*string, bool)`
 
-GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field if it's non-nil, zero value otherwise
+GetDeletedAtOk returns a tuple with the DeletedAt field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetDeviceExternalId
+### SetDeletedAt
 
-`func (o *AccessPortalListItem) SetDeviceExternalId(v string)`
+`func (o *AccessPortalListItem) SetDeletedAt(v string)`
 
-SetDeviceExternalId sets DeviceExternalId field to given value.
+SetDeletedAt sets DeletedAt field to given value.
 
-### HasDeviceExternalId
+### HasDeletedAt
 
-`func (o *AccessPortalListItem) HasDeviceExternalId() bool`
+`func (o *AccessPortalListItem) HasDeletedAt() bool`
 
-HasDeviceExternalId returns a boolean if a field has been set.
+HasDeletedAt returns a boolean if a field has been set.
 
-### SetDeviceExternalIdNil
+### SetDeletedAtNil
 
-`func (o *AccessPortalListItem) SetDeviceExternalIdNil(b bool)`
+`func (o *AccessPortalListItem) SetDeletedAtNil(b bool)`
 
- SetDeviceExternalIdNil sets the value for DeviceExternalId to be an explicit nil
+ SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
 
-### UnsetDeviceExternalId
-`func (o *AccessPortalListItem) UnsetDeviceExternalId()`
+### UnsetDeletedAt
+`func (o *AccessPortalListItem) UnsetDeletedAt()`
 
-UnsetDeviceExternalId ensures that no value is present for DeviceExternalId, not even an explicit nil
+UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
+### GetDeviceId
+
+`func (o *AccessPortalListItem) GetDeviceId() string`
+
+GetDeviceId returns the DeviceId field if non-nil, zero value otherwise.
+
+### GetDeviceIdOk
+
+`func (o *AccessPortalListItem) GetDeviceIdOk() (*string, bool)`
+
+GetDeviceIdOk returns a tuple with the DeviceId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeviceId
+
+`func (o *AccessPortalListItem) SetDeviceId(v string)`
+
+SetDeviceId sets DeviceId field to given value.
+
+### HasDeviceId
+
+`func (o *AccessPortalListItem) HasDeviceId() bool`
+
+HasDeviceId returns a boolean if a field has been set.
+
+### SetDeviceIdNil
+
+`func (o *AccessPortalListItem) SetDeviceIdNil(b bool)`
+
+ SetDeviceIdNil sets the value for DeviceId to be an explicit nil
+
+### UnsetDeviceId
+`func (o *AccessPortalListItem) UnsetDeviceId()`
+
+UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
+### GetDirectoryId
+
+`func (o *AccessPortalListItem) GetDirectoryId() string`
+
+GetDirectoryId returns the DirectoryId field if non-nil, zero value otherwise.
+
+### GetDirectoryIdOk
+
+`func (o *AccessPortalListItem) GetDirectoryIdOk() (*string, bool)`
+
+GetDirectoryIdOk returns a tuple with the DirectoryId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDirectoryId
+
+`func (o *AccessPortalListItem) SetDirectoryId(v string)`
+
+SetDirectoryId sets DirectoryId field to given value.
+
+### HasDirectoryId
+
+`func (o *AccessPortalListItem) HasDirectoryId() bool`
+
+HasDirectoryId returns a boolean if a field has been set.
+
+### SetDirectoryIdNil
+
+`func (o *AccessPortalListItem) SetDirectoryIdNil(b bool)`
+
+ SetDirectoryIdNil sets the value for DirectoryId to be an explicit nil
+
+### UnsetDirectoryId
+`func (o *AccessPortalListItem) UnsetDirectoryId()`
+
+UnsetDirectoryId ensures that no value is present for DirectoryId, not even an explicit nil
 ### GetId
 
 `func (o *AccessPortalListItem) GetId() string`

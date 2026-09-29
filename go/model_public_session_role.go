@@ -20,8 +20,8 @@ type PublicSessionRole string
 
 // List of PublicSessionRole
 const (
-	CALLER PublicSessionRole = "caller"
-	CALLEE PublicSessionRole = "callee"
+	PUBLICSESSIONROLE_CALLER PublicSessionRole = "caller"
+	PUBLICSESSIONROLE_CALLEE PublicSessionRole = "callee"
 )
 
 // All allowed values of PublicSessionRole enum

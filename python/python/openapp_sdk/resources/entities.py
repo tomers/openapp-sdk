@@ -35,7 +35,7 @@ class EntityHandle:
 
 
 class EntitiesClient(_BaseResource):
-    """Entities: logical objects (apartments, gates, cameras…) attached to devices."""
+    """Entities: logical objects (directory listings, gates, cameras…) attached to devices."""
 
     async def list(
         self,
@@ -90,6 +90,28 @@ class EntitiesClient(_BaseResource):
             "POST", f"/entities/{entity_id}/actions/{action_id}", body=body or {}
         )
 
+    async def preview(self, entity_id: str, action_id: str, **body: Any) -> dict[str, Any]:
+        return await self._client._request(
+            "POST",
+            f"/entities/{entity_id}/actions/{action_id}/preview",
+            body=body or {},
+        )
+
+    async def actions_with_headers(
+        self,
+        entity_id: str,
+        action_id: str,
+        *,
+        headers: dict[str, str] | None = None,
+        **body: Any,
+    ) -> dict[str, Any]:
+        return await self._client._request(
+            "POST",
+            f"/entities/{entity_id}/actions/{action_id}",
+            body=body or {},
+            headers=headers,
+        )
+
     def by_id(self, entity_id: str) -> EntityHandle:
         """Return a fluent entity handle for action-style operations."""
 
@@ -111,8 +133,8 @@ class EntitiesClient(_BaseResource):
             query=q,
         )
 
-    async def apartment_floors(self, device_id: str) -> dict[str, Any]:
-        return await self._client._request("GET", f"/devices/{device_id}/apartment-floors")
+    async def directory_floors(self, device_id: str) -> dict[str, Any]:
+        return await self._client._request("GET", f"/devices/{device_id}/directory-floors")
 
     async def upload_image(
         self,

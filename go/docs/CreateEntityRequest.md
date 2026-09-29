@@ -5,18 +5,18 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **ChannelIndex** | Pointer to **NullableInt32** |  | [optional]
-**DeviceId** | **string** |  |
-**EntityType** | **string** |  |
+**DeviceId** | **NullableString** |  |
+**EntityType** | **NullableString** |  |
 **ExternalId** | Pointer to **NullableString** |  | [optional]
 **Metadata** | Pointer to **map[string]interface{}** | Arbitrary, persisted entity metadata (integration-specific).  For example, MQTT entities can store: - &#x60;command_topic&#x60; - &#x60;toggle_payload&#x60;  Values are converted to strings (non-strings are JSON-stringified) to match &#x60;domain::Metadata&#x60;. | [optional]
-**Name** | Pointer to **NullableString** | Optional friendly name for the entity. | [optional]
+**Name** | Pointer to **string** | Optional friendly name for the entity. | [optional]
 **ZoneId** | Pointer to **NullableString** |  | [optional]
 
 ## Methods
 
 ### NewCreateEntityRequest
 
-`func NewCreateEntityRequest(deviceId string, entityType string, ) *CreateEntityRequest`
+`func NewCreateEntityRequest(deviceId NullableString, entityType NullableString, ) *CreateEntityRequest`
 
 NewCreateEntityRequest instantiates a new CreateEntityRequest object
 This constructor will assign default values to properties that have it defined,
@@ -86,6 +86,16 @@ and a boolean to check if the value has been set.
 SetDeviceId sets DeviceId field to given value.
 
 
+### SetDeviceIdNil
+
+`func (o *CreateEntityRequest) SetDeviceIdNil(b bool)`
+
+ SetDeviceIdNil sets the value for DeviceId to be an explicit nil
+
+### UnsetDeviceId
+`func (o *CreateEntityRequest) UnsetDeviceId()`
+
+UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
 ### GetEntityType
 
 `func (o *CreateEntityRequest) GetEntityType() string`
@@ -106,6 +116,16 @@ and a boolean to check if the value has been set.
 SetEntityType sets EntityType field to given value.
 
 
+### SetEntityTypeNil
+
+`func (o *CreateEntityRequest) SetEntityTypeNil(b bool)`
+
+ SetEntityTypeNil sets the value for EntityType to be an explicit nil
+
+### UnsetEntityType
+`func (o *CreateEntityRequest) UnsetEntityType()`
+
+UnsetEntityType ensures that no value is present for EntityType, not even an explicit nil
 ### GetExternalId
 
 `func (o *CreateEntityRequest) GetExternalId() string`
@@ -191,16 +211,6 @@ SetName sets Name field to given value.
 
 HasName returns a boolean if a field has been set.
 
-### SetNameNil
-
-`func (o *CreateEntityRequest) SetNameNil(b bool)`
-
- SetNameNil sets the value for Name to be an explicit nil
-
-### UnsetName
-`func (o *CreateEntityRequest) UnsetName()`
-
-UnsetName ensures that no value is present for Name, not even an explicit nil
 ### GetZoneId
 
 `func (o *CreateEntityRequest) GetZoneId() string`

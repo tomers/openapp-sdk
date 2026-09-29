@@ -4,11 +4,15 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**CreatedAt** | Pointer to **time.Time** |  | [optional]
+**DeletedAt** | Pointer to **time.Time** |  | [optional]
+**HardDeleteAt** | Pointer to **time.Time** |  | [optional]
+**PurgeAt** | Pointer to **time.Time** |  | [optional]
+**UpdatedAt** | Pointer to **time.Time** |  | [optional]
 **Config** | Pointer to **interface{}** |  | [optional]
-**Enabled** | **bool** | User-controlled flag: if false, this integration will not be used for actions/ops. |
-**Health** | [**IntegrationHealth**](IntegrationHealth.md) | Backend-controlled health marker (ok/error). |
+**Enabled** | **bool** | Pause switch for hardware connectors. Always true for site providers. |
+**Health** | [**IntegrationHealth**](IntegrationHealth.md) | Backend-controlled health marker (ok/reduced/error). |
 **Id** | **string** | Unique identifier (ULID). |
-**Metadata** | Pointer to **map[string]string** |  | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) | Human-friendly name for this integration (distinguishes multiple integrations of same provider). |
 **OrgId** | **string** | Organization that owns this integration. |
 **ProviderType** | [**ProviderType**](ProviderType.md) | Provider type (e.g. homeassistant, shelly_cloud). |
@@ -31,6 +35,131 @@ will change when the set of required properties is changed
 NewIntegrationWithDefaults instantiates a new Integration object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetCreatedAt
+
+`func (o *Integration) GetCreatedAt() time.Time`
+
+GetCreatedAt returns the CreatedAt field if non-nil, zero value otherwise.
+
+### GetCreatedAtOk
+
+`func (o *Integration) GetCreatedAtOk() (*time.Time, bool)`
+
+GetCreatedAtOk returns a tuple with the CreatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCreatedAt
+
+`func (o *Integration) SetCreatedAt(v time.Time)`
+
+SetCreatedAt sets CreatedAt field to given value.
+
+### HasCreatedAt
+
+`func (o *Integration) HasCreatedAt() bool`
+
+HasCreatedAt returns a boolean if a field has been set.
+
+### GetDeletedAt
+
+`func (o *Integration) GetDeletedAt() time.Time`
+
+GetDeletedAt returns the DeletedAt field if non-nil, zero value otherwise.
+
+### GetDeletedAtOk
+
+`func (o *Integration) GetDeletedAtOk() (*time.Time, bool)`
+
+GetDeletedAtOk returns a tuple with the DeletedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeletedAt
+
+`func (o *Integration) SetDeletedAt(v time.Time)`
+
+SetDeletedAt sets DeletedAt field to given value.
+
+### HasDeletedAt
+
+`func (o *Integration) HasDeletedAt() bool`
+
+HasDeletedAt returns a boolean if a field has been set.
+
+### GetHardDeleteAt
+
+`func (o *Integration) GetHardDeleteAt() time.Time`
+
+GetHardDeleteAt returns the HardDeleteAt field if non-nil, zero value otherwise.
+
+### GetHardDeleteAtOk
+
+`func (o *Integration) GetHardDeleteAtOk() (*time.Time, bool)`
+
+GetHardDeleteAtOk returns a tuple with the HardDeleteAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHardDeleteAt
+
+`func (o *Integration) SetHardDeleteAt(v time.Time)`
+
+SetHardDeleteAt sets HardDeleteAt field to given value.
+
+### HasHardDeleteAt
+
+`func (o *Integration) HasHardDeleteAt() bool`
+
+HasHardDeleteAt returns a boolean if a field has been set.
+
+### GetPurgeAt
+
+`func (o *Integration) GetPurgeAt() time.Time`
+
+GetPurgeAt returns the PurgeAt field if non-nil, zero value otherwise.
+
+### GetPurgeAtOk
+
+`func (o *Integration) GetPurgeAtOk() (*time.Time, bool)`
+
+GetPurgeAtOk returns a tuple with the PurgeAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPurgeAt
+
+`func (o *Integration) SetPurgeAt(v time.Time)`
+
+SetPurgeAt sets PurgeAt field to given value.
+
+### HasPurgeAt
+
+`func (o *Integration) HasPurgeAt() bool`
+
+HasPurgeAt returns a boolean if a field has been set.
+
+### GetUpdatedAt
+
+`func (o *Integration) GetUpdatedAt() time.Time`
+
+GetUpdatedAt returns the UpdatedAt field if non-nil, zero value otherwise.
+
+### GetUpdatedAtOk
+
+`func (o *Integration) GetUpdatedAtOk() (*time.Time, bool)`
+
+GetUpdatedAtOk returns a tuple with the UpdatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUpdatedAt
+
+`func (o *Integration) SetUpdatedAt(v time.Time)`
+
+SetUpdatedAt sets UpdatedAt field to given value.
+
+### HasUpdatedAt
+
+`func (o *Integration) HasUpdatedAt() bool`
+
+HasUpdatedAt returns a boolean if a field has been set.
 
 ### GetConfig
 
@@ -126,31 +255,6 @@ and a boolean to check if the value has been set.
 
 SetId sets Id field to given value.
 
-
-### GetMetadata
-
-`func (o *Integration) GetMetadata() map[string]string`
-
-GetMetadata returns the Metadata field if non-nil, zero value otherwise.
-
-### GetMetadataOk
-
-`func (o *Integration) GetMetadataOk() (*map[string]string, bool)`
-
-GetMetadataOk returns a tuple with the Metadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetMetadata
-
-`func (o *Integration) SetMetadata(v map[string]string)`
-
-SetMetadata sets Metadata field to given value.
-
-### HasMetadata
-
-`func (o *Integration) HasMetadata() bool`
-
-HasMetadata returns a boolean if a field has been set.
 
 ### GetName
 

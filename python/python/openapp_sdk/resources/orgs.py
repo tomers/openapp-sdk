@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from .._image_from_url import fetch_image_for_upload
 from ._base import _BaseResource
+from ._resolve import _bridge_get_by_name
+
+MatchMode = Literal["exact", "fuzzy"]
 
 
 class OrgsClient(_BaseResource):
@@ -25,6 +28,19 @@ class OrgsClient(_BaseResource):
         )
         return await self._client._request("GET", "/orgs", query=q)
 
+    async def get_by_name(
+        self,
+        name: str,
+        *,
+        match: MatchMode = "exact",
+    ) -> dict[str, Any]:
+        return await _bridge_get_by_name(
+            self._client,
+            "orgs_get_by_name",
+            name,
+            match=match,
+        )
+
     async def create(self, *, name: str, **extra: Any) -> dict[str, Any]:
         return await self._client._request("POST", "/orgs", body={"name": name, **extra})
 
@@ -42,6 +58,37 @@ class OrgsClient(_BaseResource):
 
     async def permissions(self, org_id: str) -> dict[str, Any]:
         return await self._client._request("GET", f"/orgs/{org_id}/permissions")
+
+    async def resolve(
+        self, org_id: str, *, query: str, resource_type: str | None = None
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {"query": query}
+        if resource_type is not None:
+            body["resource_type"] = resource_type
+        return await self._client._request("POST", f"/orgs/{org_id}/resolve", body=body)
+
+    async def create_alias(
+        self,
+        org_id: str,
+        *,
+        resource_type: str,
+        resource_id: str,
+        alias: str,
+    ) -> dict[str, Any]:
+        return await self._client._request(
+            "POST",
+            f"/orgs/{org_id}/aliases",
+            body={
+                "resource_type": resource_type,
+                "resource_id": resource_id,
+                "alias": alias,
+            },
+        )
+
+    async def copilot_chat(self, org_id: str, *, message: str) -> dict[str, Any]:
+        return await self._client._request(
+            "POST", f"/orgs/{org_id}/copilot/chat", body={"message": message}
+        )
 
     async def users(
         self, org_id: str, *, limit: int | None = None, cursor: str | None = None

@@ -25,12 +25,14 @@ type QuotaUsage struct {
 	Key     QuotaKey       `json:"key"`
 	Limit   EffectiveLimit `json:"limit"`
 	Period  QuotaPeriod    `json:"period"`
-	// Window end (RFC3339). `null` for `Lifetime`.
+	// Window end ([RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)). `null` for `Lifetime`.
 	PeriodEnd NullableString `json:"period_end,omitempty"`
 	// Window label (e.g. `lifetime`, `month:2026-04`). Stable across reports.
 	PeriodLabel string `json:"period_label"`
-	// Window start (RFC3339). `null` for `Lifetime`.
+	// Window start ([RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)). `null` for `Lifetime`.
 	PeriodStart NullableString `json:"period_start,omitempty"`
+	// Machine-readable unit of `current`/`limit` (e.g. `count`, `seconds`).
+	Unit QuotaUnit `json:"unit"`
 }
 
 type _QuotaUsage QuotaUsage
@@ -39,13 +41,14 @@ type _QuotaUsage QuotaUsage
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewQuotaUsage(current int64, key QuotaKey, limit EffectiveLimit, period QuotaPeriod, periodLabel string) *QuotaUsage {
+func NewQuotaUsage(current int64, key QuotaKey, limit EffectiveLimit, period QuotaPeriod, periodLabel string, unit QuotaUnit) *QuotaUsage {
 	this := QuotaUsage{}
 	this.Current = current
 	this.Key = key
 	this.Limit = limit
 	this.Period = period
 	this.PeriodLabel = periodLabel
+	this.Unit = unit
 	return &this
 }
 
@@ -263,6 +266,30 @@ func (o *QuotaUsage) UnsetPeriodStart() {
 	o.PeriodStart.Unset()
 }
 
+// GetUnit returns the Unit field value
+func (o *QuotaUsage) GetUnit() QuotaUnit {
+	if o == nil {
+		var ret QuotaUnit
+		return ret
+	}
+
+	return o.Unit
+}
+
+// GetUnitOk returns a tuple with the Unit field value
+// and a boolean to check if the value has been set.
+func (o *QuotaUsage) GetUnitOk() (*QuotaUnit, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Unit, true
+}
+
+// SetUnit sets field value
+func (o *QuotaUsage) SetUnit(v QuotaUnit) {
+	o.Unit = v
+}
+
 func (o QuotaUsage) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["current"] = o.Current
@@ -276,6 +303,7 @@ func (o QuotaUsage) ToMap() (map[string]interface{}, error) {
 	if o.PeriodStart.IsSet() {
 		toSerialize["period_start"] = o.PeriodStart.Get()
 	}
+	toSerialize["unit"] = o.Unit
 	return toSerialize, nil
 }
 
@@ -289,6 +317,7 @@ func (o *QuotaUsage) UnmarshalJSON(data []byte) (err error) {
 		"limit",
 		"period",
 		"period_label",
+		"unit",
 	}
 
 	allProperties := make(map[string]interface{})

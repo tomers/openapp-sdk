@@ -19,6 +19,8 @@ Method | HTTP request | Description
 
 
 
+
+
 ### Example
 
 ```go
@@ -34,7 +36,7 @@ import (
 func main() {
 	createApiKeyRequest := *openapiclient.NewCreateApiKeyRequest("Name_example") // CreateApiKeyRequest |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -69,7 +71,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -83,7 +85,7 @@ Name | Type | Description  | Notes
 
 ## ListApiKeys
 
-> []ApiKeyListItem ListApiKeys(ctx).Execute()
+> PaginatedResponseApiKeyListItem ListApiKeys(ctx).Limit(limit).Offset(offset).Execute()
 
 
 
@@ -100,39 +102,46 @@ import (
 )
 
 func main() {
+	limit := int32(50) // int32 | Number of items per page. Default from config, max 200. (optional)
+	offset := int32(0) // int32 | Number of items to skip. Default 0. (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.APIKeysAPI.ListApiKeys(context.Background()).Execute()
+	resp, r, err := apiClient.APIKeysAPI.ListApiKeys(context.Background()).Limit(limit).Offset(offset).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `APIKeysAPI.ListApiKeys``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListApiKeys`: []ApiKeyListItem
+	// response from `ListApiKeys`: PaginatedResponseApiKeyListItem
 	fmt.Fprintf(os.Stdout, "Response from `APIKeysAPI.ListApiKeys`: %v\n", resp)
 }
 ```
 
 ### Path Parameters
 
-This endpoint does not need any parameter.
+
 
 ### Other Parameters
 
 Other parameters are passed through a pointer to a apiListApiKeysRequest struct via the builder pattern
 
 
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **limit** | **int32** | Number of items per page. Default from config, max 200. |
+ **offset** | **int32** | Number of items to skip. Default 0. |
+
 ### Return type
 
-[**[]ApiKeyListItem**](ApiKeyListItem.md)
+[**PaginatedResponseApiKeyListItem**](PaginatedResponseApiKeyListItem.md)
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -165,7 +174,7 @@ import (
 func main() {
 	id := "id_example" // string | API key ID
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -202,7 +211,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -235,7 +244,7 @@ import (
 func main() {
 	id := "id_example" // string | API key ID
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -272,7 +281,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -305,7 +314,7 @@ import (
 func main() {
 	id := "id_example" // string | API key ID
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -342,7 +351,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -376,7 +385,7 @@ func main() {
 	id := "id_example" // string | API key ID
 	updateApiKeyRequest := *openapiclient.NewUpdateApiKeyRequest("Name_example") // UpdateApiKeyRequest |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -414,7 +423,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 

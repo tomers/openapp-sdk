@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **string** |  |
+**IsLinked** | **bool** | Whether the portal currently resolves to a live door device. When false the portal is misconfigured/unlinked and the invite UI shows it in a warning state. |
 **Name** | [**LocalizedString**](LocalizedString.md) |  |
 **PublicId** | **string** |  |
 
@@ -12,7 +13,7 @@ Name | Type | Description | Notes
 
 ### NewAccessInviteGrantedPortal
 
-`func NewAccessInviteGrantedPortal(id string, name LocalizedString, publicId string, ) *AccessInviteGrantedPortal`
+`func NewAccessInviteGrantedPortal(id string, isLinked bool, name LocalizedString, publicId string, ) *AccessInviteGrantedPortal`
 
 NewAccessInviteGrantedPortal instantiates a new AccessInviteGrantedPortal object
 This constructor will assign default values to properties that have it defined,
@@ -45,6 +46,26 @@ and a boolean to check if the value has been set.
 `func (o *AccessInviteGrantedPortal) SetId(v string)`
 
 SetId sets Id field to given value.
+
+
+### GetIsLinked
+
+`func (o *AccessInviteGrantedPortal) GetIsLinked() bool`
+
+GetIsLinked returns the IsLinked field if non-nil, zero value otherwise.
+
+### GetIsLinkedOk
+
+`func (o *AccessInviteGrantedPortal) GetIsLinkedOk() (*bool, bool)`
+
+GetIsLinkedOk returns a tuple with the IsLinked field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIsLinked
+
+`func (o *AccessInviteGrantedPortal) SetIsLinked(v bool)`
+
+SetIsLinked sets IsLinked field to given value.
 
 
 ### GetName

@@ -14,6 +14,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // checks if the Organization type satisfies the MappedNullable interface at compile time
@@ -21,11 +22,17 @@ var _ MappedNullable = &Organization{}
 
 // Organization An organization (tenant) with optional parent for hierarchy.
 type Organization struct {
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
+	HardDeleteAt *time.Time `json:"hard_delete_at,omitempty"`
+	PurgeAt      *time.Time `json:"purge_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
 	// Optional description.
 	Description NullableString `json:"description,omitempty"`
 	// Unique identifier (ULID).
-	Id       string            `json:"id"`
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Id string `json:"id"`
+	// True when this org is a personal workspace auto-created for a self-signup user.  Company / property orgs are `false`. A workspace is the parent a user's own first site is created under, not an operating organization that members are invited into.
+	IsPersonal *bool `json:"is_personal,omitempty"`
 	// Organization name.
 	Name LocalizedString `json:"name"`
 	// Parent organization ID for hierarchy.
@@ -54,6 +61,166 @@ func NewOrganization(id string, name LocalizedString, userRoles map[string][]str
 func NewOrganizationWithDefaults() *Organization {
 	this := Organization{}
 	return &this
+}
+
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *Organization) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Organization) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *Organization) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *Organization) SetCreatedAt(v time.Time) {
+	o.CreatedAt = &v
+}
+
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *Organization) GetDeletedAt() time.Time {
+	if o == nil || IsNil(o.DeletedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.DeletedAt
+}
+
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Organization) GetDeletedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
+		return nil, false
+	}
+	return o.DeletedAt, true
+}
+
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *Organization) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeletedAt gets a reference to the given time.Time and assigns it to the DeletedAt field.
+func (o *Organization) SetDeletedAt(v time.Time) {
+	o.DeletedAt = &v
+}
+
+// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise.
+func (o *Organization) GetHardDeleteAt() time.Time {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.HardDeleteAt
+}
+
+// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Organization) GetHardDeleteAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		return nil, false
+	}
+	return o.HardDeleteAt, true
+}
+
+// HasHardDeleteAt returns a boolean if a field has been set.
+func (o *Organization) HasHardDeleteAt() bool {
+	if o != nil && !IsNil(o.HardDeleteAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetHardDeleteAt gets a reference to the given time.Time and assigns it to the HardDeleteAt field.
+func (o *Organization) SetHardDeleteAt(v time.Time) {
+	o.HardDeleteAt = &v
+}
+
+// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise.
+func (o *Organization) GetPurgeAt() time.Time {
+	if o == nil || IsNil(o.PurgeAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.PurgeAt
+}
+
+// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Organization) GetPurgeAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.PurgeAt) {
+		return nil, false
+	}
+	return o.PurgeAt, true
+}
+
+// HasPurgeAt returns a boolean if a field has been set.
+func (o *Organization) HasPurgeAt() bool {
+	if o != nil && !IsNil(o.PurgeAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPurgeAt gets a reference to the given time.Time and assigns it to the PurgeAt field.
+func (o *Organization) SetPurgeAt(v time.Time) {
+	o.PurgeAt = &v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *Organization) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Organization) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *Organization) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *Organization) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = &v
 }
 
 // GetDescription returns the Description field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -123,36 +290,36 @@ func (o *Organization) SetId(v string) {
 	o.Id = v
 }
 
-// GetMetadata returns the Metadata field value if set, zero value otherwise.
-func (o *Organization) GetMetadata() map[string]string {
-	if o == nil || IsNil(o.Metadata) {
-		var ret map[string]string
+// GetIsPersonal returns the IsPersonal field value if set, zero value otherwise.
+func (o *Organization) GetIsPersonal() bool {
+	if o == nil || IsNil(o.IsPersonal) {
+		var ret bool
 		return ret
 	}
-	return o.Metadata
+	return *o.IsPersonal
 }
 
-// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// GetIsPersonalOk returns a tuple with the IsPersonal field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *Organization) GetMetadataOk() (map[string]string, bool) {
-	if o == nil || IsNil(o.Metadata) {
-		return map[string]string{}, false
+func (o *Organization) GetIsPersonalOk() (*bool, bool) {
+	if o == nil || IsNil(o.IsPersonal) {
+		return nil, false
 	}
-	return o.Metadata, true
+	return o.IsPersonal, true
 }
 
-// HasMetadata returns a boolean if a field has been set.
-func (o *Organization) HasMetadata() bool {
-	if o != nil && !IsNil(o.Metadata) {
+// HasIsPersonal returns a boolean if a field has been set.
+func (o *Organization) HasIsPersonal() bool {
+	if o != nil && !IsNil(o.IsPersonal) {
 		return true
 	}
 
 	return false
 }
 
-// SetMetadata gets a reference to the given map[string]string and assigns it to the Metadata field.
-func (o *Organization) SetMetadata(v map[string]string) {
-	o.Metadata = v
+// SetIsPersonal gets a reference to the given bool and assigns it to the IsPersonal field.
+func (o *Organization) SetIsPersonal(v bool) {
+	o.IsPersonal = &v
 }
 
 // GetName returns the Name field value
@@ -248,12 +415,27 @@ func (o *Organization) SetUserRoles(v map[string][]string) {
 
 func (o Organization) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.HardDeleteAt) {
+		toSerialize["hard_delete_at"] = o.HardDeleteAt
+	}
+	if !IsNil(o.PurgeAt) {
+		toSerialize["purge_at"] = o.PurgeAt
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
 	}
 	toSerialize["id"] = o.Id
-	if !IsNil(o.Metadata) {
-		toSerialize["metadata"] = o.Metadata
+	if !IsNil(o.IsPersonal) {
+		toSerialize["is_personal"] = o.IsPersonal
 	}
 	toSerialize["name"] = o.Name
 	if o.ParentId.IsSet() {

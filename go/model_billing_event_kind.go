@@ -20,12 +20,12 @@ type BillingEventKind string
 
 // List of BillingEventKind
 const (
-	SUBSCRIPTION_CREATED  BillingEventKind = "subscription_created"
-	SUBSCRIPTION_UPDATED  BillingEventKind = "subscription_updated"
-	SUBSCRIPTION_CANCELED BillingEventKind = "subscription_canceled"
-	INVOICE_PAID          BillingEventKind = "invoice_paid"
-	INVOICE_FAILED        BillingEventKind = "invoice_failed"
-	OTHER                 BillingEventKind = "other"
+	BILLINGEVENTKIND_SUBSCRIPTION_CREATED  BillingEventKind = "subscription_created"
+	BILLINGEVENTKIND_SUBSCRIPTION_UPDATED  BillingEventKind = "subscription_updated"
+	BILLINGEVENTKIND_SUBSCRIPTION_CANCELED BillingEventKind = "subscription_canceled"
+	BILLINGEVENTKIND_INVOICE_PAID          BillingEventKind = "invoice_paid"
+	BILLINGEVENTKIND_INVOICE_FAILED        BillingEventKind = "invoice_failed"
+	BILLINGEVENTKIND_OTHER                 BillingEventKind = "other"
 )
 
 // All allowed values of BillingEventKind enum

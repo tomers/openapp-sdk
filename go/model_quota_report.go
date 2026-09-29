@@ -21,9 +21,11 @@ var _ MappedNullable = &QuotaReport{}
 
 // QuotaReport Full quota report for an org; powers `/dashboard/billing`.
 type QuotaReport struct {
-	Items    []QuotaUsage   `json:"items"`
-	OrgId    string         `json:"org_id"`
-	TierSlug NullableString `json:"tier_slug,omitempty"`
+	// Over-capacity remediation snapshot. Present only when the degradation system is enabled and the caller is permitted to see it; `null` otherwise.
+	Degradation NullableDegradationStatus `json:"degradation,omitempty"`
+	Items       []QuotaUsage              `json:"items"`
+	OrgId       string                    `json:"org_id"`
+	TierSlug    NullableString            `json:"tier_slug,omitempty"`
 }
 
 type _QuotaReport QuotaReport
@@ -45,6 +47,49 @@ func NewQuotaReport(items []QuotaUsage, orgId string) *QuotaReport {
 func NewQuotaReportWithDefaults() *QuotaReport {
 	this := QuotaReport{}
 	return &this
+}
+
+// GetDegradation returns the Degradation field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *QuotaReport) GetDegradation() DegradationStatus {
+	if o == nil || IsNil(o.Degradation.Get()) {
+		var ret DegradationStatus
+		return ret
+	}
+	return *o.Degradation.Get()
+}
+
+// GetDegradationOk returns a tuple with the Degradation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *QuotaReport) GetDegradationOk() (*DegradationStatus, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Degradation.Get(), o.Degradation.IsSet()
+}
+
+// HasDegradation returns a boolean if a field has been set.
+func (o *QuotaReport) HasDegradation() bool {
+	if o != nil && o.Degradation.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDegradation gets a reference to the given NullableDegradationStatus and assigns it to the Degradation field.
+func (o *QuotaReport) SetDegradation(v DegradationStatus) {
+	o.Degradation.Set(&v)
+}
+
+// SetDegradationNil sets the value for Degradation to be an explicit nil
+func (o *QuotaReport) SetDegradationNil() {
+	o.Degradation.Set(nil)
+}
+
+// UnsetDegradation ensures that no value is present for Degradation, not even an explicit nil
+func (o *QuotaReport) UnsetDegradation() {
+	o.Degradation.Unset()
 }
 
 // GetItems returns the Items field value
@@ -140,6 +185,9 @@ func (o *QuotaReport) UnsetTierSlug() {
 
 func (o QuotaReport) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.Degradation.IsSet() {
+		toSerialize["degradation"] = o.Degradation.Get()
+	}
 	toSerialize["items"] = o.Items
 	toSerialize["org_id"] = o.OrgId
 	if o.TierSlug.IsSet() {

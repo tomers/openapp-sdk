@@ -24,6 +24,8 @@ type PlanQuotaResponse struct {
 	LimitValue NullableInt64 `json:"limit_value,omitempty"`
 	Period     string        `json:"period"`
 	QuotaKey   string        `json:"quota_key"`
+	// Machine-readable unit of `limit_value` (e.g. `count`, `seconds`). Empty when `quota_key` is not a recognized `QuotaKey`.
+	Unit string `json:"unit"`
 }
 
 type _PlanQuotaResponse PlanQuotaResponse
@@ -32,10 +34,11 @@ type _PlanQuotaResponse PlanQuotaResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPlanQuotaResponse(period string, quotaKey string) *PlanQuotaResponse {
+func NewPlanQuotaResponse(period string, quotaKey string, unit string) *PlanQuotaResponse {
 	this := PlanQuotaResponse{}
 	this.Period = period
 	this.QuotaKey = quotaKey
+	this.Unit = unit
 	return &this
 }
 
@@ -138,6 +141,30 @@ func (o *PlanQuotaResponse) SetQuotaKey(v string) {
 	o.QuotaKey = v
 }
 
+// GetUnit returns the Unit field value
+func (o *PlanQuotaResponse) GetUnit() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Unit
+}
+
+// GetUnitOk returns a tuple with the Unit field value
+// and a boolean to check if the value has been set.
+func (o *PlanQuotaResponse) GetUnitOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Unit, true
+}
+
+// SetUnit sets field value
+func (o *PlanQuotaResponse) SetUnit(v string) {
+	o.Unit = v
+}
+
 func (o PlanQuotaResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.LimitValue.IsSet() {
@@ -145,6 +172,7 @@ func (o PlanQuotaResponse) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["period"] = o.Period
 	toSerialize["quota_key"] = o.QuotaKey
+	toSerialize["unit"] = o.Unit
 	return toSerialize, nil
 }
 
@@ -155,6 +183,7 @@ func (o *PlanQuotaResponse) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"period",
 		"quota_key",
+		"unit",
 	}
 
 	allProperties := make(map[string]interface{})

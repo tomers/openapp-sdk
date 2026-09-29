@@ -45,6 +45,28 @@ pub enum SdkError {
     #[error("failed to serialize request: {0}")]
     Serialize(String),
 
+    /// No resource matched the requested localized name.
+    #[error("no {resource_type} named {name:?}")]
+    ResourceNotFound {
+        /// Resource kind (e.g. `"integration"`, `"portal"`).
+        resource_type: &'static str,
+        /// Name needle passed to `get_by_name`.
+        name: String,
+    },
+
+    /// Multiple resources matched the same localized name.
+    #[error("{resource_type} name {name:?} is ambiguous ({match_count} matches)")]
+    AmbiguousResource {
+        /// Resource kind (e.g. `"integration"`, `"portal"`).
+        resource_type: &'static str,
+        /// Name needle passed to `get_by_name`.
+        name: String,
+        /// All matching resource objects (include `id` for disambiguation).
+        matches: Vec<serde_json::Value>,
+        /// Number of matches (convenience for bindings).
+        match_count: usize,
+    },
+
     /// Catch-all for anything else; always prefer a more specific variant.
     #[error(transparent)]
     Other(#[from] anyhow::Error),

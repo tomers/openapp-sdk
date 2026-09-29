@@ -19,7 +19,7 @@ import (
 // checks if the PublicPortalCreateSessionRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &PublicPortalCreateSessionRequest{}
 
-// PublicPortalCreateSessionRequest struct for PublicPortalCreateSessionRequest
+// PublicPortalCreateSessionRequest Map of light entity ULID to auto-off duration in seconds (re-exported for OpenAPI).
 type PublicPortalCreateSessionRequest struct {
 	Mode           string `json:"mode"`
 	TargetEntityId string `json:"target_entity_id"`

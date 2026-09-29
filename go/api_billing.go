@@ -16,7 +16,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 )
 
@@ -107,6 +106,108 @@ func (a *BillingAPIService) GetAdminQuotaOverridesExecute(r ApiGetAdminQuotaOver
 	}
 
 	return localVarHTTPResponse, nil
+}
+
+type ApiGetOrgBillingDegradationRequest struct {
+	ctx        context.Context
+	ApiService *BillingAPIService
+	id         string
+}
+
+func (r ApiGetOrgBillingDegradationRequest) Execute() (*DegradationStatus, *http.Response, error) {
+	return r.ApiService.GetOrgBillingDegradationExecute(r)
+}
+
+/*
+GetOrgBillingDegradation Read the org's over-capacity remediation snapshot (stage, level, overages, flagged resources, selection policy). Powers the dashboard degradation panel.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiGetOrgBillingDegradationRequest
+*/
+func (a *BillingAPIService) GetOrgBillingDegradation(ctx context.Context, id string) ApiGetOrgBillingDegradationRequest {
+	return ApiGetOrgBillingDegradationRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return DegradationStatus
+func (a *BillingAPIService) GetOrgBillingDegradationExecute(r ApiGetOrgBillingDegradationRequest) (*DegradationStatus, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *DegradationStatus
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BillingAPIService.GetOrgBillingDegradation")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{id}/billing/degradation"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiGetOrgBillingPlanRequest struct {
@@ -610,120 +711,6 @@ func (a *BillingAPIService) PostAdminQuotaOverrideExecute(r ApiPostAdminQuotaOve
 	return localVarHTTPResponse, nil
 }
 
-type ApiPostBillingWebhookRequest struct {
-	ctx        context.Context
-	ApiService *BillingAPIService
-	provider   string
-	body       *os.File
-}
-
-// Raw billing provider webhook payload
-func (r ApiPostBillingWebhookRequest) Body(body *os.File) ApiPostBillingWebhookRequest {
-	r.body = body
-	return r
-}
-
-func (r ApiPostBillingWebhookRequest) Execute() (*BillingWebhookResponse, *http.Response, error) {
-	return r.ApiService.PostBillingWebhookExecute(r)
-}
-
-/*
-PostBillingWebhook Method for PostBillingWebhook
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param provider
-	@return ApiPostBillingWebhookRequest
-*/
-func (a *BillingAPIService) PostBillingWebhook(ctx context.Context, provider string) ApiPostBillingWebhookRequest {
-	return ApiPostBillingWebhookRequest{
-		ApiService: a,
-		ctx:        ctx,
-		provider:   provider,
-	}
-}
-
-// Execute executes the request
-//
-//	@return BillingWebhookResponse
-func (a *BillingAPIService) PostBillingWebhookExecute(r ApiPostBillingWebhookRequest) (*BillingWebhookResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *BillingWebhookResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BillingAPIService.PostBillingWebhook")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/billing/webhooks/{provider}"
-	localVarPath = strings.Replace(localVarPath, "{"+"provider"+"}", url.PathEscape(parameterValueToString(r.provider, "provider")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.body == nil {
-		return localVarReturnValue, nil, reportError("body is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/octet-stream"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.body
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type ApiPostOrgBillingCheckoutRequest struct {
 	ctx             context.Context
 	ApiService      *BillingAPIService
@@ -837,6 +824,119 @@ func (a *BillingAPIService) PostOrgBillingCheckoutExecute(r ApiPostOrgBillingChe
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiPostOrgBillingDegradationResourceRequest struct {
+	ctx                    context.Context
+	ApiService             *BillingAPIService
+	id                     string
+	setResourceKeepRequest *SetResourceKeepRequest
+}
+
+func (r ApiPostOrgBillingDegradationResourceRequest) SetResourceKeepRequest(setResourceKeepRequest SetResourceKeepRequest) ApiPostOrgBillingDegradationResourceRequest {
+	r.setResourceKeepRequest = &setResourceKeepRequest
+	return r
+}
+
+func (r ApiPostOrgBillingDegradationResourceRequest) Execute() (*DegradationStatus, *http.Response, error) {
+	return r.ApiService.PostOrgBillingDegradationResourceExecute(r)
+}
+
+/*
+PostOrgBillingDegradationResource Pin or unpin a specific resource so the admin can choose which rows survive a downgrade, then re-flag the excess. Requires `billing:manage`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPostOrgBillingDegradationResourceRequest
+*/
+func (a *BillingAPIService) PostOrgBillingDegradationResource(ctx context.Context, id string) ApiPostOrgBillingDegradationResourceRequest {
+	return ApiPostOrgBillingDegradationResourceRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return DegradationStatus
+func (a *BillingAPIService) PostOrgBillingDegradationResourceExecute(r ApiPostOrgBillingDegradationResourceRequest) (*DegradationStatus, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *DegradationStatus
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BillingAPIService.PostOrgBillingDegradationResource")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{id}/billing/degradation/resource"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.setResourceKeepRequest == nil {
+		return localVarReturnValue, nil, reportError("setResourceKeepRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.setResourceKeepRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiPostOrgBillingPortalRequest struct {
 	ctx           context.Context
 	ApiService    *BillingAPIService
@@ -913,6 +1013,119 @@ func (a *BillingAPIService) PostOrgBillingPortalExecute(r ApiPostOrgBillingPorta
 	}
 	// body params
 	localVarPostBody = r.portalRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiPutOrgBillingDegradationPolicyRequest struct {
+	ctx                       context.Context
+	ApiService                *BillingAPIService
+	id                        string
+	setSelectionPolicyRequest *SetSelectionPolicyRequest
+}
+
+func (r ApiPutOrgBillingDegradationPolicyRequest) SetSelectionPolicyRequest(setSelectionPolicyRequest SetSelectionPolicyRequest) ApiPutOrgBillingDegradationPolicyRequest {
+	r.setSelectionPolicyRequest = &setSelectionPolicyRequest
+	return r
+}
+
+func (r ApiPutOrgBillingDegradationPolicyRequest) Execute() (*DegradationStatus, *http.Response, error) {
+	return r.ApiService.PutOrgBillingDegradationPolicyExecute(r)
+}
+
+/*
+PutOrgBillingDegradationPolicy Set the excess-selection policy for an over-capacity org and re-flag accordingly. Requires `billing:manage`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPutOrgBillingDegradationPolicyRequest
+*/
+func (a *BillingAPIService) PutOrgBillingDegradationPolicy(ctx context.Context, id string) ApiPutOrgBillingDegradationPolicyRequest {
+	return ApiPutOrgBillingDegradationPolicyRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return DegradationStatus
+func (a *BillingAPIService) PutOrgBillingDegradationPolicyExecute(r ApiPutOrgBillingDegradationPolicyRequest) (*DegradationStatus, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *DegradationStatus
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BillingAPIService.PutOrgBillingDegradationPolicy")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{id}/billing/degradation/policy"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.setSelectionPolicyRequest == nil {
+		return localVarReturnValue, nil, reportError("setSelectionPolicyRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.setSelectionPolicyRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

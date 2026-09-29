@@ -28,7 +28,7 @@ import (
 
 func main() {
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)

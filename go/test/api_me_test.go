@@ -19,16 +19,16 @@ import (
 
 func Test_openapi_MeAPIService(t *testing.T) {
 
-	apiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"
+	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
-	t.Run("Test MeAPIService GetMeApartments", func(t *testing.T) {
+	t.Run("Test MeAPIService GetMeDirectoryListings", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		resp, httpRes, err := apiClient.MeAPI.GetMeApartments(context.Background()).Execute()
+		resp, httpRes, err := apiClient.MeAPI.GetMeDirectoryListings(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

@@ -4,7 +4,7 @@ Typical usage::
 
     from openapp_sdk import Client
 
-    client = Client.connect(api_key="https://api.openapp.house/api/v1_openapp_...")
+    client = Client.connect(api_key="https://openapp.house_openapp_...")
     for org in client.orgs.list():
         print(org["name"])
 

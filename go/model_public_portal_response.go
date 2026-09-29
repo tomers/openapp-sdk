@@ -21,10 +21,18 @@ var _ MappedNullable = &PublicPortalResponse{}
 
 // PublicPortalResponse struct for PublicPortalResponse
 type PublicPortalResponse struct {
-	Branding                     interface{}   `json:"branding,omitempty"`
-	DoorEffectiveAutoOffDuration NullableInt64 `json:"door_effective_auto_off_duration,omitempty"`
+	// Access-control integration summary (building name, address, photo).
+	AccessControl NullablePublicPortalAccessControl `json:"access_control,omitempty"`
+	// Visitor directory device summary for this portal (building directory name, photo).
+	AccessDirectory              NullablePublicPortalAccessControl `json:"access_directory,omitempty"`
+	Branding                     interface{}                       `json:"branding,omitempty"`
+	DoorEffectiveAutoOffDuration NullableInt64                     `json:"door_effective_auto_off_duration,omitempty"`
 	// Image URL for the door (presigned S3 URL from media service).
-	DoorImageUrl   NullableString                    `json:"door_image_url,omitempty"`
+	DoorImageUrl NullableString `json:"door_image_url,omitempty"`
+	// Entry type from linked portal device (`virtual_access.entry_kind`). Default `door`.
+	EntryKind string `json:"entry_kind"`
+	// Effective door hold when any opener is held (guest-visible).
+	Hold           NullablePublicHoldView            `json:"hold,omitempty"`
 	Lights         []PublicPortalLight               `json:"lights,omitempty"`
 	Mode           PublicPortalMode                  `json:"mode"`
 	Name           NullableLocalizedString           `json:"name,omitempty"`
@@ -38,8 +46,9 @@ type _PublicPortalResponse PublicPortalResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicPortalResponse(mode PublicPortalMode, publicPortalId string) *PublicPortalResponse {
+func NewPublicPortalResponse(entryKind string, mode PublicPortalMode, publicPortalId string) *PublicPortalResponse {
 	this := PublicPortalResponse{}
+	this.EntryKind = entryKind
 	this.Mode = mode
 	this.PublicPortalId = publicPortalId
 	return &this
@@ -51,6 +60,92 @@ func NewPublicPortalResponse(mode PublicPortalMode, publicPortalId string) *Publ
 func NewPublicPortalResponseWithDefaults() *PublicPortalResponse {
 	this := PublicPortalResponse{}
 	return &this
+}
+
+// GetAccessControl returns the AccessControl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalResponse) GetAccessControl() PublicPortalAccessControl {
+	if o == nil || IsNil(o.AccessControl.Get()) {
+		var ret PublicPortalAccessControl
+		return ret
+	}
+	return *o.AccessControl.Get()
+}
+
+// GetAccessControlOk returns a tuple with the AccessControl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalResponse) GetAccessControlOk() (*PublicPortalAccessControl, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AccessControl.Get(), o.AccessControl.IsSet()
+}
+
+// HasAccessControl returns a boolean if a field has been set.
+func (o *PublicPortalResponse) HasAccessControl() bool {
+	if o != nil && o.AccessControl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAccessControl gets a reference to the given NullablePublicPortalAccessControl and assigns it to the AccessControl field.
+func (o *PublicPortalResponse) SetAccessControl(v PublicPortalAccessControl) {
+	o.AccessControl.Set(&v)
+}
+
+// SetAccessControlNil sets the value for AccessControl to be an explicit nil
+func (o *PublicPortalResponse) SetAccessControlNil() {
+	o.AccessControl.Set(nil)
+}
+
+// UnsetAccessControl ensures that no value is present for AccessControl, not even an explicit nil
+func (o *PublicPortalResponse) UnsetAccessControl() {
+	o.AccessControl.Unset()
+}
+
+// GetAccessDirectory returns the AccessDirectory field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalResponse) GetAccessDirectory() PublicPortalAccessControl {
+	if o == nil || IsNil(o.AccessDirectory.Get()) {
+		var ret PublicPortalAccessControl
+		return ret
+	}
+	return *o.AccessDirectory.Get()
+}
+
+// GetAccessDirectoryOk returns a tuple with the AccessDirectory field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalResponse) GetAccessDirectoryOk() (*PublicPortalAccessControl, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AccessDirectory.Get(), o.AccessDirectory.IsSet()
+}
+
+// HasAccessDirectory returns a boolean if a field has been set.
+func (o *PublicPortalResponse) HasAccessDirectory() bool {
+	if o != nil && o.AccessDirectory.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAccessDirectory gets a reference to the given NullablePublicPortalAccessControl and assigns it to the AccessDirectory field.
+func (o *PublicPortalResponse) SetAccessDirectory(v PublicPortalAccessControl) {
+	o.AccessDirectory.Set(&v)
+}
+
+// SetAccessDirectoryNil sets the value for AccessDirectory to be an explicit nil
+func (o *PublicPortalResponse) SetAccessDirectoryNil() {
+	o.AccessDirectory.Set(nil)
+}
+
+// UnsetAccessDirectory ensures that no value is present for AccessDirectory, not even an explicit nil
+func (o *PublicPortalResponse) UnsetAccessDirectory() {
+	o.AccessDirectory.Unset()
 }
 
 // GetBranding returns the Branding field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -170,6 +265,73 @@ func (o *PublicPortalResponse) SetDoorImageUrlNil() {
 // UnsetDoorImageUrl ensures that no value is present for DoorImageUrl, not even an explicit nil
 func (o *PublicPortalResponse) UnsetDoorImageUrl() {
 	o.DoorImageUrl.Unset()
+}
+
+// GetEntryKind returns the EntryKind field value
+func (o *PublicPortalResponse) GetEntryKind() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.EntryKind
+}
+
+// GetEntryKindOk returns a tuple with the EntryKind field value
+// and a boolean to check if the value has been set.
+func (o *PublicPortalResponse) GetEntryKindOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.EntryKind, true
+}
+
+// SetEntryKind sets field value
+func (o *PublicPortalResponse) SetEntryKind(v string) {
+	o.EntryKind = v
+}
+
+// GetHold returns the Hold field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalResponse) GetHold() PublicHoldView {
+	if o == nil || IsNil(o.Hold.Get()) {
+		var ret PublicHoldView
+		return ret
+	}
+	return *o.Hold.Get()
+}
+
+// GetHoldOk returns a tuple with the Hold field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalResponse) GetHoldOk() (*PublicHoldView, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Hold.Get(), o.Hold.IsSet()
+}
+
+// HasHold returns a boolean if a field has been set.
+func (o *PublicPortalResponse) HasHold() bool {
+	if o != nil && o.Hold.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetHold gets a reference to the given NullablePublicHoldView and assigns it to the Hold field.
+func (o *PublicPortalResponse) SetHold(v PublicHoldView) {
+	o.Hold.Set(&v)
+}
+
+// SetHoldNil sets the value for Hold to be an explicit nil
+func (o *PublicPortalResponse) SetHoldNil() {
+	o.Hold.Set(nil)
+}
+
+// UnsetHold ensures that no value is present for Hold, not even an explicit nil
+func (o *PublicPortalResponse) UnsetHold() {
+	o.Hold.Unset()
 }
 
 // GetLights returns the Lights field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -341,6 +503,12 @@ func (o *PublicPortalResponse) SetPublicPortalId(v string) {
 
 func (o PublicPortalResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.AccessControl.IsSet() {
+		toSerialize["access_control"] = o.AccessControl.Get()
+	}
+	if o.AccessDirectory.IsSet() {
+		toSerialize["access_directory"] = o.AccessDirectory.Get()
+	}
 	if o.Branding != nil {
 		toSerialize["branding"] = o.Branding
 	}
@@ -349,6 +517,10 @@ func (o PublicPortalResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if o.DoorImageUrl.IsSet() {
 		toSerialize["door_image_url"] = o.DoorImageUrl.Get()
+	}
+	toSerialize["entry_kind"] = o.EntryKind
+	if o.Hold.IsSet() {
+		toSerialize["hold"] = o.Hold.Get()
 	}
 	if o.Lights != nil {
 		toSerialize["lights"] = o.Lights
@@ -369,6 +541,7 @@ func (o *PublicPortalResponse) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"entry_kind",
 		"mode",
 		"public_portal_id",
 	}

@@ -4,9 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IncludeDeleted** | **bool** |  |
-**IncludeMetadata** | **bool** |  |
-**OnlyDeleted** | **bool** |  |
+**IncludeDeleted** | Pointer to **bool** |  | [optional]
+**OnlyDeleted** | Pointer to **bool** |  | [optional]
 **Limit** | Pointer to **int32** | Number of items per page. Default from config, max 200. | [optional]
 **Offset** | Pointer to **int32** | Number of items to skip. Default 0. | [optional]
 
@@ -14,7 +13,7 @@ Name | Type | Description | Notes
 
 ### NewListOrgsQuery
 
-`func NewListOrgsQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool, ) *ListOrgsQuery`
+`func NewListOrgsQuery() *ListOrgsQuery`
 
 NewListOrgsQuery instantiates a new ListOrgsQuery object
 This constructor will assign default values to properties that have it defined,
@@ -48,26 +47,11 @@ and a boolean to check if the value has been set.
 
 SetIncludeDeleted sets IncludeDeleted field to given value.
 
+### HasIncludeDeleted
 
-### GetIncludeMetadata
+`func (o *ListOrgsQuery) HasIncludeDeleted() bool`
 
-`func (o *ListOrgsQuery) GetIncludeMetadata() bool`
-
-GetIncludeMetadata returns the IncludeMetadata field if non-nil, zero value otherwise.
-
-### GetIncludeMetadataOk
-
-`func (o *ListOrgsQuery) GetIncludeMetadataOk() (*bool, bool)`
-
-GetIncludeMetadataOk returns a tuple with the IncludeMetadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIncludeMetadata
-
-`func (o *ListOrgsQuery) SetIncludeMetadata(v bool)`
-
-SetIncludeMetadata sets IncludeMetadata field to given value.
-
+HasIncludeDeleted returns a boolean if a field has been set.
 
 ### GetOnlyDeleted
 
@@ -88,6 +72,11 @@ and a boolean to check if the value has been set.
 
 SetOnlyDeleted sets OnlyDeleted field to given value.
 
+### HasOnlyDeleted
+
+`func (o *ListOrgsQuery) HasOnlyDeleted() bool`
+
+HasOnlyDeleted returns a boolean if a field has been set.
 
 ### GetLimit
 

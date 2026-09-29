@@ -21,8 +21,9 @@ var _ MappedNullable = &InviteRecurrenceSeriesEndOneOf2{}
 
 // InviteRecurrenceSeriesEndOneOf2 struct for InviteRecurrenceSeriesEndOneOf2
 type InviteRecurrenceSeriesEndOneOf2 struct {
-	Kind  string `json:"kind"`
-	Total int32  `json:"total"`
+	Kind         string         `json:"kind"`
+	LastWindowTo NullableString `json:"last_window_to,omitempty"`
+	Total        int32          `json:"total"`
 }
 
 type _InviteRecurrenceSeriesEndOneOf2 InviteRecurrenceSeriesEndOneOf2
@@ -70,6 +71,49 @@ func (o *InviteRecurrenceSeriesEndOneOf2) SetKind(v string) {
 	o.Kind = v
 }
 
+// GetLastWindowTo returns the LastWindowTo field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InviteRecurrenceSeriesEndOneOf2) GetLastWindowTo() string {
+	if o == nil || IsNil(o.LastWindowTo.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.LastWindowTo.Get()
+}
+
+// GetLastWindowToOk returns a tuple with the LastWindowTo field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InviteRecurrenceSeriesEndOneOf2) GetLastWindowToOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.LastWindowTo.Get(), o.LastWindowTo.IsSet()
+}
+
+// HasLastWindowTo returns a boolean if a field has been set.
+func (o *InviteRecurrenceSeriesEndOneOf2) HasLastWindowTo() bool {
+	if o != nil && o.LastWindowTo.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLastWindowTo gets a reference to the given NullableString and assigns it to the LastWindowTo field.
+func (o *InviteRecurrenceSeriesEndOneOf2) SetLastWindowTo(v string) {
+	o.LastWindowTo.Set(&v)
+}
+
+// SetLastWindowToNil sets the value for LastWindowTo to be an explicit nil
+func (o *InviteRecurrenceSeriesEndOneOf2) SetLastWindowToNil() {
+	o.LastWindowTo.Set(nil)
+}
+
+// UnsetLastWindowTo ensures that no value is present for LastWindowTo, not even an explicit nil
+func (o *InviteRecurrenceSeriesEndOneOf2) UnsetLastWindowTo() {
+	o.LastWindowTo.Unset()
+}
+
 // GetTotal returns the Total field value
 func (o *InviteRecurrenceSeriesEndOneOf2) GetTotal() int32 {
 	if o == nil {
@@ -97,6 +141,9 @@ func (o *InviteRecurrenceSeriesEndOneOf2) SetTotal(v int32) {
 func (o InviteRecurrenceSeriesEndOneOf2) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["kind"] = o.Kind
+	if o.LastWindowTo.IsSet() {
+		toSerialize["last_window_to"] = o.LastWindowTo.Get()
+	}
 	toSerialize["total"] = o.Total
 	return toSerialize, nil
 }

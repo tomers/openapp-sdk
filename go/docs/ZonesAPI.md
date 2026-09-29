@@ -15,9 +15,11 @@ Method | HTTP request | Description
 
 ## CreateZone
 
-> ZoneResponse CreateZone(ctx).XOrg(xOrg).CreateZoneRequest(createZoneRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> ZoneResponse CreateZone(ctx).XOrg(xOrg).CreateZoneRequest(createZoneRequest).IncludeDeleted(includeDeleted).Execute()
 
 Create a zone for an integration.
+
+
 
 ### Example
 
@@ -35,15 +37,14 @@ func main() {
 	xOrg := "xOrg_example" // string |
 	createZoneRequest := *openapiclient.NewCreateZoneRequest("IntegrationId_example", *openapiclient.NewLocalizedString(map[string]string{"key": "Inner_example"})) // CreateZoneRequest |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ZonesAPI.CreateZone(context.Background()).XOrg(xOrg).CreateZoneRequest(createZoneRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.ZonesAPI.CreateZone(context.Background()).XOrg(xOrg).CreateZoneRequest(createZoneRequest).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ZonesAPI.CreateZone``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -67,7 +68,6 @@ Name | Type | Description  | Notes
  **xOrg** | **string** |  |
  **createZoneRequest** | [**CreateZoneRequest**](CreateZoneRequest.md) |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -75,7 +75,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -89,7 +89,7 @@ Name | Type | Description  | Notes
 
 ## DeleteZone
 
-> ZoneResponse DeleteZone(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> ZoneResponse DeleteZone(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
 Soft-delete a zone.
 
@@ -109,15 +109,14 @@ func main() {
 	id := "id_example" // string |
 	xOrg := "xOrg_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ZonesAPI.DeleteZone(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.ZonesAPI.DeleteZone(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ZonesAPI.DeleteZone``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -145,7 +144,6 @@ Name | Type | Description  | Notes
 
  **xOrg** | **string** |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -153,7 +151,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -167,7 +165,7 @@ Name | Type | Description  | Notes
 
 ## GetZone
 
-> ZoneResponse GetZone(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> ZoneResponse GetZone(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
 Get a zone by ID.
 
@@ -187,15 +185,14 @@ func main() {
 	id := "id_example" // string |
 	xOrg := "xOrg_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ZonesAPI.GetZone(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.ZonesAPI.GetZone(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ZonesAPI.GetZone``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -223,7 +220,6 @@ Name | Type | Description  | Notes
 
  **xOrg** | **string** |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -231,7 +227,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -245,7 +241,7 @@ Name | Type | Description  | Notes
 
 ## HardDeleteZone
 
-> ZoneResponse HardDeleteZone(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> ZoneResponse HardDeleteZone(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
 Permanently delete (purge) a zone.
 
@@ -265,15 +261,14 @@ func main() {
 	id := "id_example" // string |
 	xOrg := "xOrg_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ZonesAPI.HardDeleteZone(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.ZonesAPI.HardDeleteZone(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ZonesAPI.HardDeleteZone``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -301,7 +296,6 @@ Name | Type | Description  | Notes
 
  **xOrg** | **string** |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -309,7 +303,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -323,7 +317,7 @@ Name | Type | Description  | Notes
 
 ## ListIntegrationZones
 
-> []ZoneResponse ListIntegrationZones(ctx, integrationId).XOrg(xOrg).IncludeDeleted(includeDeleted).OnlyDeleted(onlyDeleted).IncludeMetadata(includeMetadata).Execute()
+> PaginatedResponseZoneResponse ListIntegrationZones(ctx, integrationId).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).Execute()
 
 List zones for an integration.
 
@@ -342,22 +336,21 @@ import (
 func main() {
 	integrationId := "integrationId_example" // string |
 	xOrg := "xOrg_example" // string |
-	includeDeleted := true // bool |  (optional)
-	onlyDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
+	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
+	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ZonesAPI.ListIntegrationZones(context.Background(), integrationId).XOrg(xOrg).IncludeDeleted(includeDeleted).OnlyDeleted(onlyDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.ZonesAPI.ListIntegrationZones(context.Background(), integrationId).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ZonesAPI.ListIntegrationZones``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `ListIntegrationZones`: []ZoneResponse
+	// response from `ListIntegrationZones`: PaginatedResponseZoneResponse
 	fmt.Fprintf(os.Stdout, "Response from `ZonesAPI.ListIntegrationZones`: %v\n", resp)
 }
 ```
@@ -379,17 +372,16 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
  **xOrg** | **string** |  |
- **includeDeleted** | **bool** |  |
- **onlyDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
+ **outputOptions** | [**MultiResourceOutputOptionsQuery**](MultiResourceOutputOptionsQuery.md) |  |
+ **pagination** | [**PaginationQuery**](PaginationQuery.md) |  |
 
 ### Return type
 
-[**[]ZoneResponse**](ZoneResponse.md)
+[**PaginatedResponseZoneResponse**](PaginatedResponseZoneResponse.md)
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -403,7 +395,7 @@ Name | Type | Description  | Notes
 
 ## UpdateZone
 
-> ZoneResponse UpdateZone(ctx, id).XOrg(xOrg).UpdateZoneRequest(updateZoneRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> ZoneResponse UpdateZone(ctx, id).XOrg(xOrg).UpdateZoneRequest(updateZoneRequest).IncludeDeleted(includeDeleted).Execute()
 
 Update a zone.
 
@@ -424,15 +416,14 @@ func main() {
 	xOrg := "xOrg_example" // string |
 	updateZoneRequest := *openapiclient.NewUpdateZoneRequest() // UpdateZoneRequest |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ZonesAPI.UpdateZone(context.Background(), id).XOrg(xOrg).UpdateZoneRequest(updateZoneRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.ZonesAPI.UpdateZone(context.Background(), id).XOrg(xOrg).UpdateZoneRequest(updateZoneRequest).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ZonesAPI.UpdateZone``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -461,7 +452,6 @@ Name | Type | Description  | Notes
  **xOrg** | **string** |  |
  **updateZoneRequest** | [**UpdateZoneRequest**](UpdateZoneRequest.md) |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -469,7 +459,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 

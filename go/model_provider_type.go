@@ -20,32 +20,32 @@ type ProviderType string
 
 // List of ProviderType
 const (
-	GO2RTC           ProviderType = "go2rtc"
-	HOME_ASSISTANT   ProviderType = "home_assistant"
-	KNX              ProviderType = "knx"
-	MQTT             ProviderType = "mqtt"
-	PALGATE_CLOUD    ProviderType = "palgate_cloud"
-	SHELLY_CLOUD     ProviderType = "shelly_cloud"
-	SHELLY_WEBSOCKET ProviderType = "shelly_websocket"
-	VIRTUAL_BUDGET   ProviderType = "virtual_budget"
-	VIRTUAL_ACCESS   ProviderType = "virtual_access"
-	VIRTUAL_DEMO     ProviderType = "virtual_demo"
-	WAVESHARE        ProviderType = "waveshare"
+	PROVIDERTYPE_GO2RTC           ProviderType = "go2rtc"
+	PROVIDERTYPE_HOMEASSISTANT    ProviderType = "homeassistant"
+	PROVIDERTYPE_KNX              ProviderType = "knx"
+	PROVIDERTYPE_MQTT             ProviderType = "mqtt"
+	PROVIDERTYPE_PALGATE_CLOUD    ProviderType = "palgate_cloud"
+	PROVIDERTYPE_SHELLY_CLOUD     ProviderType = "shelly_cloud"
+	PROVIDERTYPE_SHELLY_WEBSOCKET ProviderType = "shelly_websocket"
+	PROVIDERTYPE_VIRTUAL_ACCESS   ProviderType = "virtual_access"
+	PROVIDERTYPE_VIRTUAL_DEMO     ProviderType = "virtual_demo"
+	PROVIDERTYPE_WAVESHARE        ProviderType = "waveshare"
+	PROVIDERTYPE_TASMOTA          ProviderType = "tasmota"
 )
 
 // All allowed values of ProviderType enum
 var AllowedProviderTypeEnumValues = []ProviderType{
 	"go2rtc",
-	"home_assistant",
+	"homeassistant",
 	"knx",
 	"mqtt",
 	"palgate_cloud",
 	"shelly_cloud",
 	"shelly_websocket",
-	"virtual_budget",
 	"virtual_access",
 	"virtual_demo",
 	"waveshare",
+	"tasmota",
 }
 
 func (v *ProviderType) UnmarshalJSON(src []byte) error {

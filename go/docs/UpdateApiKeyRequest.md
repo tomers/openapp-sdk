@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ExpiresAt** | Pointer to **NullableString** | RFC3339 absolute expiration timestamp. Mutually exclusive with expires_in. Optional; if omitted, expiry is unchanged. | [optional]
-**ExpiresIn** | Pointer to **NullableString** | Duration from now, e.g. \&quot;1d\&quot;, \&quot;2w\&quot;, \&quot;90d\&quot;. Mutually exclusive with expires_at. Optional; if omitted, expiry is unchanged. | [optional]
+**ExpiresAt** | Pointer to **NullableString** | [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) absolute expiration timestamp (UTC). Mutually exclusive with &#x60;expires_in&#x60;. Optional; if omitted, expiry is unchanged. | [optional]
+**ExpiresIn** | Pointer to **NullableString** | Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 &#x60;P1D&#x60;, &#x60;PT1H&#x60;, …; no months/years) or compact tokens &#x60;s&#x60;/&#x60;m&#x60;/&#x60;h&#x60;/&#x60;d&#x60;/&#x60;w&#x60; (&#x60;M&#x60; is minutes). Max 3650d (10 years). &#x60;1y&#x60; is rejected. Mutually exclusive with &#x60;expires_at&#x60;. Optional; if omitted, expiry is unchanged. | [optional]
 **Name** | **string** |  |
 
 ## Methods

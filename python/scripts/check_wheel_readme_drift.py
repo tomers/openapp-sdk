@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -19,14 +20,17 @@ PLATFORMS_DOC = REPO_ROOT / "packages" / "sdk" / "python" / "WHEEL_PLATFORMS.md"
 ANCHOR = "Prebuilt wheels are published for:"
 
 
-def _load_workflow() -> dict:
+def _load_workflow() -> dict[str, Any]:
     if not WORKFLOW.is_file():
         raise FileNotFoundError(f"Missing workflow: {WORKFLOW}")
     with WORKFLOW.open(encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        loaded = yaml.safe_load(f)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"{WORKFLOW.name} must be a YAML mapping, got {type(loaded).__name__}")
+    return loaded
 
 
-def _expected_bullets(data: dict) -> list[str]:
+def _expected_bullets(data: dict[str, Any]) -> list[str]:
     job = data["jobs"]["build-wheels"]
     matrix_rows = job["strategy"]["matrix"]["include"]
     env = job.get("env") or {}

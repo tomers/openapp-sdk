@@ -21,7 +21,9 @@ var _ MappedNullable = &AccessInviteGrantedPortal{}
 
 // AccessInviteGrantedPortal struct for AccessInviteGrantedPortal
 type AccessInviteGrantedPortal struct {
-	Id       string          `json:"id"`
+	Id string `json:"id"`
+	// Whether the portal currently resolves to a live door device. When false the portal is misconfigured/unlinked and the invite UI shows it in a warning state.
+	IsLinked bool            `json:"is_linked"`
 	Name     LocalizedString `json:"name"`
 	PublicId string          `json:"public_id"`
 }
@@ -32,9 +34,10 @@ type _AccessInviteGrantedPortal AccessInviteGrantedPortal
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAccessInviteGrantedPortal(id string, name LocalizedString, publicId string) *AccessInviteGrantedPortal {
+func NewAccessInviteGrantedPortal(id string, isLinked bool, name LocalizedString, publicId string) *AccessInviteGrantedPortal {
 	this := AccessInviteGrantedPortal{}
 	this.Id = id
+	this.IsLinked = isLinked
 	this.Name = name
 	this.PublicId = publicId
 	return &this
@@ -70,6 +73,30 @@ func (o *AccessInviteGrantedPortal) GetIdOk() (*string, bool) {
 // SetId sets field value
 func (o *AccessInviteGrantedPortal) SetId(v string) {
 	o.Id = v
+}
+
+// GetIsLinked returns the IsLinked field value
+func (o *AccessInviteGrantedPortal) GetIsLinked() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsLinked
+}
+
+// GetIsLinkedOk returns a tuple with the IsLinked field value
+// and a boolean to check if the value has been set.
+func (o *AccessInviteGrantedPortal) GetIsLinkedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.IsLinked, true
+}
+
+// SetIsLinked sets field value
+func (o *AccessInviteGrantedPortal) SetIsLinked(v bool) {
+	o.IsLinked = v
 }
 
 // GetName returns the Name field value
@@ -123,6 +150,7 @@ func (o *AccessInviteGrantedPortal) SetPublicId(v string) {
 func (o AccessInviteGrantedPortal) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["id"] = o.Id
+	toSerialize["is_linked"] = o.IsLinked
 	toSerialize["name"] = o.Name
 	toSerialize["public_id"] = o.PublicId
 	return toSerialize, nil
@@ -134,6 +162,7 @@ func (o *AccessInviteGrantedPortal) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"id",
+		"is_linked",
 		"name",
 		"public_id",
 	}

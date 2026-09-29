@@ -22,25 +22,24 @@ var _ MappedNullable = &DeviceResponse{}
 
 // DeviceResponse struct for DeviceResponse
 type DeviceResponse struct {
+	CreatedAt      *time.Time  `json:"created_at,omitempty"`
+	DeletedAt      *time.Time  `json:"deleted_at,omitempty"`
+	HardDeleteAt   *time.Time  `json:"hard_delete_at,omitempty"`
+	PurgeAt        *time.Time  `json:"purge_at,omitempty"`
+	UpdatedAt      *time.Time  `json:"updated_at,omitempty"`
 	DeviceMetadata interface{} `json:"device_metadata,omitempty"`
 	// External ID from the integration provider.
 	ExternalId *string `json:"external_id,omitempty"`
 	// Unique identifier (ULID).
 	Id string `json:"id"`
 	// Owning integration (e.g. Shelly Cloud account/connection).
-	IntegrationId string            `json:"integration_id"`
-	Metadata      map[string]string `json:"metadata,omitempty"`
+	IntegrationId string `json:"integration_id"`
 	// Human-readable name.
 	Name LocalizedString `json:"name"`
 	// Organization that owns this device.
-	OrgId        string        `json:"org_id"`
-	CacheHit     NullableBool  `json:"cache_hit,omitempty"`
-	CacheTtl     NullableInt64 `json:"cache_ttl,omitempty"`
-	CreatedAt    NullableTime  `json:"created_at,omitempty"`
-	DeletedAt    NullableTime  `json:"deleted_at,omitempty"`
-	HardDeleteAt NullableTime  `json:"hard_delete_at,omitempty"`
-	PurgeAt      NullableTime  `json:"purge_at,omitempty"`
-	UpdatedAt    NullableTime  `json:"updated_at,omitempty"`
+	OrgId string `json:"org_id"`
+	// Server-computed, read-only: true when this OpenApp device record is the canonical (primary) instance for its physical hardware in the global `physical_devices` registry. Never accepted from a request body. See `docs/POLICIES_HDD.md` §6.3.
+	IsPrimaryInstance NullableBool `json:"is_primary_instance,omitempty"`
 	// Present when `include_stale=true` was requested and the provider supports stale detection.
 	Stale NullableBool `json:"stale,omitempty"`
 }
@@ -66,6 +65,166 @@ func NewDeviceResponse(id string, integrationId string, name LocalizedString, or
 func NewDeviceResponseWithDefaults() *DeviceResponse {
 	this := DeviceResponse{}
 	return &this
+}
+
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *DeviceResponse) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *DeviceResponse) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *DeviceResponse) SetCreatedAt(v time.Time) {
+	o.CreatedAt = &v
+}
+
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *DeviceResponse) GetDeletedAt() time.Time {
+	if o == nil || IsNil(o.DeletedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.DeletedAt
+}
+
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetDeletedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
+		return nil, false
+	}
+	return o.DeletedAt, true
+}
+
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *DeviceResponse) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeletedAt gets a reference to the given time.Time and assigns it to the DeletedAt field.
+func (o *DeviceResponse) SetDeletedAt(v time.Time) {
+	o.DeletedAt = &v
+}
+
+// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise.
+func (o *DeviceResponse) GetHardDeleteAt() time.Time {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.HardDeleteAt
+}
+
+// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetHardDeleteAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		return nil, false
+	}
+	return o.HardDeleteAt, true
+}
+
+// HasHardDeleteAt returns a boolean if a field has been set.
+func (o *DeviceResponse) HasHardDeleteAt() bool {
+	if o != nil && !IsNil(o.HardDeleteAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetHardDeleteAt gets a reference to the given time.Time and assigns it to the HardDeleteAt field.
+func (o *DeviceResponse) SetHardDeleteAt(v time.Time) {
+	o.HardDeleteAt = &v
+}
+
+// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise.
+func (o *DeviceResponse) GetPurgeAt() time.Time {
+	if o == nil || IsNil(o.PurgeAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.PurgeAt
+}
+
+// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetPurgeAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.PurgeAt) {
+		return nil, false
+	}
+	return o.PurgeAt, true
+}
+
+// HasPurgeAt returns a boolean if a field has been set.
+func (o *DeviceResponse) HasPurgeAt() bool {
+	if o != nil && !IsNil(o.PurgeAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPurgeAt gets a reference to the given time.Time and assigns it to the PurgeAt field.
+func (o *DeviceResponse) SetPurgeAt(v time.Time) {
+	o.PurgeAt = &v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *DeviceResponse) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *DeviceResponse) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *DeviceResponse) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = &v
 }
 
 // GetDeviceMetadata returns the DeviceMetadata field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -181,38 +340,6 @@ func (o *DeviceResponse) SetIntegrationId(v string) {
 	o.IntegrationId = v
 }
 
-// GetMetadata returns the Metadata field value if set, zero value otherwise.
-func (o *DeviceResponse) GetMetadata() map[string]string {
-	if o == nil || IsNil(o.Metadata) {
-		var ret map[string]string
-		return ret
-	}
-	return o.Metadata
-}
-
-// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *DeviceResponse) GetMetadataOk() (map[string]string, bool) {
-	if o == nil || IsNil(o.Metadata) {
-		return map[string]string{}, false
-	}
-	return o.Metadata, true
-}
-
-// HasMetadata returns a boolean if a field has been set.
-func (o *DeviceResponse) HasMetadata() bool {
-	if o != nil && !IsNil(o.Metadata) {
-		return true
-	}
-
-	return false
-}
-
-// SetMetadata gets a reference to the given map[string]string and assigns it to the Metadata field.
-func (o *DeviceResponse) SetMetadata(v map[string]string) {
-	o.Metadata = v
-}
-
 // GetName returns the Name field value
 func (o *DeviceResponse) GetName() LocalizedString {
 	if o == nil {
@@ -261,305 +388,47 @@ func (o *DeviceResponse) SetOrgId(v string) {
 	o.OrgId = v
 }
 
-// GetCacheHit returns the CacheHit field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetCacheHit() bool {
-	if o == nil || IsNil(o.CacheHit.Get()) {
+// GetIsPrimaryInstance returns the IsPrimaryInstance field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *DeviceResponse) GetIsPrimaryInstance() bool {
+	if o == nil || IsNil(o.IsPrimaryInstance.Get()) {
 		var ret bool
 		return ret
 	}
-	return *o.CacheHit.Get()
+	return *o.IsPrimaryInstance.Get()
 }
 
-// GetCacheHitOk returns a tuple with the CacheHit field value if set, nil otherwise
+// GetIsPrimaryInstanceOk returns a tuple with the IsPrimaryInstance field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetCacheHitOk() (*bool, bool) {
+func (o *DeviceResponse) GetIsPrimaryInstanceOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CacheHit.Get(), o.CacheHit.IsSet()
+	return o.IsPrimaryInstance.Get(), o.IsPrimaryInstance.IsSet()
 }
 
-// HasCacheHit returns a boolean if a field has been set.
-func (o *DeviceResponse) HasCacheHit() bool {
-	if o != nil && o.CacheHit.IsSet() {
+// HasIsPrimaryInstance returns a boolean if a field has been set.
+func (o *DeviceResponse) HasIsPrimaryInstance() bool {
+	if o != nil && o.IsPrimaryInstance.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetCacheHit gets a reference to the given NullableBool and assigns it to the CacheHit field.
-func (o *DeviceResponse) SetCacheHit(v bool) {
-	o.CacheHit.Set(&v)
+// SetIsPrimaryInstance gets a reference to the given NullableBool and assigns it to the IsPrimaryInstance field.
+func (o *DeviceResponse) SetIsPrimaryInstance(v bool) {
+	o.IsPrimaryInstance.Set(&v)
 }
 
-// SetCacheHitNil sets the value for CacheHit to be an explicit nil
-func (o *DeviceResponse) SetCacheHitNil() {
-	o.CacheHit.Set(nil)
+// SetIsPrimaryInstanceNil sets the value for IsPrimaryInstance to be an explicit nil
+func (o *DeviceResponse) SetIsPrimaryInstanceNil() {
+	o.IsPrimaryInstance.Set(nil)
 }
 
-// UnsetCacheHit ensures that no value is present for CacheHit, not even an explicit nil
-func (o *DeviceResponse) UnsetCacheHit() {
-	o.CacheHit.Unset()
-}
-
-// GetCacheTtl returns the CacheTtl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetCacheTtl() int64 {
-	if o == nil || IsNil(o.CacheTtl.Get()) {
-		var ret int64
-		return ret
-	}
-	return *o.CacheTtl.Get()
-}
-
-// GetCacheTtlOk returns a tuple with the CacheTtl field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetCacheTtlOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CacheTtl.Get(), o.CacheTtl.IsSet()
-}
-
-// HasCacheTtl returns a boolean if a field has been set.
-func (o *DeviceResponse) HasCacheTtl() bool {
-	if o != nil && o.CacheTtl.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheTtl gets a reference to the given NullableInt64 and assigns it to the CacheTtl field.
-func (o *DeviceResponse) SetCacheTtl(v int64) {
-	o.CacheTtl.Set(&v)
-}
-
-// SetCacheTtlNil sets the value for CacheTtl to be an explicit nil
-func (o *DeviceResponse) SetCacheTtlNil() {
-	o.CacheTtl.Set(nil)
-}
-
-// UnsetCacheTtl ensures that no value is present for CacheTtl, not even an explicit nil
-func (o *DeviceResponse) UnsetCacheTtl() {
-	o.CacheTtl.Unset()
-}
-
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.CreatedAt.Get()
-}
-
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CreatedAt.Get(), o.CreatedAt.IsSet()
-}
-
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *DeviceResponse) HasCreatedAt() bool {
-	if o != nil && o.CreatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given NullableTime and assigns it to the CreatedAt field.
-func (o *DeviceResponse) SetCreatedAt(v time.Time) {
-	o.CreatedAt.Set(&v)
-}
-
-// SetCreatedAtNil sets the value for CreatedAt to be an explicit nil
-func (o *DeviceResponse) SetCreatedAtNil() {
-	o.CreatedAt.Set(nil)
-}
-
-// UnsetCreatedAt ensures that no value is present for CreatedAt, not even an explicit nil
-func (o *DeviceResponse) UnsetCreatedAt() {
-	o.CreatedAt.Unset()
-}
-
-// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetDeletedAt() time.Time {
-	if o == nil || IsNil(o.DeletedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.DeletedAt.Get()
-}
-
-// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetDeletedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.DeletedAt.Get(), o.DeletedAt.IsSet()
-}
-
-// HasDeletedAt returns a boolean if a field has been set.
-func (o *DeviceResponse) HasDeletedAt() bool {
-	if o != nil && o.DeletedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetDeletedAt gets a reference to the given NullableTime and assigns it to the DeletedAt field.
-func (o *DeviceResponse) SetDeletedAt(v time.Time) {
-	o.DeletedAt.Set(&v)
-}
-
-// SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
-func (o *DeviceResponse) SetDeletedAtNil() {
-	o.DeletedAt.Set(nil)
-}
-
-// UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
-func (o *DeviceResponse) UnsetDeletedAt() {
-	o.DeletedAt.Unset()
-}
-
-// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetHardDeleteAt() time.Time {
-	if o == nil || IsNil(o.HardDeleteAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.HardDeleteAt.Get()
-}
-
-// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetHardDeleteAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.HardDeleteAt.Get(), o.HardDeleteAt.IsSet()
-}
-
-// HasHardDeleteAt returns a boolean if a field has been set.
-func (o *DeviceResponse) HasHardDeleteAt() bool {
-	if o != nil && o.HardDeleteAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetHardDeleteAt gets a reference to the given NullableTime and assigns it to the HardDeleteAt field.
-func (o *DeviceResponse) SetHardDeleteAt(v time.Time) {
-	o.HardDeleteAt.Set(&v)
-}
-
-// SetHardDeleteAtNil sets the value for HardDeleteAt to be an explicit nil
-func (o *DeviceResponse) SetHardDeleteAtNil() {
-	o.HardDeleteAt.Set(nil)
-}
-
-// UnsetHardDeleteAt ensures that no value is present for HardDeleteAt, not even an explicit nil
-func (o *DeviceResponse) UnsetHardDeleteAt() {
-	o.HardDeleteAt.Unset()
-}
-
-// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetPurgeAt() time.Time {
-	if o == nil || IsNil(o.PurgeAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.PurgeAt.Get()
-}
-
-// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetPurgeAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.PurgeAt.Get(), o.PurgeAt.IsSet()
-}
-
-// HasPurgeAt returns a boolean if a field has been set.
-func (o *DeviceResponse) HasPurgeAt() bool {
-	if o != nil && o.PurgeAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetPurgeAt gets a reference to the given NullableTime and assigns it to the PurgeAt field.
-func (o *DeviceResponse) SetPurgeAt(v time.Time) {
-	o.PurgeAt.Set(&v)
-}
-
-// SetPurgeAtNil sets the value for PurgeAt to be an explicit nil
-func (o *DeviceResponse) SetPurgeAtNil() {
-	o.PurgeAt.Set(nil)
-}
-
-// UnsetPurgeAt ensures that no value is present for PurgeAt, not even an explicit nil
-func (o *DeviceResponse) UnsetPurgeAt() {
-	o.PurgeAt.Unset()
-}
-
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *DeviceResponse) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.UpdatedAt.Get()
-}
-
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *DeviceResponse) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.UpdatedAt.Get(), o.UpdatedAt.IsSet()
-}
-
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *DeviceResponse) HasUpdatedAt() bool {
-	if o != nil && o.UpdatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given NullableTime and assigns it to the UpdatedAt field.
-func (o *DeviceResponse) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt.Set(&v)
-}
-
-// SetUpdatedAtNil sets the value for UpdatedAt to be an explicit nil
-func (o *DeviceResponse) SetUpdatedAtNil() {
-	o.UpdatedAt.Set(nil)
-}
-
-// UnsetUpdatedAt ensures that no value is present for UpdatedAt, not even an explicit nil
-func (o *DeviceResponse) UnsetUpdatedAt() {
-	o.UpdatedAt.Unset()
+// UnsetIsPrimaryInstance ensures that no value is present for IsPrimaryInstance, not even an explicit nil
+func (o *DeviceResponse) UnsetIsPrimaryInstance() {
+	o.IsPrimaryInstance.Unset()
 }
 
 // GetStale returns the Stale field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -607,6 +476,21 @@ func (o *DeviceResponse) UnsetStale() {
 
 func (o DeviceResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.HardDeleteAt) {
+		toSerialize["hard_delete_at"] = o.HardDeleteAt
+	}
+	if !IsNil(o.PurgeAt) {
+		toSerialize["purge_at"] = o.PurgeAt
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
 	if o.DeviceMetadata != nil {
 		toSerialize["device_metadata"] = o.DeviceMetadata
 	}
@@ -615,31 +499,10 @@ func (o DeviceResponse) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["id"] = o.Id
 	toSerialize["integration_id"] = o.IntegrationId
-	if !IsNil(o.Metadata) {
-		toSerialize["metadata"] = o.Metadata
-	}
 	toSerialize["name"] = o.Name
 	toSerialize["org_id"] = o.OrgId
-	if o.CacheHit.IsSet() {
-		toSerialize["cache_hit"] = o.CacheHit.Get()
-	}
-	if o.CacheTtl.IsSet() {
-		toSerialize["cache_ttl"] = o.CacheTtl.Get()
-	}
-	if o.CreatedAt.IsSet() {
-		toSerialize["created_at"] = o.CreatedAt.Get()
-	}
-	if o.DeletedAt.IsSet() {
-		toSerialize["deleted_at"] = o.DeletedAt.Get()
-	}
-	if o.HardDeleteAt.IsSet() {
-		toSerialize["hard_delete_at"] = o.HardDeleteAt.Get()
-	}
-	if o.PurgeAt.IsSet() {
-		toSerialize["purge_at"] = o.PurgeAt.Get()
-	}
-	if o.UpdatedAt.IsSet() {
-		toSerialize["updated_at"] = o.UpdatedAt.Get()
+	if o.IsPrimaryInstance.IsSet() {
+		toSerialize["is_primary_instance"] = o.IsPrimaryInstance.Get()
 	}
 	if o.Stale.IsSet() {
 		toSerialize["stale"] = o.Stale.Get()

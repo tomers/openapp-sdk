@@ -21,16 +21,31 @@ var _ MappedNullable = &MeInvitationAsset{}
 
 // MeInvitationAsset struct for MeInvitationAsset
 type MeInvitationAsset struct {
-	BuildingName  interface{}    `json:"building_name,omitempty"`
-	ClaimedAt     NullableString `json:"claimed_at,omitempty"`
-	IntegrationId string         `json:"integration_id"`
-	InviteLinkId  string         `json:"invite_link_id"`
-	LastUsedAt    NullableString `json:"last_used_at,omitempty"`
-	MaxUses       NullableInt32  `json:"max_uses,omitempty"`
-	OrgId         string         `json:"org_id"`
-	// Portal IDs the invite grants (for display: \"Scan portal QR to open\").
-	PortalIds []string `json:"portal_ids"`
-	State     string   `json:"state"`
+	// Integration / building summary with photo (best-effort).
+	AccessControl NullablePublicPortalAccessControl `json:"access_control,omitempty"`
+	BuildingName  interface{}                       `json:"building_name,omitempty"`
+	// True when the requester has `integrations:read` on the invite's org, i.e. may open the invitation's management page. Mirrors the authz check in `list_integration_access_invites`.
+	CanRead   bool           `json:"can_read"`
+	ClaimedAt NullableString `json:"claimed_at,omitempty"`
+	// One entry per grant in the invite, with label / door image / lights flag enriched the same way as `GET /public/access/invites/{token}`. Lets clients render multi-door invitations without an extra round trip.
+	Grants         []PublicInviteGrant `json:"grants"`
+	IntegrationId  string              `json:"integration_id"`
+	InviteLinkId   string              `json:"invite_link_id"`
+	InviteeMessage interface{}         `json:"invitee_message,omitempty"`
+	LastUsedAt     NullableString      `json:"last_used_at,omitempty"`
+	MaxUses        NullableInt32       `json:"max_uses,omitempty"`
+	// Admin-defined invite name (mirrors `PublicInviteResponse.name`).
+	Name  NullableString `json:"name,omitempty"`
+	OrgId string         `json:"org_id"`
+	// Presigned URL for the `thumb` rendition of the org logo, for small renders. Absent when the source is already thumb-sized; fall back to `org_image_url`.
+	OrgImageThumbUrl NullableString `json:"org_image_thumb_url,omitempty"`
+	// Presigned org logo URL (best-effort).
+	OrgImageUrl NullableString `json:"org_image_url,omitempty"`
+	// Presigned URL for the `thumb` rendition of the invite photo, for small renders. Absent when the source is already thumb-sized; fall back to `photo_url`.
+	PhotoThumbUrl NullableString `json:"photo_thumb_url,omitempty"`
+	// Presigned URL for the invite's main photo (best-effort).
+	PhotoUrl NullableString `json:"photo_url,omitempty"`
+	State    string         `json:"state"`
 	// Number of times the invite has been used.
 	Uses      int32          `json:"uses"`
 	ValidFrom NullableString `json:"valid_from,omitempty"`
@@ -43,12 +58,13 @@ type _MeInvitationAsset MeInvitationAsset
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMeInvitationAsset(integrationId string, inviteLinkId string, orgId string, portalIds []string, state string, uses int32) *MeInvitationAsset {
+func NewMeInvitationAsset(canRead bool, grants []PublicInviteGrant, integrationId string, inviteLinkId string, orgId string, state string, uses int32) *MeInvitationAsset {
 	this := MeInvitationAsset{}
+	this.CanRead = canRead
+	this.Grants = grants
 	this.IntegrationId = integrationId
 	this.InviteLinkId = inviteLinkId
 	this.OrgId = orgId
-	this.PortalIds = portalIds
 	this.State = state
 	this.Uses = uses
 	return &this
@@ -60,6 +76,49 @@ func NewMeInvitationAsset(integrationId string, inviteLinkId string, orgId strin
 func NewMeInvitationAssetWithDefaults() *MeInvitationAsset {
 	this := MeInvitationAsset{}
 	return &this
+}
+
+// GetAccessControl returns the AccessControl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetAccessControl() PublicPortalAccessControl {
+	if o == nil || IsNil(o.AccessControl.Get()) {
+		var ret PublicPortalAccessControl
+		return ret
+	}
+	return *o.AccessControl.Get()
+}
+
+// GetAccessControlOk returns a tuple with the AccessControl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetAccessControlOk() (*PublicPortalAccessControl, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AccessControl.Get(), o.AccessControl.IsSet()
+}
+
+// HasAccessControl returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasAccessControl() bool {
+	if o != nil && o.AccessControl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAccessControl gets a reference to the given NullablePublicPortalAccessControl and assigns it to the AccessControl field.
+func (o *MeInvitationAsset) SetAccessControl(v PublicPortalAccessControl) {
+	o.AccessControl.Set(&v)
+}
+
+// SetAccessControlNil sets the value for AccessControl to be an explicit nil
+func (o *MeInvitationAsset) SetAccessControlNil() {
+	o.AccessControl.Set(nil)
+}
+
+// UnsetAccessControl ensures that no value is present for AccessControl, not even an explicit nil
+func (o *MeInvitationAsset) UnsetAccessControl() {
+	o.AccessControl.Unset()
 }
 
 // GetBuildingName returns the BuildingName field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -93,6 +152,30 @@ func (o *MeInvitationAsset) HasBuildingName() bool {
 // SetBuildingName gets a reference to the given interface{} and assigns it to the BuildingName field.
 func (o *MeInvitationAsset) SetBuildingName(v interface{}) {
 	o.BuildingName = v
+}
+
+// GetCanRead returns the CanRead field value
+func (o *MeInvitationAsset) GetCanRead() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.CanRead
+}
+
+// GetCanReadOk returns a tuple with the CanRead field value
+// and a boolean to check if the value has been set.
+func (o *MeInvitationAsset) GetCanReadOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.CanRead, true
+}
+
+// SetCanRead sets field value
+func (o *MeInvitationAsset) SetCanRead(v bool) {
+	o.CanRead = v
 }
 
 // GetClaimedAt returns the ClaimedAt field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -136,6 +219,30 @@ func (o *MeInvitationAsset) SetClaimedAtNil() {
 // UnsetClaimedAt ensures that no value is present for ClaimedAt, not even an explicit nil
 func (o *MeInvitationAsset) UnsetClaimedAt() {
 	o.ClaimedAt.Unset()
+}
+
+// GetGrants returns the Grants field value
+func (o *MeInvitationAsset) GetGrants() []PublicInviteGrant {
+	if o == nil {
+		var ret []PublicInviteGrant
+		return ret
+	}
+
+	return o.Grants
+}
+
+// GetGrantsOk returns a tuple with the Grants field value
+// and a boolean to check if the value has been set.
+func (o *MeInvitationAsset) GetGrantsOk() ([]PublicInviteGrant, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Grants, true
+}
+
+// SetGrants sets field value
+func (o *MeInvitationAsset) SetGrants(v []PublicInviteGrant) {
+	o.Grants = v
 }
 
 // GetIntegrationId returns the IntegrationId field value
@@ -184,6 +291,39 @@ func (o *MeInvitationAsset) GetInviteLinkIdOk() (*string, bool) {
 // SetInviteLinkId sets field value
 func (o *MeInvitationAsset) SetInviteLinkId(v string) {
 	o.InviteLinkId = v
+}
+
+// GetInviteeMessage returns the InviteeMessage field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetInviteeMessage() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.InviteeMessage
+}
+
+// GetInviteeMessageOk returns a tuple with the InviteeMessage field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetInviteeMessageOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.InviteeMessage) {
+		return nil, false
+	}
+	return &o.InviteeMessage, true
+}
+
+// HasInviteeMessage returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasInviteeMessage() bool {
+	if o != nil && !IsNil(o.InviteeMessage) {
+		return true
+	}
+
+	return false
+}
+
+// SetInviteeMessage gets a reference to the given interface{} and assigns it to the InviteeMessage field.
+func (o *MeInvitationAsset) SetInviteeMessage(v interface{}) {
+	o.InviteeMessage = v
 }
 
 // GetLastUsedAt returns the LastUsedAt field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -272,6 +412,49 @@ func (o *MeInvitationAsset) UnsetMaxUses() {
 	o.MaxUses.Unset()
 }
 
+// GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetName() string {
+	if o == nil || IsNil(o.Name.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Name.Get()
+}
+
+// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Name.Get(), o.Name.IsSet()
+}
+
+// HasName returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasName() bool {
+	if o != nil && o.Name.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetName gets a reference to the given NullableString and assigns it to the Name field.
+func (o *MeInvitationAsset) SetName(v string) {
+	o.Name.Set(&v)
+}
+
+// SetNameNil sets the value for Name to be an explicit nil
+func (o *MeInvitationAsset) SetNameNil() {
+	o.Name.Set(nil)
+}
+
+// UnsetName ensures that no value is present for Name, not even an explicit nil
+func (o *MeInvitationAsset) UnsetName() {
+	o.Name.Unset()
+}
+
 // GetOrgId returns the OrgId field value
 func (o *MeInvitationAsset) GetOrgId() string {
 	if o == nil {
@@ -296,28 +479,176 @@ func (o *MeInvitationAsset) SetOrgId(v string) {
 	o.OrgId = v
 }
 
-// GetPortalIds returns the PortalIds field value
-func (o *MeInvitationAsset) GetPortalIds() []string {
-	if o == nil {
-		var ret []string
+// GetOrgImageThumbUrl returns the OrgImageThumbUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetOrgImageThumbUrl() string {
+	if o == nil || IsNil(o.OrgImageThumbUrl.Get()) {
+		var ret string
 		return ret
 	}
-
-	return o.PortalIds
+	return *o.OrgImageThumbUrl.Get()
 }
 
-// GetPortalIdsOk returns a tuple with the PortalIds field value
+// GetOrgImageThumbUrlOk returns a tuple with the OrgImageThumbUrl field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *MeInvitationAsset) GetPortalIdsOk() ([]string, bool) {
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetOrgImageThumbUrlOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.PortalIds, true
+	return o.OrgImageThumbUrl.Get(), o.OrgImageThumbUrl.IsSet()
 }
 
-// SetPortalIds sets field value
-func (o *MeInvitationAsset) SetPortalIds(v []string) {
-	o.PortalIds = v
+// HasOrgImageThumbUrl returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasOrgImageThumbUrl() bool {
+	if o != nil && o.OrgImageThumbUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOrgImageThumbUrl gets a reference to the given NullableString and assigns it to the OrgImageThumbUrl field.
+func (o *MeInvitationAsset) SetOrgImageThumbUrl(v string) {
+	o.OrgImageThumbUrl.Set(&v)
+}
+
+// SetOrgImageThumbUrlNil sets the value for OrgImageThumbUrl to be an explicit nil
+func (o *MeInvitationAsset) SetOrgImageThumbUrlNil() {
+	o.OrgImageThumbUrl.Set(nil)
+}
+
+// UnsetOrgImageThumbUrl ensures that no value is present for OrgImageThumbUrl, not even an explicit nil
+func (o *MeInvitationAsset) UnsetOrgImageThumbUrl() {
+	o.OrgImageThumbUrl.Unset()
+}
+
+// GetOrgImageUrl returns the OrgImageUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetOrgImageUrl() string {
+	if o == nil || IsNil(o.OrgImageUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.OrgImageUrl.Get()
+}
+
+// GetOrgImageUrlOk returns a tuple with the OrgImageUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetOrgImageUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OrgImageUrl.Get(), o.OrgImageUrl.IsSet()
+}
+
+// HasOrgImageUrl returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasOrgImageUrl() bool {
+	if o != nil && o.OrgImageUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOrgImageUrl gets a reference to the given NullableString and assigns it to the OrgImageUrl field.
+func (o *MeInvitationAsset) SetOrgImageUrl(v string) {
+	o.OrgImageUrl.Set(&v)
+}
+
+// SetOrgImageUrlNil sets the value for OrgImageUrl to be an explicit nil
+func (o *MeInvitationAsset) SetOrgImageUrlNil() {
+	o.OrgImageUrl.Set(nil)
+}
+
+// UnsetOrgImageUrl ensures that no value is present for OrgImageUrl, not even an explicit nil
+func (o *MeInvitationAsset) UnsetOrgImageUrl() {
+	o.OrgImageUrl.Unset()
+}
+
+// GetPhotoThumbUrl returns the PhotoThumbUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetPhotoThumbUrl() string {
+	if o == nil || IsNil(o.PhotoThumbUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhotoThumbUrl.Get()
+}
+
+// GetPhotoThumbUrlOk returns a tuple with the PhotoThumbUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetPhotoThumbUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhotoThumbUrl.Get(), o.PhotoThumbUrl.IsSet()
+}
+
+// HasPhotoThumbUrl returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasPhotoThumbUrl() bool {
+	if o != nil && o.PhotoThumbUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhotoThumbUrl gets a reference to the given NullableString and assigns it to the PhotoThumbUrl field.
+func (o *MeInvitationAsset) SetPhotoThumbUrl(v string) {
+	o.PhotoThumbUrl.Set(&v)
+}
+
+// SetPhotoThumbUrlNil sets the value for PhotoThumbUrl to be an explicit nil
+func (o *MeInvitationAsset) SetPhotoThumbUrlNil() {
+	o.PhotoThumbUrl.Set(nil)
+}
+
+// UnsetPhotoThumbUrl ensures that no value is present for PhotoThumbUrl, not even an explicit nil
+func (o *MeInvitationAsset) UnsetPhotoThumbUrl() {
+	o.PhotoThumbUrl.Unset()
+}
+
+// GetPhotoUrl returns the PhotoUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetPhotoUrl() string {
+	if o == nil || IsNil(o.PhotoUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhotoUrl.Get()
+}
+
+// GetPhotoUrlOk returns a tuple with the PhotoUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetPhotoUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhotoUrl.Get(), o.PhotoUrl.IsSet()
+}
+
+// HasPhotoUrl returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasPhotoUrl() bool {
+	if o != nil && o.PhotoUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhotoUrl gets a reference to the given NullableString and assigns it to the PhotoUrl field.
+func (o *MeInvitationAsset) SetPhotoUrl(v string) {
+	o.PhotoUrl.Set(&v)
+}
+
+// SetPhotoUrlNil sets the value for PhotoUrl to be an explicit nil
+func (o *MeInvitationAsset) SetPhotoUrlNil() {
+	o.PhotoUrl.Set(nil)
+}
+
+// UnsetPhotoUrl ensures that no value is present for PhotoUrl, not even an explicit nil
+func (o *MeInvitationAsset) UnsetPhotoUrl() {
+	o.PhotoUrl.Unset()
 }
 
 // GetState returns the State field value
@@ -456,22 +787,44 @@ func (o *MeInvitationAsset) UnsetValidTo() {
 
 func (o MeInvitationAsset) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.AccessControl.IsSet() {
+		toSerialize["access_control"] = o.AccessControl.Get()
+	}
 	if o.BuildingName != nil {
 		toSerialize["building_name"] = o.BuildingName
 	}
+	toSerialize["can_read"] = o.CanRead
 	if o.ClaimedAt.IsSet() {
 		toSerialize["claimed_at"] = o.ClaimedAt.Get()
 	}
+	toSerialize["grants"] = o.Grants
 	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["invite_link_id"] = o.InviteLinkId
+	if o.InviteeMessage != nil {
+		toSerialize["invitee_message"] = o.InviteeMessage
+	}
 	if o.LastUsedAt.IsSet() {
 		toSerialize["last_used_at"] = o.LastUsedAt.Get()
 	}
 	if o.MaxUses.IsSet() {
 		toSerialize["max_uses"] = o.MaxUses.Get()
 	}
+	if o.Name.IsSet() {
+		toSerialize["name"] = o.Name.Get()
+	}
 	toSerialize["org_id"] = o.OrgId
-	toSerialize["portal_ids"] = o.PortalIds
+	if o.OrgImageThumbUrl.IsSet() {
+		toSerialize["org_image_thumb_url"] = o.OrgImageThumbUrl.Get()
+	}
+	if o.OrgImageUrl.IsSet() {
+		toSerialize["org_image_url"] = o.OrgImageUrl.Get()
+	}
+	if o.PhotoThumbUrl.IsSet() {
+		toSerialize["photo_thumb_url"] = o.PhotoThumbUrl.Get()
+	}
+	if o.PhotoUrl.IsSet() {
+		toSerialize["photo_url"] = o.PhotoUrl.Get()
+	}
 	toSerialize["state"] = o.State
 	toSerialize["uses"] = o.Uses
 	if o.ValidFrom.IsSet() {
@@ -488,10 +841,11 @@ func (o *MeInvitationAsset) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"can_read",
+		"grants",
 		"integration_id",
 		"invite_link_id",
 		"org_id",
-		"portal_ids",
 		"state",
 		"uses",
 	}

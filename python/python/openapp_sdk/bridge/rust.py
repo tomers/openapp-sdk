@@ -64,6 +64,68 @@ class _RustClient(BridgeClient):
     async def close(self) -> None:
         self._inner = None
 
+    def with_org(self, org: str) -> BridgeClient:
+        return _RustClient(self._inner.with_org(org))
+
+    async def integrations_get_by_name(
+        self,
+        name: str,
+        *,
+        match: str = "exact",
+        provider_type: str | None = None,
+    ) -> Any:
+        return await self._resolve_call(
+            self._inner.integrations_get_by_name(name, match, provider_type)
+        )
+
+    async def integrations_get_access_portal_by_name(
+        self,
+        integration_id: str,
+        name: str,
+        *,
+        match: str = "exact",
+    ) -> Any:
+        return await self._resolve_call(
+            self._inner.integrations_get_access_portal_by_name(integration_id, name, match)
+        )
+
+    async def devices_get_by_name(
+        self,
+        name: str,
+        *,
+        match: str = "exact",
+        integration_id: str | None = None,
+    ) -> Any:
+        return await self._resolve_call(
+            self._inner.devices_get_by_name(name, match, integration_id)
+        )
+
+    async def zones_get_by_name(
+        self,
+        integration_id: str,
+        name: str,
+        *,
+        match: str = "exact",
+    ) -> Any:
+        return await self._resolve_call(self._inner.zones_get_by_name(integration_id, name, match))
+
+    async def orgs_get_by_name(self, name: str, *, match: str = "exact") -> Any:
+        return await self._resolve_call(self._inner.orgs_get_by_name(name, match))
+
+    async def _resolve_call(self, coro: Any) -> Any:
+        try:
+            raw = await coro
+        except ValueError as exc:
+            payload = exc.args[0] if exc.args else {}
+            if isinstance(payload, dict):
+                raise from_bridge_payload(payload) from None
+            raise SdkError(str(exc)) from None
+        if raw in (None, "", "null"):
+            return None
+        if isinstance(raw, str):
+            return json.loads(raw)
+        return raw
+
 
 class RustBridge(Bridge):
     name = "rust"
@@ -80,6 +142,7 @@ class RustBridge(Bridge):
         user_agent: str,
         timeout_secs: float,
         max_retries: int,
+        org: str | None = None,
     ) -> BridgeClient:
         inner = _bridge.Client(
             api_key,
@@ -87,5 +150,6 @@ class RustBridge(Bridge):
             user_agent,
             timeout_secs,
             max_retries,
+            org,
         )
         return _RustClient(inner)

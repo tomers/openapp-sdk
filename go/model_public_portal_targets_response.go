@@ -22,8 +22,11 @@ var _ MappedNullable = &PublicPortalTargetsResponse{}
 // PublicPortalTargetsResponse struct for PublicPortalTargetsResponse
 type PublicPortalTargetsResponse struct {
 	// Building `floor_order` from virtual_access integration config (canonical keys).
-	FloorOrder []string             `json:"floor_order,omitempty"`
-	Targets    []PublicPortalTarget `json:"targets"`
+	FloorOrder []string    `json:"floor_order,omitempty"`
+	Message    interface{} `json:"message,omitempty"`
+	// One of `ready`, `empty`, `not_configured`, `disabled`. Each carries its own visitor copy, so a building with no occupants reads differently from an intercom that was never set up.
+	Status  string               `json:"status"`
+	Targets []PublicPortalTarget `json:"targets"`
 }
 
 type _PublicPortalTargetsResponse PublicPortalTargetsResponse
@@ -32,8 +35,9 @@ type _PublicPortalTargetsResponse PublicPortalTargetsResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicPortalTargetsResponse(targets []PublicPortalTarget) *PublicPortalTargetsResponse {
+func NewPublicPortalTargetsResponse(status string, targets []PublicPortalTarget) *PublicPortalTargetsResponse {
 	this := PublicPortalTargetsResponse{}
+	this.Status = status
 	this.Targets = targets
 	return &this
 }
@@ -79,6 +83,63 @@ func (o *PublicPortalTargetsResponse) SetFloorOrder(v []string) {
 	o.FloorOrder = v
 }
 
+// GetMessage returns the Message field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalTargetsResponse) GetMessage() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.Message
+}
+
+// GetMessageOk returns a tuple with the Message field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalTargetsResponse) GetMessageOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.Message) {
+		return nil, false
+	}
+	return &o.Message, true
+}
+
+// HasMessage returns a boolean if a field has been set.
+func (o *PublicPortalTargetsResponse) HasMessage() bool {
+	if o != nil && !IsNil(o.Message) {
+		return true
+	}
+
+	return false
+}
+
+// SetMessage gets a reference to the given interface{} and assigns it to the Message field.
+func (o *PublicPortalTargetsResponse) SetMessage(v interface{}) {
+	o.Message = v
+}
+
+// GetStatus returns the Status field value
+func (o *PublicPortalTargetsResponse) GetStatus() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Status
+}
+
+// GetStatusOk returns a tuple with the Status field value
+// and a boolean to check if the value has been set.
+func (o *PublicPortalTargetsResponse) GetStatusOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Status, true
+}
+
+// SetStatus sets field value
+func (o *PublicPortalTargetsResponse) SetStatus(v string) {
+	o.Status = v
+}
+
 // GetTargets returns the Targets field value
 func (o *PublicPortalTargetsResponse) GetTargets() []PublicPortalTarget {
 	if o == nil {
@@ -108,6 +169,10 @@ func (o PublicPortalTargetsResponse) ToMap() (map[string]interface{}, error) {
 	if o.FloorOrder != nil {
 		toSerialize["floor_order"] = o.FloorOrder
 	}
+	if o.Message != nil {
+		toSerialize["message"] = o.Message
+	}
+	toSerialize["status"] = o.Status
 	toSerialize["targets"] = o.Targets
 	return toSerialize, nil
 }
@@ -117,6 +182,7 @@ func (o *PublicPortalTargetsResponse) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"status",
 		"targets",
 	}
 

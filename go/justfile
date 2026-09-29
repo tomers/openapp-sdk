@@ -28,7 +28,7 @@ generate:
         -o /workspace/packages/sdk/go \
         --git-user-id tomers \
         --git-repo-id openapp-sdk/go \
-        --additional-properties=generateMarshalJSON=false
+        --additional-properties=generateMarshalJSON=false,enumClassPrefix=true
     bash "{{ _pkg }}/scripts/fix_openapi_generator_go.sh"
     docker run --rm \
         -u "$(id -u):$(id -g)" \
@@ -43,17 +43,21 @@ openapi-check: generate
     #!/usr/bin/env bash
     set -euo pipefail
     cd "{{ _pkg }}"
-    git diff --exit-code
+    git diff --exit-code -- .
+
+# Bind-mounted GOCACHE/GOMODCACHE must exist as the invoking user before sdk-go runs.
+_ensure_host_go_caches:
+    bash "{{ _pkg }}/scripts/ensure_host_go_caches.sh" "{{ _pkg }}"
 
 # Run Go via sdk-go container (see packages/sdk/docker/go/Dockerfile).
-_go *ARGS:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-go \
-        sh -euxc 'mkdir -p .gocache .gomodcache && go {{ ARGS }}'
+_go *ARGS: _ensure_host_go_caches
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-go \
+        sh -euxc 'go {{ ARGS }}'
 
 # Multi-step Go commands in one container (`&&` chains).
-_go_cmd CMD:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-go \
-        sh -euxc 'mkdir -p .gocache .gomodcache && {{ CMD }}'
+_go_cmd CMD: _ensure_host_go_caches
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-go \
+        sh -euxc '{{ CMD }}'
 
 lint:
     @just _go vet ./...
@@ -61,21 +65,34 @@ lint:
 build:
     @just _go build ./...
 
-test:
+# `_bridge` first so ad-hoc local runs link against a current cdylib (same reason as `pre-commit`).
+test: _bridge
     @just _go_cmd '{{ _go_test_with_reports }}'
 
 gherkin-tier0:
     @just _go_cmd 'OPENAPP_SDK_GHERKIN_TAGS="@tier0 and not @wip" go test . -run TestGherkinTier1 -count=1'
 
-# Vet/build/test in sdk-go only. Build the image first: `docker compose -f packages/sdk/docker/compose.yaml build sdk-go`
-# (see `.github/workflows/sdk-unified-release.yml`).
-release-gate:
+# Vet/build/test in sdk-go only. Build the image first: `scripts/sdk-compose.sh -f packages/sdk/docker/compose.yaml build sdk-go`
+# (see `.github/workflows/sdk-unified-release.yml`). `_bridge` first so the cgo linker uses a current
+# cdylib locally; it's a no-op under `$CI`, where the image rebuild already ships a fresh bridge.
+release-gate: _bridge
     @just _go_cmd 'go vet ./... && go build ./... && go test ./...'
+
+# Refresh the core C bridge cdylib before cgo links against it. Delegates to the single source of
+# truth (`just sdk core _bridge-local`) so the compose service / cargo flags / CI guard never drift.
+_bridge:
+    @just -f "{{ source_directory() }}/../core/justfile" _bridge-local
+
+# Host mkdir helper + sdk-compose --user rewriting (no Docker daemon).
+test-cache-dirs:
+    bash "{{ _pkg }}/scripts/ensure_host_go_caches_test.sh"
+    bash "{{ _repo }}/scripts/sdk-compose_test.sh"
 
 # Invoked from repo root via `scripts/pre-commit-subproject-wrapper.sh packages/sdk/go`.
 # Same openapi drift gate as CI (`just sdk go openapi-check`); hook wiring is `.pre-commit-config.yaml`.
-# Pre-commit runs OpenAPI codegen/drift then delegates to `release-gate` (same vet/build/test).
+# `release-gate` carries the `_bridge` prerequisite, so the cdylib is fresh before vet/build/test.
 pre-commit:
+    @just test-cache-dirs
     @just openapi-check
     @just release-gate
 

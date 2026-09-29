@@ -4,6 +4,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**CreatedAt** | Pointer to **time.Time** |  | [optional]
+**DeletedAt** | Pointer to **time.Time** |  | [optional]
+**HardDeleteAt** | Pointer to **time.Time** |  | [optional]
+**PurgeAt** | Pointer to **time.Time** |  | [optional]
+**UpdatedAt** | Pointer to **time.Time** |  | [optional]
 **DeviceId** | **string** | Parent device ID. |
 **EntityType** | [**EntityType**](EntityType.md) | Entity type (switch, light, sensor). |
 **ExternalId** | Pointer to **string** | External ID from the integration. | [optional]
@@ -11,14 +16,8 @@ Name | Type | Description | Notes
 **Metadata** | Pointer to **map[string]string** |  | [optional]
 **Name** | Pointer to **string** | Optional friendly name for the entity. | [optional]
 **ZoneId** | Pointer to **string** | Optional zone this entity belongs to. | [optional]
-**CacheHit** | Pointer to **NullableBool** |  | [optional]
-**CacheTtl** | Pointer to **NullableInt64** |  | [optional]
-**CreatedAt** | Pointer to **NullableTime** |  | [optional]
-**DeletedAt** | Pointer to **NullableTime** |  | [optional]
-**HardDeleteAt** | Pointer to **NullableTime** |  | [optional]
-**PurgeAt** | Pointer to **NullableTime** |  | [optional]
-**UpdatedAt** | Pointer to **NullableTime** |  | [optional]
 **EntityMetadata** | Pointer to **map[string]string** |  | [optional]
+**EntryKind** | Pointer to **NullableString** | Derived, read-only entry kind for switchable entries on Virtual Access devices. Omitted when the entity is not an entry or the device has no Virtual Access config. | [optional]
 **State** | Pointer to **interface{}** |  | [optional]
 
 ## Methods
@@ -39,6 +38,131 @@ will change when the set of required properties is changed
 NewEntityResponseWithDefaults instantiates a new EntityResponse object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetCreatedAt
+
+`func (o *EntityResponse) GetCreatedAt() time.Time`
+
+GetCreatedAt returns the CreatedAt field if non-nil, zero value otherwise.
+
+### GetCreatedAtOk
+
+`func (o *EntityResponse) GetCreatedAtOk() (*time.Time, bool)`
+
+GetCreatedAtOk returns a tuple with the CreatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCreatedAt
+
+`func (o *EntityResponse) SetCreatedAt(v time.Time)`
+
+SetCreatedAt sets CreatedAt field to given value.
+
+### HasCreatedAt
+
+`func (o *EntityResponse) HasCreatedAt() bool`
+
+HasCreatedAt returns a boolean if a field has been set.
+
+### GetDeletedAt
+
+`func (o *EntityResponse) GetDeletedAt() time.Time`
+
+GetDeletedAt returns the DeletedAt field if non-nil, zero value otherwise.
+
+### GetDeletedAtOk
+
+`func (o *EntityResponse) GetDeletedAtOk() (*time.Time, bool)`
+
+GetDeletedAtOk returns a tuple with the DeletedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeletedAt
+
+`func (o *EntityResponse) SetDeletedAt(v time.Time)`
+
+SetDeletedAt sets DeletedAt field to given value.
+
+### HasDeletedAt
+
+`func (o *EntityResponse) HasDeletedAt() bool`
+
+HasDeletedAt returns a boolean if a field has been set.
+
+### GetHardDeleteAt
+
+`func (o *EntityResponse) GetHardDeleteAt() time.Time`
+
+GetHardDeleteAt returns the HardDeleteAt field if non-nil, zero value otherwise.
+
+### GetHardDeleteAtOk
+
+`func (o *EntityResponse) GetHardDeleteAtOk() (*time.Time, bool)`
+
+GetHardDeleteAtOk returns a tuple with the HardDeleteAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHardDeleteAt
+
+`func (o *EntityResponse) SetHardDeleteAt(v time.Time)`
+
+SetHardDeleteAt sets HardDeleteAt field to given value.
+
+### HasHardDeleteAt
+
+`func (o *EntityResponse) HasHardDeleteAt() bool`
+
+HasHardDeleteAt returns a boolean if a field has been set.
+
+### GetPurgeAt
+
+`func (o *EntityResponse) GetPurgeAt() time.Time`
+
+GetPurgeAt returns the PurgeAt field if non-nil, zero value otherwise.
+
+### GetPurgeAtOk
+
+`func (o *EntityResponse) GetPurgeAtOk() (*time.Time, bool)`
+
+GetPurgeAtOk returns a tuple with the PurgeAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPurgeAt
+
+`func (o *EntityResponse) SetPurgeAt(v time.Time)`
+
+SetPurgeAt sets PurgeAt field to given value.
+
+### HasPurgeAt
+
+`func (o *EntityResponse) HasPurgeAt() bool`
+
+HasPurgeAt returns a boolean if a field has been set.
+
+### GetUpdatedAt
+
+`func (o *EntityResponse) GetUpdatedAt() time.Time`
+
+GetUpdatedAt returns the UpdatedAt field if non-nil, zero value otherwise.
+
+### GetUpdatedAtOk
+
+`func (o *EntityResponse) GetUpdatedAtOk() (*time.Time, bool)`
+
+GetUpdatedAtOk returns a tuple with the UpdatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUpdatedAt
+
+`func (o *EntityResponse) SetUpdatedAt(v time.Time)`
+
+SetUpdatedAt sets UpdatedAt field to given value.
+
+### HasUpdatedAt
+
+`func (o *EntityResponse) HasUpdatedAt() bool`
+
+HasUpdatedAt returns a boolean if a field has been set.
 
 ### GetDeviceId
 
@@ -200,251 +324,6 @@ SetZoneId sets ZoneId field to given value.
 
 HasZoneId returns a boolean if a field has been set.
 
-### GetCacheHit
-
-`func (o *EntityResponse) GetCacheHit() bool`
-
-GetCacheHit returns the CacheHit field if non-nil, zero value otherwise.
-
-### GetCacheHitOk
-
-`func (o *EntityResponse) GetCacheHitOk() (*bool, bool)`
-
-GetCacheHitOk returns a tuple with the CacheHit field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetCacheHit
-
-`func (o *EntityResponse) SetCacheHit(v bool)`
-
-SetCacheHit sets CacheHit field to given value.
-
-### HasCacheHit
-
-`func (o *EntityResponse) HasCacheHit() bool`
-
-HasCacheHit returns a boolean if a field has been set.
-
-### SetCacheHitNil
-
-`func (o *EntityResponse) SetCacheHitNil(b bool)`
-
- SetCacheHitNil sets the value for CacheHit to be an explicit nil
-
-### UnsetCacheHit
-`func (o *EntityResponse) UnsetCacheHit()`
-
-UnsetCacheHit ensures that no value is present for CacheHit, not even an explicit nil
-### GetCacheTtl
-
-`func (o *EntityResponse) GetCacheTtl() int64`
-
-GetCacheTtl returns the CacheTtl field if non-nil, zero value otherwise.
-
-### GetCacheTtlOk
-
-`func (o *EntityResponse) GetCacheTtlOk() (*int64, bool)`
-
-GetCacheTtlOk returns a tuple with the CacheTtl field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetCacheTtl
-
-`func (o *EntityResponse) SetCacheTtl(v int64)`
-
-SetCacheTtl sets CacheTtl field to given value.
-
-### HasCacheTtl
-
-`func (o *EntityResponse) HasCacheTtl() bool`
-
-HasCacheTtl returns a boolean if a field has been set.
-
-### SetCacheTtlNil
-
-`func (o *EntityResponse) SetCacheTtlNil(b bool)`
-
- SetCacheTtlNil sets the value for CacheTtl to be an explicit nil
-
-### UnsetCacheTtl
-`func (o *EntityResponse) UnsetCacheTtl()`
-
-UnsetCacheTtl ensures that no value is present for CacheTtl, not even an explicit nil
-### GetCreatedAt
-
-`func (o *EntityResponse) GetCreatedAt() time.Time`
-
-GetCreatedAt returns the CreatedAt field if non-nil, zero value otherwise.
-
-### GetCreatedAtOk
-
-`func (o *EntityResponse) GetCreatedAtOk() (*time.Time, bool)`
-
-GetCreatedAtOk returns a tuple with the CreatedAt field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetCreatedAt
-
-`func (o *EntityResponse) SetCreatedAt(v time.Time)`
-
-SetCreatedAt sets CreatedAt field to given value.
-
-### HasCreatedAt
-
-`func (o *EntityResponse) HasCreatedAt() bool`
-
-HasCreatedAt returns a boolean if a field has been set.
-
-### SetCreatedAtNil
-
-`func (o *EntityResponse) SetCreatedAtNil(b bool)`
-
- SetCreatedAtNil sets the value for CreatedAt to be an explicit nil
-
-### UnsetCreatedAt
-`func (o *EntityResponse) UnsetCreatedAt()`
-
-UnsetCreatedAt ensures that no value is present for CreatedAt, not even an explicit nil
-### GetDeletedAt
-
-`func (o *EntityResponse) GetDeletedAt() time.Time`
-
-GetDeletedAt returns the DeletedAt field if non-nil, zero value otherwise.
-
-### GetDeletedAtOk
-
-`func (o *EntityResponse) GetDeletedAtOk() (*time.Time, bool)`
-
-GetDeletedAtOk returns a tuple with the DeletedAt field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetDeletedAt
-
-`func (o *EntityResponse) SetDeletedAt(v time.Time)`
-
-SetDeletedAt sets DeletedAt field to given value.
-
-### HasDeletedAt
-
-`func (o *EntityResponse) HasDeletedAt() bool`
-
-HasDeletedAt returns a boolean if a field has been set.
-
-### SetDeletedAtNil
-
-`func (o *EntityResponse) SetDeletedAtNil(b bool)`
-
- SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
-
-### UnsetDeletedAt
-`func (o *EntityResponse) UnsetDeletedAt()`
-
-UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
-### GetHardDeleteAt
-
-`func (o *EntityResponse) GetHardDeleteAt() time.Time`
-
-GetHardDeleteAt returns the HardDeleteAt field if non-nil, zero value otherwise.
-
-### GetHardDeleteAtOk
-
-`func (o *EntityResponse) GetHardDeleteAtOk() (*time.Time, bool)`
-
-GetHardDeleteAtOk returns a tuple with the HardDeleteAt field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetHardDeleteAt
-
-`func (o *EntityResponse) SetHardDeleteAt(v time.Time)`
-
-SetHardDeleteAt sets HardDeleteAt field to given value.
-
-### HasHardDeleteAt
-
-`func (o *EntityResponse) HasHardDeleteAt() bool`
-
-HasHardDeleteAt returns a boolean if a field has been set.
-
-### SetHardDeleteAtNil
-
-`func (o *EntityResponse) SetHardDeleteAtNil(b bool)`
-
- SetHardDeleteAtNil sets the value for HardDeleteAt to be an explicit nil
-
-### UnsetHardDeleteAt
-`func (o *EntityResponse) UnsetHardDeleteAt()`
-
-UnsetHardDeleteAt ensures that no value is present for HardDeleteAt, not even an explicit nil
-### GetPurgeAt
-
-`func (o *EntityResponse) GetPurgeAt() time.Time`
-
-GetPurgeAt returns the PurgeAt field if non-nil, zero value otherwise.
-
-### GetPurgeAtOk
-
-`func (o *EntityResponse) GetPurgeAtOk() (*time.Time, bool)`
-
-GetPurgeAtOk returns a tuple with the PurgeAt field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetPurgeAt
-
-`func (o *EntityResponse) SetPurgeAt(v time.Time)`
-
-SetPurgeAt sets PurgeAt field to given value.
-
-### HasPurgeAt
-
-`func (o *EntityResponse) HasPurgeAt() bool`
-
-HasPurgeAt returns a boolean if a field has been set.
-
-### SetPurgeAtNil
-
-`func (o *EntityResponse) SetPurgeAtNil(b bool)`
-
- SetPurgeAtNil sets the value for PurgeAt to be an explicit nil
-
-### UnsetPurgeAt
-`func (o *EntityResponse) UnsetPurgeAt()`
-
-UnsetPurgeAt ensures that no value is present for PurgeAt, not even an explicit nil
-### GetUpdatedAt
-
-`func (o *EntityResponse) GetUpdatedAt() time.Time`
-
-GetUpdatedAt returns the UpdatedAt field if non-nil, zero value otherwise.
-
-### GetUpdatedAtOk
-
-`func (o *EntityResponse) GetUpdatedAtOk() (*time.Time, bool)`
-
-GetUpdatedAtOk returns a tuple with the UpdatedAt field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetUpdatedAt
-
-`func (o *EntityResponse) SetUpdatedAt(v time.Time)`
-
-SetUpdatedAt sets UpdatedAt field to given value.
-
-### HasUpdatedAt
-
-`func (o *EntityResponse) HasUpdatedAt() bool`
-
-HasUpdatedAt returns a boolean if a field has been set.
-
-### SetUpdatedAtNil
-
-`func (o *EntityResponse) SetUpdatedAtNil(b bool)`
-
- SetUpdatedAtNil sets the value for UpdatedAt to be an explicit nil
-
-### UnsetUpdatedAt
-`func (o *EntityResponse) UnsetUpdatedAt()`
-
-UnsetUpdatedAt ensures that no value is present for UpdatedAt, not even an explicit nil
 ### GetEntityMetadata
 
 `func (o *EntityResponse) GetEntityMetadata() map[string]string`
@@ -470,6 +349,41 @@ SetEntityMetadata sets EntityMetadata field to given value.
 
 HasEntityMetadata returns a boolean if a field has been set.
 
+### GetEntryKind
+
+`func (o *EntityResponse) GetEntryKind() string`
+
+GetEntryKind returns the EntryKind field if non-nil, zero value otherwise.
+
+### GetEntryKindOk
+
+`func (o *EntityResponse) GetEntryKindOk() (*string, bool)`
+
+GetEntryKindOk returns a tuple with the EntryKind field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEntryKind
+
+`func (o *EntityResponse) SetEntryKind(v string)`
+
+SetEntryKind sets EntryKind field to given value.
+
+### HasEntryKind
+
+`func (o *EntityResponse) HasEntryKind() bool`
+
+HasEntryKind returns a boolean if a field has been set.
+
+### SetEntryKindNil
+
+`func (o *EntityResponse) SetEntryKindNil(b bool)`
+
+ SetEntryKindNil sets the value for EntryKind to be an explicit nil
+
+### UnsetEntryKind
+`func (o *EntityResponse) UnsetEntryKind()`
+
+UnsetEntryKind ensures that no value is present for EntryKind, not even an explicit nil
 ### GetState
 
 `func (o *EntityResponse) GetState() interface{}`

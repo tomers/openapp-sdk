@@ -50,6 +50,22 @@ func main() {
 }
 ```
 
+## Authentication
+
+### api_key
+
+`NewAPIClient` takes an OpenApp API key of the form `{origin}_openapp_{secret}`,
+where `{origin}` is the bare deployment origin (scheme, host, optional port; no path),
+for example `https://openapp.house_openapp_SECRET`. The client derives the API root
+`{origin}/api/v1` from the key and sends the full key as the `X-API-Key` header on
+every request. Never put an API key in `Authorization`: the gateway reserves that
+header for JWTs and rejects an API key there with 401.
+
+To send requests somewhere other than the key's origin (staging, a proxy, or a dev-env
+key that embeds an in-container host), use `NewAPIClientWithBaseURL(apiKey, baseURL)`.
+`baseURL` is the full API root, including `/api/v1`, for example
+`http://localhost:4455/api/v1`.
+
 ## Calling authenticated APIs
 
 ```go
@@ -62,17 +78,8 @@ if err != nil {
 fmt.Printf("orgs: %#v\n", resp)
 ```
 
-## Maintainer docs
-
-Shared Gherkin story packs run through `go test` via `gherkin_tier1_test.go`.
-For the PR-fast slice, use `just sdk go gherkin-tier0`.
-
-Internal development, codegen, CI, and release notes are documented in
-[`../docs/GO_MAINTAINERS.md`](../docs/GO_MAINTAINERS.md) and
-[`../docs/SDK_DEVELOPMENT_POLICY.md`](../docs/SDK_DEVELOPMENT_POLICY.md).
-
 ## Documentation
 
-- [Agents & automation](https://openapp.house/docs/guides/agents/overview/)
+- [SDK overview](https://openapp.house/docs/sdk/)
 - [API reference](https://openapp.house/docs/api-reference/)
-- [Time-bound guest invitation](https://openapp.house/docs/guides/agents/time-bound-guest-invitation/)
+- [AI index (llms.txt)](https://openapp.house/llms.txt)

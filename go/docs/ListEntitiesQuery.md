@@ -4,18 +4,19 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IncludeDeleted** | **bool** |  |
-**IncludeMetadata** | **bool** |  |
-**OnlyDeleted** | **bool** |  |
+**IncludeDeleted** | Pointer to **bool** |  | [optional]
+**OnlyDeleted** | Pointer to **bool** |  | [optional]
 **Limit** | Pointer to **int32** | Number of items per page. Default from config, max 200. | [optional]
 **Offset** | Pointer to **int32** | Number of items to skip. Default 0. | [optional]
+**Q** | Pointer to **NullableString** | Case-insensitive substring match on entity &#x60;name&#x60; (plain text). Applies to org-wide lists. | [optional]
+**Sort** | Pointer to **NullableString** | Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;zone_id&#x60; is set. Defaults to insertion order when omitted. | [optional]
 **ZoneId** | Pointer to **NullableString** | Optional filter: only entities in this zone. | [optional]
 
 ## Methods
 
 ### NewListEntitiesQuery
 
-`func NewListEntitiesQuery(includeDeleted bool, includeMetadata bool, onlyDeleted bool, ) *ListEntitiesQuery`
+`func NewListEntitiesQuery() *ListEntitiesQuery`
 
 NewListEntitiesQuery instantiates a new ListEntitiesQuery object
 This constructor will assign default values to properties that have it defined,
@@ -49,26 +50,11 @@ and a boolean to check if the value has been set.
 
 SetIncludeDeleted sets IncludeDeleted field to given value.
 
+### HasIncludeDeleted
 
-### GetIncludeMetadata
+`func (o *ListEntitiesQuery) HasIncludeDeleted() bool`
 
-`func (o *ListEntitiesQuery) GetIncludeMetadata() bool`
-
-GetIncludeMetadata returns the IncludeMetadata field if non-nil, zero value otherwise.
-
-### GetIncludeMetadataOk
-
-`func (o *ListEntitiesQuery) GetIncludeMetadataOk() (*bool, bool)`
-
-GetIncludeMetadataOk returns a tuple with the IncludeMetadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIncludeMetadata
-
-`func (o *ListEntitiesQuery) SetIncludeMetadata(v bool)`
-
-SetIncludeMetadata sets IncludeMetadata field to given value.
-
+HasIncludeDeleted returns a boolean if a field has been set.
 
 ### GetOnlyDeleted
 
@@ -89,6 +75,11 @@ and a boolean to check if the value has been set.
 
 SetOnlyDeleted sets OnlyDeleted field to given value.
 
+### HasOnlyDeleted
+
+`func (o *ListEntitiesQuery) HasOnlyDeleted() bool`
+
+HasOnlyDeleted returns a boolean if a field has been set.
 
 ### GetLimit
 
@@ -140,6 +131,76 @@ SetOffset sets Offset field to given value.
 
 HasOffset returns a boolean if a field has been set.
 
+### GetQ
+
+`func (o *ListEntitiesQuery) GetQ() string`
+
+GetQ returns the Q field if non-nil, zero value otherwise.
+
+### GetQOk
+
+`func (o *ListEntitiesQuery) GetQOk() (*string, bool)`
+
+GetQOk returns a tuple with the Q field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetQ
+
+`func (o *ListEntitiesQuery) SetQ(v string)`
+
+SetQ sets Q field to given value.
+
+### HasQ
+
+`func (o *ListEntitiesQuery) HasQ() bool`
+
+HasQ returns a boolean if a field has been set.
+
+### SetQNil
+
+`func (o *ListEntitiesQuery) SetQNil(b bool)`
+
+ SetQNil sets the value for Q to be an explicit nil
+
+### UnsetQ
+`func (o *ListEntitiesQuery) UnsetQ()`
+
+UnsetQ ensures that no value is present for Q, not even an explicit nil
+### GetSort
+
+`func (o *ListEntitiesQuery) GetSort() string`
+
+GetSort returns the Sort field if non-nil, zero value otherwise.
+
+### GetSortOk
+
+`func (o *ListEntitiesQuery) GetSortOk() (*string, bool)`
+
+GetSortOk returns a tuple with the Sort field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSort
+
+`func (o *ListEntitiesQuery) SetSort(v string)`
+
+SetSort sets Sort field to given value.
+
+### HasSort
+
+`func (o *ListEntitiesQuery) HasSort() bool`
+
+HasSort returns a boolean if a field has been set.
+
+### SetSortNil
+
+`func (o *ListEntitiesQuery) SetSortNil(b bool)`
+
+ SetSortNil sets the value for Sort to be an explicit nil
+
+### UnsetSort
+`func (o *ListEntitiesQuery) UnsetSort()`
+
+UnsetSort ensures that no value is present for Sort, not even an explicit nil
 ### GetZoneId
 
 `func (o *ListEntitiesQuery) GetZoneId() string`

@@ -21,9 +21,13 @@ var _ MappedNullable = &ApiErrorResponse{}
 
 // ApiErrorResponse A minimal, user-facing error body for public API responses.
 type ApiErrorResponse struct {
+	// Server-generated correlation id that ties this error to the request trace and the matching audit event (see the audit log). Present when the request carried one.
+	CorrelationId NullableString `json:"correlationId,omitempty"`
 	// Optional stable code for clients to branch on (e.g. \"door_unreachable\").
 	ErrorCode NullableString `json:"error_code,omitempty"`
 	Message   string         `json:"message"`
+	// Present when `error_code` is `confirmation_required` (retry with `X-OpenApp-Confirm`).
+	PreviewToken NullableString `json:"preview_token,omitempty"`
 }
 
 type _ApiErrorResponse ApiErrorResponse
@@ -44,6 +48,49 @@ func NewApiErrorResponse(message string) *ApiErrorResponse {
 func NewApiErrorResponseWithDefaults() *ApiErrorResponse {
 	this := ApiErrorResponse{}
 	return &this
+}
+
+// GetCorrelationId returns the CorrelationId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ApiErrorResponse) GetCorrelationId() string {
+	if o == nil || IsNil(o.CorrelationId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.CorrelationId.Get()
+}
+
+// GetCorrelationIdOk returns a tuple with the CorrelationId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ApiErrorResponse) GetCorrelationIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CorrelationId.Get(), o.CorrelationId.IsSet()
+}
+
+// HasCorrelationId returns a boolean if a field has been set.
+func (o *ApiErrorResponse) HasCorrelationId() bool {
+	if o != nil && o.CorrelationId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCorrelationId gets a reference to the given NullableString and assigns it to the CorrelationId field.
+func (o *ApiErrorResponse) SetCorrelationId(v string) {
+	o.CorrelationId.Set(&v)
+}
+
+// SetCorrelationIdNil sets the value for CorrelationId to be an explicit nil
+func (o *ApiErrorResponse) SetCorrelationIdNil() {
+	o.CorrelationId.Set(nil)
+}
+
+// UnsetCorrelationId ensures that no value is present for CorrelationId, not even an explicit nil
+func (o *ApiErrorResponse) UnsetCorrelationId() {
+	o.CorrelationId.Unset()
 }
 
 // GetErrorCode returns the ErrorCode field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -113,12 +160,61 @@ func (o *ApiErrorResponse) SetMessage(v string) {
 	o.Message = v
 }
 
+// GetPreviewToken returns the PreviewToken field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ApiErrorResponse) GetPreviewToken() string {
+	if o == nil || IsNil(o.PreviewToken.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PreviewToken.Get()
+}
+
+// GetPreviewTokenOk returns a tuple with the PreviewToken field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ApiErrorResponse) GetPreviewTokenOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PreviewToken.Get(), o.PreviewToken.IsSet()
+}
+
+// HasPreviewToken returns a boolean if a field has been set.
+func (o *ApiErrorResponse) HasPreviewToken() bool {
+	if o != nil && o.PreviewToken.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPreviewToken gets a reference to the given NullableString and assigns it to the PreviewToken field.
+func (o *ApiErrorResponse) SetPreviewToken(v string) {
+	o.PreviewToken.Set(&v)
+}
+
+// SetPreviewTokenNil sets the value for PreviewToken to be an explicit nil
+func (o *ApiErrorResponse) SetPreviewTokenNil() {
+	o.PreviewToken.Set(nil)
+}
+
+// UnsetPreviewToken ensures that no value is present for PreviewToken, not even an explicit nil
+func (o *ApiErrorResponse) UnsetPreviewToken() {
+	o.PreviewToken.Unset()
+}
+
 func (o ApiErrorResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.CorrelationId.IsSet() {
+		toSerialize["correlationId"] = o.CorrelationId.Get()
+	}
 	if o.ErrorCode.IsSet() {
 		toSerialize["error_code"] = o.ErrorCode.Get()
 	}
 	toSerialize["message"] = o.Message
+	if o.PreviewToken.IsSet() {
+		toSerialize["preview_token"] = o.PreviewToken.Get()
+	}
 	return toSerialize, nil
 }
 

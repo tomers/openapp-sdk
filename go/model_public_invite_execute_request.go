@@ -21,7 +21,10 @@ var _ MappedNullable = &PublicInviteExecuteRequest{}
 
 // PublicInviteExecuteRequest struct for PublicInviteExecuteRequest
 type PublicInviteExecuteRequest struct {
-	GrantId string `json:"grant_id"`
+	GrantId        string         `json:"grant_id"`
+	OtpChallengeId NullableString `json:"otp_challenge_id,omitempty"`
+	OtpCode        NullableString `json:"otp_code,omitempty"`
+	Pin            NullableString `json:"pin,omitempty"`
 }
 
 type _PublicInviteExecuteRequest PublicInviteExecuteRequest
@@ -68,9 +71,147 @@ func (o *PublicInviteExecuteRequest) SetGrantId(v string) {
 	o.GrantId = v
 }
 
+// GetOtpChallengeId returns the OtpChallengeId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteExecuteRequest) GetOtpChallengeId() string {
+	if o == nil || IsNil(o.OtpChallengeId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.OtpChallengeId.Get()
+}
+
+// GetOtpChallengeIdOk returns a tuple with the OtpChallengeId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteExecuteRequest) GetOtpChallengeIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OtpChallengeId.Get(), o.OtpChallengeId.IsSet()
+}
+
+// HasOtpChallengeId returns a boolean if a field has been set.
+func (o *PublicInviteExecuteRequest) HasOtpChallengeId() bool {
+	if o != nil && o.OtpChallengeId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOtpChallengeId gets a reference to the given NullableString and assigns it to the OtpChallengeId field.
+func (o *PublicInviteExecuteRequest) SetOtpChallengeId(v string) {
+	o.OtpChallengeId.Set(&v)
+}
+
+// SetOtpChallengeIdNil sets the value for OtpChallengeId to be an explicit nil
+func (o *PublicInviteExecuteRequest) SetOtpChallengeIdNil() {
+	o.OtpChallengeId.Set(nil)
+}
+
+// UnsetOtpChallengeId ensures that no value is present for OtpChallengeId, not even an explicit nil
+func (o *PublicInviteExecuteRequest) UnsetOtpChallengeId() {
+	o.OtpChallengeId.Unset()
+}
+
+// GetOtpCode returns the OtpCode field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteExecuteRequest) GetOtpCode() string {
+	if o == nil || IsNil(o.OtpCode.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.OtpCode.Get()
+}
+
+// GetOtpCodeOk returns a tuple with the OtpCode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteExecuteRequest) GetOtpCodeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OtpCode.Get(), o.OtpCode.IsSet()
+}
+
+// HasOtpCode returns a boolean if a field has been set.
+func (o *PublicInviteExecuteRequest) HasOtpCode() bool {
+	if o != nil && o.OtpCode.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOtpCode gets a reference to the given NullableString and assigns it to the OtpCode field.
+func (o *PublicInviteExecuteRequest) SetOtpCode(v string) {
+	o.OtpCode.Set(&v)
+}
+
+// SetOtpCodeNil sets the value for OtpCode to be an explicit nil
+func (o *PublicInviteExecuteRequest) SetOtpCodeNil() {
+	o.OtpCode.Set(nil)
+}
+
+// UnsetOtpCode ensures that no value is present for OtpCode, not even an explicit nil
+func (o *PublicInviteExecuteRequest) UnsetOtpCode() {
+	o.OtpCode.Unset()
+}
+
+// GetPin returns the Pin field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteExecuteRequest) GetPin() string {
+	if o == nil || IsNil(o.Pin.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Pin.Get()
+}
+
+// GetPinOk returns a tuple with the Pin field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteExecuteRequest) GetPinOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Pin.Get(), o.Pin.IsSet()
+}
+
+// HasPin returns a boolean if a field has been set.
+func (o *PublicInviteExecuteRequest) HasPin() bool {
+	if o != nil && o.Pin.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPin gets a reference to the given NullableString and assigns it to the Pin field.
+func (o *PublicInviteExecuteRequest) SetPin(v string) {
+	o.Pin.Set(&v)
+}
+
+// SetPinNil sets the value for Pin to be an explicit nil
+func (o *PublicInviteExecuteRequest) SetPinNil() {
+	o.Pin.Set(nil)
+}
+
+// UnsetPin ensures that no value is present for Pin, not even an explicit nil
+func (o *PublicInviteExecuteRequest) UnsetPin() {
+	o.Pin.Unset()
+}
+
 func (o PublicInviteExecuteRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["grant_id"] = o.GrantId
+	if o.OtpChallengeId.IsSet() {
+		toSerialize["otp_challenge_id"] = o.OtpChallengeId.Get()
+	}
+	if o.OtpCode.IsSet() {
+		toSerialize["otp_code"] = o.OtpCode.Get()
+	}
+	if o.Pin.IsSet() {
+		toSerialize["pin"] = o.Pin.Get()
+	}
 	return toSerialize, nil
 }
 

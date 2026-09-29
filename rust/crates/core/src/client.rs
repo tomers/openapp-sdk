@@ -37,6 +37,7 @@ pub struct ClientConfig {
     pub user_agent: String,
     pub default_timeout: Duration,
     pub retry: RetryPolicy,
+    pub default_org: Option<String>,
 }
 
 /// Fluent builder for [`Client`]. Use [`Client::builder`] to construct one.
@@ -49,6 +50,7 @@ pub struct ClientBuilder {
     retry: RetryPolicy,
     interceptors: Vec<SharedInterceptor>,
     underlying: Option<reqwest::Client>,
+    org: Option<String>,
 }
 
 impl Default for ClientBuilder {
@@ -61,19 +63,21 @@ impl Default for ClientBuilder {
             retry: RetryPolicy::default(),
             interceptors: vec![Arc::new(TracingInterceptor) as SharedInterceptor],
             underlying: None,
+            org: None,
         }
     }
 }
 
 impl ClientBuilder {
-    /// Authenticate with a static `OpenApp` API key. The base URL is derived from the
-    /// token unless overridden via [`ClientBuilder::base_url`].
+    /// Authenticate with a static `OpenApp` API key. The API root (`{origin}/api/v1`) is
+    /// derived from the origin embedded in the token unless overridden via
+    /// [`ClientBuilder::base_url`].
     #[must_use]
     pub fn api_key(mut self, token: impl Into<String>) -> Self {
         match StaticApiKey::from_raw(token) {
             Ok(provider) => {
                 if self.base_url.is_none() {
-                    self.base_url = Some(provider.api_key().base_url().clone());
+                    self.base_url = Some(provider.api_key().api_base_url());
                 }
                 self.token_provider = Some(Arc::new(provider));
             }
@@ -92,8 +96,9 @@ impl ClientBuilder {
         self
     }
 
-    /// Override the API base URL. Rarely needed — an `OpenApp` API key embeds its base
-    /// URL, so calling [`ClientBuilder::api_key`] usually suffices.
+    /// Override the API root every request path is resolved against (for example
+    /// `https://openapp.house/api/v1`, including the `/api/v1` prefix). Rarely needed —
+    /// [`ClientBuilder::api_key`] derives it from the token's origin.
     pub fn base_url(mut self, url: impl AsRef<str>) -> Result<Self, SdkError> {
         let parsed = Url::parse(url.as_ref())
             .map_err(|e| SdkError::Config(format!("invalid base_url: {e}")))?;
@@ -119,6 +124,13 @@ impl ClientBuilder {
     #[must_use]
     pub fn retry_policy(mut self, policy: RetryPolicy) -> Self {
         self.retry = policy;
+        self
+    }
+
+    /// Set the default organization context (`X-Org` header) for every request.
+    #[must_use]
+    pub fn org(mut self, org: impl Into<String>) -> Self {
+        self.org = Some(org.into());
         self
     }
 
@@ -189,6 +201,7 @@ impl ClientBuilder {
             user_agent: user_agent.clone(),
             default_timeout: self.default_timeout,
             retry: self.retry,
+            default_org: self.org.clone(),
         };
 
         let transport = Transport::new(
@@ -198,6 +211,7 @@ impl ClientBuilder {
             tokens,
             self.interceptors,
             self.default_timeout,
+            self.org,
         );
 
         Ok(Client {
@@ -244,11 +258,30 @@ impl Client {
         self.transport.clone()
     }
 
+    /// Return a client scoped to a different organization (`X-Org` header).
+    #[must_use]
+    pub fn with_org(&self, org: impl Into<String>) -> Client {
+        let org = org.into();
+        let transport = Arc::new(self.transport.with_default_org(org.clone()));
+        Client {
+            transport,
+            config: ClientConfig {
+                default_org: Some(org),
+                ..self.config.clone()
+            },
+        }
+    }
+
     // -- Per-tag sub-clients -------------------------------------------------
 
     #[must_use]
     pub fn api_keys(&self) -> resources::ApiKeysClient {
         resources::ApiKeysClient::new(self.transport.clone())
+    }
+
+    #[must_use]
+    pub fn agents(&self) -> resources::AgentsClient {
+        resources::AgentsClient::new(self.transport.clone())
     }
 
     #[must_use]
@@ -297,8 +330,8 @@ impl Client {
     }
 
     #[must_use]
-    pub fn apartment_residents(&self) -> resources::ApartmentResidentsClient {
-        resources::ApartmentResidentsClient::new(self.transport.clone())
+    pub fn directory_listing_members(&self) -> resources::DirectoryListingMembersClient {
+        resources::DirectoryListingMembersClient::new(self.transport.clone())
     }
 
     #[must_use]
@@ -338,15 +371,60 @@ mod tests {
     }
 
     #[test]
-    fn api_key_derives_base_url() {
+    fn api_key_derives_versioned_api_root_from_origin() {
         let client = Client::builder()
-            .api_key("https://api.openapp.house/api/v1_openapp_SECRET")
+            .api_key("https://openapp.house_openapp_SECRET")
             .build()
             .unwrap();
         assert_eq!(
             client.config().base_url.as_str(),
-            "https://api.openapp.house/api/v1"
+            "https://openapp.house/api/v1"
         );
+    }
+
+    #[test]
+    fn explicit_base_url_overrides_derived_root() {
+        let client = Client::builder()
+            .base_url("http://localhost:4455/api/v1")
+            .unwrap()
+            .api_key("http://oathkeeper:4455_openapp_SECRET")
+            .build()
+            .unwrap();
+        assert_eq!(
+            client.config().base_url.as_str(),
+            "http://localhost:4455/api/v1"
+        );
+    }
+
+    #[test]
+    fn org_sets_default_org_on_config() {
+        let client = Client::builder()
+            .api_key("https://openapp.house_openapp_SECRET")
+            .org("01HORG00000000000000000000")
+            .build()
+            .unwrap();
+        assert_eq!(
+            client.config().default_org.as_deref(),
+            Some("01HORG00000000000000000000")
+        );
+        assert_eq!(
+            client.transport().default_org(),
+            Some("01HORG00000000000000000000")
+        );
+    }
+
+    #[test]
+    fn with_org_returns_scoped_client() {
+        let client = Client::builder()
+            .api_key("https://openapp.house_openapp_SECRET")
+            .build()
+            .unwrap();
+        let scoped = client.with_org("01HORG00000000000000000001");
+        assert_eq!(
+            scoped.config().default_org.as_deref(),
+            Some("01HORG00000000000000000001")
+        );
+        assert!(client.config().default_org.is_none());
     }
 
     #[test]
@@ -355,7 +433,7 @@ mod tests {
         // when the first request asks the provider for a token.
         let client = Client::builder()
             .api_key("not a token")
-            .base_url("https://api.openapp.house/api/v1")
+            .base_url("https://openapp.house/api/v1")
             .unwrap()
             .build()
             .unwrap();

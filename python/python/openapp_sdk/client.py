@@ -21,11 +21,12 @@ from .bridge.base import BridgeRequest
 from .errors import ConfigError
 from .interceptor import Interceptor, RequestSpec, ResponseView
 from .resources import (
-    ApartmentResidentsClient,
+    AgentsClient,
     ApiKeysClient,
     AuthClient,
     BillingClient,
     DevicesClient,
+    DirectoryListingMembersClient,
     EntitiesClient,
     EulaClient,
     IntegrationsClient,
@@ -34,6 +35,7 @@ from .resources import (
     OrgsClient,
     PublicAccessClient,
     ScriptingClient,
+    SitePeopleClient,
     StatusClient,
     UsersClient,
     ZonesClient,
@@ -53,12 +55,14 @@ class ClientConfig:
     user_agent: str
     timeout_secs: float
     max_retries: int
+    org_id: str | None = None
 
 
 class AsyncClient:
     """Async-first client. Construct via :meth:`connect`."""
 
     api_keys: ApiKeysClient
+    agents: AgentsClient
     billing: BillingClient
     users: UsersClient
     orgs: OrgsClient
@@ -68,7 +72,8 @@ class AsyncClient:
     zones: ZonesClient
     lan_agent: LanAgentClient
     scripting: ScriptingClient
-    apartment_residents: ApartmentResidentsClient
+    directory_listing_members: DirectoryListingMembersClient
+    site_people: SitePeopleClient
     public_access: PublicAccessClient
     auth: AuthClient
     me: MeClient
@@ -88,6 +93,7 @@ class AsyncClient:
 
         # Sub-clients: all share the same request dispatcher.
         self.api_keys = ApiKeysClient(self)
+        self.agents = AgentsClient(self)
         self.billing = BillingClient(self)
         self.users = UsersClient(self)
         self.orgs = OrgsClient(self)
@@ -97,7 +103,8 @@ class AsyncClient:
         self.zones = ZonesClient(self)
         self.lan_agent = LanAgentClient(self)
         self.scripting = ScriptingClient(self)
-        self.apartment_residents = ApartmentResidentsClient(self)
+        self.directory_listing_members = DirectoryListingMembersClient(self)
+        self.site_people = SitePeopleClient(self)
         self.public_access = PublicAccessClient(self)
         self.auth = AuthClient(self)
         self.me = MeClient(self)
@@ -115,11 +122,16 @@ class AsyncClient:
         max_retries: int = DEFAULT_RETRIES,
         interceptors: Sequence[Interceptor] = (),
         skip_status_probe: bool = False,
+        org_id: str | None = None,
     ) -> AsyncClient:
-        """Parse credentials, build the bridge client, and verify connectivity."""
+        """Parse credentials, build the bridge client, and verify connectivity.
+
+        ``base_url`` overrides the API root (including ``/api/v1``); by default it
+        is derived from the key as ``{origin}/api/v1``.
+        """
 
         parsed = ApiKey.parse(api_key)
-        resolved_base_url = (base_url or parsed.base_url).rstrip("/")
+        resolved_base_url = (base_url or parsed.api_base_url).rstrip("/")
         if not resolved_base_url:
             raise ConfigError("could not determine a base URL from the API key")
 
@@ -129,13 +141,15 @@ class AsyncClient:
             user_agent=ua,
             timeout_secs=float(timeout),
             max_retries=int(max_retries),
+            org_id=org_id,
         )
         bridge_client = get_bridge().new_client(
-            api_key=parsed.bearer,
+            api_key=parsed.raw,
             base_url=resolved_base_url,
             user_agent=ua,
             timeout_secs=config.timeout_secs,
             max_retries=config.max_retries,
+            org=org_id,
         )
         client = cls(
             bridge_client=bridge_client,
@@ -151,6 +165,21 @@ class AsyncClient:
     @property
     def config(self) -> ClientConfig:
         return self._config
+
+    def with_org(self, org_id: str) -> AsyncClient:
+        """Return a client scoped to a different organization."""
+        scoped_bridge = self._bridge.with_org(org_id)
+        return AsyncClient(
+            bridge_client=scoped_bridge,
+            config=ClientConfig(
+                base_url=self._config.base_url,
+                user_agent=self._config.user_agent,
+                timeout_secs=self._config.timeout_secs,
+                max_retries=self._config.max_retries,
+                org_id=org_id,
+            ),
+            interceptors=self._interceptors,
+        )
 
     async def close(self) -> None:
         """Release the underlying transport / runtime."""
@@ -174,13 +203,14 @@ class AsyncClient:
         query: Sequence[tuple[str, str | None]] = (),
         timeout: float | None = None,
         multipart: tuple[str, str, str, bytes] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> Any:
         spec = RequestSpec(
             method=method,
             path=path,
             query=tuple(query),
             body=body,
-            headers={},
+            headers=headers or {},
             timeout_secs=timeout,
             multipart=multipart,
         )
@@ -225,22 +255,30 @@ class Client:
             print(org)
     """
 
-    api_keys: ApiKeysClient
-    billing: BillingClient
-    users: UsersClient
-    orgs: OrgsClient
-    devices: DevicesClient
-    entities: EntitiesClient
-    integrations: IntegrationsClient
-    zones: ZonesClient
-    lan_agent: LanAgentClient
-    scripting: ScriptingClient
-    apartment_residents: ApartmentResidentsClient
-    public_access: PublicAccessClient
-    auth: AuthClient
-    me: MeClient
-    eula: EulaClient
-    status: StatusClient
+    # Sub-clients are produced by `_wrap`, which rebuilds each async sub-client
+    # at runtime with its coroutine methods turned into blocking calls. The async
+    # sub-client types therefore do not describe them: `client.orgs.list()` yields
+    # the awaited value, not a coroutine, and annotating them as the async types
+    # makes type checkers demand an `await` that would fail at runtime. The shim
+    # is assembled dynamically, so `Any` is the only annotation that is not a lie.
+    api_keys: Any
+    agents: Any
+    billing: Any
+    users: Any
+    orgs: Any
+    devices: Any
+    entities: Any
+    integrations: Any
+    zones: Any
+    lan_agent: Any
+    scripting: Any
+    directory_listing_members: Any
+    site_people: Any
+    public_access: Any
+    auth: Any
+    me: Any
+    eula: Any
+    status: Any
 
     def __init__(
         self,
@@ -250,6 +288,7 @@ class Client:
         self._inner = inner
         self._loop: asyncio.AbstractEventLoop = loop or asyncio.new_event_loop()
         self.api_keys = _wrap(inner.api_keys, self)
+        self.agents = _wrap(inner.agents, self)
         self.billing = _wrap(inner.billing, self)
         self.users = _wrap(inner.users, self)
         self.orgs = _wrap(inner.orgs, self)
@@ -259,7 +298,8 @@ class Client:
         self.zones = _wrap(inner.zones, self)
         self.lan_agent = _wrap(inner.lan_agent, self)
         self.scripting = _wrap(inner.scripting, self)
-        self.apartment_residents = _wrap(inner.apartment_residents, self)
+        self.directory_listing_members = _wrap(inner.directory_listing_members, self)
+        self.site_people = _wrap(inner.site_people, self)
         self.public_access = _wrap(inner.public_access, self)
         self.auth = _wrap(inner.auth, self)
         self.me = _wrap(inner.me, self)
@@ -277,6 +317,7 @@ class Client:
         max_retries: int = DEFAULT_RETRIES,
         interceptors: Sequence[Interceptor] = (),
         skip_status_probe: bool = False,
+        org_id: str | None = None,
     ) -> Client:
         loop = asyncio.new_event_loop()
         try:
@@ -289,6 +330,7 @@ class Client:
                     max_retries=max_retries,
                     interceptors=interceptors,
                     skip_status_probe=skip_status_probe,
+                    org_id=org_id,
                 )
             )
         except BaseException:
@@ -299,6 +341,10 @@ class Client:
     @property
     def config(self) -> ClientConfig:
         return self._inner.config
+
+    def with_org(self, org_id: str) -> Client:
+        """Return a client scoped to a different organization."""
+        return Client(self._inner.with_org(org_id), loop=self._loop)
 
     def close(self) -> None:
         try:

@@ -11,9 +11,7 @@ API version: v1
 package openapi
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
 )
 
 // checks if the InviteScheduleEntryInput type satisfies the MappedNullable interface at compile time
@@ -21,24 +19,26 @@ var _ MappedNullable = &InviteScheduleEntryInput{}
 
 // InviteScheduleEntryInput struct for InviteScheduleEntryInput
 type InviteScheduleEntryInput struct {
+	// Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Measured from resolved `valid_from`. Mutually exclusive with `valid_to`.
+	ExpiresIn        NullableString `json:"expires_in,omitempty"`
 	Id               NullableString `json:"id,omitempty"`
 	InviteRecurrence interface{}    `json:"invite_recurrence,omitempty"`
 	IsEnabled        *bool          `json:"is_enabled,omitempty"`
 	Name             NullableString `json:"name,omitempty"`
-	ValidFrom        string         `json:"valid_from"`
-	ValidTo          string         `json:"valid_to"`
+	// Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Mutually exclusive with `valid_from`.
+	StartsIn NullableString `json:"starts_in,omitempty"`
+	// [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) start (UTC). Mutually exclusive with `starts_in`.
+	ValidFrom NullableString `json:"valid_from,omitempty"`
+	// [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) end (UTC). Mutually exclusive with `expires_in`.
+	ValidTo NullableString `json:"valid_to,omitempty"`
 }
-
-type _InviteScheduleEntryInput InviteScheduleEntryInput
 
 // NewInviteScheduleEntryInput instantiates a new InviteScheduleEntryInput object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInviteScheduleEntryInput(validFrom string, validTo string) *InviteScheduleEntryInput {
+func NewInviteScheduleEntryInput() *InviteScheduleEntryInput {
 	this := InviteScheduleEntryInput{}
-	this.ValidFrom = validFrom
-	this.ValidTo = validTo
 	return &this
 }
 
@@ -48,6 +48,49 @@ func NewInviteScheduleEntryInput(validFrom string, validTo string) *InviteSchedu
 func NewInviteScheduleEntryInputWithDefaults() *InviteScheduleEntryInput {
 	this := InviteScheduleEntryInput{}
 	return &this
+}
+
+// GetExpiresIn returns the ExpiresIn field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InviteScheduleEntryInput) GetExpiresIn() string {
+	if o == nil || IsNil(o.ExpiresIn.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ExpiresIn.Get()
+}
+
+// GetExpiresInOk returns a tuple with the ExpiresIn field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InviteScheduleEntryInput) GetExpiresInOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ExpiresIn.Get(), o.ExpiresIn.IsSet()
+}
+
+// HasExpiresIn returns a boolean if a field has been set.
+func (o *InviteScheduleEntryInput) HasExpiresIn() bool {
+	if o != nil && o.ExpiresIn.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetExpiresIn gets a reference to the given NullableString and assigns it to the ExpiresIn field.
+func (o *InviteScheduleEntryInput) SetExpiresIn(v string) {
+	o.ExpiresIn.Set(&v)
+}
+
+// SetExpiresInNil sets the value for ExpiresIn to be an explicit nil
+func (o *InviteScheduleEntryInput) SetExpiresInNil() {
+	o.ExpiresIn.Set(nil)
+}
+
+// UnsetExpiresIn ensures that no value is present for ExpiresIn, not even an explicit nil
+func (o *InviteScheduleEntryInput) UnsetExpiresIn() {
+	o.ExpiresIn.Unset()
 }
 
 // GetId returns the Id field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -201,56 +244,140 @@ func (o *InviteScheduleEntryInput) UnsetName() {
 	o.Name.Unset()
 }
 
-// GetValidFrom returns the ValidFrom field value
-func (o *InviteScheduleEntryInput) GetValidFrom() string {
-	if o == nil {
+// GetStartsIn returns the StartsIn field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InviteScheduleEntryInput) GetStartsIn() string {
+	if o == nil || IsNil(o.StartsIn.Get()) {
 		var ret string
 		return ret
 	}
-
-	return o.ValidFrom
+	return *o.StartsIn.Get()
 }
 
-// GetValidFromOk returns a tuple with the ValidFrom field value
+// GetStartsInOk returns a tuple with the StartsIn field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InviteScheduleEntryInput) GetStartsInOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.StartsIn.Get(), o.StartsIn.IsSet()
+}
+
+// HasStartsIn returns a boolean if a field has been set.
+func (o *InviteScheduleEntryInput) HasStartsIn() bool {
+	if o != nil && o.StartsIn.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetStartsIn gets a reference to the given NullableString and assigns it to the StartsIn field.
+func (o *InviteScheduleEntryInput) SetStartsIn(v string) {
+	o.StartsIn.Set(&v)
+}
+
+// SetStartsInNil sets the value for StartsIn to be an explicit nil
+func (o *InviteScheduleEntryInput) SetStartsInNil() {
+	o.StartsIn.Set(nil)
+}
+
+// UnsetStartsIn ensures that no value is present for StartsIn, not even an explicit nil
+func (o *InviteScheduleEntryInput) UnsetStartsIn() {
+	o.StartsIn.Unset()
+}
+
+// GetValidFrom returns the ValidFrom field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InviteScheduleEntryInput) GetValidFrom() string {
+	if o == nil || IsNil(o.ValidFrom.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ValidFrom.Get()
+}
+
+// GetValidFromOk returns a tuple with the ValidFrom field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *InviteScheduleEntryInput) GetValidFromOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.ValidFrom, true
+	return o.ValidFrom.Get(), o.ValidFrom.IsSet()
 }
 
-// SetValidFrom sets field value
+// HasValidFrom returns a boolean if a field has been set.
+func (o *InviteScheduleEntryInput) HasValidFrom() bool {
+	if o != nil && o.ValidFrom.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetValidFrom gets a reference to the given NullableString and assigns it to the ValidFrom field.
 func (o *InviteScheduleEntryInput) SetValidFrom(v string) {
-	o.ValidFrom = v
+	o.ValidFrom.Set(&v)
 }
 
-// GetValidTo returns the ValidTo field value
+// SetValidFromNil sets the value for ValidFrom to be an explicit nil
+func (o *InviteScheduleEntryInput) SetValidFromNil() {
+	o.ValidFrom.Set(nil)
+}
+
+// UnsetValidFrom ensures that no value is present for ValidFrom, not even an explicit nil
+func (o *InviteScheduleEntryInput) UnsetValidFrom() {
+	o.ValidFrom.Unset()
+}
+
+// GetValidTo returns the ValidTo field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *InviteScheduleEntryInput) GetValidTo() string {
-	if o == nil {
+	if o == nil || IsNil(o.ValidTo.Get()) {
 		var ret string
 		return ret
 	}
-
-	return o.ValidTo
+	return *o.ValidTo.Get()
 }
 
-// GetValidToOk returns a tuple with the ValidTo field value
+// GetValidToOk returns a tuple with the ValidTo field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *InviteScheduleEntryInput) GetValidToOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.ValidTo, true
+	return o.ValidTo.Get(), o.ValidTo.IsSet()
 }
 
-// SetValidTo sets field value
+// HasValidTo returns a boolean if a field has been set.
+func (o *InviteScheduleEntryInput) HasValidTo() bool {
+	if o != nil && o.ValidTo.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetValidTo gets a reference to the given NullableString and assigns it to the ValidTo field.
 func (o *InviteScheduleEntryInput) SetValidTo(v string) {
-	o.ValidTo = v
+	o.ValidTo.Set(&v)
+}
+
+// SetValidToNil sets the value for ValidTo to be an explicit nil
+func (o *InviteScheduleEntryInput) SetValidToNil() {
+	o.ValidTo.Set(nil)
+}
+
+// UnsetValidTo ensures that no value is present for ValidTo, not even an explicit nil
+func (o *InviteScheduleEntryInput) UnsetValidTo() {
+	o.ValidTo.Unset()
 }
 
 func (o InviteScheduleEntryInput) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.ExpiresIn.IsSet() {
+		toSerialize["expires_in"] = o.ExpiresIn.Get()
+	}
 	if o.Id.IsSet() {
 		toSerialize["id"] = o.Id.Get()
 	}
@@ -263,47 +390,16 @@ func (o InviteScheduleEntryInput) ToMap() (map[string]interface{}, error) {
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
 	}
-	toSerialize["valid_from"] = o.ValidFrom
-	toSerialize["valid_to"] = o.ValidTo
+	if o.StartsIn.IsSet() {
+		toSerialize["starts_in"] = o.StartsIn.Get()
+	}
+	if o.ValidFrom.IsSet() {
+		toSerialize["valid_from"] = o.ValidFrom.Get()
+	}
+	if o.ValidTo.IsSet() {
+		toSerialize["valid_to"] = o.ValidTo.Get()
+	}
 	return toSerialize, nil
-}
-
-func (o *InviteScheduleEntryInput) UnmarshalJSON(data []byte) (err error) {
-	// This validates that all required properties are included in the JSON object
-	// by unmarshalling the object into a generic map with string keys and checking
-	// that every required field exists as a key in the generic map.
-	requiredProperties := []string{
-		"valid_from",
-		"valid_to",
-	}
-
-	allProperties := make(map[string]interface{})
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err
-	}
-
-	for _, requiredProperty := range requiredProperties {
-		if _, exists := allProperties[requiredProperty]; !exists {
-			return fmt.Errorf("no value given for required property %v", requiredProperty)
-		}
-	}
-
-	varInviteScheduleEntryInput := _InviteScheduleEntryInput{}
-
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varInviteScheduleEntryInput)
-
-	if err != nil {
-		return err
-	}
-
-	*o = InviteScheduleEntryInput(varInviteScheduleEntryInput)
-
-	return err
 }
 
 type NullableInviteScheduleEntryInput struct {

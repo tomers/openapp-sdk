@@ -22,6 +22,7 @@ type UpdateUserRequest struct {
 	Email NullableString          `json:"email,omitempty"`
 	Id    NullableString          `json:"id,omitempty"`
 	Name  NullableLocalizedString `json:"name,omitempty"`
+	Phone NullableString          `json:"phone,omitempty"`
 }
 
 // NewUpdateUserRequest instantiates a new UpdateUserRequest object
@@ -170,6 +171,49 @@ func (o *UpdateUserRequest) UnsetName() {
 	o.Name.Unset()
 }
 
+// GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UpdateUserRequest) GetPhone() string {
+	if o == nil || IsNil(o.Phone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Phone.Get()
+}
+
+// GetPhoneOk returns a tuple with the Phone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UpdateUserRequest) GetPhoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Phone.Get(), o.Phone.IsSet()
+}
+
+// HasPhone returns a boolean if a field has been set.
+func (o *UpdateUserRequest) HasPhone() bool {
+	if o != nil && o.Phone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhone gets a reference to the given NullableString and assigns it to the Phone field.
+func (o *UpdateUserRequest) SetPhone(v string) {
+	o.Phone.Set(&v)
+}
+
+// SetPhoneNil sets the value for Phone to be an explicit nil
+func (o *UpdateUserRequest) SetPhoneNil() {
+	o.Phone.Set(nil)
+}
+
+// UnsetPhone ensures that no value is present for Phone, not even an explicit nil
+func (o *UpdateUserRequest) UnsetPhone() {
+	o.Phone.Unset()
+}
+
 func (o UpdateUserRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Email.IsSet() {
@@ -180,6 +224,9 @@ func (o UpdateUserRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
+	}
+	if o.Phone.IsSet() {
+		toSerialize["phone"] = o.Phone.Get()
 	}
 	return toSerialize, nil
 }

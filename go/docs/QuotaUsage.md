@@ -8,15 +8,16 @@ Name | Type | Description | Notes
 **Key** | [**QuotaKey**](QuotaKey.md) |  |
 **Limit** | [**EffectiveLimit**](EffectiveLimit.md) |  |
 **Period** | [**QuotaPeriod**](QuotaPeriod.md) |  |
-**PeriodEnd** | Pointer to **NullableString** | Window end (RFC3339). &#x60;null&#x60; for &#x60;Lifetime&#x60;. | [optional]
+**PeriodEnd** | Pointer to **NullableString** | Window end ([RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)). &#x60;null&#x60; for &#x60;Lifetime&#x60;. | [optional]
 **PeriodLabel** | **string** | Window label (e.g. &#x60;lifetime&#x60;, &#x60;month:2026-04&#x60;). Stable across reports. |
-**PeriodStart** | Pointer to **NullableString** | Window start (RFC3339). &#x60;null&#x60; for &#x60;Lifetime&#x60;. | [optional]
+**PeriodStart** | Pointer to **NullableString** | Window start ([RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)). &#x60;null&#x60; for &#x60;Lifetime&#x60;. | [optional]
+**Unit** | [**QuotaUnit**](QuotaUnit.md) | Machine-readable unit of &#x60;current&#x60;/&#x60;limit&#x60; (e.g. &#x60;count&#x60;, &#x60;seconds&#x60;). |
 
 ## Methods
 
 ### NewQuotaUsage
 
-`func NewQuotaUsage(current int64, key QuotaKey, limit EffectiveLimit, period QuotaPeriod, periodLabel string, ) *QuotaUsage`
+`func NewQuotaUsage(current int64, key QuotaKey, limit EffectiveLimit, period QuotaPeriod, periodLabel string, unit QuotaUnit, ) *QuotaUsage`
 
 NewQuotaUsage instantiates a new QuotaUsage object
 This constructor will assign default values to properties that have it defined,
@@ -201,5 +202,25 @@ HasPeriodStart returns a boolean if a field has been set.
 `func (o *QuotaUsage) UnsetPeriodStart()`
 
 UnsetPeriodStart ensures that no value is present for PeriodStart, not even an explicit nil
+### GetUnit
+
+`func (o *QuotaUsage) GetUnit() QuotaUnit`
+
+GetUnit returns the Unit field if non-nil, zero value otherwise.
+
+### GetUnitOk
+
+`func (o *QuotaUsage) GetUnitOk() (*QuotaUnit, bool)`
+
+GetUnitOk returns a tuple with the Unit field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUnit
+
+`func (o *QuotaUsage) SetUnit(v QuotaUnit)`
+
+SetUnit sets Unit field to given value.
+
+
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

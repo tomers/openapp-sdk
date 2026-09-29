@@ -29,6 +29,7 @@ pub mod auth;
 pub mod client;
 pub mod error;
 pub mod interceptor;
+pub mod resolve;
 pub mod resources;
 pub mod retry;
 pub mod telemetry;
@@ -37,4 +38,6 @@ pub mod transport;
 pub use client::{Client, ClientBuilder, ClientConfig};
 pub use error::{ApiErrorResponse, SdkError};
 pub use interceptor::Interceptor;
-pub use openapp_sdk_common::{ApiKey, SDK_NAME, SDK_VERSION, TokenFormatError};
+pub use openapp_sdk_common::{
+    API_PATH_PREFIX, ApiKey, NameMatch, SDK_NAME, SDK_VERSION, TokenFormatError,
+};

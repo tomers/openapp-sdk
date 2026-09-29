@@ -11,7 +11,6 @@ API version: v1
 package openapi
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -22,7 +21,8 @@ var _ MappedNullable = &PatchEntityRequest{}
 // PatchEntityRequest Shallow-merge into existing `entity_metadata` (PATCH). Does not replace the whole map.
 type PatchEntityRequest struct {
 	// Keys to merge into persisted metadata. Omitted keys are left unchanged. JSON `null` removes a key (e.g. clear `floor` when setting `floor_number`).
-	Metadata map[string]interface{} `json:"metadata"`
+	Metadata             map[string]interface{} `json:"metadata"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _PatchEntityRequest PatchEntityRequest
@@ -72,6 +72,11 @@ func (o *PatchEntityRequest) SetMetadata(v map[string]interface{}) {
 func (o PatchEntityRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["metadata"] = o.Metadata
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -99,15 +104,20 @@ func (o *PatchEntityRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varPatchEntityRequest := _PatchEntityRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPatchEntityRequest)
+	err = json.Unmarshal(data, &varPatchEntityRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = PatchEntityRequest(varPatchEntityRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "metadata")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

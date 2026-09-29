@@ -7,7 +7,7 @@ use openapp_sdk_core::{Client, SdkError};
 use serde_json::json;
 use wiremock::{
     Mock, MockServer, ResponseTemplate,
-    matchers::{bearer_token, method, path},
+    matchers::{header, method, path},
 };
 
 fn build_client(base_url: &str, token: &str) -> Client {
@@ -20,13 +20,44 @@ fn build_client(base_url: &str, token: &str) -> Client {
         .unwrap()
 }
 
+/// Builds a client the way applications do: only the API key, API root derived from the
+/// token's origin. The mock server's origin is embedded in the token, so every path must
+/// arrive under `/api/v1`.
+fn client_from_key_only(server: &MockServer) -> (Client, String) {
+    let token = format!("{}_openapp_SECRET", server.uri().trim_end_matches('/'));
+    let client = Client::builder()
+        .api_key(token.clone())
+        .default_timeout(Duration::from_secs(2))
+        .build()
+        .unwrap();
+    (client, token)
+}
+
 #[tokio::test]
-async fn get_status_attaches_bearer() {
+async fn api_key_is_sent_in_x_api_key_header() {
     let server = MockServer::start().await;
-    let token = "https://api.test_openapp_SECRET";
+    let (client, token) = client_from_key_only(&server);
     Mock::given(method("GET"))
-        .and(path("/status"))
-        .and(bearer_token(token))
+        .and(path("/api/v1/status"))
+        .and(header("x-api-key", token.as_str()))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
+            "environment": "test",
+            "version": "dev"
+        })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let body = client.status().get().await.unwrap();
+    assert_eq!(body.environment, "test");
+}
+
+#[tokio::test]
+async fn api_key_is_never_sent_as_authorization() {
+    let server = MockServer::start().await;
+    let (client, _token) = client_from_key_only(&server);
+    Mock::given(method("GET"))
+        .and(path("/api/v1/status"))
         .respond_with(ResponseTemplate::new(200).set_body_json(json!({
             "environment": "test",
             "version": "dev"
@@ -34,9 +65,42 @@ async fn get_status_attaches_bearer() {
         .mount(&server)
         .await;
 
-    let client = build_client(&server.uri(), token);
-    let body = client.status().get().await.unwrap();
-    assert_eq!(body.environment, "test");
+    client.status().get().await.unwrap();
+    let requests = server.received_requests().await.unwrap();
+    assert_eq!(requests.len(), 1);
+    assert!(
+        !requests[0].headers.contains_key("authorization"),
+        "API key must not travel in Authorization: {:?}",
+        requests[0].headers.get("authorization")
+    );
+}
+
+#[tokio::test]
+async fn api_key_header_is_sent_on_raw_body_requests() {
+    let server = MockServer::start().await;
+    let (client, token) = client_from_key_only(&server);
+    Mock::given(method("POST"))
+        .and(path("/api/v1/upload"))
+        .and(header("x-api-key", token.as_str()))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({ "ok": true })))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let body = client
+        .transport()
+        .request_json_raw_body(
+            reqwest::Method::POST,
+            "/upload",
+            &[],
+            b"--b\r\n\r\npng\r\n--b--\r\n".to_vec(),
+            "multipart/form-data; boundary=b",
+            &[],
+            None,
+        )
+        .await
+        .unwrap();
+    assert_eq!(body, json!({ "ok": true }));
 }
 
 #[tokio::test]

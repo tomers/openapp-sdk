@@ -21,8 +21,13 @@ var _ MappedNullable = &MePushSubscriptionStatusResponse{}
 
 // MePushSubscriptionStatusResponse struct for MePushSubscriptionStatusResponse
 type MePushSubscriptionStatusResponse struct {
+	// Convenience: `has_subscription || has_device_token`.
+	HasAnyNotificationChannel bool `json:"has_any_notification_channel"`
+	// True when at least one native device token (APNs / FCM) is registered.
+	HasDeviceToken bool `json:"has_device_token"`
+	// True when at least one Web Push subscription exists for this browser/device flow.
 	HasSubscription bool `json:"has_subscription"`
-	// True when VAPID is configured; false means call notifications cannot be sent.
+	// True when VAPID is configured; false means Web Push call notifications cannot be sent.
 	PushConfigured bool `json:"push_configured"`
 }
 
@@ -32,8 +37,10 @@ type _MePushSubscriptionStatusResponse MePushSubscriptionStatusResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMePushSubscriptionStatusResponse(hasSubscription bool, pushConfigured bool) *MePushSubscriptionStatusResponse {
+func NewMePushSubscriptionStatusResponse(hasAnyNotificationChannel bool, hasDeviceToken bool, hasSubscription bool, pushConfigured bool) *MePushSubscriptionStatusResponse {
 	this := MePushSubscriptionStatusResponse{}
+	this.HasAnyNotificationChannel = hasAnyNotificationChannel
+	this.HasDeviceToken = hasDeviceToken
 	this.HasSubscription = hasSubscription
 	this.PushConfigured = pushConfigured
 	return &this
@@ -45,6 +52,54 @@ func NewMePushSubscriptionStatusResponse(hasSubscription bool, pushConfigured bo
 func NewMePushSubscriptionStatusResponseWithDefaults() *MePushSubscriptionStatusResponse {
 	this := MePushSubscriptionStatusResponse{}
 	return &this
+}
+
+// GetHasAnyNotificationChannel returns the HasAnyNotificationChannel field value
+func (o *MePushSubscriptionStatusResponse) GetHasAnyNotificationChannel() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.HasAnyNotificationChannel
+}
+
+// GetHasAnyNotificationChannelOk returns a tuple with the HasAnyNotificationChannel field value
+// and a boolean to check if the value has been set.
+func (o *MePushSubscriptionStatusResponse) GetHasAnyNotificationChannelOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.HasAnyNotificationChannel, true
+}
+
+// SetHasAnyNotificationChannel sets field value
+func (o *MePushSubscriptionStatusResponse) SetHasAnyNotificationChannel(v bool) {
+	o.HasAnyNotificationChannel = v
+}
+
+// GetHasDeviceToken returns the HasDeviceToken field value
+func (o *MePushSubscriptionStatusResponse) GetHasDeviceToken() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.HasDeviceToken
+}
+
+// GetHasDeviceTokenOk returns a tuple with the HasDeviceToken field value
+// and a boolean to check if the value has been set.
+func (o *MePushSubscriptionStatusResponse) GetHasDeviceTokenOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.HasDeviceToken, true
+}
+
+// SetHasDeviceToken sets field value
+func (o *MePushSubscriptionStatusResponse) SetHasDeviceToken(v bool) {
+	o.HasDeviceToken = v
 }
 
 // GetHasSubscription returns the HasSubscription field value
@@ -97,6 +152,8 @@ func (o *MePushSubscriptionStatusResponse) SetPushConfigured(v bool) {
 
 func (o MePushSubscriptionStatusResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	toSerialize["has_any_notification_channel"] = o.HasAnyNotificationChannel
+	toSerialize["has_device_token"] = o.HasDeviceToken
 	toSerialize["has_subscription"] = o.HasSubscription
 	toSerialize["push_configured"] = o.PushConfigured
 	return toSerialize, nil
@@ -107,6 +164,8 @@ func (o *MePushSubscriptionStatusResponse) UnmarshalJSON(data []byte) (err error
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"has_any_notification_channel",
+		"has_device_token",
 		"has_subscription",
 		"push_configured",
 	}

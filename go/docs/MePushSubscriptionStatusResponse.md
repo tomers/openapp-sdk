@@ -4,14 +4,16 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**HasSubscription** | **bool** |  |
-**PushConfigured** | **bool** | True when VAPID is configured; false means call notifications cannot be sent. |
+**HasAnyNotificationChannel** | **bool** | Convenience: &#x60;has_subscription || has_device_token&#x60;. |
+**HasDeviceToken** | **bool** | True when at least one native device token (APNs / FCM) is registered. |
+**HasSubscription** | **bool** | True when at least one Web Push subscription exists for this browser/device flow. |
+**PushConfigured** | **bool** | True when VAPID is configured; false means Web Push call notifications cannot be sent. |
 
 ## Methods
 
 ### NewMePushSubscriptionStatusResponse
 
-`func NewMePushSubscriptionStatusResponse(hasSubscription bool, pushConfigured bool, ) *MePushSubscriptionStatusResponse`
+`func NewMePushSubscriptionStatusResponse(hasAnyNotificationChannel bool, hasDeviceToken bool, hasSubscription bool, pushConfigured bool, ) *MePushSubscriptionStatusResponse`
 
 NewMePushSubscriptionStatusResponse instantiates a new MePushSubscriptionStatusResponse object
 This constructor will assign default values to properties that have it defined,
@@ -25,6 +27,46 @@ will change when the set of required properties is changed
 NewMePushSubscriptionStatusResponseWithDefaults instantiates a new MePushSubscriptionStatusResponse object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetHasAnyNotificationChannel
+
+`func (o *MePushSubscriptionStatusResponse) GetHasAnyNotificationChannel() bool`
+
+GetHasAnyNotificationChannel returns the HasAnyNotificationChannel field if non-nil, zero value otherwise.
+
+### GetHasAnyNotificationChannelOk
+
+`func (o *MePushSubscriptionStatusResponse) GetHasAnyNotificationChannelOk() (*bool, bool)`
+
+GetHasAnyNotificationChannelOk returns a tuple with the HasAnyNotificationChannel field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHasAnyNotificationChannel
+
+`func (o *MePushSubscriptionStatusResponse) SetHasAnyNotificationChannel(v bool)`
+
+SetHasAnyNotificationChannel sets HasAnyNotificationChannel field to given value.
+
+
+### GetHasDeviceToken
+
+`func (o *MePushSubscriptionStatusResponse) GetHasDeviceToken() bool`
+
+GetHasDeviceToken returns the HasDeviceToken field if non-nil, zero value otherwise.
+
+### GetHasDeviceTokenOk
+
+`func (o *MePushSubscriptionStatusResponse) GetHasDeviceTokenOk() (*bool, bool)`
+
+GetHasDeviceTokenOk returns a tuple with the HasDeviceToken field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHasDeviceToken
+
+`func (o *MePushSubscriptionStatusResponse) SetHasDeviceToken(v bool)`
+
+SetHasDeviceToken sets HasDeviceToken field to given value.
+
 
 ### GetHasSubscription
 

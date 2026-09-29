@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 **ExternalCustomerId** | Pointer to **NullableString** |  | [optional]
 **ExternalSubscriptionId** | Pointer to **NullableString** |  | [optional]
 **Kind** | [**BillingEventKind**](BillingEventKind.md) |  |
-**Provider** | **string** |  |
+**Provider** | **NullableString** |  |
 **Raw** | **interface{}** |  |
 **Status** | Pointer to **NullableString** |  | [optional]
 **TierSlug** | Pointer to **NullableString** |  | [optional]
@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 
 ### NewBillingEvent
 
-`func NewBillingEvent(kind BillingEventKind, provider string, raw interface{}, ) *BillingEvent`
+`func NewBillingEvent(kind BillingEventKind, provider NullableString, raw interface{}, ) *BillingEvent`
 
 NewBillingEvent instantiates a new BillingEvent object
 This constructor will assign default values to properties that have it defined,
@@ -141,6 +141,16 @@ and a boolean to check if the value has been set.
 SetProvider sets Provider field to given value.
 
 
+### SetProviderNil
+
+`func (o *BillingEvent) SetProviderNil(b bool)`
+
+ SetProviderNil sets the value for Provider to be an explicit nil
+
+### UnsetProvider
+`func (o *BillingEvent) UnsetProvider()`
+
+UnsetProvider ensures that no value is present for Provider, not even an explicit nil
 ### GetRaw
 
 `func (o *BillingEvent) GetRaw() interface{}`

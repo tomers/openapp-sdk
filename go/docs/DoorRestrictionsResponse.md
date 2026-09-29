@@ -4,13 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ApartmentEntityIds** | **[]string** |  |
+**ListingEntityIds** | **[]string** |  |
 
 ## Methods
 
 ### NewDoorRestrictionsResponse
 
-`func NewDoorRestrictionsResponse(apartmentEntityIds []string, ) *DoorRestrictionsResponse`
+`func NewDoorRestrictionsResponse(listingEntityIds []string, ) *DoorRestrictionsResponse`
 
 NewDoorRestrictionsResponse instantiates a new DoorRestrictionsResponse object
 This constructor will assign default values to properties that have it defined,
@@ -25,24 +25,24 @@ NewDoorRestrictionsResponseWithDefaults instantiates a new DoorRestrictionsRespo
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetApartmentEntityIds
+### GetListingEntityIds
 
-`func (o *DoorRestrictionsResponse) GetApartmentEntityIds() []string`
+`func (o *DoorRestrictionsResponse) GetListingEntityIds() []string`
 
-GetApartmentEntityIds returns the ApartmentEntityIds field if non-nil, zero value otherwise.
+GetListingEntityIds returns the ListingEntityIds field if non-nil, zero value otherwise.
 
-### GetApartmentEntityIdsOk
+### GetListingEntityIdsOk
 
-`func (o *DoorRestrictionsResponse) GetApartmentEntityIdsOk() (*[]string, bool)`
+`func (o *DoorRestrictionsResponse) GetListingEntityIdsOk() (*[]string, bool)`
 
-GetApartmentEntityIdsOk returns a tuple with the ApartmentEntityIds field if it's non-nil, zero value otherwise
+GetListingEntityIdsOk returns a tuple with the ListingEntityIds field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetApartmentEntityIds
+### SetListingEntityIds
 
-`func (o *DoorRestrictionsResponse) SetApartmentEntityIds(v []string)`
+`func (o *DoorRestrictionsResponse) SetListingEntityIds(v []string)`
 
-SetApartmentEntityIds sets ApartmentEntityIds field to given value.
+SetListingEntityIds sets ListingEntityIds field to given value.
 
 
 

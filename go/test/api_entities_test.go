@@ -19,7 +19,7 @@ import (
 
 func Test_openapi_EntitiesAPIService(t *testing.T) {
 
-	apiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"
+	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
@@ -120,13 +120,13 @@ func Test_openapi_EntitiesAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test EntitiesAPIService ListDeviceApartmentFloors", func(t *testing.T) {
+	t.Run("Test EntitiesAPIService ListDeviceDirectoryFloors", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		var deviceId string
 
-		resp, httpRes, err := apiClient.EntitiesAPI.ListDeviceApartmentFloors(context.Background(), deviceId).Execute()
+		resp, httpRes, err := apiClient.EntitiesAPI.ListDeviceDirectoryFloors(context.Background(), deviceId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

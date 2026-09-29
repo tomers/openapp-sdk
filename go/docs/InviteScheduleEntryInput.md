@@ -4,18 +4,20 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**ExpiresIn** | Pointer to **NullableString** | Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 &#x60;P1D&#x60;, &#x60;PT1H&#x60;, …; no months/years) or compact tokens &#x60;s&#x60;/&#x60;m&#x60;/&#x60;h&#x60;/&#x60;d&#x60;/&#x60;w&#x60; (&#x60;M&#x60; is minutes). Max 3650d (10 years). &#x60;1y&#x60; is rejected. Measured from resolved &#x60;valid_from&#x60;. Mutually exclusive with &#x60;valid_to&#x60;. | [optional]
 **Id** | Pointer to **NullableString** |  | [optional]
 **InviteRecurrence** | Pointer to **interface{}** |  | [optional]
 **IsEnabled** | Pointer to **bool** |  | [optional]
 **Name** | Pointer to **NullableString** |  | [optional]
-**ValidFrom** | **string** |  |
-**ValidTo** | **string** |  |
+**StartsIn** | Pointer to **NullableString** | Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 &#x60;P1D&#x60;, &#x60;PT1H&#x60;, …; no months/years) or compact tokens &#x60;s&#x60;/&#x60;m&#x60;/&#x60;h&#x60;/&#x60;d&#x60;/&#x60;w&#x60; (&#x60;M&#x60; is minutes). Max 3650d (10 years). &#x60;1y&#x60; is rejected. Mutually exclusive with &#x60;valid_from&#x60;. | [optional]
+**ValidFrom** | Pointer to **NullableString** | [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) start (UTC). Mutually exclusive with &#x60;starts_in&#x60;. | [optional]
+**ValidTo** | Pointer to **NullableString** | [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) end (UTC). Mutually exclusive with &#x60;expires_in&#x60;. | [optional]
 
 ## Methods
 
 ### NewInviteScheduleEntryInput
 
-`func NewInviteScheduleEntryInput(validFrom string, validTo string, ) *InviteScheduleEntryInput`
+`func NewInviteScheduleEntryInput() *InviteScheduleEntryInput`
 
 NewInviteScheduleEntryInput instantiates a new InviteScheduleEntryInput object
 This constructor will assign default values to properties that have it defined,
@@ -30,6 +32,41 @@ NewInviteScheduleEntryInputWithDefaults instantiates a new InviteScheduleEntryIn
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
+### GetExpiresIn
+
+`func (o *InviteScheduleEntryInput) GetExpiresIn() string`
+
+GetExpiresIn returns the ExpiresIn field if non-nil, zero value otherwise.
+
+### GetExpiresInOk
+
+`func (o *InviteScheduleEntryInput) GetExpiresInOk() (*string, bool)`
+
+GetExpiresInOk returns a tuple with the ExpiresIn field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetExpiresIn
+
+`func (o *InviteScheduleEntryInput) SetExpiresIn(v string)`
+
+SetExpiresIn sets ExpiresIn field to given value.
+
+### HasExpiresIn
+
+`func (o *InviteScheduleEntryInput) HasExpiresIn() bool`
+
+HasExpiresIn returns a boolean if a field has been set.
+
+### SetExpiresInNil
+
+`func (o *InviteScheduleEntryInput) SetExpiresInNil(b bool)`
+
+ SetExpiresInNil sets the value for ExpiresIn to be an explicit nil
+
+### UnsetExpiresIn
+`func (o *InviteScheduleEntryInput) UnsetExpiresIn()`
+
+UnsetExpiresIn ensures that no value is present for ExpiresIn, not even an explicit nil
 ### GetId
 
 `func (o *InviteScheduleEntryInput) GetId() string`
@@ -160,6 +197,41 @@ HasName returns a boolean if a field has been set.
 `func (o *InviteScheduleEntryInput) UnsetName()`
 
 UnsetName ensures that no value is present for Name, not even an explicit nil
+### GetStartsIn
+
+`func (o *InviteScheduleEntryInput) GetStartsIn() string`
+
+GetStartsIn returns the StartsIn field if non-nil, zero value otherwise.
+
+### GetStartsInOk
+
+`func (o *InviteScheduleEntryInput) GetStartsInOk() (*string, bool)`
+
+GetStartsInOk returns a tuple with the StartsIn field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetStartsIn
+
+`func (o *InviteScheduleEntryInput) SetStartsIn(v string)`
+
+SetStartsIn sets StartsIn field to given value.
+
+### HasStartsIn
+
+`func (o *InviteScheduleEntryInput) HasStartsIn() bool`
+
+HasStartsIn returns a boolean if a field has been set.
+
+### SetStartsInNil
+
+`func (o *InviteScheduleEntryInput) SetStartsInNil(b bool)`
+
+ SetStartsInNil sets the value for StartsIn to be an explicit nil
+
+### UnsetStartsIn
+`func (o *InviteScheduleEntryInput) UnsetStartsIn()`
+
+UnsetStartsIn ensures that no value is present for StartsIn, not even an explicit nil
 ### GetValidFrom
 
 `func (o *InviteScheduleEntryInput) GetValidFrom() string`
@@ -179,7 +251,22 @@ and a boolean to check if the value has been set.
 
 SetValidFrom sets ValidFrom field to given value.
 
+### HasValidFrom
 
+`func (o *InviteScheduleEntryInput) HasValidFrom() bool`
+
+HasValidFrom returns a boolean if a field has been set.
+
+### SetValidFromNil
+
+`func (o *InviteScheduleEntryInput) SetValidFromNil(b bool)`
+
+ SetValidFromNil sets the value for ValidFrom to be an explicit nil
+
+### UnsetValidFrom
+`func (o *InviteScheduleEntryInput) UnsetValidFrom()`
+
+UnsetValidFrom ensures that no value is present for ValidFrom, not even an explicit nil
 ### GetValidTo
 
 `func (o *InviteScheduleEntryInput) GetValidTo() string`
@@ -199,6 +286,21 @@ and a boolean to check if the value has been set.
 
 SetValidTo sets ValidTo field to given value.
 
+### HasValidTo
 
+`func (o *InviteScheduleEntryInput) HasValidTo() bool`
+
+HasValidTo returns a boolean if a field has been set.
+
+### SetValidToNil
+
+`func (o *InviteScheduleEntryInput) SetValidToNil(b bool)`
+
+ SetValidToNil sets the value for ValidTo to be an explicit nil
+
+### UnsetValidTo
+`func (o *InviteScheduleEntryInput) UnsetValidTo()`
+
+UnsetValidTo ensures that no value is present for ValidTo, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

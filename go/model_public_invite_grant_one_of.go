@@ -21,14 +21,24 @@ var _ MappedNullable = &PublicInviteGrantOneOf{}
 
 // PublicInviteGrantOneOf struct for PublicInviteGrantOneOf
 type PublicInviteGrantOneOf struct {
+	// Presigned URL for the `thumb` rendition of the door image, for avatar-sized renders. Absent when the source is already thumb-sized; fall back to `door_image_url`.
+	DoorImageThumbUrl NullableString `json:"door_image_thumb_url,omitempty"`
 	// Presigned URL for door image (loaded asynchronously as card background).
 	DoorImageUrl NullableString `json:"door_image_url,omitempty"`
+	// Entry type from linked portal device (`virtual_access.entry_kind`). Default `door`.
+	EntryKind string `json:"entry_kind"`
 	// Whether the portal has light devices configured (controls light button visibility).
-	HasLights      bool        `json:"has_lights"`
-	Id             string      `json:"id"`
-	Kind           string      `json:"kind"`
-	Label          interface{} `json:"label,omitempty"`
-	PublicPortalId string      `json:"public_portal_id"`
+	HasLights bool `json:"has_lights"`
+	// Effective door hold when any opener is held (guest-visible).
+	Hold  NullablePublicHoldView `json:"hold,omitempty"`
+	Id    string                 `json:"id"`
+	Kind  string                 `json:"kind"`
+	Label interface{}            `json:"label,omitempty"`
+	// Enforced integration-scoped minimum interval between `switchable.open` calls. A second open inside the interval returns 429 `provider_open_rate_limited`.
+	OpenRateLimit NullablePublicPortalOpenRateLimit `json:"open_rate_limit,omitempty"`
+	// Whether the portal is linked to a live door device (i.e. can actually be opened). When false, the invite UI disables the open action (a misconfigured/unlinked portal).
+	Openable       bool   `json:"openable"`
+	PublicPortalId string `json:"public_portal_id"`
 }
 
 type _PublicInviteGrantOneOf PublicInviteGrantOneOf
@@ -37,11 +47,13 @@ type _PublicInviteGrantOneOf PublicInviteGrantOneOf
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicInviteGrantOneOf(hasLights bool, id string, kind string, publicPortalId string) *PublicInviteGrantOneOf {
+func NewPublicInviteGrantOneOf(entryKind string, hasLights bool, id string, kind string, openable bool, publicPortalId string) *PublicInviteGrantOneOf {
 	this := PublicInviteGrantOneOf{}
+	this.EntryKind = entryKind
 	this.HasLights = hasLights
 	this.Id = id
 	this.Kind = kind
+	this.Openable = openable
 	this.PublicPortalId = publicPortalId
 	return &this
 }
@@ -52,6 +64,49 @@ func NewPublicInviteGrantOneOf(hasLights bool, id string, kind string, publicPor
 func NewPublicInviteGrantOneOfWithDefaults() *PublicInviteGrantOneOf {
 	this := PublicInviteGrantOneOf{}
 	return &this
+}
+
+// GetDoorImageThumbUrl returns the DoorImageThumbUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteGrantOneOf) GetDoorImageThumbUrl() string {
+	if o == nil || IsNil(o.DoorImageThumbUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DoorImageThumbUrl.Get()
+}
+
+// GetDoorImageThumbUrlOk returns a tuple with the DoorImageThumbUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteGrantOneOf) GetDoorImageThumbUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DoorImageThumbUrl.Get(), o.DoorImageThumbUrl.IsSet()
+}
+
+// HasDoorImageThumbUrl returns a boolean if a field has been set.
+func (o *PublicInviteGrantOneOf) HasDoorImageThumbUrl() bool {
+	if o != nil && o.DoorImageThumbUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDoorImageThumbUrl gets a reference to the given NullableString and assigns it to the DoorImageThumbUrl field.
+func (o *PublicInviteGrantOneOf) SetDoorImageThumbUrl(v string) {
+	o.DoorImageThumbUrl.Set(&v)
+}
+
+// SetDoorImageThumbUrlNil sets the value for DoorImageThumbUrl to be an explicit nil
+func (o *PublicInviteGrantOneOf) SetDoorImageThumbUrlNil() {
+	o.DoorImageThumbUrl.Set(nil)
+}
+
+// UnsetDoorImageThumbUrl ensures that no value is present for DoorImageThumbUrl, not even an explicit nil
+func (o *PublicInviteGrantOneOf) UnsetDoorImageThumbUrl() {
+	o.DoorImageThumbUrl.Unset()
 }
 
 // GetDoorImageUrl returns the DoorImageUrl field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -97,6 +152,30 @@ func (o *PublicInviteGrantOneOf) UnsetDoorImageUrl() {
 	o.DoorImageUrl.Unset()
 }
 
+// GetEntryKind returns the EntryKind field value
+func (o *PublicInviteGrantOneOf) GetEntryKind() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.EntryKind
+}
+
+// GetEntryKindOk returns a tuple with the EntryKind field value
+// and a boolean to check if the value has been set.
+func (o *PublicInviteGrantOneOf) GetEntryKindOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.EntryKind, true
+}
+
+// SetEntryKind sets field value
+func (o *PublicInviteGrantOneOf) SetEntryKind(v string) {
+	o.EntryKind = v
+}
+
 // GetHasLights returns the HasLights field value
 func (o *PublicInviteGrantOneOf) GetHasLights() bool {
 	if o == nil {
@@ -119,6 +198,49 @@ func (o *PublicInviteGrantOneOf) GetHasLightsOk() (*bool, bool) {
 // SetHasLights sets field value
 func (o *PublicInviteGrantOneOf) SetHasLights(v bool) {
 	o.HasLights = v
+}
+
+// GetHold returns the Hold field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteGrantOneOf) GetHold() PublicHoldView {
+	if o == nil || IsNil(o.Hold.Get()) {
+		var ret PublicHoldView
+		return ret
+	}
+	return *o.Hold.Get()
+}
+
+// GetHoldOk returns a tuple with the Hold field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteGrantOneOf) GetHoldOk() (*PublicHoldView, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Hold.Get(), o.Hold.IsSet()
+}
+
+// HasHold returns a boolean if a field has been set.
+func (o *PublicInviteGrantOneOf) HasHold() bool {
+	if o != nil && o.Hold.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetHold gets a reference to the given NullablePublicHoldView and assigns it to the Hold field.
+func (o *PublicInviteGrantOneOf) SetHold(v PublicHoldView) {
+	o.Hold.Set(&v)
+}
+
+// SetHoldNil sets the value for Hold to be an explicit nil
+func (o *PublicInviteGrantOneOf) SetHoldNil() {
+	o.Hold.Set(nil)
+}
+
+// UnsetHold ensures that no value is present for Hold, not even an explicit nil
+func (o *PublicInviteGrantOneOf) UnsetHold() {
+	o.Hold.Unset()
 }
 
 // GetId returns the Id field value
@@ -202,6 +324,73 @@ func (o *PublicInviteGrantOneOf) SetLabel(v interface{}) {
 	o.Label = v
 }
 
+// GetOpenRateLimit returns the OpenRateLimit field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteGrantOneOf) GetOpenRateLimit() PublicPortalOpenRateLimit {
+	if o == nil || IsNil(o.OpenRateLimit.Get()) {
+		var ret PublicPortalOpenRateLimit
+		return ret
+	}
+	return *o.OpenRateLimit.Get()
+}
+
+// GetOpenRateLimitOk returns a tuple with the OpenRateLimit field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteGrantOneOf) GetOpenRateLimitOk() (*PublicPortalOpenRateLimit, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OpenRateLimit.Get(), o.OpenRateLimit.IsSet()
+}
+
+// HasOpenRateLimit returns a boolean if a field has been set.
+func (o *PublicInviteGrantOneOf) HasOpenRateLimit() bool {
+	if o != nil && o.OpenRateLimit.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOpenRateLimit gets a reference to the given NullablePublicPortalOpenRateLimit and assigns it to the OpenRateLimit field.
+func (o *PublicInviteGrantOneOf) SetOpenRateLimit(v PublicPortalOpenRateLimit) {
+	o.OpenRateLimit.Set(&v)
+}
+
+// SetOpenRateLimitNil sets the value for OpenRateLimit to be an explicit nil
+func (o *PublicInviteGrantOneOf) SetOpenRateLimitNil() {
+	o.OpenRateLimit.Set(nil)
+}
+
+// UnsetOpenRateLimit ensures that no value is present for OpenRateLimit, not even an explicit nil
+func (o *PublicInviteGrantOneOf) UnsetOpenRateLimit() {
+	o.OpenRateLimit.Unset()
+}
+
+// GetOpenable returns the Openable field value
+func (o *PublicInviteGrantOneOf) GetOpenable() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.Openable
+}
+
+// GetOpenableOk returns a tuple with the Openable field value
+// and a boolean to check if the value has been set.
+func (o *PublicInviteGrantOneOf) GetOpenableOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Openable, true
+}
+
+// SetOpenable sets field value
+func (o *PublicInviteGrantOneOf) SetOpenable(v bool) {
+	o.Openable = v
+}
+
 // GetPublicPortalId returns the PublicPortalId field value
 func (o *PublicInviteGrantOneOf) GetPublicPortalId() string {
 	if o == nil {
@@ -228,15 +417,26 @@ func (o *PublicInviteGrantOneOf) SetPublicPortalId(v string) {
 
 func (o PublicInviteGrantOneOf) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.DoorImageThumbUrl.IsSet() {
+		toSerialize["door_image_thumb_url"] = o.DoorImageThumbUrl.Get()
+	}
 	if o.DoorImageUrl.IsSet() {
 		toSerialize["door_image_url"] = o.DoorImageUrl.Get()
 	}
+	toSerialize["entry_kind"] = o.EntryKind
 	toSerialize["has_lights"] = o.HasLights
+	if o.Hold.IsSet() {
+		toSerialize["hold"] = o.Hold.Get()
+	}
 	toSerialize["id"] = o.Id
 	toSerialize["kind"] = o.Kind
 	if o.Label != nil {
 		toSerialize["label"] = o.Label
 	}
+	if o.OpenRateLimit.IsSet() {
+		toSerialize["open_rate_limit"] = o.OpenRateLimit.Get()
+	}
+	toSerialize["openable"] = o.Openable
 	toSerialize["public_portal_id"] = o.PublicPortalId
 	return toSerialize, nil
 }
@@ -246,9 +446,11 @@ func (o *PublicInviteGrantOneOf) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"entry_kind",
 		"has_lights",
 		"id",
 		"kind",
+		"openable",
 		"public_portal_id",
 	}
 

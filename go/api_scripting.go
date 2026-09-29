@@ -16,34 +16,162 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // ScriptingAPIService ScriptingAPI service
 type ScriptingAPIService service
 
-type ApiExecuteScriptingRequest struct {
-	ctx                     context.Context
-	ApiService              *ScriptingAPIService
-	executeScriptingRequest *ExecuteScriptingRequest
+type ApiCancelScriptingExecutionRequest struct {
+	ctx        context.Context
+	ApiService *ScriptingAPIService
+	id         string
 }
 
-func (r ApiExecuteScriptingRequest) ExecuteScriptingRequest(executeScriptingRequest ExecuteScriptingRequest) ApiExecuteScriptingRequest {
-	r.executeScriptingRequest = &executeScriptingRequest
-	return r
-}
-
-func (r ApiExecuteScriptingRequest) Execute() (*ExecuteScriptingResponse, *http.Response, error) {
-	return r.ApiService.ExecuteScriptingExecute(r)
+func (r ApiCancelScriptingExecutionRequest) Execute() (*http.Response, error) {
+	return r.ApiService.CancelScriptingExecutionExecute(r)
 }
 
 /*
-ExecuteScripting Execute an OpenApp Scripting program. Requires execute permission in at least one org.
+CancelScriptingExecution Cancel a pending or running execution.
+
+Cancellation is cooperative: the worker notices within a few seconds. Effects the program
+already applied are **not** rolled back.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiExecuteScriptingRequest
+	@param id Execution id
+	@return ApiCancelScriptingExecutionRequest
 */
-func (a *ScriptingAPIService) ExecuteScripting(ctx context.Context) ApiExecuteScriptingRequest {
-	return ApiExecuteScriptingRequest{
+func (a *ScriptingAPIService) CancelScriptingExecution(ctx context.Context, id string) ApiCancelScriptingExecutionRequest {
+	return ApiCancelScriptingExecutionRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+func (a *ScriptingAPIService) CancelScriptingExecutionExecute(r ApiCancelScriptingExecutionRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodDelete
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ScriptingAPIService.CancelScriptingExecution")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/scripting/executions/{id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiCreateScriptingExecutionRequest struct {
+	ctx                             context.Context
+	ApiService                      *ScriptingAPIService
+	createScriptingExecutionRequest *CreateScriptingExecutionRequest
+}
+
+func (r ApiCreateScriptingExecutionRequest) CreateScriptingExecutionRequest(createScriptingExecutionRequest CreateScriptingExecutionRequest) ApiCreateScriptingExecutionRequest {
+	r.createScriptingExecutionRequest = &createScriptingExecutionRequest
+	return r
+}
+
+func (r ApiCreateScriptingExecutionRequest) Execute() (*ScriptingExecution, *http.Response, error) {
+	return r.ApiService.CreateScriptingExecutionExecute(r)
+}
+
+/*
+CreateScriptingExecution Submit an OpenApp Scripting program for asynchronous execution.
+
+Submit an OpenApp Scripting program for asynchronous execution. Quota: consumes 1 from `scripting_executions` (unit: count, per day).
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiCreateScriptingExecutionRequest
+*/
+func (a *ScriptingAPIService) CreateScriptingExecution(ctx context.Context) ApiCreateScriptingExecutionRequest {
+	return ApiCreateScriptingExecutionRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -51,27 +179,27 @@ func (a *ScriptingAPIService) ExecuteScripting(ctx context.Context) ApiExecuteSc
 
 // Execute executes the request
 //
-//	@return ExecuteScriptingResponse
-func (a *ScriptingAPIService) ExecuteScriptingExecute(r ApiExecuteScriptingRequest) (*ExecuteScriptingResponse, *http.Response, error) {
+//	@return ScriptingExecution
+func (a *ScriptingAPIService) CreateScriptingExecutionExecute(r ApiCreateScriptingExecutionRequest) (*ScriptingExecution, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *ExecuteScriptingResponse
+		localVarReturnValue *ScriptingExecution
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ScriptingAPIService.ExecuteScripting")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ScriptingAPIService.CreateScriptingExecution")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/scripting/execute"
+	localVarPath := localBasePath + "/scripting/executions"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.executeScriptingRequest == nil {
-		return localVarReturnValue, nil, reportError("executeScriptingRequest is required and must be specified")
+	if r.createScriptingExecutionRequest == nil {
+		return localVarReturnValue, nil, reportError("createScriptingExecutionRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -92,7 +220,7 @@ func (a *ScriptingAPIService) ExecuteScriptingExecute(r ApiExecuteScriptingReque
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.executeScriptingRequest
+	localVarPostBody = r.createScriptingExecutionRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -114,6 +242,279 @@ func (a *ScriptingAPIService) ExecuteScriptingExecute(r ApiExecuteScriptingReque
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetScriptingExecutionRequest struct {
+	ctx        context.Context
+	ApiService *ScriptingAPIService
+	id         string
+}
+
+func (r ApiGetScriptingExecutionRequest) Execute() (*ScriptingExecution, *http.Response, error) {
+	return r.ApiService.GetScriptingExecutionExecute(r)
+}
+
+/*
+GetScriptingExecution Read one of the caller's own scripting executions.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id Execution id
+	@return ApiGetScriptingExecutionRequest
+*/
+func (a *ScriptingAPIService) GetScriptingExecution(ctx context.Context, id string) ApiGetScriptingExecutionRequest {
+	return ApiGetScriptingExecutionRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ScriptingExecution
+func (a *ScriptingAPIService) GetScriptingExecutionExecute(r ApiGetScriptingExecutionRequest) (*ScriptingExecution, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ScriptingExecution
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ScriptingAPIService.GetScriptingExecution")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/scripting/executions/{id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListScriptingExecutionsRequest struct {
+	ctx        context.Context
+	ApiService *ScriptingAPIService
+	limit      *int64
+}
+
+// Maximum number of executions to return (1-100, default 20).
+func (r ApiListScriptingExecutionsRequest) Limit(limit int64) ApiListScriptingExecutionsRequest {
+	r.limit = &limit
+	return r
+}
+
+func (r ApiListScriptingExecutionsRequest) Execute() ([]ScriptingExecutionSummary, *http.Response, error) {
+	return r.ApiService.ListScriptingExecutionsExecute(r)
+}
+
+/*
+ListScriptingExecutions List the caller's own scripting executions, newest first.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiListScriptingExecutionsRequest
+*/
+func (a *ScriptingAPIService) ListScriptingExecutions(ctx context.Context) ApiListScriptingExecutionsRequest {
+	return ApiListScriptingExecutionsRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return []ScriptingExecutionSummary
+func (a *ScriptingAPIService) ListScriptingExecutionsExecute(r ApiListScriptingExecutionsRequest) ([]ScriptingExecutionSummary, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue []ScriptingExecutionSummary
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ScriptingAPIService.ListScriptingExecutions")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/scripting/executions"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}

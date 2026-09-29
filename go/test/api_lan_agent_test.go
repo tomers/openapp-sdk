@@ -19,7 +19,7 @@ import (
 
 func Test_openapi_LANAgentAPIService(t *testing.T) {
 
-	apiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"
+	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
@@ -37,29 +37,6 @@ func Test_openapi_LANAgentAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test LANAgentAPIService GetLanAgentCliBootstrapSh", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		httpRes, err := apiClient.LANAgentAPI.GetLanAgentCliBootstrapSh(context.Background()).Execute()
-
-		require.Nil(t, err)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test LANAgentAPIService GetLanAgentMeta", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		resp, httpRes, err := apiClient.LANAgentAPI.GetLanAgentMeta(context.Background()).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test LANAgentAPIService PostIntegrationLanAgentTaskSpec", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -67,30 +44,6 @@ func Test_openapi_LANAgentAPIService(t *testing.T) {
 		var integrationId string
 
 		resp, httpRes, err := apiClient.LANAgentAPI.PostIntegrationLanAgentTaskSpec(context.Background(), integrationId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test LANAgentAPIService PostLanAgentCliBootstrapToken", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		resp, httpRes, err := apiClient.LANAgentAPI.PostLanAgentCliBootstrapToken(context.Background()).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test LANAgentAPIService PostLanAgentCliToken", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		resp, httpRes, err := apiClient.LANAgentAPI.PostLanAgentCliToken(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

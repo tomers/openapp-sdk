@@ -21,8 +21,9 @@ var _ MappedNullable = &PublicPortalOpenRateLimit{}
 
 // PublicPortalOpenRateLimit struct for PublicPortalOpenRateLimit
 type PublicPortalOpenRateLimit struct {
-	IntegrationId string `json:"integration_id"`
-	MinIntervalMs int64  `json:"min_interval_ms"`
+	IntegrationId NullableString `json:"integration_id"`
+	// Enforced minimum milliseconds between `switchable.open` calls on this integration.
+	MinIntervalMs int64 `json:"min_interval_ms"`
 }
 
 type _PublicPortalOpenRateLimit PublicPortalOpenRateLimit
@@ -31,7 +32,7 @@ type _PublicPortalOpenRateLimit PublicPortalOpenRateLimit
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicPortalOpenRateLimit(integrationId string, minIntervalMs int64) *PublicPortalOpenRateLimit {
+func NewPublicPortalOpenRateLimit(integrationId NullableString, minIntervalMs int64) *PublicPortalOpenRateLimit {
 	this := PublicPortalOpenRateLimit{}
 	this.IntegrationId = integrationId
 	this.MinIntervalMs = minIntervalMs
@@ -47,27 +48,29 @@ func NewPublicPortalOpenRateLimitWithDefaults() *PublicPortalOpenRateLimit {
 }
 
 // GetIntegrationId returns the IntegrationId field value
+// If the value is explicit nil, the zero value for string will be returned
 func (o *PublicPortalOpenRateLimit) GetIntegrationId() string {
-	if o == nil {
+	if o == nil || o.IntegrationId.Get() == nil {
 		var ret string
 		return ret
 	}
 
-	return o.IntegrationId
+	return *o.IntegrationId.Get()
 }
 
 // GetIntegrationIdOk returns a tuple with the IntegrationId field value
 // and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *PublicPortalOpenRateLimit) GetIntegrationIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.IntegrationId, true
+	return o.IntegrationId.Get(), o.IntegrationId.IsSet()
 }
 
 // SetIntegrationId sets field value
 func (o *PublicPortalOpenRateLimit) SetIntegrationId(v string) {
-	o.IntegrationId = v
+	o.IntegrationId.Set(&v)
 }
 
 // GetMinIntervalMs returns the MinIntervalMs field value
@@ -96,7 +99,7 @@ func (o *PublicPortalOpenRateLimit) SetMinIntervalMs(v int64) {
 
 func (o PublicPortalOpenRateLimit) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["integration_id"] = o.IntegrationId
+	toSerialize["integration_id"] = o.IntegrationId.Get()
 	toSerialize["min_interval_ms"] = o.MinIntervalMs
 	return toSerialize, nil
 }

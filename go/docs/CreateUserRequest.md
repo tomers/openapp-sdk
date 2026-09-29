@@ -4,19 +4,20 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Email** | **string** |  |
+**Email** | Pointer to **NullableString** | Login email. Omit for phone-only provisioning (Kratos uses &#x60;traits.phone&#x60; only; OpenApp stores a synthetic &#x60;{id}@phone.openapp.local&#x60; placeholder in &#x60;users.email&#x60;). | [optional]
 **FirstName** | Pointer to **NullableString** | Given name stored on the Kratos identity (&#x60;traits.name.first&#x60;) when creating the account. | [optional]
 **Id** | Pointer to **NullableString** | Optional ID parameter (admin-only, not documented in API docs) This field is intentionally not included in OpenAPI documentation | [optional]
 **LastName** | Pointer to **NullableString** | Family name stored on the Kratos identity (&#x60;traits.name.last&#x60;) when creating the account. | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) |  |
 **Password** | Pointer to **NullableString** | Optional password for Kratos identity (provisioning only; same permission as id). When set, the Kratos identity is created with this password so the user can log in immediately. | [optional]
+**Phone** | Pointer to **NullableString** | E.164 phone (&#x60;+[country][digits]&#x60;). When set, must satisfy the same pattern as Kratos. | [optional]
 **Roles** | Pointer to **map[string]interface{}** | Org ID (string) to list of role names. Optional. | [optional]
 
 ## Methods
 
 ### NewCreateUserRequest
 
-`func NewCreateUserRequest(email string, name LocalizedString, ) *CreateUserRequest`
+`func NewCreateUserRequest(name LocalizedString, ) *CreateUserRequest`
 
 NewCreateUserRequest instantiates a new CreateUserRequest object
 This constructor will assign default values to properties that have it defined,
@@ -50,7 +51,22 @@ and a boolean to check if the value has been set.
 
 SetEmail sets Email field to given value.
 
+### HasEmail
 
+`func (o *CreateUserRequest) HasEmail() bool`
+
+HasEmail returns a boolean if a field has been set.
+
+### SetEmailNil
+
+`func (o *CreateUserRequest) SetEmailNil(b bool)`
+
+ SetEmailNil sets the value for Email to be an explicit nil
+
+### UnsetEmail
+`func (o *CreateUserRequest) UnsetEmail()`
+
+UnsetEmail ensures that no value is present for Email, not even an explicit nil
 ### GetFirstName
 
 `func (o *CreateUserRequest) GetFirstName() string`
@@ -211,6 +227,41 @@ HasPassword returns a boolean if a field has been set.
 `func (o *CreateUserRequest) UnsetPassword()`
 
 UnsetPassword ensures that no value is present for Password, not even an explicit nil
+### GetPhone
+
+`func (o *CreateUserRequest) GetPhone() string`
+
+GetPhone returns the Phone field if non-nil, zero value otherwise.
+
+### GetPhoneOk
+
+`func (o *CreateUserRequest) GetPhoneOk() (*string, bool)`
+
+GetPhoneOk returns a tuple with the Phone field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPhone
+
+`func (o *CreateUserRequest) SetPhone(v string)`
+
+SetPhone sets Phone field to given value.
+
+### HasPhone
+
+`func (o *CreateUserRequest) HasPhone() bool`
+
+HasPhone returns a boolean if a field has been set.
+
+### SetPhoneNil
+
+`func (o *CreateUserRequest) SetPhoneNil(b bool)`
+
+ SetPhoneNil sets the value for Phone to be an explicit nil
+
+### UnsetPhone
+`func (o *CreateUserRequest) UnsetPhone()`
+
+UnsetPhone ensures that no value is present for Phone, not even an explicit nil
 ### GetRoles
 
 `func (o *CreateUserRequest) GetRoles() map[string]interface{}`

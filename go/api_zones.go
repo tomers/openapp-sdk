@@ -28,7 +28,6 @@ type ApiCreateZoneRequest struct {
 	xOrg              *string
 	createZoneRequest *CreateZoneRequest
 	includeDeleted    *bool
-	includeMetadata   *bool
 }
 
 func (r ApiCreateZoneRequest) XOrg(xOrg string) ApiCreateZoneRequest {
@@ -46,17 +45,14 @@ func (r ApiCreateZoneRequest) IncludeDeleted(includeDeleted bool) ApiCreateZoneR
 	return r
 }
 
-func (r ApiCreateZoneRequest) IncludeMetadata(includeMetadata bool) ApiCreateZoneRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiCreateZoneRequest) Execute() (*ZoneResponse, *http.Response, error) {
 	return r.ApiService.CreateZoneExecute(r)
 }
 
 /*
 CreateZone Create a zone for an integration.
+
+Create a zone. Quota: consumes 1 from `zones` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateZoneRequest
@@ -98,9 +94,6 @@ func (a *ZonesAPIService) CreateZoneExecute(r ApiCreateZoneRequest) (*ZoneRespon
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -225,12 +218,11 @@ func (a *ZonesAPIService) CreateZoneExecute(r ApiCreateZoneRequest) (*ZoneRespon
 }
 
 type ApiDeleteZoneRequest struct {
-	ctx             context.Context
-	ApiService      *ZonesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *ZonesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiDeleteZoneRequest) XOrg(xOrg string) ApiDeleteZoneRequest {
@@ -240,11 +232,6 @@ func (r ApiDeleteZoneRequest) XOrg(xOrg string) ApiDeleteZoneRequest {
 
 func (r ApiDeleteZoneRequest) IncludeDeleted(includeDeleted bool) ApiDeleteZoneRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiDeleteZoneRequest) IncludeMetadata(includeMetadata bool) ApiDeleteZoneRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -295,9 +282,6 @@ func (a *ZonesAPIService) DeleteZoneExecute(r ApiDeleteZoneRequest) (*ZoneRespon
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -420,12 +404,11 @@ func (a *ZonesAPIService) DeleteZoneExecute(r ApiDeleteZoneRequest) (*ZoneRespon
 }
 
 type ApiGetZoneRequest struct {
-	ctx             context.Context
-	ApiService      *ZonesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *ZonesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiGetZoneRequest) XOrg(xOrg string) ApiGetZoneRequest {
@@ -435,11 +418,6 @@ func (r ApiGetZoneRequest) XOrg(xOrg string) ApiGetZoneRequest {
 
 func (r ApiGetZoneRequest) IncludeDeleted(includeDeleted bool) ApiGetZoneRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiGetZoneRequest) IncludeMetadata(includeMetadata bool) ApiGetZoneRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -490,9 +468,6 @@ func (a *ZonesAPIService) GetZoneExecute(r ApiGetZoneRequest) (*ZoneResponse, *h
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -604,12 +579,11 @@ func (a *ZonesAPIService) GetZoneExecute(r ApiGetZoneRequest) (*ZoneResponse, *h
 }
 
 type ApiHardDeleteZoneRequest struct {
-	ctx             context.Context
-	ApiService      *ZonesAPIService
-	id              string
-	xOrg            *string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *ZonesAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
 func (r ApiHardDeleteZoneRequest) XOrg(xOrg string) ApiHardDeleteZoneRequest {
@@ -619,11 +593,6 @@ func (r ApiHardDeleteZoneRequest) XOrg(xOrg string) ApiHardDeleteZoneRequest {
 
 func (r ApiHardDeleteZoneRequest) IncludeDeleted(includeDeleted bool) ApiHardDeleteZoneRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiHardDeleteZoneRequest) IncludeMetadata(includeMetadata bool) ApiHardDeleteZoneRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -674,9 +643,6 @@ func (a *ZonesAPIService) HardDeleteZoneExecute(r ApiHardDeleteZoneRequest) (*Zo
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -799,13 +765,12 @@ func (a *ZonesAPIService) HardDeleteZoneExecute(r ApiHardDeleteZoneRequest) (*Zo
 }
 
 type ApiListIntegrationZonesRequest struct {
-	ctx             context.Context
-	ApiService      *ZonesAPIService
-	integrationId   string
-	xOrg            *string
-	includeDeleted  *bool
-	onlyDeleted     *bool
-	includeMetadata *bool
+	ctx           context.Context
+	ApiService    *ZonesAPIService
+	integrationId string
+	xOrg          *string
+	outputOptions *MultiResourceOutputOptionsQuery
+	pagination    *PaginationQuery
 }
 
 func (r ApiListIntegrationZonesRequest) XOrg(xOrg string) ApiListIntegrationZonesRequest {
@@ -813,22 +778,17 @@ func (r ApiListIntegrationZonesRequest) XOrg(xOrg string) ApiListIntegrationZone
 	return r
 }
 
-func (r ApiListIntegrationZonesRequest) IncludeDeleted(includeDeleted bool) ApiListIntegrationZonesRequest {
-	r.includeDeleted = &includeDeleted
+func (r ApiListIntegrationZonesRequest) OutputOptions(outputOptions MultiResourceOutputOptionsQuery) ApiListIntegrationZonesRequest {
+	r.outputOptions = &outputOptions
 	return r
 }
 
-func (r ApiListIntegrationZonesRequest) OnlyDeleted(onlyDeleted bool) ApiListIntegrationZonesRequest {
-	r.onlyDeleted = &onlyDeleted
+func (r ApiListIntegrationZonesRequest) Pagination(pagination PaginationQuery) ApiListIntegrationZonesRequest {
+	r.pagination = &pagination
 	return r
 }
 
-func (r ApiListIntegrationZonesRequest) IncludeMetadata(includeMetadata bool) ApiListIntegrationZonesRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
-func (r ApiListIntegrationZonesRequest) Execute() ([]ZoneResponse, *http.Response, error) {
+func (r ApiListIntegrationZonesRequest) Execute() (*PaginatedResponseZoneResponse, *http.Response, error) {
 	return r.ApiService.ListIntegrationZonesExecute(r)
 }
 
@@ -849,13 +809,13 @@ func (a *ZonesAPIService) ListIntegrationZones(ctx context.Context, integrationI
 
 // Execute executes the request
 //
-//	@return []ZoneResponse
-func (a *ZonesAPIService) ListIntegrationZonesExecute(r ApiListIntegrationZonesRequest) ([]ZoneResponse, *http.Response, error) {
+//	@return PaginatedResponseZoneResponse
+func (a *ZonesAPIService) ListIntegrationZonesExecute(r ApiListIntegrationZonesRequest) (*PaginatedResponseZoneResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue []ZoneResponse
+		localVarReturnValue *PaginatedResponseZoneResponse
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.ListIntegrationZones")
@@ -872,16 +832,15 @@ func (a *ZonesAPIService) ListIntegrationZonesExecute(r ApiListIntegrationZonesR
 	if r.xOrg == nil {
 		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
+	if r.outputOptions == nil {
+		return localVarReturnValue, nil, reportError("outputOptions is required and must be specified")
+	}
+	if r.pagination == nil {
+		return localVarReturnValue, nil, reportError("pagination is required and must be specified")
+	}
 
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.onlyDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "only_deleted", r.onlyDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
-	}
+	parameterAddToHeaderOrQuery(localVarQueryParams, "output_options", r.outputOptions, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "pagination", r.pagination, "form", "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -987,7 +946,6 @@ type ApiUpdateZoneRequest struct {
 	xOrg              *string
 	updateZoneRequest *UpdateZoneRequest
 	includeDeleted    *bool
-	includeMetadata   *bool
 }
 
 func (r ApiUpdateZoneRequest) XOrg(xOrg string) ApiUpdateZoneRequest {
@@ -1002,11 +960,6 @@ func (r ApiUpdateZoneRequest) UpdateZoneRequest(updateZoneRequest UpdateZoneRequ
 
 func (r ApiUpdateZoneRequest) IncludeDeleted(includeDeleted bool) ApiUpdateZoneRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiUpdateZoneRequest) IncludeMetadata(includeMetadata bool) ApiUpdateZoneRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -1060,9 +1013,6 @@ func (a *ZonesAPIService) UpdateZoneExecute(r ApiUpdateZoneRequest) (*ZoneRespon
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

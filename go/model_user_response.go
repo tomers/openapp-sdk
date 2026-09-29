@@ -22,21 +22,25 @@ var _ MappedNullable = &UserResponse{}
 
 // UserResponse struct for UserResponse
 type UserResponse struct {
-	// Email address (used for login and provisioning).
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
+	HardDeleteAt *time.Time `json:"hard_delete_at,omitempty"`
+	PurgeAt      *time.Time `json:"purge_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
+	// Email address (used for login and provisioning). May be an internal placeholder when no verified email is available.
 	Email string `json:"email"`
 	// Unique identifier (ULID).
-	Id       string            `json:"id"`
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Id string `json:"id"`
+	// When set, this row was absorbed into another user. Follow for live identity.
+	MergedIntoUserId *string `json:"merged_into_user_id,omitempty"`
 	// Display name.
-	Name         LocalizedString     `json:"name"`
-	CacheHit     NullableBool        `json:"cache_hit,omitempty"`
-	CacheTtl     NullableInt64       `json:"cache_ttl,omitempty"`
-	CreatedAt    NullableTime        `json:"created_at,omitempty"`
-	DeletedAt    NullableTime        `json:"deleted_at,omitempty"`
-	HardDeleteAt NullableTime        `json:"hard_delete_at,omitempty"`
-	PurgeAt      NullableTime        `json:"purge_at,omitempty"`
-	UpdatedAt    NullableTime        `json:"updated_at,omitempty"`
-	Roles        map[string][]string `json:"roles"`
+	Name LocalizedString `json:"name"`
+	// Verified E.164 phone when set.
+	Phone           *string `json:"phone,omitempty"`
+	PhoneVerifiedAt *string `json:"phone_verified_at,omitempty"`
+	// True when `email` is an internal placeholder (phone-only account or identity-provider merge claimant) and must not be shown as a mailbox.
+	EmailIsSynthetic bool                `json:"email_is_synthetic"`
+	Roles            map[string][]string `json:"roles"`
 }
 
 type _UserResponse UserResponse
@@ -45,11 +49,12 @@ type _UserResponse UserResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUserResponse(email string, id string, name LocalizedString, roles map[string][]string) *UserResponse {
+func NewUserResponse(email string, id string, name LocalizedString, emailIsSynthetic bool, roles map[string][]string) *UserResponse {
 	this := UserResponse{}
 	this.Email = email
 	this.Id = id
 	this.Name = name
+	this.EmailIsSynthetic = emailIsSynthetic
 	this.Roles = roles
 	return &this
 }
@@ -60,6 +65,166 @@ func NewUserResponse(email string, id string, name LocalizedString, roles map[st
 func NewUserResponseWithDefaults() *UserResponse {
 	this := UserResponse{}
 	return &this
+}
+
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *UserResponse) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *UserResponse) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *UserResponse) SetCreatedAt(v time.Time) {
+	o.CreatedAt = &v
+}
+
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *UserResponse) GetDeletedAt() time.Time {
+	if o == nil || IsNil(o.DeletedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.DeletedAt
+}
+
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetDeletedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
+		return nil, false
+	}
+	return o.DeletedAt, true
+}
+
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *UserResponse) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeletedAt gets a reference to the given time.Time and assigns it to the DeletedAt field.
+func (o *UserResponse) SetDeletedAt(v time.Time) {
+	o.DeletedAt = &v
+}
+
+// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise.
+func (o *UserResponse) GetHardDeleteAt() time.Time {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.HardDeleteAt
+}
+
+// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetHardDeleteAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		return nil, false
+	}
+	return o.HardDeleteAt, true
+}
+
+// HasHardDeleteAt returns a boolean if a field has been set.
+func (o *UserResponse) HasHardDeleteAt() bool {
+	if o != nil && !IsNil(o.HardDeleteAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetHardDeleteAt gets a reference to the given time.Time and assigns it to the HardDeleteAt field.
+func (o *UserResponse) SetHardDeleteAt(v time.Time) {
+	o.HardDeleteAt = &v
+}
+
+// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise.
+func (o *UserResponse) GetPurgeAt() time.Time {
+	if o == nil || IsNil(o.PurgeAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.PurgeAt
+}
+
+// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetPurgeAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.PurgeAt) {
+		return nil, false
+	}
+	return o.PurgeAt, true
+}
+
+// HasPurgeAt returns a boolean if a field has been set.
+func (o *UserResponse) HasPurgeAt() bool {
+	if o != nil && !IsNil(o.PurgeAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPurgeAt gets a reference to the given time.Time and assigns it to the PurgeAt field.
+func (o *UserResponse) SetPurgeAt(v time.Time) {
+	o.PurgeAt = &v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *UserResponse) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *UserResponse) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *UserResponse) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = &v
 }
 
 // GetEmail returns the Email field value
@@ -110,36 +275,36 @@ func (o *UserResponse) SetId(v string) {
 	o.Id = v
 }
 
-// GetMetadata returns the Metadata field value if set, zero value otherwise.
-func (o *UserResponse) GetMetadata() map[string]string {
-	if o == nil || IsNil(o.Metadata) {
-		var ret map[string]string
+// GetMergedIntoUserId returns the MergedIntoUserId field value if set, zero value otherwise.
+func (o *UserResponse) GetMergedIntoUserId() string {
+	if o == nil || IsNil(o.MergedIntoUserId) {
+		var ret string
 		return ret
 	}
-	return o.Metadata
+	return *o.MergedIntoUserId
 }
 
-// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// GetMergedIntoUserIdOk returns a tuple with the MergedIntoUserId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UserResponse) GetMetadataOk() (map[string]string, bool) {
-	if o == nil || IsNil(o.Metadata) {
-		return map[string]string{}, false
+func (o *UserResponse) GetMergedIntoUserIdOk() (*string, bool) {
+	if o == nil || IsNil(o.MergedIntoUserId) {
+		return nil, false
 	}
-	return o.Metadata, true
+	return o.MergedIntoUserId, true
 }
 
-// HasMetadata returns a boolean if a field has been set.
-func (o *UserResponse) HasMetadata() bool {
-	if o != nil && !IsNil(o.Metadata) {
+// HasMergedIntoUserId returns a boolean if a field has been set.
+func (o *UserResponse) HasMergedIntoUserId() bool {
+	if o != nil && !IsNil(o.MergedIntoUserId) {
 		return true
 	}
 
 	return false
 }
 
-// SetMetadata gets a reference to the given map[string]string and assigns it to the Metadata field.
-func (o *UserResponse) SetMetadata(v map[string]string) {
-	o.Metadata = v
+// SetMergedIntoUserId gets a reference to the given string and assigns it to the MergedIntoUserId field.
+func (o *UserResponse) SetMergedIntoUserId(v string) {
+	o.MergedIntoUserId = &v
 }
 
 // GetName returns the Name field value
@@ -166,305 +331,92 @@ func (o *UserResponse) SetName(v LocalizedString) {
 	o.Name = v
 }
 
-// GetCacheHit returns the CacheHit field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetCacheHit() bool {
-	if o == nil || IsNil(o.CacheHit.Get()) {
+// GetPhone returns the Phone field value if set, zero value otherwise.
+func (o *UserResponse) GetPhone() string {
+	if o == nil || IsNil(o.Phone) {
+		var ret string
+		return ret
+	}
+	return *o.Phone
+}
+
+// GetPhoneOk returns a tuple with the Phone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetPhoneOk() (*string, bool) {
+	if o == nil || IsNil(o.Phone) {
+		return nil, false
+	}
+	return o.Phone, true
+}
+
+// HasPhone returns a boolean if a field has been set.
+func (o *UserResponse) HasPhone() bool {
+	if o != nil && !IsNil(o.Phone) {
+		return true
+	}
+
+	return false
+}
+
+// SetPhone gets a reference to the given string and assigns it to the Phone field.
+func (o *UserResponse) SetPhone(v string) {
+	o.Phone = &v
+}
+
+// GetPhoneVerifiedAt returns the PhoneVerifiedAt field value if set, zero value otherwise.
+func (o *UserResponse) GetPhoneVerifiedAt() string {
+	if o == nil || IsNil(o.PhoneVerifiedAt) {
+		var ret string
+		return ret
+	}
+	return *o.PhoneVerifiedAt
+}
+
+// GetPhoneVerifiedAtOk returns a tuple with the PhoneVerifiedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserResponse) GetPhoneVerifiedAtOk() (*string, bool) {
+	if o == nil || IsNil(o.PhoneVerifiedAt) {
+		return nil, false
+	}
+	return o.PhoneVerifiedAt, true
+}
+
+// HasPhoneVerifiedAt returns a boolean if a field has been set.
+func (o *UserResponse) HasPhoneVerifiedAt() bool {
+	if o != nil && !IsNil(o.PhoneVerifiedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPhoneVerifiedAt gets a reference to the given string and assigns it to the PhoneVerifiedAt field.
+func (o *UserResponse) SetPhoneVerifiedAt(v string) {
+	o.PhoneVerifiedAt = &v
+}
+
+// GetEmailIsSynthetic returns the EmailIsSynthetic field value
+func (o *UserResponse) GetEmailIsSynthetic() bool {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.CacheHit.Get()
+
+	return o.EmailIsSynthetic
 }
 
-// GetCacheHitOk returns a tuple with the CacheHit field value if set, nil otherwise
+// GetEmailIsSyntheticOk returns a tuple with the EmailIsSynthetic field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetCacheHitOk() (*bool, bool) {
+func (o *UserResponse) GetEmailIsSyntheticOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CacheHit.Get(), o.CacheHit.IsSet()
+	return &o.EmailIsSynthetic, true
 }
 
-// HasCacheHit returns a boolean if a field has been set.
-func (o *UserResponse) HasCacheHit() bool {
-	if o != nil && o.CacheHit.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheHit gets a reference to the given NullableBool and assigns it to the CacheHit field.
-func (o *UserResponse) SetCacheHit(v bool) {
-	o.CacheHit.Set(&v)
-}
-
-// SetCacheHitNil sets the value for CacheHit to be an explicit nil
-func (o *UserResponse) SetCacheHitNil() {
-	o.CacheHit.Set(nil)
-}
-
-// UnsetCacheHit ensures that no value is present for CacheHit, not even an explicit nil
-func (o *UserResponse) UnsetCacheHit() {
-	o.CacheHit.Unset()
-}
-
-// GetCacheTtl returns the CacheTtl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetCacheTtl() int64 {
-	if o == nil || IsNil(o.CacheTtl.Get()) {
-		var ret int64
-		return ret
-	}
-	return *o.CacheTtl.Get()
-}
-
-// GetCacheTtlOk returns a tuple with the CacheTtl field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetCacheTtlOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CacheTtl.Get(), o.CacheTtl.IsSet()
-}
-
-// HasCacheTtl returns a boolean if a field has been set.
-func (o *UserResponse) HasCacheTtl() bool {
-	if o != nil && o.CacheTtl.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheTtl gets a reference to the given NullableInt64 and assigns it to the CacheTtl field.
-func (o *UserResponse) SetCacheTtl(v int64) {
-	o.CacheTtl.Set(&v)
-}
-
-// SetCacheTtlNil sets the value for CacheTtl to be an explicit nil
-func (o *UserResponse) SetCacheTtlNil() {
-	o.CacheTtl.Set(nil)
-}
-
-// UnsetCacheTtl ensures that no value is present for CacheTtl, not even an explicit nil
-func (o *UserResponse) UnsetCacheTtl() {
-	o.CacheTtl.Unset()
-}
-
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.CreatedAt.Get()
-}
-
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CreatedAt.Get(), o.CreatedAt.IsSet()
-}
-
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *UserResponse) HasCreatedAt() bool {
-	if o != nil && o.CreatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given NullableTime and assigns it to the CreatedAt field.
-func (o *UserResponse) SetCreatedAt(v time.Time) {
-	o.CreatedAt.Set(&v)
-}
-
-// SetCreatedAtNil sets the value for CreatedAt to be an explicit nil
-func (o *UserResponse) SetCreatedAtNil() {
-	o.CreatedAt.Set(nil)
-}
-
-// UnsetCreatedAt ensures that no value is present for CreatedAt, not even an explicit nil
-func (o *UserResponse) UnsetCreatedAt() {
-	o.CreatedAt.Unset()
-}
-
-// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetDeletedAt() time.Time {
-	if o == nil || IsNil(o.DeletedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.DeletedAt.Get()
-}
-
-// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetDeletedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.DeletedAt.Get(), o.DeletedAt.IsSet()
-}
-
-// HasDeletedAt returns a boolean if a field has been set.
-func (o *UserResponse) HasDeletedAt() bool {
-	if o != nil && o.DeletedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetDeletedAt gets a reference to the given NullableTime and assigns it to the DeletedAt field.
-func (o *UserResponse) SetDeletedAt(v time.Time) {
-	o.DeletedAt.Set(&v)
-}
-
-// SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
-func (o *UserResponse) SetDeletedAtNil() {
-	o.DeletedAt.Set(nil)
-}
-
-// UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
-func (o *UserResponse) UnsetDeletedAt() {
-	o.DeletedAt.Unset()
-}
-
-// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetHardDeleteAt() time.Time {
-	if o == nil || IsNil(o.HardDeleteAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.HardDeleteAt.Get()
-}
-
-// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetHardDeleteAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.HardDeleteAt.Get(), o.HardDeleteAt.IsSet()
-}
-
-// HasHardDeleteAt returns a boolean if a field has been set.
-func (o *UserResponse) HasHardDeleteAt() bool {
-	if o != nil && o.HardDeleteAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetHardDeleteAt gets a reference to the given NullableTime and assigns it to the HardDeleteAt field.
-func (o *UserResponse) SetHardDeleteAt(v time.Time) {
-	o.HardDeleteAt.Set(&v)
-}
-
-// SetHardDeleteAtNil sets the value for HardDeleteAt to be an explicit nil
-func (o *UserResponse) SetHardDeleteAtNil() {
-	o.HardDeleteAt.Set(nil)
-}
-
-// UnsetHardDeleteAt ensures that no value is present for HardDeleteAt, not even an explicit nil
-func (o *UserResponse) UnsetHardDeleteAt() {
-	o.HardDeleteAt.Unset()
-}
-
-// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetPurgeAt() time.Time {
-	if o == nil || IsNil(o.PurgeAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.PurgeAt.Get()
-}
-
-// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetPurgeAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.PurgeAt.Get(), o.PurgeAt.IsSet()
-}
-
-// HasPurgeAt returns a boolean if a field has been set.
-func (o *UserResponse) HasPurgeAt() bool {
-	if o != nil && o.PurgeAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetPurgeAt gets a reference to the given NullableTime and assigns it to the PurgeAt field.
-func (o *UserResponse) SetPurgeAt(v time.Time) {
-	o.PurgeAt.Set(&v)
-}
-
-// SetPurgeAtNil sets the value for PurgeAt to be an explicit nil
-func (o *UserResponse) SetPurgeAtNil() {
-	o.PurgeAt.Set(nil)
-}
-
-// UnsetPurgeAt ensures that no value is present for PurgeAt, not even an explicit nil
-func (o *UserResponse) UnsetPurgeAt() {
-	o.PurgeAt.Unset()
-}
-
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *UserResponse) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.UpdatedAt.Get()
-}
-
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *UserResponse) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.UpdatedAt.Get(), o.UpdatedAt.IsSet()
-}
-
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *UserResponse) HasUpdatedAt() bool {
-	if o != nil && o.UpdatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given NullableTime and assigns it to the UpdatedAt field.
-func (o *UserResponse) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt.Set(&v)
-}
-
-// SetUpdatedAtNil sets the value for UpdatedAt to be an explicit nil
-func (o *UserResponse) SetUpdatedAtNil() {
-	o.UpdatedAt.Set(nil)
-}
-
-// UnsetUpdatedAt ensures that no value is present for UpdatedAt, not even an explicit nil
-func (o *UserResponse) UnsetUpdatedAt() {
-	o.UpdatedAt.Unset()
+// SetEmailIsSynthetic sets field value
+func (o *UserResponse) SetEmailIsSynthetic(v bool) {
+	o.EmailIsSynthetic = v
 }
 
 // GetRoles returns the Roles field value
@@ -493,33 +445,34 @@ func (o *UserResponse) SetRoles(v map[string][]string) {
 
 func (o UserResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.HardDeleteAt) {
+		toSerialize["hard_delete_at"] = o.HardDeleteAt
+	}
+	if !IsNil(o.PurgeAt) {
+		toSerialize["purge_at"] = o.PurgeAt
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
 	toSerialize["email"] = o.Email
 	toSerialize["id"] = o.Id
-	if !IsNil(o.Metadata) {
-		toSerialize["metadata"] = o.Metadata
+	if !IsNil(o.MergedIntoUserId) {
+		toSerialize["merged_into_user_id"] = o.MergedIntoUserId
 	}
 	toSerialize["name"] = o.Name
-	if o.CacheHit.IsSet() {
-		toSerialize["cache_hit"] = o.CacheHit.Get()
+	if !IsNil(o.Phone) {
+		toSerialize["phone"] = o.Phone
 	}
-	if o.CacheTtl.IsSet() {
-		toSerialize["cache_ttl"] = o.CacheTtl.Get()
+	if !IsNil(o.PhoneVerifiedAt) {
+		toSerialize["phone_verified_at"] = o.PhoneVerifiedAt
 	}
-	if o.CreatedAt.IsSet() {
-		toSerialize["created_at"] = o.CreatedAt.Get()
-	}
-	if o.DeletedAt.IsSet() {
-		toSerialize["deleted_at"] = o.DeletedAt.Get()
-	}
-	if o.HardDeleteAt.IsSet() {
-		toSerialize["hard_delete_at"] = o.HardDeleteAt.Get()
-	}
-	if o.PurgeAt.IsSet() {
-		toSerialize["purge_at"] = o.PurgeAt.Get()
-	}
-	if o.UpdatedAt.IsSet() {
-		toSerialize["updated_at"] = o.UpdatedAt.Get()
-	}
+	toSerialize["email_is_synthetic"] = o.EmailIsSynthetic
 	toSerialize["roles"] = o.Roles
 	return toSerialize, nil
 }
@@ -532,6 +485,7 @@ func (o *UserResponse) UnmarshalJSON(data []byte) (err error) {
 		"email",
 		"id",
 		"name",
+		"email_is_synthetic",
 		"roles",
 	}
 

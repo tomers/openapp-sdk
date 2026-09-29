@@ -7,7 +7,7 @@
 //
 // The sdk-go Docker image installs libopenapp_sdk_core_c_bridge.so under /usr/local/lib.
 // Run all Go commands via Docker (`just sdk go test`, `just sdk go pre-commit`, or
-// `docker compose -f packages/sdk/docker/compose.yaml run --rm sdk-go …`) — do not rely
+// `scripts/sdk-compose.sh -f packages/sdk/docker/compose.yaml run --rm sdk-go …`) — do not rely
 // on a host `go` binary for SDK work.
 //
 // [openapp-sdk-core]: https://github.com/tomers/openapp-sdk/tree/main/rust (public mirror;

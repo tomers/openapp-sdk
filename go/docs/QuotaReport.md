@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Degradation** | Pointer to [**NullableDegradationStatus**](DegradationStatus.md) | Over-capacity remediation snapshot. Present only when the degradation system is enabled and the caller is permitted to see it; &#x60;null&#x60; otherwise. | [optional]
 **Items** | [**[]QuotaUsage**](QuotaUsage.md) |  |
 **OrgId** | **string** |  |
 **TierSlug** | Pointer to **NullableString** |  | [optional]
@@ -27,6 +28,41 @@ NewQuotaReportWithDefaults instantiates a new QuotaReport object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
+### GetDegradation
+
+`func (o *QuotaReport) GetDegradation() DegradationStatus`
+
+GetDegradation returns the Degradation field if non-nil, zero value otherwise.
+
+### GetDegradationOk
+
+`func (o *QuotaReport) GetDegradationOk() (*DegradationStatus, bool)`
+
+GetDegradationOk returns a tuple with the Degradation field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDegradation
+
+`func (o *QuotaReport) SetDegradation(v DegradationStatus)`
+
+SetDegradation sets Degradation field to given value.
+
+### HasDegradation
+
+`func (o *QuotaReport) HasDegradation() bool`
+
+HasDegradation returns a boolean if a field has been set.
+
+### SetDegradationNil
+
+`func (o *QuotaReport) SetDegradationNil(b bool)`
+
+ SetDegradationNil sets the value for Degradation to be an explicit nil
+
+### UnsetDegradation
+`func (o *QuotaReport) UnsetDegradation()`
+
+UnsetDegradation ensures that no value is present for Degradation, not even an explicit nil
 ### GetItems
 
 `func (o *QuotaReport) GetItems() []QuotaUsage`

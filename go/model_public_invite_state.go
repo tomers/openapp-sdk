@@ -20,12 +20,13 @@ type PublicInviteState string
 
 // List of PublicInviteState
 const (
-	ACTIVE    PublicInviteState = "active"
-	EXPIRED   PublicInviteState = "expired"
-	REVOKED   PublicInviteState = "revoked"
-	SCHEDULED PublicInviteState = "scheduled"
-	DISABLED  PublicInviteState = "disabled"
-	NOT_FOUND PublicInviteState = "not_found"
+	PUBLICINVITESTATE_ACTIVE              PublicInviteState = "active"
+	PUBLICINVITESTATE_EXPIRED             PublicInviteState = "expired"
+	PUBLICINVITESTATE_REVOKED             PublicInviteState = "revoked"
+	PUBLICINVITESTATE_SCHEDULED           PublicInviteState = "scheduled"
+	PUBLICINVITESTATE_DISABLED            PublicInviteState = "disabled"
+	PUBLICINVITESTATE_NOT_FOUND           PublicInviteState = "not_found"
+	PUBLICINVITESTATE_MAX_DEVICES_REACHED PublicInviteState = "max_devices_reached"
 )
 
 // All allowed values of PublicInviteState enum
@@ -36,6 +37,7 @@ var AllowedPublicInviteStateEnumValues = []PublicInviteState{
 	"scheduled",
 	"disabled",
 	"not_found",
+	"max_devices_reached",
 }
 
 func (v *PublicInviteState) UnmarshalJSON(src []byte) error {

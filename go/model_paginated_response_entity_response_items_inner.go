@@ -22,6 +22,11 @@ var _ MappedNullable = &PaginatedResponseEntityResponseItemsInner{}
 
 // PaginatedResponseEntityResponseItemsInner struct for PaginatedResponseEntityResponseItemsInner
 type PaginatedResponseEntityResponseItemsInner struct {
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
+	HardDeleteAt *time.Time `json:"hard_delete_at,omitempty"`
+	PurgeAt      *time.Time `json:"purge_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
 	// Parent device ID.
 	DeviceId string `json:"device_id"`
 	// Entity type (switch, light, sensor).
@@ -35,15 +40,10 @@ type PaginatedResponseEntityResponseItemsInner struct {
 	Name *string `json:"name,omitempty"`
 	// Optional zone this entity belongs to.
 	ZoneId         *string           `json:"zone_id,omitempty"`
-	CacheHit       NullableBool      `json:"cache_hit,omitempty"`
-	CacheTtl       NullableInt64     `json:"cache_ttl,omitempty"`
-	CreatedAt      NullableTime      `json:"created_at,omitempty"`
-	DeletedAt      NullableTime      `json:"deleted_at,omitempty"`
-	HardDeleteAt   NullableTime      `json:"hard_delete_at,omitempty"`
-	PurgeAt        NullableTime      `json:"purge_at,omitempty"`
-	UpdatedAt      NullableTime      `json:"updated_at,omitempty"`
 	EntityMetadata map[string]string `json:"entity_metadata,omitempty"`
-	State          interface{}       `json:"state,omitempty"`
+	// Derived, read-only entry kind for switchable entries on Virtual Access devices. Omitted when the entity is not an entry or the device has no Virtual Access config.
+	EntryKind NullableString `json:"entry_kind,omitempty"`
+	State     interface{}    `json:"state,omitempty"`
 }
 
 type _PaginatedResponseEntityResponseItemsInner PaginatedResponseEntityResponseItemsInner
@@ -66,6 +66,166 @@ func NewPaginatedResponseEntityResponseItemsInner(deviceId string, entityType En
 func NewPaginatedResponseEntityResponseItemsInnerWithDefaults() *PaginatedResponseEntityResponseItemsInner {
 	this := PaginatedResponseEntityResponseItemsInner{}
 	return &this
+}
+
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *PaginatedResponseEntityResponseItemsInner) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *PaginatedResponseEntityResponseItemsInner) SetCreatedAt(v time.Time) {
+	o.CreatedAt = &v
+}
+
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *PaginatedResponseEntityResponseItemsInner) GetDeletedAt() time.Time {
+	if o == nil || IsNil(o.DeletedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.DeletedAt
+}
+
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) GetDeletedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
+		return nil, false
+	}
+	return o.DeletedAt, true
+}
+
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeletedAt gets a reference to the given time.Time and assigns it to the DeletedAt field.
+func (o *PaginatedResponseEntityResponseItemsInner) SetDeletedAt(v time.Time) {
+	o.DeletedAt = &v
+}
+
+// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise.
+func (o *PaginatedResponseEntityResponseItemsInner) GetHardDeleteAt() time.Time {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.HardDeleteAt
+}
+
+// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) GetHardDeleteAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		return nil, false
+	}
+	return o.HardDeleteAt, true
+}
+
+// HasHardDeleteAt returns a boolean if a field has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) HasHardDeleteAt() bool {
+	if o != nil && !IsNil(o.HardDeleteAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetHardDeleteAt gets a reference to the given time.Time and assigns it to the HardDeleteAt field.
+func (o *PaginatedResponseEntityResponseItemsInner) SetHardDeleteAt(v time.Time) {
+	o.HardDeleteAt = &v
+}
+
+// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise.
+func (o *PaginatedResponseEntityResponseItemsInner) GetPurgeAt() time.Time {
+	if o == nil || IsNil(o.PurgeAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.PurgeAt
+}
+
+// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) GetPurgeAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.PurgeAt) {
+		return nil, false
+	}
+	return o.PurgeAt, true
+}
+
+// HasPurgeAt returns a boolean if a field has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) HasPurgeAt() bool {
+	if o != nil && !IsNil(o.PurgeAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPurgeAt gets a reference to the given time.Time and assigns it to the PurgeAt field.
+func (o *PaginatedResponseEntityResponseItemsInner) SetPurgeAt(v time.Time) {
+	o.PurgeAt = &v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *PaginatedResponseEntityResponseItemsInner) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *PaginatedResponseEntityResponseItemsInner) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = &v
 }
 
 // GetDeviceId returns the DeviceId field value
@@ -268,307 +428,6 @@ func (o *PaginatedResponseEntityResponseItemsInner) SetZoneId(v string) {
 	o.ZoneId = &v
 }
 
-// GetCacheHit returns the CacheHit field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetCacheHit() bool {
-	if o == nil || IsNil(o.CacheHit.Get()) {
-		var ret bool
-		return ret
-	}
-	return *o.CacheHit.Get()
-}
-
-// GetCacheHitOk returns a tuple with the CacheHit field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetCacheHitOk() (*bool, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CacheHit.Get(), o.CacheHit.IsSet()
-}
-
-// HasCacheHit returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasCacheHit() bool {
-	if o != nil && o.CacheHit.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheHit gets a reference to the given NullableBool and assigns it to the CacheHit field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetCacheHit(v bool) {
-	o.CacheHit.Set(&v)
-}
-
-// SetCacheHitNil sets the value for CacheHit to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetCacheHitNil() {
-	o.CacheHit.Set(nil)
-}
-
-// UnsetCacheHit ensures that no value is present for CacheHit, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetCacheHit() {
-	o.CacheHit.Unset()
-}
-
-// GetCacheTtl returns the CacheTtl field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetCacheTtl() int64 {
-	if o == nil || IsNil(o.CacheTtl.Get()) {
-		var ret int64
-		return ret
-	}
-	return *o.CacheTtl.Get()
-}
-
-// GetCacheTtlOk returns a tuple with the CacheTtl field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetCacheTtlOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CacheTtl.Get(), o.CacheTtl.IsSet()
-}
-
-// HasCacheTtl returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasCacheTtl() bool {
-	if o != nil && o.CacheTtl.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCacheTtl gets a reference to the given NullableInt64 and assigns it to the CacheTtl field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetCacheTtl(v int64) {
-	o.CacheTtl.Set(&v)
-}
-
-// SetCacheTtlNil sets the value for CacheTtl to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetCacheTtlNil() {
-	o.CacheTtl.Set(nil)
-}
-
-// UnsetCacheTtl ensures that no value is present for CacheTtl, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetCacheTtl() {
-	o.CacheTtl.Unset()
-}
-
-// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetCreatedAt() time.Time {
-	if o == nil || IsNil(o.CreatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.CreatedAt.Get()
-}
-
-// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetCreatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.CreatedAt.Get(), o.CreatedAt.IsSet()
-}
-
-// HasCreatedAt returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasCreatedAt() bool {
-	if o != nil && o.CreatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetCreatedAt gets a reference to the given NullableTime and assigns it to the CreatedAt field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetCreatedAt(v time.Time) {
-	o.CreatedAt.Set(&v)
-}
-
-// SetCreatedAtNil sets the value for CreatedAt to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetCreatedAtNil() {
-	o.CreatedAt.Set(nil)
-}
-
-// UnsetCreatedAt ensures that no value is present for CreatedAt, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetCreatedAt() {
-	o.CreatedAt.Unset()
-}
-
-// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetDeletedAt() time.Time {
-	if o == nil || IsNil(o.DeletedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.DeletedAt.Get()
-}
-
-// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetDeletedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.DeletedAt.Get(), o.DeletedAt.IsSet()
-}
-
-// HasDeletedAt returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasDeletedAt() bool {
-	if o != nil && o.DeletedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetDeletedAt gets a reference to the given NullableTime and assigns it to the DeletedAt field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetDeletedAt(v time.Time) {
-	o.DeletedAt.Set(&v)
-}
-
-// SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetDeletedAtNil() {
-	o.DeletedAt.Set(nil)
-}
-
-// UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetDeletedAt() {
-	o.DeletedAt.Unset()
-}
-
-// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetHardDeleteAt() time.Time {
-	if o == nil || IsNil(o.HardDeleteAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.HardDeleteAt.Get()
-}
-
-// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetHardDeleteAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.HardDeleteAt.Get(), o.HardDeleteAt.IsSet()
-}
-
-// HasHardDeleteAt returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasHardDeleteAt() bool {
-	if o != nil && o.HardDeleteAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetHardDeleteAt gets a reference to the given NullableTime and assigns it to the HardDeleteAt field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetHardDeleteAt(v time.Time) {
-	o.HardDeleteAt.Set(&v)
-}
-
-// SetHardDeleteAtNil sets the value for HardDeleteAt to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetHardDeleteAtNil() {
-	o.HardDeleteAt.Set(nil)
-}
-
-// UnsetHardDeleteAt ensures that no value is present for HardDeleteAt, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetHardDeleteAt() {
-	o.HardDeleteAt.Unset()
-}
-
-// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetPurgeAt() time.Time {
-	if o == nil || IsNil(o.PurgeAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.PurgeAt.Get()
-}
-
-// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetPurgeAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.PurgeAt.Get(), o.PurgeAt.IsSet()
-}
-
-// HasPurgeAt returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasPurgeAt() bool {
-	if o != nil && o.PurgeAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetPurgeAt gets a reference to the given NullableTime and assigns it to the PurgeAt field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetPurgeAt(v time.Time) {
-	o.PurgeAt.Set(&v)
-}
-
-// SetPurgeAtNil sets the value for PurgeAt to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetPurgeAtNil() {
-	o.PurgeAt.Set(nil)
-}
-
-// UnsetPurgeAt ensures that no value is present for PurgeAt, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetPurgeAt() {
-	o.PurgeAt.Unset()
-}
-
-// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PaginatedResponseEntityResponseItemsInner) GetUpdatedAt() time.Time {
-	if o == nil || IsNil(o.UpdatedAt.Get()) {
-		var ret time.Time
-		return ret
-	}
-	return *o.UpdatedAt.Get()
-}
-
-// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PaginatedResponseEntityResponseItemsInner) GetUpdatedAtOk() (*time.Time, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.UpdatedAt.Get(), o.UpdatedAt.IsSet()
-}
-
-// HasUpdatedAt returns a boolean if a field has been set.
-func (o *PaginatedResponseEntityResponseItemsInner) HasUpdatedAt() bool {
-	if o != nil && o.UpdatedAt.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetUpdatedAt gets a reference to the given NullableTime and assigns it to the UpdatedAt field.
-func (o *PaginatedResponseEntityResponseItemsInner) SetUpdatedAt(v time.Time) {
-	o.UpdatedAt.Set(&v)
-}
-
-// SetUpdatedAtNil sets the value for UpdatedAt to be an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) SetUpdatedAtNil() {
-	o.UpdatedAt.Set(nil)
-}
-
-// UnsetUpdatedAt ensures that no value is present for UpdatedAt, not even an explicit nil
-func (o *PaginatedResponseEntityResponseItemsInner) UnsetUpdatedAt() {
-	o.UpdatedAt.Unset()
-}
-
 // GetEntityMetadata returns the EntityMetadata field value if set, zero value otherwise.
 func (o *PaginatedResponseEntityResponseItemsInner) GetEntityMetadata() map[string]string {
 	if o == nil || IsNil(o.EntityMetadata) {
@@ -599,6 +458,49 @@ func (o *PaginatedResponseEntityResponseItemsInner) HasEntityMetadata() bool {
 // SetEntityMetadata gets a reference to the given map[string]string and assigns it to the EntityMetadata field.
 func (o *PaginatedResponseEntityResponseItemsInner) SetEntityMetadata(v map[string]string) {
 	o.EntityMetadata = v
+}
+
+// GetEntryKind returns the EntryKind field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PaginatedResponseEntityResponseItemsInner) GetEntryKind() string {
+	if o == nil || IsNil(o.EntryKind.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.EntryKind.Get()
+}
+
+// GetEntryKindOk returns a tuple with the EntryKind field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PaginatedResponseEntityResponseItemsInner) GetEntryKindOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.EntryKind.Get(), o.EntryKind.IsSet()
+}
+
+// HasEntryKind returns a boolean if a field has been set.
+func (o *PaginatedResponseEntityResponseItemsInner) HasEntryKind() bool {
+	if o != nil && o.EntryKind.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetEntryKind gets a reference to the given NullableString and assigns it to the EntryKind field.
+func (o *PaginatedResponseEntityResponseItemsInner) SetEntryKind(v string) {
+	o.EntryKind.Set(&v)
+}
+
+// SetEntryKindNil sets the value for EntryKind to be an explicit nil
+func (o *PaginatedResponseEntityResponseItemsInner) SetEntryKindNil() {
+	o.EntryKind.Set(nil)
+}
+
+// UnsetEntryKind ensures that no value is present for EntryKind, not even an explicit nil
+func (o *PaginatedResponseEntityResponseItemsInner) UnsetEntryKind() {
+	o.EntryKind.Unset()
 }
 
 // GetState returns the State field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -636,6 +538,21 @@ func (o *PaginatedResponseEntityResponseItemsInner) SetState(v interface{}) {
 
 func (o PaginatedResponseEntityResponseItemsInner) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.HardDeleteAt) {
+		toSerialize["hard_delete_at"] = o.HardDeleteAt
+	}
+	if !IsNil(o.PurgeAt) {
+		toSerialize["purge_at"] = o.PurgeAt
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
 	toSerialize["device_id"] = o.DeviceId
 	toSerialize["entity_type"] = o.EntityType
 	if !IsNil(o.ExternalId) {
@@ -651,29 +568,11 @@ func (o PaginatedResponseEntityResponseItemsInner) ToMap() (map[string]interface
 	if !IsNil(o.ZoneId) {
 		toSerialize["zone_id"] = o.ZoneId
 	}
-	if o.CacheHit.IsSet() {
-		toSerialize["cache_hit"] = o.CacheHit.Get()
-	}
-	if o.CacheTtl.IsSet() {
-		toSerialize["cache_ttl"] = o.CacheTtl.Get()
-	}
-	if o.CreatedAt.IsSet() {
-		toSerialize["created_at"] = o.CreatedAt.Get()
-	}
-	if o.DeletedAt.IsSet() {
-		toSerialize["deleted_at"] = o.DeletedAt.Get()
-	}
-	if o.HardDeleteAt.IsSet() {
-		toSerialize["hard_delete_at"] = o.HardDeleteAt.Get()
-	}
-	if o.PurgeAt.IsSet() {
-		toSerialize["purge_at"] = o.PurgeAt.Get()
-	}
-	if o.UpdatedAt.IsSet() {
-		toSerialize["updated_at"] = o.UpdatedAt.Get()
-	}
 	if !IsNil(o.EntityMetadata) {
 		toSerialize["entity_metadata"] = o.EntityMetadata
+	}
+	if o.EntryKind.IsSet() {
+		toSerialize["entry_kind"] = o.EntryKind.Get()
 	}
 	if o.State != nil {
 		toSerialize["state"] = o.State

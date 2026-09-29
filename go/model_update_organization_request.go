@@ -21,6 +21,8 @@ var _ MappedNullable = &UpdateOrganizationRequest{}
 type UpdateOrganizationRequest struct {
 	Description NullableString          `json:"description,omitempty"`
 	Name        NullableLocalizedString `json:"name,omitempty"`
+	// Move the org under a new parent (re-parent). When present and different from the current parent, the org (and its whole subtree) is moved under `parent_id`. Requires `admin` on the destination parent (or an ancestor) in addition to `update_orgs` on the org being moved.
+	ParentId NullableString `json:"parent_id,omitempty"`
 }
 
 // NewUpdateOrganizationRequest instantiates a new UpdateOrganizationRequest object
@@ -126,6 +128,49 @@ func (o *UpdateOrganizationRequest) UnsetName() {
 	o.Name.Unset()
 }
 
+// GetParentId returns the ParentId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UpdateOrganizationRequest) GetParentId() string {
+	if o == nil || IsNil(o.ParentId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ParentId.Get()
+}
+
+// GetParentIdOk returns a tuple with the ParentId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UpdateOrganizationRequest) GetParentIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ParentId.Get(), o.ParentId.IsSet()
+}
+
+// HasParentId returns a boolean if a field has been set.
+func (o *UpdateOrganizationRequest) HasParentId() bool {
+	if o != nil && o.ParentId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetParentId gets a reference to the given NullableString and assigns it to the ParentId field.
+func (o *UpdateOrganizationRequest) SetParentId(v string) {
+	o.ParentId.Set(&v)
+}
+
+// SetParentIdNil sets the value for ParentId to be an explicit nil
+func (o *UpdateOrganizationRequest) SetParentIdNil() {
+	o.ParentId.Set(nil)
+}
+
+// UnsetParentId ensures that no value is present for ParentId, not even an explicit nil
+func (o *UpdateOrganizationRequest) UnsetParentId() {
+	o.ParentId.Unset()
+}
+
 func (o UpdateOrganizationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Description.IsSet() {
@@ -133,6 +178,9 @@ func (o UpdateOrganizationRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
+	}
+	if o.ParentId.IsSet() {
+		toSerialize["parent_id"] = o.ParentId.Get()
 	}
 	return toSerialize, nil
 }

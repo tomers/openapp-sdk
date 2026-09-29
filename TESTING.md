@@ -24,9 +24,9 @@ Tests live in each language package plus shared assets under [`tests/`](tests/).
 | `just test` | Rust core fmt/clippy/test, OpenAPI drift check, Python unit+contract+Behave, Go vet/build/test |
 | `just test-tier0` | Fast `@tier0` Gherkin + Python tier-0 unit/contract slice |
 | `just test-docker` | Same CI slice inside `tests/docker/` containers |
-| `just docker core` | Rust workspace only (container) |
-| `just docker python` | Python unit tests (container) |
-| `just docker go` | Go OpenAPI drift + vet/build/test (container; builds C bridge image) |
+| `just docker-core` | Rust workspace only (container) |
+| `just docker-python` | Python unit + contract tests (container) |
+| `just docker-go` | Go vet/build/test (container; builds the Go test image) |
 | `just behave` | Full shared Gherkin via Behave (`tests/features/`) |
 | `just report-allure` | Merge pytest/Behave Allure inputs and open HTML (needs `just test` first) |
 

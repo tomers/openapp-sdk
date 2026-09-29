@@ -19,7 +19,7 @@ import (
 
 func Test_openapi_BillingAPIService(t *testing.T) {
 
-	apiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"
+	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
@@ -96,20 +96,6 @@ func Test_openapi_BillingAPIService(t *testing.T) {
 		httpRes, err := apiClient.BillingAPI.PostAdminQuotaOverride(context.Background()).Execute()
 
 		require.Nil(t, err)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test BillingAPIService PostBillingWebhook", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var provider string
-
-		resp, httpRes, err := apiClient.BillingAPI.PostBillingWebhook(context.Background(), provider).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})

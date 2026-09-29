@@ -77,6 +77,8 @@ fn main() -> Result<()> {
     // Down-convert in-memory before handing the spec to progenitor so we don't have to
     // change the backend or pin progenitor to a 3.1-aware fork.
     normalize_openapi_31_to_30(&mut spec);
+    strip_multipart_request_bodies(&mut spec);
+    strip_optional_no_content_responses(&mut spec);
 
     // progenitor accepts `openapiv3::OpenAPI` — parse from Value to avoid a second I/O.
     let spec: openapiv3::OpenAPI = serde_json::from_value(spec)
@@ -171,6 +173,66 @@ fn normalize_openapi_31_to_30(spec: &mut Value) {
     }
     rewrite_type_arrays(spec);
     flatten_object_query_params(spec);
+}
+
+/// Remove extra 2xx responses when `200` is present so progenitor sees at most one
+/// success type (`response_types.len() <= 1`).
+///
+/// The committed OpenAPI contract keeps `202` (accepted / queued) and `204` (empty
+/// body) for other generators and docs; language-specific SDKs that need those
+/// statuses should use raw HTTP helpers or wrap the generated client.
+fn strip_optional_no_content_responses(spec: &mut Value) {
+    let Some(paths) = spec.get_mut("paths").and_then(Value::as_object_mut) else {
+        return;
+    };
+
+    for methods in paths.values_mut() {
+        let Some(methods) = methods.as_object_mut() else {
+            continue;
+        };
+        for op in methods.values_mut() {
+            let Some(op) = op.as_object_mut() else {
+                continue;
+            };
+            let Some(responses) = op.get_mut("responses").and_then(Value::as_object_mut) else {
+                continue;
+            };
+            if responses.contains_key("200") {
+                responses.remove("204");
+                responses.remove("202");
+            }
+        }
+    }
+}
+
+/// Remove `multipart/form-data` request bodies before handing the spec to progenitor.
+///
+/// progenitor cannot codegen multipart uploads (it reports "No schema specified for
+/// request body"). The committed OpenAPI contract keeps them for other generators and
+/// docs; callers use raw multipart helpers in language-specific SDKs.
+fn strip_multipart_request_bodies(spec: &mut Value) {
+    let Some(paths) = spec.get_mut("paths").and_then(Value::as_object_mut) else {
+        return;
+    };
+
+    for methods in paths.values_mut() {
+        let Some(methods) = methods.as_object_mut() else {
+            continue;
+        };
+        for op in methods.values_mut() {
+            let Some(op) = op.as_object_mut() else {
+                continue;
+            };
+            let is_multipart = op
+                .get("requestBody")
+                .and_then(|rb| rb.get("content"))
+                .and_then(Value::as_object)
+                .is_some_and(|c| c.contains_key("multipart/form-data"));
+            if is_multipart {
+                op.remove("requestBody");
+            }
+        }
+    }
 }
 
 /// Replace any `in: query` parameter whose schema references an object made of

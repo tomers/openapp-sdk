@@ -14,7 +14,11 @@ import (
 
 // NewAPIClient builds a client whose outbound HTTP is implemented entirely by
 // openapp-sdk-core (via cgo and openapp-sdk-core-c-bridge). apiKey must use OpenApp’s
-// encoded form ({base_url}_openapp_{secret}) unless you rely on core defaults only.
+// encoded form ({origin}_openapp_{secret}), where {origin} is scheme, host, and optional
+// port with no path (for example https://openapp.house_openapp_SECRET).
+//
+// The core owns authentication and the API root: it sends the full key as the
+// X-API-Key header and resolves every request path against {origin}/api/v1.
 //
 // JSON responses use the bridge sync JSON path. Multipart uploads use the bridge raw-body
 // path (same core transport as other HTTP calls). Byte streams (for example SSE) use the
@@ -24,12 +28,33 @@ import (
 //
 // Call [APIClient.Close] when done to release bridge runtime resources.
 func NewAPIClient(apiKey string) (*APIClient, error) {
+	return newCoreAPIClient(func(rt *bridge.Runtime) (*bridge.Client, error) {
+		return bridge.NewClient(rt, apiKey)
+	})
+}
+
+// NewAPIClientWithBaseURL is [NewAPIClient] with an explicit API root instead of the one
+// derived from the key's origin. baseURL is the full root including the /api/v1 prefix
+// (for example http://localhost:4455/api/v1 when the key embeds an in-container origin).
+func NewAPIClientWithBaseURL(apiKey, baseURL string) (*APIClient, error) {
+	return newCoreAPIClient(func(rt *bridge.Runtime) (*bridge.Client, error) {
+		return bridge.NewClientWithBaseURL(rt, apiKey, baseURL)
+	})
+}
+
+func newCoreAPIClient(newBridgeClient func(*bridge.Runtime) (*bridge.Client, error)) (*APIClient, error) {
 	cfg := NewConfiguration()
+	// The core resolves request paths against the API root ({origin}/api/v1 or the explicit
+	// base URL), so generated operations must emit API-relative paths ("/status", not
+	// "/api/v1/status"). An empty server base keeps the spec's "/api/v1" server URL from being
+	// applied a second time.
+	cfg.Servers = ServerConfigurations{{URL: "", Description: "API root owned by openapp-sdk-core"}}
+	cfg.OperationServers = map[string]ServerConfigurations{}
 	rt, err := bridge.NewRuntime()
 	if err != nil {
 		return nil, fmt.Errorf("openapp sdk: runtime: %w", err)
 	}
-	bc, err := bridge.NewClient(rt, apiKey)
+	bc, err := newBridgeClient(rt)
 	if err != nil {
 		rt.Close()
 		return nil, fmt.Errorf("openapp sdk: client: %w", err)
@@ -69,7 +94,10 @@ func (t *coreRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 		return nil, fmt.Errorf("openapp sdk: nil http.Request")
 	}
 
-	path := req.URL.Path
+	// req.URL carries an API-relative path (see NewAPIClient); the core prefixes the
+	// {origin}/api/v1 root. EscapedPath keeps percent-encoded path parameters (such as
+	// %2F inside an id) intact instead of decoding them into extra path segments.
+	path := req.URL.EscapedPath()
 	if req.URL.RawQuery != "" {
 		path += "?" + req.URL.RawQuery
 	}

@@ -22,12 +22,16 @@ var _ MappedNullable = &AccessPortalListItem{}
 // AccessPortalListItem struct for AccessPortalListItem
 type AccessPortalListItem struct {
 	CreatedAt NullableString `json:"created_at,omitempty"`
-	// Device external_id (same integration): portal links to virtual_access_portal device by standard external identity.
-	DeviceExternalId NullableString  `json:"device_external_id,omitempty"`
-	Id               string          `json:"id"`
-	Name             LocalizedString `json:"name"`
-	PublicId         string          `json:"public_id"`
-	UpdatedAt        NullableString  `json:"updated_at,omitempty"`
+	// When set, the portal is soft-deleted (kept for restore).
+	DeletedAt NullableString `json:"deleted_at,omitempty"`
+	// Door device id (virtual_access_portal in this integration). Canonical portal link key.
+	DeviceId NullableString `json:"device_id,omitempty"`
+	// Directory device id (virtual_access_directory in this integration).
+	DirectoryId NullableString  `json:"directory_id,omitempty"`
+	Id          string          `json:"id"`
+	Name        LocalizedString `json:"name"`
+	PublicId    string          `json:"public_id"`
+	UpdatedAt   NullableString  `json:"updated_at,omitempty"`
 }
 
 type _AccessPortalListItem AccessPortalListItem
@@ -95,47 +99,133 @@ func (o *AccessPortalListItem) UnsetCreatedAt() {
 	o.CreatedAt.Unset()
 }
 
-// GetDeviceExternalId returns the DeviceExternalId field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AccessPortalListItem) GetDeviceExternalId() string {
-	if o == nil || IsNil(o.DeviceExternalId.Get()) {
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessPortalListItem) GetDeletedAt() string {
+	if o == nil || IsNil(o.DeletedAt.Get()) {
 		var ret string
 		return ret
 	}
-	return *o.DeviceExternalId.Get()
+	return *o.DeletedAt.Get()
 }
 
-// GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field value if set, nil otherwise
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AccessPortalListItem) GetDeviceExternalIdOk() (*string, bool) {
+func (o *AccessPortalListItem) GetDeletedAtOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.DeviceExternalId.Get(), o.DeviceExternalId.IsSet()
+	return o.DeletedAt.Get(), o.DeletedAt.IsSet()
 }
 
-// HasDeviceExternalId returns a boolean if a field has been set.
-func (o *AccessPortalListItem) HasDeviceExternalId() bool {
-	if o != nil && o.DeviceExternalId.IsSet() {
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *AccessPortalListItem) HasDeletedAt() bool {
+	if o != nil && o.DeletedAt.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetDeviceExternalId gets a reference to the given NullableString and assigns it to the DeviceExternalId field.
-func (o *AccessPortalListItem) SetDeviceExternalId(v string) {
-	o.DeviceExternalId.Set(&v)
+// SetDeletedAt gets a reference to the given NullableString and assigns it to the DeletedAt field.
+func (o *AccessPortalListItem) SetDeletedAt(v string) {
+	o.DeletedAt.Set(&v)
 }
 
-// SetDeviceExternalIdNil sets the value for DeviceExternalId to be an explicit nil
-func (o *AccessPortalListItem) SetDeviceExternalIdNil() {
-	o.DeviceExternalId.Set(nil)
+// SetDeletedAtNil sets the value for DeletedAt to be an explicit nil
+func (o *AccessPortalListItem) SetDeletedAtNil() {
+	o.DeletedAt.Set(nil)
 }
 
-// UnsetDeviceExternalId ensures that no value is present for DeviceExternalId, not even an explicit nil
-func (o *AccessPortalListItem) UnsetDeviceExternalId() {
-	o.DeviceExternalId.Unset()
+// UnsetDeletedAt ensures that no value is present for DeletedAt, not even an explicit nil
+func (o *AccessPortalListItem) UnsetDeletedAt() {
+	o.DeletedAt.Unset()
+}
+
+// GetDeviceId returns the DeviceId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessPortalListItem) GetDeviceId() string {
+	if o == nil || IsNil(o.DeviceId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DeviceId.Get()
+}
+
+// GetDeviceIdOk returns a tuple with the DeviceId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessPortalListItem) GetDeviceIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DeviceId.Get(), o.DeviceId.IsSet()
+}
+
+// HasDeviceId returns a boolean if a field has been set.
+func (o *AccessPortalListItem) HasDeviceId() bool {
+	if o != nil && o.DeviceId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDeviceId gets a reference to the given NullableString and assigns it to the DeviceId field.
+func (o *AccessPortalListItem) SetDeviceId(v string) {
+	o.DeviceId.Set(&v)
+}
+
+// SetDeviceIdNil sets the value for DeviceId to be an explicit nil
+func (o *AccessPortalListItem) SetDeviceIdNil() {
+	o.DeviceId.Set(nil)
+}
+
+// UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
+func (o *AccessPortalListItem) UnsetDeviceId() {
+	o.DeviceId.Unset()
+}
+
+// GetDirectoryId returns the DirectoryId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *AccessPortalListItem) GetDirectoryId() string {
+	if o == nil || IsNil(o.DirectoryId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DirectoryId.Get()
+}
+
+// GetDirectoryIdOk returns a tuple with the DirectoryId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *AccessPortalListItem) GetDirectoryIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DirectoryId.Get(), o.DirectoryId.IsSet()
+}
+
+// HasDirectoryId returns a boolean if a field has been set.
+func (o *AccessPortalListItem) HasDirectoryId() bool {
+	if o != nil && o.DirectoryId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDirectoryId gets a reference to the given NullableString and assigns it to the DirectoryId field.
+func (o *AccessPortalListItem) SetDirectoryId(v string) {
+	o.DirectoryId.Set(&v)
+}
+
+// SetDirectoryIdNil sets the value for DirectoryId to be an explicit nil
+func (o *AccessPortalListItem) SetDirectoryIdNil() {
+	o.DirectoryId.Set(nil)
+}
+
+// UnsetDirectoryId ensures that no value is present for DirectoryId, not even an explicit nil
+func (o *AccessPortalListItem) UnsetDirectoryId() {
+	o.DirectoryId.Unset()
 }
 
 // GetId returns the Id field value
@@ -258,8 +348,14 @@ func (o AccessPortalListItem) ToMap() (map[string]interface{}, error) {
 	if o.CreatedAt.IsSet() {
 		toSerialize["created_at"] = o.CreatedAt.Get()
 	}
-	if o.DeviceExternalId.IsSet() {
-		toSerialize["device_external_id"] = o.DeviceExternalId.Get()
+	if o.DeletedAt.IsSet() {
+		toSerialize["deleted_at"] = o.DeletedAt.Get()
+	}
+	if o.DeviceId.IsSet() {
+		toSerialize["device_id"] = o.DeviceId.Get()
+	}
+	if o.DirectoryId.IsSet() {
+		toSerialize["directory_id"] = o.DirectoryId.Get()
 	}
 	toSerialize["id"] = o.Id
 	toSerialize["name"] = o.Name

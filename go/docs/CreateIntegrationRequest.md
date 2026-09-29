@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **Config** | Pointer to **interface{}** |  | [optional]
 **Enabled** | Pointer to **bool** |  | [optional]
 **Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) | Human-friendly name for this integration (optional; defaults server-side). Accepts string or LocalizedString map, e.g. { \&quot;en\&quot;: \&quot;Name\&quot;, \&quot;he\&quot;: \&quot;שם\&quot; }. | [optional]
+**NonAdminAcknowledgment** | Pointer to **interface{}** |  | [optional]
 **OrgId** | **string** |  |
 **ProviderType** | **string** |  |
 **Secrets** | Pointer to **interface{}** |  | [optional]
@@ -125,6 +126,41 @@ HasName returns a boolean if a field has been set.
 `func (o *CreateIntegrationRequest) UnsetName()`
 
 UnsetName ensures that no value is present for Name, not even an explicit nil
+### GetNonAdminAcknowledgment
+
+`func (o *CreateIntegrationRequest) GetNonAdminAcknowledgment() interface{}`
+
+GetNonAdminAcknowledgment returns the NonAdminAcknowledgment field if non-nil, zero value otherwise.
+
+### GetNonAdminAcknowledgmentOk
+
+`func (o *CreateIntegrationRequest) GetNonAdminAcknowledgmentOk() (*interface{}, bool)`
+
+GetNonAdminAcknowledgmentOk returns a tuple with the NonAdminAcknowledgment field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetNonAdminAcknowledgment
+
+`func (o *CreateIntegrationRequest) SetNonAdminAcknowledgment(v interface{})`
+
+SetNonAdminAcknowledgment sets NonAdminAcknowledgment field to given value.
+
+### HasNonAdminAcknowledgment
+
+`func (o *CreateIntegrationRequest) HasNonAdminAcknowledgment() bool`
+
+HasNonAdminAcknowledgment returns a boolean if a field has been set.
+
+### SetNonAdminAcknowledgmentNil
+
+`func (o *CreateIntegrationRequest) SetNonAdminAcknowledgmentNil(b bool)`
+
+ SetNonAdminAcknowledgmentNil sets the value for NonAdminAcknowledgment to be an explicit nil
+
+### UnsetNonAdminAcknowledgment
+`func (o *CreateIntegrationRequest) UnsetNonAdminAcknowledgment()`
+
+UnsetNonAdminAcknowledgment ensures that no value is present for NonAdminAcknowledgment, not even an explicit nil
 ### GetOrgId
 
 `func (o *CreateIntegrationRequest) GetOrgId() string`

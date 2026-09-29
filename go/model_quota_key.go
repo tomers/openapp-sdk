@@ -20,32 +20,40 @@ type QuotaKey string
 
 // List of QuotaKey
 const (
-	ORG_USERS                      QuotaKey = "org_users"
-	INTEGRATIONS                   QuotaKey = "integrations"
-	DEVICES                        QuotaKey = "devices"
-	ENTITIES                       QuotaKey = "entities"
-	ZONES                          QuotaKey = "zones"
-	API_KEYS                       QuotaKey = "api_keys"
-	DOOR_OPENS                     QuotaKey = "door_opens"
-	PORTAL_VIEWS                   QuotaKey = "portal_views"
-	VIDEO_SESSIONS                 QuotaKey = "video_sessions"
-	VIDEO_SESSION_DURATION_SECONDS QuotaKey = "video_session_duration_seconds"
-	SCRIPTING_EXECUTIONS           QuotaKey = "scripting_executions"
+	QUOTAKEY_ORG_USERS                      QuotaKey = "org_users"
+	QUOTAKEY_ORGANIZATIONS                  QuotaKey = "organizations"
+	QUOTAKEY_INTEGRATIONS                   QuotaKey = "integrations"
+	QUOTAKEY_DEVICES                        QuotaKey = "devices"
+	QUOTAKEY_ENTITIES                       QuotaKey = "entities"
+	QUOTAKEY_ZONES                          QuotaKey = "zones"
+	QUOTAKEY_API_KEYS                       QuotaKey = "api_keys"
+	QUOTAKEY_DOOR_OPENS                     QuotaKey = "door_opens"
+	QUOTAKEY_VOICE_INVOCATIONS              QuotaKey = "voice_invocations"
+	QUOTAKEY_PORTAL_VIEWS                   QuotaKey = "portal_views"
+	QUOTAKEY_VIDEO_SESSIONS                 QuotaKey = "video_sessions"
+	QUOTAKEY_VIDEO_SESSION_DURATION_SECONDS QuotaKey = "video_session_duration_seconds"
+	QUOTAKEY_SCRIPTING_EXECUTIONS           QuotaKey = "scripting_executions"
+	QUOTAKEY_AI_REQUESTS                    QuotaKey = "ai_requests"
+	QUOTAKEY_GEOCODING_REQUESTS             QuotaKey = "geocoding_requests"
 )
 
 // All allowed values of QuotaKey enum
 var AllowedQuotaKeyEnumValues = []QuotaKey{
 	"org_users",
+	"organizations",
 	"integrations",
 	"devices",
 	"entities",
 	"zones",
 	"api_keys",
 	"door_opens",
+	"voice_invocations",
 	"portal_views",
 	"video_sessions",
 	"video_session_duration_seconds",
 	"scripting_executions",
+	"ai_requests",
+	"geocoding_requests",
 }
 
 func (v *QuotaKey) UnmarshalJSON(src []byte) error {

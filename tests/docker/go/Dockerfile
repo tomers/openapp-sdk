@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 # sdk-go: Go toolchain + openapp-sdk-core-c-bridge for cgo tests in go/.
 
-FROM rust:1.85-bookworm AS bridge-build
+ARG RUST_VERSION=invalid-version-must-be-provided
+ARG RUST_DEBIAN=invalid-debian-must-be-provided
+FROM rust:${RUST_VERSION}-slim-${RUST_DEBIAN} AS bridge-build
 WORKDIR /build
 COPY rust /build/core
 WORKDIR /build/core

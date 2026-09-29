@@ -9,17 +9,22 @@ Method | HTTP request | Description
 [**GetOrg**](OrgsAPI.md#GetOrg) | **Get** /orgs/{id} | Get an organization by ID.
 [**GetOrgPermissions**](OrgsAPI.md#GetOrgPermissions) | **Get** /orgs/{id}/permissions | Get current user&#39;s permissions for an organization.
 [**HardDeleteOrg**](OrgsAPI.md#HardDeleteOrg) | **Delete** /orgs/{id}/purge | Permanently delete (purge) an organization.
+[**ListOrgAncestors**](OrgsAPI.md#ListOrgAncestors) | **Get** /orgs/{id}/ancestors | Visible ancestor chain of an org, ordered root-most first (excludes the org itself).
+[**ListOrgChildren**](OrgsAPI.md#ListOrgChildren) | **Get** /orgs/children | List the direct children of an org (or the visible-forest roots) for lazy tree expansion.
 [**ListOrgUsers**](OrgsAPI.md#ListOrgUsers) | **Get** /orgs/{org_id}/users | List users in an organization (and optionally descendant orgs).
 [**ListOrgs**](OrgsAPI.md#ListOrgs) | **Get** /orgs | List organizations the user has access to.
-[**UpdateOrg**](OrgsAPI.md#UpdateOrg) | **Put** /orgs/{id} | Update an organization (body: name?, description?).
+[**SearchOrgs**](OrgsAPI.md#SearchOrgs) | **Get** /orgs/search | Free-text search across the orgs visible to the caller (flat, paginated).
+[**UpdateOrg**](OrgsAPI.md#UpdateOrg) | **Put** /orgs/{id} | Update an organization (body: name?, description?, parent_id?).
 
 
 
 ## CreateOrg
 
-> OrganizationResponse CreateOrg(ctx).CreateOrganizationRequest(createOrganizationRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> OrganizationResponse CreateOrg(ctx).CreateOrganizationRequest(createOrganizationRequest).IncludeDeleted(includeDeleted).Execute()
 
 Create an organization (body: name, description?, parent_id?).
+
+
 
 ### Example
 
@@ -36,15 +41,14 @@ import (
 func main() {
 	createOrganizationRequest := *openapiclient.NewCreateOrganizationRequest(*openapiclient.NewLocalizedString(map[string]string{"key": "Inner_example"})) // CreateOrganizationRequest |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgsAPI.CreateOrg(context.Background()).CreateOrganizationRequest(createOrganizationRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.OrgsAPI.CreateOrg(context.Background()).CreateOrganizationRequest(createOrganizationRequest).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.CreateOrg``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -67,7 +71,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **createOrganizationRequest** | [**CreateOrganizationRequest**](CreateOrganizationRequest.md) |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -75,7 +78,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -89,7 +92,7 @@ Name | Type | Description  | Notes
 
 ## DeleteOrg
 
-> OrganizationResponse DeleteOrg(ctx, id).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> OrganizationResponse DeleteOrg(ctx, id).IncludeDeleted(includeDeleted).Execute()
 
 Soft-delete an organization.
 
@@ -108,15 +111,14 @@ import (
 func main() {
 	id := "id_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgsAPI.DeleteOrg(context.Background(), id).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.OrgsAPI.DeleteOrg(context.Background(), id).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.DeleteOrg``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -143,7 +145,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -151,7 +152,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -165,7 +166,7 @@ Name | Type | Description  | Notes
 
 ## GetOrg
 
-> OrganizationResponse GetOrg(ctx, id).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> OrganizationResponse GetOrg(ctx, id).IncludeDeleted(includeDeleted).Execute()
 
 Get an organization by ID.
 
@@ -184,15 +185,14 @@ import (
 func main() {
 	id := "id_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgsAPI.GetOrg(context.Background(), id).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.OrgsAPI.GetOrg(context.Background(), id).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.GetOrg``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -219,7 +219,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -227,7 +226,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -260,7 +259,7 @@ import (
 func main() {
 	id := "id_example" // string |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -299,7 +298,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -313,7 +312,7 @@ Name | Type | Description  | Notes
 
 ## HardDeleteOrg
 
-> OrganizationResponse HardDeleteOrg(ctx, id).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> OrganizationResponse HardDeleteOrg(ctx, id).IncludeDeleted(includeDeleted).Execute()
 
 Permanently delete (purge) an organization.
 
@@ -332,15 +331,14 @@ import (
 func main() {
 	id := "id_example" // string |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgsAPI.HardDeleteOrg(context.Background(), id).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.OrgsAPI.HardDeleteOrg(context.Background(), id).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.HardDeleteOrg``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -367,7 +365,6 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -375,7 +372,155 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ListOrgAncestors
+
+> []OrganizationResponse ListOrgAncestors(ctx, id).Execute()
+
+Visible ancestor chain of an org, ordered root-most first (excludes the org itself).
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string | Organization ID
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgsAPI.ListOrgAncestors(context.Background(), id).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.ListOrgAncestors``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListOrgAncestors`: []OrganizationResponse
+	fmt.Fprintf(os.Stdout, "Response from `OrgsAPI.ListOrgAncestors`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** | Organization ID |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListOrgAncestorsRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**[]OrganizationResponse**](OrganizationResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ListOrgChildren
+
+> PaginatedResponse ListOrgChildren(ctx).OutputOptions(outputOptions).Pagination(pagination).ParentId(parentId).Execute()
+
+List the direct children of an org (or the visible-forest roots) for lazy tree expansion.
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
+	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
+	parentId := "parentId_example" // string | Parent org id. When omitted, returns the roots of the caller's visible org forest. (optional)
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgsAPI.ListOrgChildren(context.Background()).OutputOptions(outputOptions).Pagination(pagination).ParentId(parentId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.ListOrgChildren``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListOrgChildren`: PaginatedResponse
+	fmt.Fprintf(os.Stdout, "Response from `OrgsAPI.ListOrgChildren`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListOrgChildrenRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **outputOptions** | [**MultiResourceOutputOptionsQuery**](MultiResourceOutputOptionsQuery.md) |  |
+ **pagination** | [**PaginationQuery**](PaginationQuery.md) |  |
+ **parentId** | **string** | Parent org id. When omitted, returns the roots of the caller&#39;s visible org forest. |
+
+### Return type
+
+[**PaginatedResponse**](PaginatedResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -408,11 +553,11 @@ import (
 func main() {
 	orgId := "orgId_example" // string |
 	xOrg := "xOrg_example" // string |
-	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery(false, false, false) // MultiResourceOutputOptionsQuery |
+	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
 	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
 	recursive := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -455,7 +600,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -486,10 +631,10 @@ import (
 )
 
 func main() {
-	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery(false, false, false) // MultiResourceOutputOptionsQuery |
+	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
 	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
@@ -525,7 +670,81 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## SearchOrgs
+
+> PaginatedResponse SearchOrgs(ctx).Q(q).OutputOptions(outputOptions).Pagination(pagination).Execute()
+
+Free-text search across the orgs visible to the caller (flat, paginated).
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	q := "q_example" // string | Free-text query matched as a case-insensitive substring of the org name, or as an exact (case-insensitive) org ID.
+	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
+	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgsAPI.SearchOrgs(context.Background()).Q(q).OutputOptions(outputOptions).Pagination(pagination).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.SearchOrgs``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `SearchOrgs`: PaginatedResponse
+	fmt.Fprintf(os.Stdout, "Response from `OrgsAPI.SearchOrgs`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiSearchOrgsRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **q** | **string** | Free-text query matched as a case-insensitive substring of the org name, or as an exact (case-insensitive) org ID. |
+ **outputOptions** | [**MultiResourceOutputOptionsQuery**](MultiResourceOutputOptionsQuery.md) |  |
+ **pagination** | [**PaginationQuery**](PaginationQuery.md) |  |
+
+### Return type
+
+[**PaginatedResponse**](PaginatedResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 
@@ -539,9 +758,11 @@ Name | Type | Description  | Notes
 
 ## UpdateOrg
 
-> OrganizationResponse UpdateOrg(ctx, id).UpdateOrganizationRequest(updateOrganizationRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+> OrganizationResponse UpdateOrg(ctx, id).UpdateOrganizationRequest(updateOrganizationRequest).IncludeDeleted(includeDeleted).Execute()
 
-Update an organization (body: name?, description?).
+Update an organization (body: name?, description?, parent_id?).
+
+
 
 ### Example
 
@@ -559,15 +780,14 @@ func main() {
 	id := "id_example" // string |
 	updateOrganizationRequest := *openapiclient.NewUpdateOrganizationRequest() // UpdateOrganizationRequest |
 	includeDeleted := true // bool |  (optional)
-	includeMetadata := true // bool |  (optional)
 
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080/api/v1_openapp_example_secret")
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgsAPI.UpdateOrg(context.Background(), id).UpdateOrganizationRequest(updateOrganizationRequest).IncludeDeleted(includeDeleted).IncludeMetadata(includeMetadata).Execute()
+	resp, r, err := apiClient.OrgsAPI.UpdateOrg(context.Background(), id).UpdateOrganizationRequest(updateOrganizationRequest).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.UpdateOrg``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -595,7 +815,6 @@ Name | Type | Description  | Notes
 
  **updateOrganizationRequest** | [**UpdateOrganizationRequest**](UpdateOrganizationRequest.md) |  |
  **includeDeleted** | **bool** |  |
- **includeMetadata** | **bool** |  |
 
 ### Return type
 
@@ -603,7 +822,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[bearer_auth](../README.md#bearer_auth)
+[api_key](../README.md#api_key)
 
 ### HTTP request headers
 

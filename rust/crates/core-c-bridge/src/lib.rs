@@ -59,6 +59,8 @@ pub enum BridgeStatus {
     TransportError = 3,
     AuthError = 4,
     ApiError = 5,
+    ResourceNotFound = 6,
+    AmbiguousResource = 7,
     InternalError = 99,
 }
 
@@ -69,6 +71,8 @@ impl From<&SdkError> for BridgeStatus {
             SdkError::Auth(_) | SdkError::Token(_) => Self::AuthError,
             SdkError::Api { .. } => Self::ApiError,
             SdkError::Transport(_) => Self::TransportError,
+            SdkError::ResourceNotFound { .. } => Self::ResourceNotFound,
+            SdkError::AmbiguousResource { .. } => Self::AmbiguousResource,
             _ => Self::InternalError,
         }
     }
@@ -284,6 +288,35 @@ pub unsafe extern "C" fn openapp_sdk_client_free(ptr: *mut BridgeClient) {
     if !ptr.is_null() {
         unsafe { drop(Box::from_raw(ptr)) };
     }
+}
+
+/// Clone a client scoped to a different organization (`X-Org` header).
+/// On failure, `out_err` receives an allocated message when non-null.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn openapp_sdk_client_with_org(
+    client: *mut BridgeClient,
+    org_utf8: *const c_char,
+    out_err: *mut *mut c_char,
+) -> *mut BridgeClient {
+    if client.is_null() || org_utf8.is_null() {
+        set_out_err(out_err, "null argument to openapp_sdk_client_with_org");
+        return std::ptr::null_mut();
+    }
+
+    let org = match unsafe { CStr::from_ptr(org_utf8) }.to_str() {
+        Ok(s) => s,
+        Err(_) => {
+            set_out_err(out_err, "org is not valid utf-8");
+            return std::ptr::null_mut();
+        }
+    };
+
+    let client = unsafe { &*client };
+    let scoped = client.client.with_org(org);
+    Box::into_raw(Box::new(BridgeClient {
+        client: scoped,
+        runtime: client.runtime.clone(),
+    }))
 }
 
 /// # Safety
@@ -714,6 +747,18 @@ pub unsafe extern "C" fn openapp_sdk_client_request_stream_async(
     }
 }
 
+mod resolve_exports;
+
+pub use resolve_exports::{
+    openapp_sdk_client_devices_get_by_name_async,
+    openapp_sdk_client_integrations_get_access_portal_by_name,
+    openapp_sdk_client_integrations_get_access_portal_by_name_async,
+    openapp_sdk_client_integrations_get_by_name, openapp_sdk_client_integrations_get_by_name_async,
+    openapp_sdk_client_integrations_get_by_name_with_provider_async,
+    openapp_sdk_client_orgs_get_by_name_async, openapp_sdk_client_zones_get_by_name_async,
+    openapp_sdk_resolve_unique_json,
+};
+
 /// Free a C string previously handed back by any bridge call.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn openapp_sdk_string_free(ptr: *mut c_char) {
@@ -722,7 +767,7 @@ pub unsafe extern "C" fn openapp_sdk_string_free(ptr: *mut c_char) {
     }
 }
 
-fn set_out_err(out: *mut *mut c_char, msg: &str) {
+pub(crate) fn set_out_err(out: *mut *mut c_char, msg: &str) {
     if out.is_null() {
         return;
     }
@@ -736,12 +781,36 @@ fn set_out_err(out: *mut *mut c_char, msg: &str) {
 }
 
 /// Wire-shaped JSON for [`SdkError::Api`] so language bindings can recover `code` /
-/// `message`; other variants keep [`SdkError::to_string`] for logs.
-fn stringify_bridge_error(err: &SdkError) -> String {
+/// `message`; resolve errors expose structured JSON for typed exceptions.
+pub(crate) fn stringify_bridge_error(err: &SdkError) -> String {
     match err {
         SdkError::Api { body, .. } => {
             serde_json::to_string(body).unwrap_or_else(|_| err.to_string())
         }
+        SdkError::ResourceNotFound {
+            resource_type,
+            name,
+        } => serde_json::json!({
+            "kind": "resource_not_found",
+            "resource_type": resource_type,
+            "name": name,
+            "message": err.to_string(),
+        })
+        .to_string(),
+        SdkError::AmbiguousResource {
+            resource_type,
+            name,
+            matches,
+            match_count,
+        } => serde_json::json!({
+            "kind": "ambiguous_resource",
+            "resource_type": resource_type,
+            "name": name,
+            "match_count": match_count,
+            "matches": matches,
+            "message": err.to_string(),
+        })
+        .to_string(),
         _ => err.to_string(),
     }
 }

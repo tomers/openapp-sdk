@@ -4,9 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**AccessControl** | Pointer to [**NullablePublicPortalAccessControl**](PublicPortalAccessControl.md) | Access-control integration summary (building name, address, photo). | [optional]
+**AccessDirectory** | Pointer to [**NullablePublicPortalAccessControl**](PublicPortalAccessControl.md) | Visitor directory device summary for this portal (building directory name, photo). | [optional]
 **Branding** | Pointer to **interface{}** |  | [optional]
 **DoorEffectiveAutoOffDuration** | Pointer to **NullableInt64** |  | [optional]
 **DoorImageUrl** | Pointer to **NullableString** | Image URL for the door (presigned S3 URL from media service). | [optional]
+**EntryKind** | **string** | Entry type from linked portal device (&#x60;virtual_access.entry_kind&#x60;). Default &#x60;door&#x60;. |
+**Hold** | Pointer to [**NullablePublicHoldView**](PublicHoldView.md) | Effective door hold when any opener is held (guest-visible). | [optional]
 **Lights** | Pointer to [**[]PublicPortalLight**](PublicPortalLight.md) |  | [optional]
 **Mode** | [**PublicPortalMode**](PublicPortalMode.md) |  |
 **Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
@@ -17,7 +21,7 @@ Name | Type | Description | Notes
 
 ### NewPublicPortalResponse
 
-`func NewPublicPortalResponse(mode PublicPortalMode, publicPortalId string, ) *PublicPortalResponse`
+`func NewPublicPortalResponse(entryKind string, mode PublicPortalMode, publicPortalId string, ) *PublicPortalResponse`
 
 NewPublicPortalResponse instantiates a new PublicPortalResponse object
 This constructor will assign default values to properties that have it defined,
@@ -32,6 +36,76 @@ NewPublicPortalResponseWithDefaults instantiates a new PublicPortalResponse obje
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
+### GetAccessControl
+
+`func (o *PublicPortalResponse) GetAccessControl() PublicPortalAccessControl`
+
+GetAccessControl returns the AccessControl field if non-nil, zero value otherwise.
+
+### GetAccessControlOk
+
+`func (o *PublicPortalResponse) GetAccessControlOk() (*PublicPortalAccessControl, bool)`
+
+GetAccessControlOk returns a tuple with the AccessControl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAccessControl
+
+`func (o *PublicPortalResponse) SetAccessControl(v PublicPortalAccessControl)`
+
+SetAccessControl sets AccessControl field to given value.
+
+### HasAccessControl
+
+`func (o *PublicPortalResponse) HasAccessControl() bool`
+
+HasAccessControl returns a boolean if a field has been set.
+
+### SetAccessControlNil
+
+`func (o *PublicPortalResponse) SetAccessControlNil(b bool)`
+
+ SetAccessControlNil sets the value for AccessControl to be an explicit nil
+
+### UnsetAccessControl
+`func (o *PublicPortalResponse) UnsetAccessControl()`
+
+UnsetAccessControl ensures that no value is present for AccessControl, not even an explicit nil
+### GetAccessDirectory
+
+`func (o *PublicPortalResponse) GetAccessDirectory() PublicPortalAccessControl`
+
+GetAccessDirectory returns the AccessDirectory field if non-nil, zero value otherwise.
+
+### GetAccessDirectoryOk
+
+`func (o *PublicPortalResponse) GetAccessDirectoryOk() (*PublicPortalAccessControl, bool)`
+
+GetAccessDirectoryOk returns a tuple with the AccessDirectory field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAccessDirectory
+
+`func (o *PublicPortalResponse) SetAccessDirectory(v PublicPortalAccessControl)`
+
+SetAccessDirectory sets AccessDirectory field to given value.
+
+### HasAccessDirectory
+
+`func (o *PublicPortalResponse) HasAccessDirectory() bool`
+
+HasAccessDirectory returns a boolean if a field has been set.
+
+### SetAccessDirectoryNil
+
+`func (o *PublicPortalResponse) SetAccessDirectoryNil(b bool)`
+
+ SetAccessDirectoryNil sets the value for AccessDirectory to be an explicit nil
+
+### UnsetAccessDirectory
+`func (o *PublicPortalResponse) UnsetAccessDirectory()`
+
+UnsetAccessDirectory ensures that no value is present for AccessDirectory, not even an explicit nil
 ### GetBranding
 
 `func (o *PublicPortalResponse) GetBranding() interface{}`
@@ -137,6 +211,61 @@ HasDoorImageUrl returns a boolean if a field has been set.
 `func (o *PublicPortalResponse) UnsetDoorImageUrl()`
 
 UnsetDoorImageUrl ensures that no value is present for DoorImageUrl, not even an explicit nil
+### GetEntryKind
+
+`func (o *PublicPortalResponse) GetEntryKind() string`
+
+GetEntryKind returns the EntryKind field if non-nil, zero value otherwise.
+
+### GetEntryKindOk
+
+`func (o *PublicPortalResponse) GetEntryKindOk() (*string, bool)`
+
+GetEntryKindOk returns a tuple with the EntryKind field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEntryKind
+
+`func (o *PublicPortalResponse) SetEntryKind(v string)`
+
+SetEntryKind sets EntryKind field to given value.
+
+
+### GetHold
+
+`func (o *PublicPortalResponse) GetHold() PublicHoldView`
+
+GetHold returns the Hold field if non-nil, zero value otherwise.
+
+### GetHoldOk
+
+`func (o *PublicPortalResponse) GetHoldOk() (*PublicHoldView, bool)`
+
+GetHoldOk returns a tuple with the Hold field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHold
+
+`func (o *PublicPortalResponse) SetHold(v PublicHoldView)`
+
+SetHold sets Hold field to given value.
+
+### HasHold
+
+`func (o *PublicPortalResponse) HasHold() bool`
+
+HasHold returns a boolean if a field has been set.
+
+### SetHoldNil
+
+`func (o *PublicPortalResponse) SetHoldNil(b bool)`
+
+ SetHoldNil sets the value for Hold to be an explicit nil
+
+### UnsetHold
+`func (o *PublicPortalResponse) UnsetHold()`
+
+UnsetHold ensures that no value is present for Hold, not even an explicit nil
 ### GetLights
 
 `func (o *PublicPortalResponse) GetLights() []PublicPortalLight`

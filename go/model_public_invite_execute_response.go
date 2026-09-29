@@ -21,8 +21,10 @@ var _ MappedNullable = &PublicInviteExecuteResponse{}
 
 // PublicInviteExecuteResponse struct for PublicInviteExecuteResponse
 type PublicInviteExecuteResponse struct {
-	DoorAutoCloseDuration NullableInt64 `json:"door_auto_close_duration,omitempty"`
-	// Map of light entity ULID to auto-off duration in seconds. Serializes as JSON object with string keys.
+	Degradation             interface{}   `json:"degradation,omitempty"`
+	DoorAutoCloseDuration   NullableInt64 `json:"door_auto_close_duration,omitempty"`
+	DoorOpenDurationSeconds NullableInt64 `json:"door_open_duration_seconds,omitempty"`
+	// Map of light entity ULID to auto-off duration in seconds.
 	LightsAutoOffDuration map[string]int64 `json:"lights_auto_off_duration,omitempty"`
 	Message               NullableString   `json:"message,omitempty"`
 	Ok                    bool             `json:"ok"`
@@ -46,6 +48,39 @@ func NewPublicInviteExecuteResponse(ok bool) *PublicInviteExecuteResponse {
 func NewPublicInviteExecuteResponseWithDefaults() *PublicInviteExecuteResponse {
 	this := PublicInviteExecuteResponse{}
 	return &this
+}
+
+// GetDegradation returns the Degradation field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteExecuteResponse) GetDegradation() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.Degradation
+}
+
+// GetDegradationOk returns a tuple with the Degradation field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteExecuteResponse) GetDegradationOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.Degradation) {
+		return nil, false
+	}
+	return &o.Degradation, true
+}
+
+// HasDegradation returns a boolean if a field has been set.
+func (o *PublicInviteExecuteResponse) HasDegradation() bool {
+	if o != nil && !IsNil(o.Degradation) {
+		return true
+	}
+
+	return false
+}
+
+// SetDegradation gets a reference to the given interface{} and assigns it to the Degradation field.
+func (o *PublicInviteExecuteResponse) SetDegradation(v interface{}) {
+	o.Degradation = v
 }
 
 // GetDoorAutoCloseDuration returns the DoorAutoCloseDuration field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -89,6 +124,49 @@ func (o *PublicInviteExecuteResponse) SetDoorAutoCloseDurationNil() {
 // UnsetDoorAutoCloseDuration ensures that no value is present for DoorAutoCloseDuration, not even an explicit nil
 func (o *PublicInviteExecuteResponse) UnsetDoorAutoCloseDuration() {
 	o.DoorAutoCloseDuration.Unset()
+}
+
+// GetDoorOpenDurationSeconds returns the DoorOpenDurationSeconds field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteExecuteResponse) GetDoorOpenDurationSeconds() int64 {
+	if o == nil || IsNil(o.DoorOpenDurationSeconds.Get()) {
+		var ret int64
+		return ret
+	}
+	return *o.DoorOpenDurationSeconds.Get()
+}
+
+// GetDoorOpenDurationSecondsOk returns a tuple with the DoorOpenDurationSeconds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteExecuteResponse) GetDoorOpenDurationSecondsOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DoorOpenDurationSeconds.Get(), o.DoorOpenDurationSeconds.IsSet()
+}
+
+// HasDoorOpenDurationSeconds returns a boolean if a field has been set.
+func (o *PublicInviteExecuteResponse) HasDoorOpenDurationSeconds() bool {
+	if o != nil && o.DoorOpenDurationSeconds.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDoorOpenDurationSeconds gets a reference to the given NullableInt64 and assigns it to the DoorOpenDurationSeconds field.
+func (o *PublicInviteExecuteResponse) SetDoorOpenDurationSeconds(v int64) {
+	o.DoorOpenDurationSeconds.Set(&v)
+}
+
+// SetDoorOpenDurationSecondsNil sets the value for DoorOpenDurationSeconds to be an explicit nil
+func (o *PublicInviteExecuteResponse) SetDoorOpenDurationSecondsNil() {
+	o.DoorOpenDurationSeconds.Set(nil)
+}
+
+// UnsetDoorOpenDurationSeconds ensures that no value is present for DoorOpenDurationSeconds, not even an explicit nil
+func (o *PublicInviteExecuteResponse) UnsetDoorOpenDurationSeconds() {
+	o.DoorOpenDurationSeconds.Unset()
 }
 
 // GetLightsAutoOffDuration returns the LightsAutoOffDuration field value if set, zero value otherwise.
@@ -192,8 +270,14 @@ func (o *PublicInviteExecuteResponse) SetOk(v bool) {
 
 func (o PublicInviteExecuteResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.Degradation != nil {
+		toSerialize["degradation"] = o.Degradation
+	}
 	if o.DoorAutoCloseDuration.IsSet() {
 		toSerialize["door_auto_close_duration"] = o.DoorAutoCloseDuration.Get()
+	}
+	if o.DoorOpenDurationSeconds.IsSet() {
+		toSerialize["door_open_duration_seconds"] = o.DoorOpenDurationSeconds.Get()
 	}
 	if !IsNil(o.LightsAutoOffDuration) {
 		toSerialize["lights_auto_off_duration"] = o.LightsAutoOffDuration

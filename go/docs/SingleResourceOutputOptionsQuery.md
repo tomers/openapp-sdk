@@ -4,14 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**IncludeDeleted** | **bool** |  |
-**IncludeMetadata** | **bool** |  |
+**IncludeDeleted** | Pointer to **bool** |  | [optional]
 
 ## Methods
 
 ### NewSingleResourceOutputOptionsQuery
 
-`func NewSingleResourceOutputOptionsQuery(includeDeleted bool, includeMetadata bool, ) *SingleResourceOutputOptionsQuery`
+`func NewSingleResourceOutputOptionsQuery() *SingleResourceOutputOptionsQuery`
 
 NewSingleResourceOutputOptionsQuery instantiates a new SingleResourceOutputOptionsQuery object
 This constructor will assign default values to properties that have it defined,
@@ -45,26 +44,11 @@ and a boolean to check if the value has been set.
 
 SetIncludeDeleted sets IncludeDeleted field to given value.
 
+### HasIncludeDeleted
 
-### GetIncludeMetadata
+`func (o *SingleResourceOutputOptionsQuery) HasIncludeDeleted() bool`
 
-`func (o *SingleResourceOutputOptionsQuery) GetIncludeMetadata() bool`
-
-GetIncludeMetadata returns the IncludeMetadata field if non-nil, zero value otherwise.
-
-### GetIncludeMetadataOk
-
-`func (o *SingleResourceOutputOptionsQuery) GetIncludeMetadataOk() (*bool, bool)`
-
-GetIncludeMetadataOk returns a tuple with the IncludeMetadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIncludeMetadata
-
-`func (o *SingleResourceOutputOptionsQuery) SetIncludeMetadata(v bool)`
-
-SetIncludeMetadata sets IncludeMetadata field to given value.
-
+HasIncludeDeleted returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

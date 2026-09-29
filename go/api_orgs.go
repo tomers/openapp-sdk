@@ -27,7 +27,6 @@ type ApiCreateOrgRequest struct {
 	ApiService                *OrgsAPIService
 	createOrganizationRequest *CreateOrganizationRequest
 	includeDeleted            *bool
-	includeMetadata           *bool
 }
 
 func (r ApiCreateOrgRequest) CreateOrganizationRequest(createOrganizationRequest CreateOrganizationRequest) ApiCreateOrgRequest {
@@ -40,17 +39,19 @@ func (r ApiCreateOrgRequest) IncludeDeleted(includeDeleted bool) ApiCreateOrgReq
 	return r
 }
 
-func (r ApiCreateOrgRequest) IncludeMetadata(includeMetadata bool) ApiCreateOrgRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiCreateOrgRequest) Execute() (*OrganizationResponse, *http.Response, error) {
 	return r.ApiService.CreateOrgExecute(r)
 }
 
 /*
 CreateOrg Create an organization (body: name, description?, parent_id?).
+
+Requires **`admin`** (or `platform_admin`) on the **parent** org or an ancestor.
+Sub-org access is inherited from that parent assignment; the API does not grant
+a duplicate **`admin`** role on the new org.
+
+Quota: consumes 1 from the **parent** org's `organizations` (unit: count, lifetime
+capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateOrgRequest
@@ -89,9 +90,6 @@ func (a *OrgsAPIService) CreateOrgExecute(r ApiCreateOrgRequest) (*OrganizationR
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -178,6 +176,17 @@ func (a *OrgsAPIService) CreateOrgExecute(r ApiCreateOrgRequest) (*OrganizationR
 			newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 500 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -204,20 +213,14 @@ func (a *OrgsAPIService) CreateOrgExecute(r ApiCreateOrgRequest) (*OrganizationR
 }
 
 type ApiDeleteOrgRequest struct {
-	ctx             context.Context
-	ApiService      *OrgsAPIService
-	id              string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *OrgsAPIService
+	id             string
+	includeDeleted *bool
 }
 
 func (r ApiDeleteOrgRequest) IncludeDeleted(includeDeleted bool) ApiDeleteOrgRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiDeleteOrgRequest) IncludeMetadata(includeMetadata bool) ApiDeleteOrgRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -265,9 +268,6 @@ func (a *OrgsAPIService) DeleteOrgExecute(r ApiDeleteOrgRequest) (*OrganizationR
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -400,20 +400,14 @@ func (a *OrgsAPIService) DeleteOrgExecute(r ApiDeleteOrgRequest) (*OrganizationR
 }
 
 type ApiGetOrgRequest struct {
-	ctx             context.Context
-	ApiService      *OrgsAPIService
-	id              string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *OrgsAPIService
+	id             string
+	includeDeleted *bool
 }
 
 func (r ApiGetOrgRequest) IncludeDeleted(includeDeleted bool) ApiGetOrgRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiGetOrgRequest) IncludeMetadata(includeMetadata bool) ApiGetOrgRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -461,9 +455,6 @@ func (a *OrgsAPIService) GetOrgExecute(r ApiGetOrgRequest) (*OrganizationRespons
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -676,20 +667,14 @@ func (a *OrgsAPIService) GetOrgPermissionsExecute(r ApiGetOrgPermissionsRequest)
 }
 
 type ApiHardDeleteOrgRequest struct {
-	ctx             context.Context
-	ApiService      *OrgsAPIService
-	id              string
-	includeDeleted  *bool
-	includeMetadata *bool
+	ctx            context.Context
+	ApiService     *OrgsAPIService
+	id             string
+	includeDeleted *bool
 }
 
 func (r ApiHardDeleteOrgRequest) IncludeDeleted(includeDeleted bool) ApiHardDeleteOrgRequest {
 	r.includeDeleted = &includeDeleted
-	return r
-}
-
-func (r ApiHardDeleteOrgRequest) IncludeMetadata(includeMetadata bool) ApiHardDeleteOrgRequest {
-	r.includeMetadata = &includeMetadata
 	return r
 }
 
@@ -737,9 +722,6 @@ func (a *OrgsAPIService) HardDeleteOrgExecute(r ApiHardDeleteOrgRequest) (*Organ
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -836,6 +818,306 @@ func (a *OrgsAPIService) HardDeleteOrgExecute(r ApiHardDeleteOrgRequest) (*Organ
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 422 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListOrgAncestorsRequest struct {
+	ctx        context.Context
+	ApiService *OrgsAPIService
+	id         string
+}
+
+func (r ApiListOrgAncestorsRequest) Execute() ([]OrganizationResponse, *http.Response, error) {
+	return r.ApiService.ListOrgAncestorsExecute(r)
+}
+
+/*
+ListOrgAncestors Visible ancestor chain of an org, ordered root-most first (excludes the org itself).
+
+Powers the breadcrumb of the selected org in the selector trigger. Only ancestors that are
+themselves visible to the caller are returned, so paths never leak orgs above the caller's reach.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id Organization ID
+	@return ApiListOrgAncestorsRequest
+*/
+func (a *OrgsAPIService) ListOrgAncestors(ctx context.Context, id string) ApiListOrgAncestorsRequest {
+	return ApiListOrgAncestorsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return []OrganizationResponse
+func (a *OrgsAPIService) ListOrgAncestorsExecute(r ApiListOrgAncestorsRequest) ([]OrganizationResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue []OrganizationResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrgsAPIService.ListOrgAncestors")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{id}/ancestors"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListOrgChildrenRequest struct {
+	ctx           context.Context
+	ApiService    *OrgsAPIService
+	outputOptions *MultiResourceOutputOptionsQuery
+	pagination    *PaginationQuery
+	parentId      *string
+}
+
+func (r ApiListOrgChildrenRequest) OutputOptions(outputOptions MultiResourceOutputOptionsQuery) ApiListOrgChildrenRequest {
+	r.outputOptions = &outputOptions
+	return r
+}
+
+func (r ApiListOrgChildrenRequest) Pagination(pagination PaginationQuery) ApiListOrgChildrenRequest {
+	r.pagination = &pagination
+	return r
+}
+
+// Parent org id. When omitted, returns the roots of the caller&#39;s visible org forest.
+func (r ApiListOrgChildrenRequest) ParentId(parentId string) ApiListOrgChildrenRequest {
+	r.parentId = &parentId
+	return r
+}
+
+func (r ApiListOrgChildrenRequest) Execute() (*PaginatedResponse, *http.Response, error) {
+	return r.ApiService.ListOrgChildrenExecute(r)
+}
+
+/*
+ListOrgChildren List the direct children of an org (or the visible-forest roots) for lazy tree expansion.
+
+Each item carries `has_children` so the client can render an expand affordance without fetching
+the next level. Visibility matches `GET /orgs`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiListOrgChildrenRequest
+*/
+func (a *OrgsAPIService) ListOrgChildren(ctx context.Context) ApiListOrgChildrenRequest {
+	return ApiListOrgChildrenRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PaginatedResponse
+func (a *OrgsAPIService) ListOrgChildrenExecute(r ApiListOrgChildrenRequest) (*PaginatedResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PaginatedResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrgsAPIService.ListOrgChildren")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/children"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.outputOptions == nil {
+		return localVarReturnValue, nil, reportError("outputOptions is required and must be specified")
+	}
+	if r.pagination == nil {
+		return localVarReturnValue, nil, reportError("pagination is required and must be specified")
+	}
+
+	if r.parentId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "parent_id", r.parentId, "form", "")
+	}
+	parameterAddToHeaderOrQuery(localVarQueryParams, "output_options", r.outputOptions, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "pagination", r.pagination, "form", "")
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -1205,13 +1487,165 @@ func (a *OrgsAPIService) ListOrgsExecute(r ApiListOrgsRequest) (*PaginatedRespon
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiSearchOrgsRequest struct {
+	ctx           context.Context
+	ApiService    *OrgsAPIService
+	q             *string
+	outputOptions *MultiResourceOutputOptionsQuery
+	pagination    *PaginationQuery
+}
+
+// Free-text query matched as a case-insensitive substring of the org name, or as an exact (case-insensitive) org ID.
+func (r ApiSearchOrgsRequest) Q(q string) ApiSearchOrgsRequest {
+	r.q = &q
+	return r
+}
+
+func (r ApiSearchOrgsRequest) OutputOptions(outputOptions MultiResourceOutputOptionsQuery) ApiSearchOrgsRequest {
+	r.outputOptions = &outputOptions
+	return r
+}
+
+func (r ApiSearchOrgsRequest) Pagination(pagination PaginationQuery) ApiSearchOrgsRequest {
+	r.pagination = &pagination
+	return r
+}
+
+func (r ApiSearchOrgsRequest) Execute() (*PaginatedResponse, *http.Response, error) {
+	return r.ApiService.SearchOrgsExecute(r)
+}
+
+/*
+SearchOrgs Free-text search across the orgs visible to the caller (flat, paginated).
+
+Results carry `parent_name` and `has_children` so the selector can show each match with its
+place in the hierarchy. An empty/blank `q` returns no results.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiSearchOrgsRequest
+*/
+func (a *OrgsAPIService) SearchOrgs(ctx context.Context) ApiSearchOrgsRequest {
+	return ApiSearchOrgsRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PaginatedResponse
+func (a *OrgsAPIService) SearchOrgsExecute(r ApiSearchOrgsRequest) (*PaginatedResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PaginatedResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrgsAPIService.SearchOrgs")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/search"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.q == nil {
+		return localVarReturnValue, nil, reportError("q is required and must be specified")
+	}
+	if r.outputOptions == nil {
+		return localVarReturnValue, nil, reportError("outputOptions is required and must be specified")
+	}
+	if r.pagination == nil {
+		return localVarReturnValue, nil, reportError("pagination is required and must be specified")
+	}
+
+	parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "output_options", r.outputOptions, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "pagination", r.pagination, "form", "")
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiUpdateOrgRequest struct {
 	ctx                       context.Context
 	ApiService                *OrgsAPIService
 	id                        string
 	updateOrganizationRequest *UpdateOrganizationRequest
 	includeDeleted            *bool
-	includeMetadata           *bool
 }
 
 func (r ApiUpdateOrgRequest) UpdateOrganizationRequest(updateOrganizationRequest UpdateOrganizationRequest) ApiUpdateOrgRequest {
@@ -1224,17 +1658,16 @@ func (r ApiUpdateOrgRequest) IncludeDeleted(includeDeleted bool) ApiUpdateOrgReq
 	return r
 }
 
-func (r ApiUpdateOrgRequest) IncludeMetadata(includeMetadata bool) ApiUpdateOrgRequest {
-	r.includeMetadata = &includeMetadata
-	return r
-}
-
 func (r ApiUpdateOrgRequest) Execute() (*OrganizationResponse, *http.Response, error) {
 	return r.ApiService.UpdateOrgExecute(r)
 }
 
 /*
-UpdateOrg Update an organization (body: name?, description?).
+UpdateOrg Update an organization (body: name?, description?, parent_id?).
+
+Supplying `parent_id` moves the org (and its subtree) under a new parent. Moving requires
+`admin` on the destination parent (or an ancestor) and is rejected if it would create a cycle
+or exceed the max org depth.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -1276,9 +1709,6 @@ func (a *OrgsAPIService) UpdateOrgExecute(r ApiUpdateOrgRequest) (*OrganizationR
 
 	if r.includeDeleted != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
-	if r.includeMetadata != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_metadata", r.includeMetadata, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 **Limit** | **int32** | Pagination: max items to return. Default from config when not specified. |
 **Offset** | **int32** | Pagination: items to skip. Default 0 when not specified. |
 **OnlyDeleted** | **bool** | If true, return *only* soft-deleted items.  Note: This implies &#x60;include_deleted&#x3D;true&#x60; at the API boundary, but repository/storage implementations should treat this as a separate filter. |
-**Single** | [**SingleResourceOutputOptions**](SingleResourceOutputOptions.md) | Single-resource options (include_deleted, include_metadata). Accessed flat via &#x60;Deref&#x60;. |
+**Single** | [**SingleResourceOutputOptions**](SingleResourceOutputOptions.md) | Single-resource options (&#x60;include_deleted&#x60;). Accessed flat via &#x60;Deref&#x60;. |
 
 ## Methods
 

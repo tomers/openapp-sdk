@@ -4,11 +4,15 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**CreatedAt** | Pointer to **time.Time** |  | [optional]
+**DeletedAt** | Pointer to **time.Time** |  | [optional]
+**HardDeleteAt** | Pointer to **time.Time** |  | [optional]
+**PurgeAt** | Pointer to **time.Time** |  | [optional]
+**UpdatedAt** | Pointer to **time.Time** |  | [optional]
 **DeviceMetadata** | Pointer to **interface{}** |  | [optional]
 **ExternalId** | Pointer to **NullableString** | External ID from the integration provider. | [optional]
 **Id** | **string** | Unique identifier (ULID). |
 **IntegrationId** | **string** | Owning integration (e.g. Shelly Cloud account/connection). |
-**Metadata** | Pointer to **map[string]string** |  | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) | Human-readable name. |
 **OrgId** | **string** | Organization that owns this device. |
 
@@ -30,6 +34,131 @@ will change when the set of required properties is changed
 NewDeviceWithDefaults instantiates a new Device object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetCreatedAt
+
+`func (o *Device) GetCreatedAt() time.Time`
+
+GetCreatedAt returns the CreatedAt field if non-nil, zero value otherwise.
+
+### GetCreatedAtOk
+
+`func (o *Device) GetCreatedAtOk() (*time.Time, bool)`
+
+GetCreatedAtOk returns a tuple with the CreatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCreatedAt
+
+`func (o *Device) SetCreatedAt(v time.Time)`
+
+SetCreatedAt sets CreatedAt field to given value.
+
+### HasCreatedAt
+
+`func (o *Device) HasCreatedAt() bool`
+
+HasCreatedAt returns a boolean if a field has been set.
+
+### GetDeletedAt
+
+`func (o *Device) GetDeletedAt() time.Time`
+
+GetDeletedAt returns the DeletedAt field if non-nil, zero value otherwise.
+
+### GetDeletedAtOk
+
+`func (o *Device) GetDeletedAtOk() (*time.Time, bool)`
+
+GetDeletedAtOk returns a tuple with the DeletedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeletedAt
+
+`func (o *Device) SetDeletedAt(v time.Time)`
+
+SetDeletedAt sets DeletedAt field to given value.
+
+### HasDeletedAt
+
+`func (o *Device) HasDeletedAt() bool`
+
+HasDeletedAt returns a boolean if a field has been set.
+
+### GetHardDeleteAt
+
+`func (o *Device) GetHardDeleteAt() time.Time`
+
+GetHardDeleteAt returns the HardDeleteAt field if non-nil, zero value otherwise.
+
+### GetHardDeleteAtOk
+
+`func (o *Device) GetHardDeleteAtOk() (*time.Time, bool)`
+
+GetHardDeleteAtOk returns a tuple with the HardDeleteAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHardDeleteAt
+
+`func (o *Device) SetHardDeleteAt(v time.Time)`
+
+SetHardDeleteAt sets HardDeleteAt field to given value.
+
+### HasHardDeleteAt
+
+`func (o *Device) HasHardDeleteAt() bool`
+
+HasHardDeleteAt returns a boolean if a field has been set.
+
+### GetPurgeAt
+
+`func (o *Device) GetPurgeAt() time.Time`
+
+GetPurgeAt returns the PurgeAt field if non-nil, zero value otherwise.
+
+### GetPurgeAtOk
+
+`func (o *Device) GetPurgeAtOk() (*time.Time, bool)`
+
+GetPurgeAtOk returns a tuple with the PurgeAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPurgeAt
+
+`func (o *Device) SetPurgeAt(v time.Time)`
+
+SetPurgeAt sets PurgeAt field to given value.
+
+### HasPurgeAt
+
+`func (o *Device) HasPurgeAt() bool`
+
+HasPurgeAt returns a boolean if a field has been set.
+
+### GetUpdatedAt
+
+`func (o *Device) GetUpdatedAt() time.Time`
+
+GetUpdatedAt returns the UpdatedAt field if non-nil, zero value otherwise.
+
+### GetUpdatedAtOk
+
+`func (o *Device) GetUpdatedAtOk() (*time.Time, bool)`
+
+GetUpdatedAtOk returns a tuple with the UpdatedAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUpdatedAt
+
+`func (o *Device) SetUpdatedAt(v time.Time)`
+
+SetUpdatedAt sets UpdatedAt field to given value.
+
+### HasUpdatedAt
+
+`func (o *Device) HasUpdatedAt() bool`
+
+HasUpdatedAt returns a boolean if a field has been set.
 
 ### GetDeviceMetadata
 
@@ -140,31 +269,6 @@ and a boolean to check if the value has been set.
 
 SetIntegrationId sets IntegrationId field to given value.
 
-
-### GetMetadata
-
-`func (o *Device) GetMetadata() map[string]string`
-
-GetMetadata returns the Metadata field if non-nil, zero value otherwise.
-
-### GetMetadataOk
-
-`func (o *Device) GetMetadataOk() (*map[string]string, bool)`
-
-GetMetadataOk returns a tuple with the Metadata field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetMetadata
-
-`func (o *Device) SetMetadata(v map[string]string)`
-
-SetMetadata sets Metadata field to given value.
-
-### HasMetadata
-
-`func (o *Device) HasMetadata() bool`
-
-HasMetadata returns a boolean if a field has been set.
 
 ### GetName
 

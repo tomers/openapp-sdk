@@ -28,22 +28,22 @@ _venv:
 
 # Run uv after sync inside sdk-python (same service as `just sdk docker python`).
 _py *ARGS:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-python \
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-python \
         sh -euxc 'uv sync --all-extras && {{ ARGS }}'
 
 # Sync + maturin develop, then ARGS (tests need the PyO3 bridge built).
 _py_bridge *ARGS:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-python \
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-python \
         sh -euxc 'uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && {{ ARGS }}'
 
 # Shell snippet after `uv sync` when ARGS cannot be expressed as a single `just` argv list (e.g. `&&` chains).
 _py_cmd CMD:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-python \
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-python \
         sh -euxc 'uv sync --all-extras && {{ CMD }}'
 
 # `docker compose run sdk-python <argv>` without the default `sh -euxc` wrapper (e.g. `bash script.sh`).
 _py_raw *ARGS:
-    SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" docker compose -f {{ _compose }} run --rm sdk-python {{ ARGS }}
+    bash {{ _sdk_compose_sh }} -f {{ _compose }} run --rm sdk-python {{ ARGS }}
 
 # Fast iteration: `maturin develop` builds the bridge in-place (debug mode).
 build-develop:
@@ -163,17 +163,20 @@ openapi-gen:
 readme-wheel-check:
     @just _py uv run python scripts/check_wheel_readme_drift.py
 
-# Drift check for the committed Pydantic models.
+# Drift check: regenerate committed models, then fail if the user must stage them
+# (same pattern as `packages/sdk/go` `openapi-check` and `packages/sdk/core` pre-commit).
 openapi-check:
-    @just _py bash scripts/openapi_models.sh check
+    @just openapi-gen
+    bash scripts/openapi_models_git_check.sh
+
+# Composite recipe used by `scripts/pre-commit-subproject-wrapper.sh packages/sdk/python`.
+pre-commit:
+    @just openapi-check
+    @just _py_raw bash /workspace/packages/sdk/python/scripts/run_pre_commit.sh
 
 # Same pytest/Behave/report layout as `.github/workflows/sdk-unified-release.yml` (JUnit + Allure raw under `.tmp/sdk-reports/`).
 release-gate:
     bash scripts/release_gate.sh
-
-# Composite recipe used by `scripts/pre-commit-subproject-wrapper.sh packages/sdk/python`.
-pre-commit:
-    @just _py_raw bash /workspace/packages/sdk/python/scripts/run_pre_commit.sh
 
 gherkin-tier0-check:
     @just _py uv run python scripts/check_gherkin_tier0.py

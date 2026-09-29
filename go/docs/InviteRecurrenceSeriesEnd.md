@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Kind** | **string** |  |
 **At** | **string** |  |
+**LastWindowTo** | Pointer to **string** |  | [optional]
 **Total** | **int32** |  |
 
 ## Methods
@@ -66,6 +67,31 @@ and a boolean to check if the value has been set.
 
 SetAt sets At field to given value.
 
+
+### GetLastWindowTo
+
+`func (o *InviteRecurrenceSeriesEnd) GetLastWindowTo() string`
+
+GetLastWindowTo returns the LastWindowTo field if non-nil, zero value otherwise.
+
+### GetLastWindowToOk
+
+`func (o *InviteRecurrenceSeriesEnd) GetLastWindowToOk() (*string, bool)`
+
+GetLastWindowToOk returns a tuple with the LastWindowTo field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetLastWindowTo
+
+`func (o *InviteRecurrenceSeriesEnd) SetLastWindowTo(v string)`
+
+SetLastWindowTo sets LastWindowTo field to given value.
+
+### HasLastWindowTo
+
+`func (o *InviteRecurrenceSeriesEnd) HasLastWindowTo() bool`
+
+HasLastWindowTo returns a boolean if a field has been set.
 
 ### GetTotal
 

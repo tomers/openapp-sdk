@@ -5,6 +5,8 @@
 
 * `OK` (value: `"ok"`)
 
+* `REDUCED` (value: `"reduced"`)
+
 * `ERROR` (value: `"error"`)
 
 

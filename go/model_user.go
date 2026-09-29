@@ -14,6 +14,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // checks if the User type satisfies the MappedNullable interface at compile time
@@ -21,13 +22,22 @@ var _ MappedNullable = &User{}
 
 // User A provisioned user (identity) in the system.
 type User struct {
-	// Email address (used for login and provisioning).
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
+	HardDeleteAt *time.Time `json:"hard_delete_at,omitempty"`
+	PurgeAt      *time.Time `json:"purge_at,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
+	// Email address (used for login and provisioning). May be an internal placeholder when no verified email is available.
 	Email string `json:"email"`
 	// Unique identifier (ULID).
-	Id       string            `json:"id"`
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Id string `json:"id"`
+	// When set, this row was absorbed into another user. Follow for live identity.
+	MergedIntoUserId NullableString `json:"merged_into_user_id,omitempty"`
 	// Display name.
 	Name LocalizedString `json:"name"`
+	// Verified E.164 phone when set.
+	Phone           NullableString `json:"phone,omitempty"`
+	PhoneVerifiedAt NullableString `json:"phone_verified_at,omitempty"`
 }
 
 type _User User
@@ -50,6 +60,166 @@ func NewUser(email string, id string, name LocalizedString) *User {
 func NewUserWithDefaults() *User {
 	this := User{}
 	return &this
+}
+
+// GetCreatedAt returns the CreatedAt field value if set, zero value otherwise.
+func (o *User) GetCreatedAt() time.Time {
+	if o == nil || IsNil(o.CreatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.CreatedAt
+}
+
+// GetCreatedAtOk returns a tuple with the CreatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *User) GetCreatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.CreatedAt) {
+		return nil, false
+	}
+	return o.CreatedAt, true
+}
+
+// HasCreatedAt returns a boolean if a field has been set.
+func (o *User) HasCreatedAt() bool {
+	if o != nil && !IsNil(o.CreatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetCreatedAt gets a reference to the given time.Time and assigns it to the CreatedAt field.
+func (o *User) SetCreatedAt(v time.Time) {
+	o.CreatedAt = &v
+}
+
+// GetDeletedAt returns the DeletedAt field value if set, zero value otherwise.
+func (o *User) GetDeletedAt() time.Time {
+	if o == nil || IsNil(o.DeletedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.DeletedAt
+}
+
+// GetDeletedAtOk returns a tuple with the DeletedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *User) GetDeletedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.DeletedAt) {
+		return nil, false
+	}
+	return o.DeletedAt, true
+}
+
+// HasDeletedAt returns a boolean if a field has been set.
+func (o *User) HasDeletedAt() bool {
+	if o != nil && !IsNil(o.DeletedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeletedAt gets a reference to the given time.Time and assigns it to the DeletedAt field.
+func (o *User) SetDeletedAt(v time.Time) {
+	o.DeletedAt = &v
+}
+
+// GetHardDeleteAt returns the HardDeleteAt field value if set, zero value otherwise.
+func (o *User) GetHardDeleteAt() time.Time {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.HardDeleteAt
+}
+
+// GetHardDeleteAtOk returns a tuple with the HardDeleteAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *User) GetHardDeleteAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.HardDeleteAt) {
+		return nil, false
+	}
+	return o.HardDeleteAt, true
+}
+
+// HasHardDeleteAt returns a boolean if a field has been set.
+func (o *User) HasHardDeleteAt() bool {
+	if o != nil && !IsNil(o.HardDeleteAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetHardDeleteAt gets a reference to the given time.Time and assigns it to the HardDeleteAt field.
+func (o *User) SetHardDeleteAt(v time.Time) {
+	o.HardDeleteAt = &v
+}
+
+// GetPurgeAt returns the PurgeAt field value if set, zero value otherwise.
+func (o *User) GetPurgeAt() time.Time {
+	if o == nil || IsNil(o.PurgeAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.PurgeAt
+}
+
+// GetPurgeAtOk returns a tuple with the PurgeAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *User) GetPurgeAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.PurgeAt) {
+		return nil, false
+	}
+	return o.PurgeAt, true
+}
+
+// HasPurgeAt returns a boolean if a field has been set.
+func (o *User) HasPurgeAt() bool {
+	if o != nil && !IsNil(o.PurgeAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetPurgeAt gets a reference to the given time.Time and assigns it to the PurgeAt field.
+func (o *User) SetPurgeAt(v time.Time) {
+	o.PurgeAt = &v
+}
+
+// GetUpdatedAt returns the UpdatedAt field value if set, zero value otherwise.
+func (o *User) GetUpdatedAt() time.Time {
+	if o == nil || IsNil(o.UpdatedAt) {
+		var ret time.Time
+		return ret
+	}
+	return *o.UpdatedAt
+}
+
+// GetUpdatedAtOk returns a tuple with the UpdatedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *User) GetUpdatedAtOk() (*time.Time, bool) {
+	if o == nil || IsNil(o.UpdatedAt) {
+		return nil, false
+	}
+	return o.UpdatedAt, true
+}
+
+// HasUpdatedAt returns a boolean if a field has been set.
+func (o *User) HasUpdatedAt() bool {
+	if o != nil && !IsNil(o.UpdatedAt) {
+		return true
+	}
+
+	return false
+}
+
+// SetUpdatedAt gets a reference to the given time.Time and assigns it to the UpdatedAt field.
+func (o *User) SetUpdatedAt(v time.Time) {
+	o.UpdatedAt = &v
 }
 
 // GetEmail returns the Email field value
@@ -100,36 +270,47 @@ func (o *User) SetId(v string) {
 	o.Id = v
 }
 
-// GetMetadata returns the Metadata field value if set, zero value otherwise.
-func (o *User) GetMetadata() map[string]string {
-	if o == nil || IsNil(o.Metadata) {
-		var ret map[string]string
+// GetMergedIntoUserId returns the MergedIntoUserId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *User) GetMergedIntoUserId() string {
+	if o == nil || IsNil(o.MergedIntoUserId.Get()) {
+		var ret string
 		return ret
 	}
-	return o.Metadata
+	return *o.MergedIntoUserId.Get()
 }
 
-// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// GetMergedIntoUserIdOk returns a tuple with the MergedIntoUserId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *User) GetMetadataOk() (map[string]string, bool) {
-	if o == nil || IsNil(o.Metadata) {
-		return map[string]string{}, false
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *User) GetMergedIntoUserIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
 	}
-	return o.Metadata, true
+	return o.MergedIntoUserId.Get(), o.MergedIntoUserId.IsSet()
 }
 
-// HasMetadata returns a boolean if a field has been set.
-func (o *User) HasMetadata() bool {
-	if o != nil && !IsNil(o.Metadata) {
+// HasMergedIntoUserId returns a boolean if a field has been set.
+func (o *User) HasMergedIntoUserId() bool {
+	if o != nil && o.MergedIntoUserId.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetMetadata gets a reference to the given map[string]string and assigns it to the Metadata field.
-func (o *User) SetMetadata(v map[string]string) {
-	o.Metadata = v
+// SetMergedIntoUserId gets a reference to the given NullableString and assigns it to the MergedIntoUserId field.
+func (o *User) SetMergedIntoUserId(v string) {
+	o.MergedIntoUserId.Set(&v)
+}
+
+// SetMergedIntoUserIdNil sets the value for MergedIntoUserId to be an explicit nil
+func (o *User) SetMergedIntoUserIdNil() {
+	o.MergedIntoUserId.Set(nil)
+}
+
+// UnsetMergedIntoUserId ensures that no value is present for MergedIntoUserId, not even an explicit nil
+func (o *User) UnsetMergedIntoUserId() {
+	o.MergedIntoUserId.Unset()
 }
 
 // GetName returns the Name field value
@@ -156,14 +337,121 @@ func (o *User) SetName(v LocalizedString) {
 	o.Name = v
 }
 
+// GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *User) GetPhone() string {
+	if o == nil || IsNil(o.Phone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Phone.Get()
+}
+
+// GetPhoneOk returns a tuple with the Phone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *User) GetPhoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Phone.Get(), o.Phone.IsSet()
+}
+
+// HasPhone returns a boolean if a field has been set.
+func (o *User) HasPhone() bool {
+	if o != nil && o.Phone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhone gets a reference to the given NullableString and assigns it to the Phone field.
+func (o *User) SetPhone(v string) {
+	o.Phone.Set(&v)
+}
+
+// SetPhoneNil sets the value for Phone to be an explicit nil
+func (o *User) SetPhoneNil() {
+	o.Phone.Set(nil)
+}
+
+// UnsetPhone ensures that no value is present for Phone, not even an explicit nil
+func (o *User) UnsetPhone() {
+	o.Phone.Unset()
+}
+
+// GetPhoneVerifiedAt returns the PhoneVerifiedAt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *User) GetPhoneVerifiedAt() string {
+	if o == nil || IsNil(o.PhoneVerifiedAt.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhoneVerifiedAt.Get()
+}
+
+// GetPhoneVerifiedAtOk returns a tuple with the PhoneVerifiedAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *User) GetPhoneVerifiedAtOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhoneVerifiedAt.Get(), o.PhoneVerifiedAt.IsSet()
+}
+
+// HasPhoneVerifiedAt returns a boolean if a field has been set.
+func (o *User) HasPhoneVerifiedAt() bool {
+	if o != nil && o.PhoneVerifiedAt.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhoneVerifiedAt gets a reference to the given NullableString and assigns it to the PhoneVerifiedAt field.
+func (o *User) SetPhoneVerifiedAt(v string) {
+	o.PhoneVerifiedAt.Set(&v)
+}
+
+// SetPhoneVerifiedAtNil sets the value for PhoneVerifiedAt to be an explicit nil
+func (o *User) SetPhoneVerifiedAtNil() {
+	o.PhoneVerifiedAt.Set(nil)
+}
+
+// UnsetPhoneVerifiedAt ensures that no value is present for PhoneVerifiedAt, not even an explicit nil
+func (o *User) UnsetPhoneVerifiedAt() {
+	o.PhoneVerifiedAt.Unset()
+}
+
 func (o User) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.CreatedAt) {
+		toSerialize["created_at"] = o.CreatedAt
+	}
+	if !IsNil(o.DeletedAt) {
+		toSerialize["deleted_at"] = o.DeletedAt
+	}
+	if !IsNil(o.HardDeleteAt) {
+		toSerialize["hard_delete_at"] = o.HardDeleteAt
+	}
+	if !IsNil(o.PurgeAt) {
+		toSerialize["purge_at"] = o.PurgeAt
+	}
+	if !IsNil(o.UpdatedAt) {
+		toSerialize["updated_at"] = o.UpdatedAt
+	}
 	toSerialize["email"] = o.Email
 	toSerialize["id"] = o.Id
-	if !IsNil(o.Metadata) {
-		toSerialize["metadata"] = o.Metadata
+	if o.MergedIntoUserId.IsSet() {
+		toSerialize["merged_into_user_id"] = o.MergedIntoUserId.Get()
 	}
 	toSerialize["name"] = o.Name
+	if o.Phone.IsSet() {
+		toSerialize["phone"] = o.Phone.Get()
+	}
+	if o.PhoneVerifiedAt.IsSet() {
+		toSerialize["phone_verified_at"] = o.PhoneVerifiedAt.Get()
+	}
 	return toSerialize, nil
 }
 

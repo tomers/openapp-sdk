@@ -32,6 +32,9 @@ class BridgeClient(Protocol):
         Errors surface as typed exceptions from :mod:`openapp_sdk.errors`.
         """
 
+    def with_org(self, org: str) -> BridgeClient:  # pragma: no cover
+        """Return a client scoped to a different organization."""
+
     async def close(self) -> None:  # pragma: no cover
         ...
 
@@ -51,5 +54,6 @@ class Bridge(Protocol):
         user_agent: str,
         timeout_secs: float,
         max_retries: int,
+        org: str | None = None,
     ) -> BridgeClient:  # pragma: no cover
         ...

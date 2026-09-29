@@ -20,9 +20,9 @@ impl LanAgentClient {
         Self { transport }
     }
 
-    pub async fn meta(&self) -> Result<types::LanAgentMetaResponse, SdkError> {
+    pub async fn meta(&self) -> Result<JsonValue, SdkError> {
         self.transport
-            .request_json::<(), types::LanAgentMetaResponse>(RequestSpec {
+            .request_json::<(), JsonValue>(RequestSpec {
                 method: Method::GET,
                 path: "/lan-agent/meta",
                 ..Default::default()
@@ -40,15 +40,9 @@ impl LanAgentClient {
             .await
     }
 
-    pub async fn bootstrap_token(
-        &self,
-        body: &types::LanAgentBootstrapTokenRequest,
-    ) -> Result<types::LanAgentBootstrapTokenResponse, SdkError> {
+    pub async fn bootstrap_token(&self, body: &JsonValue) -> Result<JsonValue, SdkError> {
         self.transport
-            .request_json::<
-                types::LanAgentBootstrapTokenRequest,
-                types::LanAgentBootstrapTokenResponse,
-            >(RequestSpec {
+            .request_json::<JsonValue, JsonValue>(RequestSpec {
                 method: Method::POST,
                 path: "/lan-agent/cli/bootstrap-token",
                 body: Some(body),
@@ -57,9 +51,9 @@ impl LanAgentClient {
             .await
     }
 
-    pub async fn token(&self) -> Result<types::LanAgentCliTokenResponse, SdkError> {
+    pub async fn token(&self) -> Result<JsonValue, SdkError> {
         self.transport
-            .request_json::<(), types::LanAgentCliTokenResponse>(RequestSpec {
+            .request_json::<(), JsonValue>(RequestSpec {
                 method: Method::POST,
                 path: "/lan-agent/cli/token",
                 ..Default::default()

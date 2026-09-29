@@ -11,28 +11,67 @@ package openapi
 
 import (
 	"context"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	openapiclient "github.com/tomers/openapp-sdk/go"
-	"testing"
 )
 
 func Test_openapi_ScriptingAPIService(t *testing.T) {
 
-	apiKey := "http://127.0.0.1:1/api/v1_openapp_testsecret"
+	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
-	t.Run("Test ScriptingAPIService ExecuteScripting", func(t *testing.T) {
+	t.Run("Test ScriptingAPIService CreateScriptingExecution", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		resp, httpRes, err := apiClient.ScriptingAPI.ExecuteScripting(context.Background()).Execute()
+		createScriptingExecutionRequest := *openapiclient.NewCreateScriptingExecutionRequest("script_example")
+		resp, httpRes, err := apiClient.ScriptingAPI.CreateScriptingExecution(context.Background()).CreateScriptingExecutionRequest(createScriptingExecutionRequest).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 202, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test ScriptingAPIService GetScriptingExecution", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		id := "id_example"
+		resp, httpRes, err := apiClient.ScriptingAPI.GetScriptingExecution(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test ScriptingAPIService ListScriptingExecutions", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.ScriptingAPI.ListScriptingExecutions(context.Background()).Limit(20).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test ScriptingAPIService CancelScriptingExecution", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		id := "id_example"
+		httpRes, err := apiClient.ScriptingAPI.CancelScriptingExecution(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 204, httpRes.StatusCode)
 
 	})
 

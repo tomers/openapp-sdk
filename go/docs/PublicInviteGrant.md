@@ -4,11 +4,16 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**DoorImageThumbUrl** | Pointer to **string** | Presigned URL for the &#x60;thumb&#x60; rendition of the door image, for avatar-sized renders. Absent when the source is already thumb-sized; fall back to &#x60;door_image_url&#x60;. | [optional]
 **DoorImageUrl** | Pointer to **string** | Presigned URL for door image (loaded asynchronously as card background). | [optional]
+**EntryKind** | **string** | Entry type from linked portal device (&#x60;virtual_access.entry_kind&#x60;). Default &#x60;door&#x60;. |
 **HasLights** | **bool** | Whether the portal has light devices configured (controls light button visibility). |
+**Hold** | Pointer to [**PublicHoldView**](PublicHoldView.md) | Effective door hold when any opener is held (guest-visible). | [optional]
 **Id** | **string** |  |
 **Kind** | **string** |  |
 **Label** | Pointer to **interface{}** |  | [optional]
+**OpenRateLimit** | Pointer to [**PublicPortalOpenRateLimit**](PublicPortalOpenRateLimit.md) | Enforced integration-scoped minimum interval between &#x60;switchable.open&#x60; calls. A second open inside the interval returns 429 &#x60;provider_open_rate_limited&#x60;. | [optional]
+**Openable** | **bool** | Whether the portal is linked to a live door device (i.e. can actually be opened). When false, the invite UI disables the open action (a misconfigured/unlinked portal). |
 **PublicPortalId** | **string** |  |
 **ActionId** | **string** |  |
 **EntityId** | **string** |  |
@@ -18,7 +23,7 @@ Name | Type | Description | Notes
 
 ### NewPublicInviteGrant
 
-`func NewPublicInviteGrant(hasLights bool, id string, kind string, publicPortalId string, actionId string, entityId string, ) *PublicInviteGrant`
+`func NewPublicInviteGrant(entryKind string, hasLights bool, id string, kind string, openable bool, publicPortalId string, actionId string, entityId string, ) *PublicInviteGrant`
 
 NewPublicInviteGrant instantiates a new PublicInviteGrant object
 This constructor will assign default values to properties that have it defined,
@@ -32,6 +37,31 @@ will change when the set of required properties is changed
 NewPublicInviteGrantWithDefaults instantiates a new PublicInviteGrant object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetDoorImageThumbUrl
+
+`func (o *PublicInviteGrant) GetDoorImageThumbUrl() string`
+
+GetDoorImageThumbUrl returns the DoorImageThumbUrl field if non-nil, zero value otherwise.
+
+### GetDoorImageThumbUrlOk
+
+`func (o *PublicInviteGrant) GetDoorImageThumbUrlOk() (*string, bool)`
+
+GetDoorImageThumbUrlOk returns a tuple with the DoorImageThumbUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDoorImageThumbUrl
+
+`func (o *PublicInviteGrant) SetDoorImageThumbUrl(v string)`
+
+SetDoorImageThumbUrl sets DoorImageThumbUrl field to given value.
+
+### HasDoorImageThumbUrl
+
+`func (o *PublicInviteGrant) HasDoorImageThumbUrl() bool`
+
+HasDoorImageThumbUrl returns a boolean if a field has been set.
 
 ### GetDoorImageUrl
 
@@ -58,6 +88,26 @@ SetDoorImageUrl sets DoorImageUrl field to given value.
 
 HasDoorImageUrl returns a boolean if a field has been set.
 
+### GetEntryKind
+
+`func (o *PublicInviteGrant) GetEntryKind() string`
+
+GetEntryKind returns the EntryKind field if non-nil, zero value otherwise.
+
+### GetEntryKindOk
+
+`func (o *PublicInviteGrant) GetEntryKindOk() (*string, bool)`
+
+GetEntryKindOk returns a tuple with the EntryKind field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEntryKind
+
+`func (o *PublicInviteGrant) SetEntryKind(v string)`
+
+SetEntryKind sets EntryKind field to given value.
+
+
 ### GetHasLights
 
 `func (o *PublicInviteGrant) GetHasLights() bool`
@@ -77,6 +127,31 @@ and a boolean to check if the value has been set.
 
 SetHasLights sets HasLights field to given value.
 
+
+### GetHold
+
+`func (o *PublicInviteGrant) GetHold() PublicHoldView`
+
+GetHold returns the Hold field if non-nil, zero value otherwise.
+
+### GetHoldOk
+
+`func (o *PublicInviteGrant) GetHoldOk() (*PublicHoldView, bool)`
+
+GetHoldOk returns a tuple with the Hold field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetHold
+
+`func (o *PublicInviteGrant) SetHold(v PublicHoldView)`
+
+SetHold sets Hold field to given value.
+
+### HasHold
+
+`func (o *PublicInviteGrant) HasHold() bool`
+
+HasHold returns a boolean if a field has been set.
 
 ### GetId
 
@@ -153,6 +228,51 @@ HasLabel returns a boolean if a field has been set.
 `func (o *PublicInviteGrant) UnsetLabel()`
 
 UnsetLabel ensures that no value is present for Label, not even an explicit nil
+### GetOpenRateLimit
+
+`func (o *PublicInviteGrant) GetOpenRateLimit() PublicPortalOpenRateLimit`
+
+GetOpenRateLimit returns the OpenRateLimit field if non-nil, zero value otherwise.
+
+### GetOpenRateLimitOk
+
+`func (o *PublicInviteGrant) GetOpenRateLimitOk() (*PublicPortalOpenRateLimit, bool)`
+
+GetOpenRateLimitOk returns a tuple with the OpenRateLimit field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOpenRateLimit
+
+`func (o *PublicInviteGrant) SetOpenRateLimit(v PublicPortalOpenRateLimit)`
+
+SetOpenRateLimit sets OpenRateLimit field to given value.
+
+### HasOpenRateLimit
+
+`func (o *PublicInviteGrant) HasOpenRateLimit() bool`
+
+HasOpenRateLimit returns a boolean if a field has been set.
+
+### GetOpenable
+
+`func (o *PublicInviteGrant) GetOpenable() bool`
+
+GetOpenable returns the Openable field if non-nil, zero value otherwise.
+
+### GetOpenableOk
+
+`func (o *PublicInviteGrant) GetOpenableOk() (*bool, bool)`
+
+GetOpenableOk returns a tuple with the Openable field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOpenable
+
+`func (o *PublicInviteGrant) SetOpenable(v bool)`
+
+SetOpenable sets Openable field to given value.
+
+
 ### GetPublicPortalId
 
 `func (o *PublicInviteGrant) GetPublicPortalId() string`

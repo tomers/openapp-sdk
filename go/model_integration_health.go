@@ -15,18 +15,20 @@ import (
 	"fmt"
 )
 
-// IntegrationHealth Integration status (active, disabled, error).
+// IntegrationHealth Integration health marker (backend-controlled).
 type IntegrationHealth string
 
 // List of IntegrationHealth
 const (
-	OK    IntegrationHealth = "ok"
-	ERROR IntegrationHealth = "error"
+	INTEGRATIONHEALTH_OK      IntegrationHealth = "ok"
+	INTEGRATIONHEALTH_REDUCED IntegrationHealth = "reduced"
+	INTEGRATIONHEALTH_ERROR   IntegrationHealth = "error"
 )
 
 // All allowed values of IntegrationHealth enum
 var AllowedIntegrationHealthEnumValues = []IntegrationHealth{
 	"ok",
+	"reduced",
 	"error",
 }
 

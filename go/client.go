@@ -48,27 +48,47 @@ type APIClient struct {
 
 	// API Services
 
+	AIAPI *AIAPIService
+
 	APIKeysAPI *APIKeysAPIService
 
-	ApartmentResidentsAPI *ApartmentResidentsAPIService
+	AgentsAPI *AgentsAPIService
 
-	AuthAPI *AuthAPIService
+	AuditAPI *AuditAPIService
 
 	BillingAPI *BillingAPIService
 
 	DevicesAPI *DevicesAPIService
 
-	EULAAPI *EULAAPIService
+	DirectoryAPI *DirectoryAPIService
+
+	DirectoryListingMembersAPI *DirectoryListingMembersAPIService
 
 	EntitiesAPI *EntitiesAPIService
 
+	GroupsAPI *GroupsAPIService
+
+	HouseholdInvitationsAPI *HouseholdInvitationsAPIService
+
 	IntegrationsAPI *IntegrationsAPIService
+
+	InvitationsAPI *InvitationsAPIService
 
 	LANAgentAPI *LANAgentAPIService
 
+	LocationsAPI *LocationsAPIService
+
 	MeAPI *MeAPIService
 
+	MediaAPI *MediaAPIService
+
+	OrgInvitationsAPI *OrgInvitationsAPIService
+
+	OrganizationsAPI *OrganizationsAPIService
+
 	OrgsAPI *OrgsAPIService
+
+	PoliciesAPI *PoliciesAPIService
 
 	PublicAccessAPI *PublicAccessAPIService
 
@@ -76,7 +96,11 @@ type APIClient struct {
 
 	StatusAPI *StatusAPIService
 
+	StoreAPI *StoreAPIService
+
 	UsersAPI *UsersAPIService
+
+	VirtualAccessAPI *VirtualAccessAPIService
 
 	ZonesAPI *ZonesAPIService
 }
@@ -94,21 +118,33 @@ func newAPIClientFromConfig(cfg *Configuration) *APIClient {
 	c.common.client = c
 
 	// API Services
+	c.AIAPI = (*AIAPIService)(&c.common)
 	c.APIKeysAPI = (*APIKeysAPIService)(&c.common)
-	c.ApartmentResidentsAPI = (*ApartmentResidentsAPIService)(&c.common)
-	c.AuthAPI = (*AuthAPIService)(&c.common)
+	c.AgentsAPI = (*AgentsAPIService)(&c.common)
+	c.AuditAPI = (*AuditAPIService)(&c.common)
 	c.BillingAPI = (*BillingAPIService)(&c.common)
 	c.DevicesAPI = (*DevicesAPIService)(&c.common)
-	c.EULAAPI = (*EULAAPIService)(&c.common)
+	c.DirectoryAPI = (*DirectoryAPIService)(&c.common)
+	c.DirectoryListingMembersAPI = (*DirectoryListingMembersAPIService)(&c.common)
 	c.EntitiesAPI = (*EntitiesAPIService)(&c.common)
+	c.GroupsAPI = (*GroupsAPIService)(&c.common)
+	c.HouseholdInvitationsAPI = (*HouseholdInvitationsAPIService)(&c.common)
 	c.IntegrationsAPI = (*IntegrationsAPIService)(&c.common)
+	c.InvitationsAPI = (*InvitationsAPIService)(&c.common)
 	c.LANAgentAPI = (*LANAgentAPIService)(&c.common)
+	c.LocationsAPI = (*LocationsAPIService)(&c.common)
 	c.MeAPI = (*MeAPIService)(&c.common)
+	c.MediaAPI = (*MediaAPIService)(&c.common)
+	c.OrgInvitationsAPI = (*OrgInvitationsAPIService)(&c.common)
+	c.OrganizationsAPI = (*OrganizationsAPIService)(&c.common)
 	c.OrgsAPI = (*OrgsAPIService)(&c.common)
+	c.PoliciesAPI = (*PoliciesAPIService)(&c.common)
 	c.PublicAccessAPI = (*PublicAccessAPIService)(&c.common)
 	c.ScriptingAPI = (*ScriptingAPIService)(&c.common)
 	c.StatusAPI = (*StatusAPIService)(&c.common)
+	c.StoreAPI = (*StoreAPIService)(&c.common)
 	c.UsersAPI = (*UsersAPIService)(&c.common)
+	c.VirtualAccessAPI = (*VirtualAccessAPIService)(&c.common)
 	c.ZonesAPI = (*ZonesAPIService)(&c.common)
 
 	return c
@@ -458,11 +494,6 @@ func (c *APIClient) prepareRequest(
 		localVarRequest = localVarRequest.WithContext(ctx)
 
 		// Walk through any authentication.
-
-		// AccessToken Authentication
-		if auth, ok := ctx.Value(ContextAccessToken).(string); ok {
-			localVarRequest.Header.Add("Authorization", "Bearer "+auth)
-		}
 
 	}
 

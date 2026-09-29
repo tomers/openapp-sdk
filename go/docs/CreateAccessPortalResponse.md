@@ -4,7 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**DeviceExternalId** | Pointer to **NullableString** |  | [optional]
+**DeviceId** | Pointer to **NullableString** |  | [optional]
+**DirectoryId** | Pointer to **NullableString** |  | [optional]
 **Id** | **string** |  |
 **Name** | [**LocalizedString**](LocalizedString.md) |  |
 **PublicId** | **string** |  |
@@ -28,41 +29,76 @@ NewCreateAccessPortalResponseWithDefaults instantiates a new CreateAccessPortalR
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetDeviceExternalId
+### GetDeviceId
 
-`func (o *CreateAccessPortalResponse) GetDeviceExternalId() string`
+`func (o *CreateAccessPortalResponse) GetDeviceId() string`
 
-GetDeviceExternalId returns the DeviceExternalId field if non-nil, zero value otherwise.
+GetDeviceId returns the DeviceId field if non-nil, zero value otherwise.
 
-### GetDeviceExternalIdOk
+### GetDeviceIdOk
 
-`func (o *CreateAccessPortalResponse) GetDeviceExternalIdOk() (*string, bool)`
+`func (o *CreateAccessPortalResponse) GetDeviceIdOk() (*string, bool)`
 
-GetDeviceExternalIdOk returns a tuple with the DeviceExternalId field if it's non-nil, zero value otherwise
+GetDeviceIdOk returns a tuple with the DeviceId field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetDeviceExternalId
+### SetDeviceId
 
-`func (o *CreateAccessPortalResponse) SetDeviceExternalId(v string)`
+`func (o *CreateAccessPortalResponse) SetDeviceId(v string)`
 
-SetDeviceExternalId sets DeviceExternalId field to given value.
+SetDeviceId sets DeviceId field to given value.
 
-### HasDeviceExternalId
+### HasDeviceId
 
-`func (o *CreateAccessPortalResponse) HasDeviceExternalId() bool`
+`func (o *CreateAccessPortalResponse) HasDeviceId() bool`
 
-HasDeviceExternalId returns a boolean if a field has been set.
+HasDeviceId returns a boolean if a field has been set.
 
-### SetDeviceExternalIdNil
+### SetDeviceIdNil
 
-`func (o *CreateAccessPortalResponse) SetDeviceExternalIdNil(b bool)`
+`func (o *CreateAccessPortalResponse) SetDeviceIdNil(b bool)`
 
- SetDeviceExternalIdNil sets the value for DeviceExternalId to be an explicit nil
+ SetDeviceIdNil sets the value for DeviceId to be an explicit nil
 
-### UnsetDeviceExternalId
-`func (o *CreateAccessPortalResponse) UnsetDeviceExternalId()`
+### UnsetDeviceId
+`func (o *CreateAccessPortalResponse) UnsetDeviceId()`
 
-UnsetDeviceExternalId ensures that no value is present for DeviceExternalId, not even an explicit nil
+UnsetDeviceId ensures that no value is present for DeviceId, not even an explicit nil
+### GetDirectoryId
+
+`func (o *CreateAccessPortalResponse) GetDirectoryId() string`
+
+GetDirectoryId returns the DirectoryId field if non-nil, zero value otherwise.
+
+### GetDirectoryIdOk
+
+`func (o *CreateAccessPortalResponse) GetDirectoryIdOk() (*string, bool)`
+
+GetDirectoryIdOk returns a tuple with the DirectoryId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDirectoryId
+
+`func (o *CreateAccessPortalResponse) SetDirectoryId(v string)`
+
+SetDirectoryId sets DirectoryId field to given value.
+
+### HasDirectoryId
+
+`func (o *CreateAccessPortalResponse) HasDirectoryId() bool`
+
+HasDirectoryId returns a boolean if a field has been set.
+
+### SetDirectoryIdNil
+
+`func (o *CreateAccessPortalResponse) SetDirectoryIdNil(b bool)`
+
+ SetDirectoryIdNil sets the value for DirectoryId to be an explicit nil
+
+### UnsetDirectoryId
+`func (o *CreateAccessPortalResponse) UnsetDirectoryId()`
+
+UnsetDirectoryId ensures that no value is present for DirectoryId, not even an explicit nil
 ### GetId
 
 `func (o *CreateAccessPortalResponse) GetId() string`
