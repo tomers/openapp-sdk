@@ -24,17 +24,6 @@ func Test_openapi_BillingAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
-	t.Run("Test BillingAPIService GetAdminQuotaOverrides", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		httpRes, err := apiClient.BillingAPI.GetAdminQuotaOverrides(context.Background()).Execute()
-
-		require.Nil(t, err)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test BillingAPIService GetOrgBillingPlan", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -42,20 +31,6 @@ func Test_openapi_BillingAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.BillingAPI.GetOrgBillingPlan(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test BillingAPIService GetOrgBillingUpgradeOptions", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		resp, httpRes, err := apiClient.BillingAPI.GetOrgBillingUpgradeOptions(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -82,45 +57,6 @@ func Test_openapi_BillingAPIService(t *testing.T) {
 		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.BillingAPI.GetPlans(context.Background()).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test BillingAPIService PostAdminQuotaOverride", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		httpRes, err := apiClient.BillingAPI.PostAdminQuotaOverride(context.Background()).Execute()
-
-		require.Nil(t, err)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test BillingAPIService PostOrgBillingCheckout", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		resp, httpRes, err := apiClient.BillingAPI.PostOrgBillingCheckout(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test BillingAPIService PostOrgBillingPortal", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		resp, httpRes, err := apiClient.BillingAPI.PostOrgBillingPortal(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

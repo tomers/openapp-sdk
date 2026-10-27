@@ -17,10 +17,13 @@ import (
 // checks if the InvitationAuthoringPolicyConfig type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &InvitationAuthoringPolicyConfig{}
 
-// InvitationAuthoringPolicyConfig Typed `config` shape for empty invitation authoring policies.
+// InvitationAuthoringPolicyConfig Typed `config` shape for invitation authoring policies without type-specific keys.
 type InvitationAuthoringPolicyConfig struct {
+	// Principal kinds the row binds; unknown and empty values are rejected. Omitted binds the type's default principals.
 	AppliesTo []PolicyPrincipalKind                                 `json:"applies_to,omitempty"`
 	Output    NullableInvitationAllowedEntryKindsPolicyConfigOutput `json:"output,omitempty"`
+	// Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy's org.
+	ZoneId NullableString `json:"zone_id,omitempty"`
 }
 
 // NewInvitationAuthoringPolicyConfig instantiates a new InvitationAuthoringPolicyConfig object
@@ -116,6 +119,49 @@ func (o *InvitationAuthoringPolicyConfig) UnsetOutput() {
 	o.Output.Unset()
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InvitationAuthoringPolicyConfig) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId.Get()
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InvitationAuthoringPolicyConfig) GetZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneId.Get(), o.ZoneId.IsSet()
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *InvitationAuthoringPolicyConfig) HasZoneId() bool {
+	if o != nil && o.ZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
+func (o *InvitationAuthoringPolicyConfig) SetZoneId(v string) {
+	o.ZoneId.Set(&v)
+}
+
+// SetZoneIdNil sets the value for ZoneId to be an explicit nil
+func (o *InvitationAuthoringPolicyConfig) SetZoneIdNil() {
+	o.ZoneId.Set(nil)
+}
+
+// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
+func (o *InvitationAuthoringPolicyConfig) UnsetZoneId() {
+	o.ZoneId.Unset()
+}
+
 func (o InvitationAuthoringPolicyConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.AppliesTo != nil {
@@ -123,6 +169,9 @@ func (o InvitationAuthoringPolicyConfig) ToMap() (map[string]interface{}, error)
 	}
 	if o.Output.IsSet() {
 		toSerialize["output"] = o.Output.Get()
+	}
+	if o.ZoneId.IsSet() {
+		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
 	return toSerialize, nil
 }

@@ -11,11 +11,10 @@ package openapi
 
 import (
 	"context"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	openapiclient "github.com/tomers/openapp-sdk/go"
+	"testing"
 )
 
 func Test_openapi_ScriptingAPIService(t *testing.T) {
@@ -25,16 +24,28 @@ func Test_openapi_ScriptingAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
+	t.Run("Test ScriptingAPIService CancelScriptingExecution", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.ScriptingAPI.CancelScriptingExecution(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test ScriptingAPIService CreateScriptingExecution", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		createScriptingExecutionRequest := *openapiclient.NewCreateScriptingExecutionRequest("script_example")
-		resp, httpRes, err := apiClient.ScriptingAPI.CreateScriptingExecution(context.Background()).CreateScriptingExecutionRequest(createScriptingExecutionRequest).Execute()
+		resp, httpRes, err := apiClient.ScriptingAPI.CreateScriptingExecution(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
-		assert.Equal(t, 202, httpRes.StatusCode)
+		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})
 
@@ -42,7 +53,8 @@ func Test_openapi_ScriptingAPIService(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		id := "id_example"
+		var id string
+
 		resp, httpRes, err := apiClient.ScriptingAPI.GetScriptingExecution(context.Background(), id).Execute()
 
 		require.Nil(t, err)
@@ -55,23 +67,11 @@ func Test_openapi_ScriptingAPIService(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		resp, httpRes, err := apiClient.ScriptingAPI.ListScriptingExecutions(context.Background()).Limit(20).Execute()
+		resp, httpRes, err := apiClient.ScriptingAPI.ListScriptingExecutions(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test ScriptingAPIService CancelScriptingExecution", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		id := "id_example"
-		httpRes, err := apiClient.ScriptingAPI.CancelScriptingExecution(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		assert.Equal(t, 204, httpRes.StatusCode)
 
 	})
 

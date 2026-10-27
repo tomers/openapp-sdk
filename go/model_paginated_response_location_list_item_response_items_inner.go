@@ -23,6 +23,7 @@ var _ MappedNullable = &PaginatedResponseLocationListItemResponseItemsInner{}
 type PaginatedResponseLocationListItemResponseItemsInner struct {
 	City              *LocalizedString                `json:"city,omitempty"`
 	Country           NullableLocationResponseCountry `json:"country,omitempty"`
+	CountryCode       *string                         `json:"country_code,omitempty"`
 	FormattedAddress  NullableLocationResponseCountry `json:"formatted_address,omitempty"`
 	GeocodingProvider *GeocodingProviderId            `json:"geocoding_provider,omitempty"`
 	Id                string                          `json:"id"`
@@ -133,6 +134,38 @@ func (o *PaginatedResponseLocationListItemResponseItemsInner) SetCountryNil() {
 // UnsetCountry ensures that no value is present for Country, not even an explicit nil
 func (o *PaginatedResponseLocationListItemResponseItemsInner) UnsetCountry() {
 	o.Country.Unset()
+}
+
+// GetCountryCode returns the CountryCode field value if set, zero value otherwise.
+func (o *PaginatedResponseLocationListItemResponseItemsInner) GetCountryCode() string {
+	if o == nil || IsNil(o.CountryCode) {
+		var ret string
+		return ret
+	}
+	return *o.CountryCode
+}
+
+// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PaginatedResponseLocationListItemResponseItemsInner) GetCountryCodeOk() (*string, bool) {
+	if o == nil || IsNil(o.CountryCode) {
+		return nil, false
+	}
+	return o.CountryCode, true
+}
+
+// HasCountryCode returns a boolean if a field has been set.
+func (o *PaginatedResponseLocationListItemResponseItemsInner) HasCountryCode() bool {
+	if o != nil && !IsNil(o.CountryCode) {
+		return true
+	}
+
+	return false
+}
+
+// SetCountryCode gets a reference to the given string and assigns it to the CountryCode field.
+func (o *PaginatedResponseLocationListItemResponseItemsInner) SetCountryCode(v string) {
+	o.CountryCode = &v
 }
 
 // GetFormattedAddress returns the FormattedAddress field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -597,6 +630,9 @@ func (o PaginatedResponseLocationListItemResponseItemsInner) ToMap() (map[string
 	}
 	if o.Country.IsSet() {
 		toSerialize["country"] = o.Country.Get()
+	}
+	if !IsNil(o.CountryCode) {
+		toSerialize["country_code"] = o.CountryCode
 	}
 	if o.FormattedAddress.IsSet() {
 		toSerialize["formatted_address"] = o.FormattedAddress.Get()

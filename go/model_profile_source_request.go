@@ -22,12 +22,14 @@ type ProfileSourceRequest string
 const (
 	PROFILESOURCEREQUEST_IDP     ProfileSourceRequest = "idp"
 	PROFILESOURCEREQUEST_OPENAPP ProfileSourceRequest = "openapp"
+	PROFILESOURCEREQUEST_NONE    ProfileSourceRequest = "none"
 )
 
 // All allowed values of ProfileSourceRequest enum
 var AllowedProfileSourceRequestEnumValues = []ProfileSourceRequest{
 	"idp",
 	"openapp",
+	"none",
 }
 
 func (v *ProfileSourceRequest) UnmarshalJSON(src []byte) error {

@@ -16,13 +16,14 @@ Name | Type | Description | Notes
 **Name** | [**LocalizedString**](LocalizedString.md) | Human-friendly name for this integration (distinguishes multiple integrations of same provider). |
 **OrgId** | **string** | Organization that owns this integration. |
 **ProviderType** | [**ProviderType**](ProviderType.md) | Provider type (e.g. homeassistant, shelly_cloud). |
+**CredentialsSet** | **[]string** | JSON Pointers into &#x60;config&#x60; of write-only credential fields (schema &#x60;format: password&#x60;) that currently hold a value. Credential values are never returned here; an update that omits them keeps the stored value and &#x60;null&#x60; clears it. |
 **ProviderTypeName** | [**LocalizedString**](LocalizedString.md) | Human-friendly provider type name(s), keyed by locale. |
 
 ## Methods
 
 ### NewIntegrationResponse
 
-`func NewIntegrationResponse(enabled bool, health IntegrationHealth, id string, name LocalizedString, orgId string, providerType ProviderType, providerTypeName LocalizedString, ) *IntegrationResponse`
+`func NewIntegrationResponse(enabled bool, health IntegrationHealth, id string, name LocalizedString, orgId string, providerType ProviderType, credentialsSet []string, providerTypeName LocalizedString, ) *IntegrationResponse`
 
 NewIntegrationResponse instantiates a new IntegrationResponse object
 This constructor will assign default values to properties that have it defined,
@@ -315,6 +316,26 @@ and a boolean to check if the value has been set.
 `func (o *IntegrationResponse) SetProviderType(v ProviderType)`
 
 SetProviderType sets ProviderType field to given value.
+
+
+### GetCredentialsSet
+
+`func (o *IntegrationResponse) GetCredentialsSet() []string`
+
+GetCredentialsSet returns the CredentialsSet field if non-nil, zero value otherwise.
+
+### GetCredentialsSetOk
+
+`func (o *IntegrationResponse) GetCredentialsSetOk() (*[]string, bool)`
+
+GetCredentialsSetOk returns a tuple with the CredentialsSet field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCredentialsSet
+
+`func (o *IntegrationResponse) SetCredentialsSet(v []string)`
+
+SetCredentialsSet sets CredentialsSet field to given value.
 
 
 ### GetProviderTypeName

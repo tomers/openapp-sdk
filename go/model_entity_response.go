@@ -38,12 +38,18 @@ type EntityResponse struct {
 	Metadata map[string]string `json:"metadata,omitempty"`
 	// Optional friendly name for the entity.
 	Name *string `json:"name,omitempty"`
-	// Optional zone this entity belongs to.
-	ZoneId         *string           `json:"zone_id,omitempty"`
-	EntityMetadata map[string]string `json:"entity_metadata,omitempty"`
+	// Zone placement: inherit the device's zone, name one explicitly, or none.
+	Zone *ZonePlacement `json:"zone,omitempty"`
+	// Derived, read-only: the zone the entity is effectively in (`zone` resolved against the device zone), or null.
+	EffectiveZoneId NullableString    `json:"effective_zone_id,omitempty"`
+	EntityMetadata  map[string]string `json:"entity_metadata,omitempty"`
 	// Derived, read-only entry kind for switchable entries on Virtual Access devices. Omitted when the entity is not an entry or the device has no Virtual Access config.
 	EntryKind NullableString `json:"entry_kind,omitempty"`
 	State     interface{}    `json:"state,omitempty"`
+	// Derived, read-only: the door that lists this entity and owns its zone. Present exactly when `zone_source` is `door`, and also when that door has no zone.
+	ZoneDoorId NullableString `json:"zone_door_id,omitempty"`
+	// Derived, read-only: `entity` when the zone is explicit, `device` when inherited, `door` when a door that lists this entity owns the zone, null when there is no effective zone.
+	ZoneSource NullableZoneSource `json:"zone_source,omitempty"`
 }
 
 type _EntityResponse EntityResponse
@@ -396,36 +402,79 @@ func (o *EntityResponse) SetName(v string) {
 	o.Name = &v
 }
 
-// GetZoneId returns the ZoneId field value if set, zero value otherwise.
-func (o *EntityResponse) GetZoneId() string {
-	if o == nil || IsNil(o.ZoneId) {
-		var ret string
+// GetZone returns the Zone field value if set, zero value otherwise.
+func (o *EntityResponse) GetZone() ZonePlacement {
+	if o == nil || IsNil(o.Zone) {
+		var ret ZonePlacement
 		return ret
 	}
-	return *o.ZoneId
+	return *o.Zone
 }
 
-// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// GetZoneOk returns a tuple with the Zone field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EntityResponse) GetZoneIdOk() (*string, bool) {
-	if o == nil || IsNil(o.ZoneId) {
+func (o *EntityResponse) GetZoneOk() (*ZonePlacement, bool) {
+	if o == nil || IsNil(o.Zone) {
 		return nil, false
 	}
-	return o.ZoneId, true
+	return o.Zone, true
 }
 
-// HasZoneId returns a boolean if a field has been set.
-func (o *EntityResponse) HasZoneId() bool {
-	if o != nil && !IsNil(o.ZoneId) {
+// HasZone returns a boolean if a field has been set.
+func (o *EntityResponse) HasZone() bool {
+	if o != nil && !IsNil(o.Zone) {
 		return true
 	}
 
 	return false
 }
 
-// SetZoneId gets a reference to the given string and assigns it to the ZoneId field.
-func (o *EntityResponse) SetZoneId(v string) {
-	o.ZoneId = &v
+// SetZone gets a reference to the given ZonePlacement and assigns it to the Zone field.
+func (o *EntityResponse) SetZone(v ZonePlacement) {
+	o.Zone = &v
+}
+
+// GetEffectiveZoneId returns the EffectiveZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EntityResponse) GetEffectiveZoneId() string {
+	if o == nil || IsNil(o.EffectiveZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.EffectiveZoneId.Get()
+}
+
+// GetEffectiveZoneIdOk returns a tuple with the EffectiveZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EntityResponse) GetEffectiveZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.EffectiveZoneId.Get(), o.EffectiveZoneId.IsSet()
+}
+
+// HasEffectiveZoneId returns a boolean if a field has been set.
+func (o *EntityResponse) HasEffectiveZoneId() bool {
+	if o != nil && o.EffectiveZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetEffectiveZoneId gets a reference to the given NullableString and assigns it to the EffectiveZoneId field.
+func (o *EntityResponse) SetEffectiveZoneId(v string) {
+	o.EffectiveZoneId.Set(&v)
+}
+
+// SetEffectiveZoneIdNil sets the value for EffectiveZoneId to be an explicit nil
+func (o *EntityResponse) SetEffectiveZoneIdNil() {
+	o.EffectiveZoneId.Set(nil)
+}
+
+// UnsetEffectiveZoneId ensures that no value is present for EffectiveZoneId, not even an explicit nil
+func (o *EntityResponse) UnsetEffectiveZoneId() {
+	o.EffectiveZoneId.Unset()
 }
 
 // GetEntityMetadata returns the EntityMetadata field value if set, zero value otherwise.
@@ -536,6 +585,92 @@ func (o *EntityResponse) SetState(v interface{}) {
 	o.State = v
 }
 
+// GetZoneDoorId returns the ZoneDoorId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EntityResponse) GetZoneDoorId() string {
+	if o == nil || IsNil(o.ZoneDoorId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneDoorId.Get()
+}
+
+// GetZoneDoorIdOk returns a tuple with the ZoneDoorId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EntityResponse) GetZoneDoorIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneDoorId.Get(), o.ZoneDoorId.IsSet()
+}
+
+// HasZoneDoorId returns a boolean if a field has been set.
+func (o *EntityResponse) HasZoneDoorId() bool {
+	if o != nil && o.ZoneDoorId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneDoorId gets a reference to the given NullableString and assigns it to the ZoneDoorId field.
+func (o *EntityResponse) SetZoneDoorId(v string) {
+	o.ZoneDoorId.Set(&v)
+}
+
+// SetZoneDoorIdNil sets the value for ZoneDoorId to be an explicit nil
+func (o *EntityResponse) SetZoneDoorIdNil() {
+	o.ZoneDoorId.Set(nil)
+}
+
+// UnsetZoneDoorId ensures that no value is present for ZoneDoorId, not even an explicit nil
+func (o *EntityResponse) UnsetZoneDoorId() {
+	o.ZoneDoorId.Unset()
+}
+
+// GetZoneSource returns the ZoneSource field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *EntityResponse) GetZoneSource() ZoneSource {
+	if o == nil || IsNil(o.ZoneSource.Get()) {
+		var ret ZoneSource
+		return ret
+	}
+	return *o.ZoneSource.Get()
+}
+
+// GetZoneSourceOk returns a tuple with the ZoneSource field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *EntityResponse) GetZoneSourceOk() (*ZoneSource, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneSource.Get(), o.ZoneSource.IsSet()
+}
+
+// HasZoneSource returns a boolean if a field has been set.
+func (o *EntityResponse) HasZoneSource() bool {
+	if o != nil && o.ZoneSource.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneSource gets a reference to the given NullableZoneSource and assigns it to the ZoneSource field.
+func (o *EntityResponse) SetZoneSource(v ZoneSource) {
+	o.ZoneSource.Set(&v)
+}
+
+// SetZoneSourceNil sets the value for ZoneSource to be an explicit nil
+func (o *EntityResponse) SetZoneSourceNil() {
+	o.ZoneSource.Set(nil)
+}
+
+// UnsetZoneSource ensures that no value is present for ZoneSource, not even an explicit nil
+func (o *EntityResponse) UnsetZoneSource() {
+	o.ZoneSource.Unset()
+}
+
 func (o EntityResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.CreatedAt) {
@@ -565,8 +700,11 @@ func (o EntityResponse) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
-	if !IsNil(o.ZoneId) {
-		toSerialize["zone_id"] = o.ZoneId
+	if !IsNil(o.Zone) {
+		toSerialize["zone"] = o.Zone
+	}
+	if o.EffectiveZoneId.IsSet() {
+		toSerialize["effective_zone_id"] = o.EffectiveZoneId.Get()
 	}
 	if !IsNil(o.EntityMetadata) {
 		toSerialize["entity_metadata"] = o.EntityMetadata
@@ -576,6 +714,12 @@ func (o EntityResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if o.State != nil {
 		toSerialize["state"] = o.State
+	}
+	if o.ZoneDoorId.IsSet() {
+		toSerialize["zone_door_id"] = o.ZoneDoorId.Get()
+	}
+	if o.ZoneSource.IsSet() {
+		toSerialize["zone_source"] = o.ZoneSource.Get()
 	}
 	return toSerialize, nil
 }

@@ -5,7 +5,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **CorrelationId** | Pointer to **NullableString** | Server-generated correlation id that ties this error to the request trace and the matching audit event (see the audit log). Present when the request carried one. | [optional]
+**CurrentPhone** | Pointer to **NullableString** | Present when &#x60;error_code&#x60; is &#x60;invite_phone_choice&#x60;: the number already on the signed-in account. | [optional]
 **ErrorCode** | Pointer to **NullableString** | Optional stable code for clients to branch on (e.g. \&quot;door_unreachable\&quot;). | [optional]
+**InvitedPhone** | Pointer to **NullableString** | Present when &#x60;error_code&#x60; is &#x60;invite_phone_choice&#x60;: the number named by the invitation. | [optional]
 **Message** | **string** |  |
 **PreviewToken** | Pointer to **NullableString** | Present when &#x60;error_code&#x60; is &#x60;confirmation_required&#x60; (retry with &#x60;X-OpenApp-Confirm&#x60;). | [optional]
 
@@ -63,6 +65,41 @@ HasCorrelationId returns a boolean if a field has been set.
 `func (o *ApiErrorResponse) UnsetCorrelationId()`
 
 UnsetCorrelationId ensures that no value is present for CorrelationId, not even an explicit nil
+### GetCurrentPhone
+
+`func (o *ApiErrorResponse) GetCurrentPhone() string`
+
+GetCurrentPhone returns the CurrentPhone field if non-nil, zero value otherwise.
+
+### GetCurrentPhoneOk
+
+`func (o *ApiErrorResponse) GetCurrentPhoneOk() (*string, bool)`
+
+GetCurrentPhoneOk returns a tuple with the CurrentPhone field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCurrentPhone
+
+`func (o *ApiErrorResponse) SetCurrentPhone(v string)`
+
+SetCurrentPhone sets CurrentPhone field to given value.
+
+### HasCurrentPhone
+
+`func (o *ApiErrorResponse) HasCurrentPhone() bool`
+
+HasCurrentPhone returns a boolean if a field has been set.
+
+### SetCurrentPhoneNil
+
+`func (o *ApiErrorResponse) SetCurrentPhoneNil(b bool)`
+
+ SetCurrentPhoneNil sets the value for CurrentPhone to be an explicit nil
+
+### UnsetCurrentPhone
+`func (o *ApiErrorResponse) UnsetCurrentPhone()`
+
+UnsetCurrentPhone ensures that no value is present for CurrentPhone, not even an explicit nil
 ### GetErrorCode
 
 `func (o *ApiErrorResponse) GetErrorCode() string`
@@ -98,6 +135,41 @@ HasErrorCode returns a boolean if a field has been set.
 `func (o *ApiErrorResponse) UnsetErrorCode()`
 
 UnsetErrorCode ensures that no value is present for ErrorCode, not even an explicit nil
+### GetInvitedPhone
+
+`func (o *ApiErrorResponse) GetInvitedPhone() string`
+
+GetInvitedPhone returns the InvitedPhone field if non-nil, zero value otherwise.
+
+### GetInvitedPhoneOk
+
+`func (o *ApiErrorResponse) GetInvitedPhoneOk() (*string, bool)`
+
+GetInvitedPhoneOk returns a tuple with the InvitedPhone field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetInvitedPhone
+
+`func (o *ApiErrorResponse) SetInvitedPhone(v string)`
+
+SetInvitedPhone sets InvitedPhone field to given value.
+
+### HasInvitedPhone
+
+`func (o *ApiErrorResponse) HasInvitedPhone() bool`
+
+HasInvitedPhone returns a boolean if a field has been set.
+
+### SetInvitedPhoneNil
+
+`func (o *ApiErrorResponse) SetInvitedPhoneNil(b bool)`
+
+ SetInvitedPhoneNil sets the value for InvitedPhone to be an explicit nil
+
+### UnsetInvitedPhone
+`func (o *ApiErrorResponse) UnsetInvitedPhone()`
+
+UnsetInvitedPhone ensures that no value is present for InvitedPhone, not even an explicit nil
 ### GetMessage
 
 `func (o *ApiErrorResponse) GetMessage() string`

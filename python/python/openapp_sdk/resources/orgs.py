@@ -85,11 +85,6 @@ class OrgsClient(_BaseResource):
             },
         )
 
-    async def copilot_chat(self, org_id: str, *, message: str) -> dict[str, Any]:
-        return await self._client._request(
-            "POST", f"/orgs/{org_id}/copilot/chat", body={"message": message}
-        )
-
     async def users(
         self, org_id: str, *, limit: int | None = None, cursor: str | None = None
     ) -> dict[str, Any]:

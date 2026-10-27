@@ -142,7 +142,6 @@ async fn json_error_decodes_into_api_variant() {
     let client = build_client(&server.uri(), "https://api.test_openapp_SECRET");
     let body = CreateOrganizationRequest {
         description: None,
-        id: None,
         name: LocalizedString {
             value: [("en".to_string(), "".to_string())].into_iter().collect(),
         },

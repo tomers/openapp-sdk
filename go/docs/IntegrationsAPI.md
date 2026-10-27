@@ -19,32 +19,30 @@ Method | HTTP request | Description
 [**GetIntegrationDeviceMetadataSchema**](IntegrationsAPI.md#GetIntegrationDeviceMetadataSchema) | **Get** /integrations/{id}/device-metadata-schema | Get provider-specific JSON Schema for &#x60;device_metadata&#x60; for this integration (for generic UI labels).
 [**GetIntegrationDiscoveredDevices**](IntegrationsAPI.md#GetIntegrationDiscoveredDevices) | **Get** /integrations/{id}/discovered-devices | List devices discovered from the upstream provider for this integration.
 [**GetIntegrationProviderDefinition**](IntegrationsAPI.md#GetIntegrationProviderDefinition) | **Get** /integrations/provider-types/{provider_type}/definition | Get a provider definition (capabilities, actions, schemas) for UI/CLI.
-[**GetIntegrationTransferPreview**](IntegrationsAPI.md#GetIntegrationTransferPreview) | **Get** /integrations/{id}/transfer-preview | Read-only preview of a transfer&#39;s impact.
 [**GetSiteAccessDevices**](IntegrationsAPI.md#GetSiteAccessDevices) | **Get** /integrations/{id}/access-devices | Hardware inventory for a virtual_access site.
-[**GetSiteAccessOverview**](IntegrationsAPI.md#GetSiteAccessOverview) | **Get** /integrations/{id}/access-overview | Counts and summaries for a virtual-access site overview.
-[**GetSiteReadiness**](IntegrationsAPI.md#GetSiteReadiness) | **Get** /integrations/{id}/readiness | Configuration completeness for a virtual_access site.
-[**GetTasmotaProvisioning**](IntegrationsAPI.md#GetTasmotaProvisioning) | **Get** /devices/{id}/tasmota/provisioning |
-[**GetWaveshareProvisioningStatus**](IntegrationsAPI.md#GetWaveshareProvisioningStatus) | **Get** /integrations/{id}/provisioning/status | Get Waveshare provisioning status for an integration.
+[**GetSiteAccessZones**](IntegrationsAPI.md#GetSiteAccessZones) | **Get** /integrations/{id}/access-zones | Zones and Wi-Fi of a virtual_access site, derived from its doors.
+[**GetTasmotaProvisioning**](IntegrationsAPI.md#GetTasmotaProvisioning) | **Get** /devices/{id}/tasmota/provisioning | Get Tasmota provisioning for a device.
 [**HardDeleteIntegration**](IntegrationsAPI.md#HardDeleteIntegration) | **Delete** /integrations/{id}/purge | Permanently delete (purge) an integration.
+[**ListAccessInviteContactNotifications**](IntegrationsAPI.md#ListAccessInviteContactNotifications) | **Get** /integrations/{id}/access-invites/{invite_link_id}/contacts/{contact_id}/notifications |
 [**ListDeletedIntegrationAccessPortals**](IntegrationsAPI.md#ListDeletedIntegrationAccessPortals) | **Get** /integrations/{id}/access-portals/deleted | List soft-deleted public access portals for an integration (restore / trash view).
 [**ListIntegrationAccessInviteRenewalRequests**](IntegrationsAPI.md#ListIntegrationAccessInviteRenewalRequests) | **Get** /integrations/{id}/access-invites/{invite_link_id}/renewal-requests | List pending renewal requests for an access invite.
-[**ListIntegrationAccessInviteUsage**](IntegrationsAPI.md#ListIntegrationAccessInviteUsage) | **Get** /integrations/{id}/access-invites/{invite_link_id}/usage | &#x60;GET /integrations/{id}/access-invites/{invite_link_id}/usage&#x60;
+[**ListIntegrationAccessInviteUsage**](IntegrationsAPI.md#ListIntegrationAccessInviteUsage) | **Get** /integrations/{id}/access-invites/{invite_link_id}/usage | List recent uses of an access invitation.
 [**ListIntegrationAccessInvites**](IntegrationsAPI.md#ListIntegrationAccessInvites) | **Get** /integrations/{id}/access-invites | List access invites for an integration.
 [**ListIntegrationAccessPortals**](IntegrationsAPI.md#ListIntegrationAccessPortals) | **Get** /integrations/{id}/access-portals | List public access portals for an integration (for admin links to public portal pages).
-[**ListIntegrationDoorUsage**](IntegrationsAPI.md#ListIntegrationDoorUsage) | **Get** /integrations/{id}/doors/{device_id}/usage | &#x60;GET /integrations/{id}/doors/{device_id}/usage&#x60;
+[**ListIntegrationDoorUsage**](IntegrationsAPI.md#ListIntegrationDoorUsage) | **Get** /integrations/{id}/doors/{device_id}/usage | List recent opens of a door through its public portal.
 [**ListIntegrationEntities**](IntegrationsAPI.md#ListIntegrationEntities) | **Get** /integrations/{id}/entities | List resource entities for devices belonging to an integration.
 [**ListIntegrationOps**](IntegrationsAPI.md#ListIntegrationOps) | **Get** /integrations/{id}/ops | List provider-specific ops available for an integration.
 [**ListIntegrationProviderTypes**](IntegrationsAPI.md#ListIntegrationProviderTypes) | **Get** /integrations/provider-types | List supported integration provider types (canonical values).
-[**ListIntegrationUsers**](IntegrationsAPI.md#ListIntegrationUsers) | **Get** /integrations/{id}/integration-users | GET &#x60;/integrations/{id}/integration-users?device_id&#x3D;...&#x60;.
+[**ListIntegrationUsers**](IntegrationsAPI.md#ListIntegrationUsers) | **Get** /integrations/{id}/integration-users | List the provider&#39;s users for an integration, joined with OpenApp users.
 [**ListIntegrations**](IntegrationsAPI.md#ListIntegrations) | **Get** /integrations | List integrations for the organization context (X-Org).
+[**NotifyAccessInviteContact**](IntegrationsAPI.md#NotifyAccessInviteContact) | **Post** /integrations/{id}/access-invites/{invite_link_id}/contacts/{contact_id}/notify |
+[**NotifyAccessInviteContacts**](IntegrationsAPI.md#NotifyAccessInviteContacts) | **Post** /integrations/{id}/access-invites/{invite_link_id}/notify |
 [**PostAccessInviteMessageMedia**](IntegrationsAPI.md#PostAccessInviteMessageMedia) | **Post** /integrations/{id}/access-invites/{invite_link_id}/message-media |
 [**PostAccessInvitePhoto**](IntegrationsAPI.md#PostAccessInvitePhoto) | **Post** /integrations/{id}/access-invites/{invite_link_id}/photo |
-[**PostIntegrationTransfer**](IntegrationsAPI.md#PostIntegrationTransfer) | **Post** /integrations/{id}/transfer | Move or duplicate an integration (and its dependents) into another org.
-[**PostPalgateProbeLinkedAccount**](IntegrationsAPI.md#PostPalgateProbeLinkedAccount) | **Post** /integration-setup/v1/palgate/probe-linked-account |
+[**PostIntegrationZoneSync**](IntegrationsAPI.md#PostIntegrationZoneSync) | **Post** /integrations/{id}/zone-sync | Import provider zones and placements into the integration&#39;s org.
 [**PostRefreshIntegrationDeviceChannelCounts**](IntegrationsAPI.md#PostRefreshIntegrationDeviceChannelCounts) | **Post** /integrations/{id}/discovered-devices/refresh-channel-counts | Explicitly refresh provider-reported channel counts on linked devices.
 [**PostTasmotaProvisionLan**](IntegrationsAPI.md#PostTasmotaProvisionLan) | **Post** /devices/{id}/tasmota/provision-lan |
 [**PostTasmotaRotateCredentials**](IntegrationsAPI.md#PostTasmotaRotateCredentials) | **Post** /devices/{id}/tasmota/rotate-credentials |
-[**PostWaveshareProvisioningAck**](IntegrationsAPI.md#PostWaveshareProvisioningAck) | **Post** /integrations/{id}/provisioning/ack | Acknowledge that the device was reprovisioned (store the current connection config snapshot).
 [**PreviewIntegrationAccessInvite**](IntegrationsAPI.md#PreviewIntegrationAccessInvite) | **Post** /integrations/{id}/access-invites/preview | Validate a desired invitation without creating physical access.
 [**ReconcileIntegrationAccessInvite**](IntegrationsAPI.md#ReconcileIntegrationAccessInvite) | **Post** /integrations/{id}/access-invites/reconcile | Make the invitation state for an external record equal a desired state.
 [**RegenerateIntegrationAccessInviteToken**](IntegrationsAPI.md#RegenerateIntegrationAccessInviteToken) | **Post** /integrations/{id}/access-invites/{invite_link_id}/regenerate-token | Regenerate invite token (returns new shareable link; old link stops working).
@@ -1201,82 +1199,6 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## GetIntegrationTransferPreview
-
-> TransferPreviewResponse GetIntegrationTransferPreview(ctx, id).XOrg(xOrg).Mode(mode).Execute()
-
-Read-only preview of a transfer's impact.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	xOrg := "xOrg_example" // string |
-	mode := "mode_example" // string | `move` (default) or `duplicate`; controls which side-effect warnings apply. (optional)
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.GetIntegrationTransferPreview(context.Background(), id).XOrg(xOrg).Mode(mode).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.GetIntegrationTransferPreview``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetIntegrationTransferPreview`: TransferPreviewResponse
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.GetIntegrationTransferPreview`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetIntegrationTransferPreviewRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **xOrg** | **string** |  |
- **mode** | **string** | &#x60;move&#x60; (default) or &#x60;duplicate&#x60;; controls which side-effect warnings apply. |
-
-### Return type
-
-[**TransferPreviewResponse**](TransferPreviewResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
 ## GetSiteAccessDevices
 
 > SiteAccessDevicesResponse GetSiteAccessDevices(ctx, id).XOrg(xOrg).Execute()
@@ -1351,85 +1273,13 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## GetSiteAccessOverview
+## GetSiteAccessZones
 
-> SiteAccessOverviewResponse GetSiteAccessOverview(ctx, id).XOrg(xOrg).Execute()
+> SiteAccessZonesResponse GetSiteAccessZones(ctx, id).XOrg(xOrg).Execute()
 
-Counts and summaries for a virtual-access site overview.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	xOrg := "xOrg_example" // string |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.GetSiteAccessOverview(context.Background(), id).XOrg(xOrg).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.GetSiteAccessOverview``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetSiteAccessOverview`: SiteAccessOverviewResponse
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.GetSiteAccessOverview`: %v\n", resp)
-}
-```
-
-### Path Parameters
+Zones and Wi-Fi of a virtual_access site, derived from its doors.
 
 
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetSiteAccessOverviewRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **xOrg** | **string** |  |
-
-### Return type
-
-[**SiteAccessOverviewResponse**](SiteAccessOverviewResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## GetSiteReadiness
-
-> SiteReadiness GetSiteReadiness(ctx, id).XOrg(xOrg).Execute()
-
-Configuration completeness for a virtual_access site.
 
 ### Example
 
@@ -1453,13 +1303,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.GetSiteReadiness(context.Background(), id).XOrg(xOrg).Execute()
+	resp, r, err := apiClient.IntegrationsAPI.GetSiteAccessZones(context.Background(), id).XOrg(xOrg).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.GetSiteReadiness``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.GetSiteAccessZones``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `GetSiteReadiness`: SiteReadiness
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.GetSiteReadiness`: %v\n", resp)
+	// response from `GetSiteAccessZones`: SiteAccessZonesResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.GetSiteAccessZones`: %v\n", resp)
 }
 ```
 
@@ -1473,7 +1323,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetSiteReadinessRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetSiteAccessZonesRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
@@ -1483,7 +1333,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**SiteReadiness**](SiteReadiness.md)
+[**SiteAccessZonesResponse**](SiteAccessZonesResponse.md)
 
 ### Authorization
 
@@ -1502,6 +1352,8 @@ Name | Type | Description  | Notes
 ## GetTasmotaProvisioning
 
 > TasmotaProvisioningResponse GetTasmotaProvisioning(ctx, id).XOrg(xOrg).Execute()
+
+Get Tasmota provisioning for a device.
 
 
 
@@ -1558,80 +1410,6 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**TasmotaProvisioningResponse**](TasmotaProvisioningResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## GetWaveshareProvisioningStatus
-
-> WaveshareProvisioningStatusResponse GetWaveshareProvisioningStatus(ctx, id).XOrg(xOrg).Execute()
-
-Get Waveshare provisioning status for an integration.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	xOrg := "xOrg_example" // string |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.GetWaveshareProvisioningStatus(context.Background(), id).XOrg(xOrg).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.GetWaveshareProvisioningStatus``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetWaveshareProvisioningStatus`: WaveshareProvisioningStatusResponse
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.GetWaveshareProvisioningStatus`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetWaveshareProvisioningStatusRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **xOrg** | **string** |  |
-
-### Return type
-
-[**WaveshareProvisioningStatusResponse**](WaveshareProvisioningStatusResponse.md)
 
 ### Authorization
 
@@ -1708,6 +1486,84 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**IntegrationResponse**](IntegrationResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## ListAccessInviteContactNotifications
+
+> ContactNotificationsResponse ListAccessInviteContactNotifications(ctx, id, inviteLinkId, contactId).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	inviteLinkId := "inviteLinkId_example" // string |
+	contactId := "contactId_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.IntegrationsAPI.ListAccessInviteContactNotifications(context.Background(), id, inviteLinkId, contactId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.ListAccessInviteContactNotifications``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListAccessInviteContactNotifications`: ContactNotificationsResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.ListAccessInviteContactNotifications`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+**inviteLinkId** | **string** |  |
+**contactId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListAccessInviteContactNotificationsRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+
+### Return type
+
+[**ContactNotificationsResponse**](ContactNotificationsResponse.md)
 
 ### Authorization
 
@@ -1878,7 +1734,9 @@ Name | Type | Description  | Notes
 
 > AccessUsageResponse ListIntegrationAccessInviteUsage(ctx, id, inviteLinkId).XOrg(xOrg).Execute()
 
-`GET /integrations/{id}/access-invites/{invite_link_id}/usage`
+List recent uses of an access invitation.
+
+
 
 ### Example
 
@@ -2121,7 +1979,9 @@ Name | Type | Description  | Notes
 
 > AccessUsageResponse ListIntegrationDoorUsage(ctx, id, deviceId).XOrg(xOrg).Execute()
 
-`GET /integrations/{id}/doors/{device_id}/usage`
+List recent opens of a door through its public portal.
+
+
 
 ### Example
 
@@ -2415,7 +2275,9 @@ Other parameters are passed through a pointer to a apiListIntegrationProviderTyp
 
 > IntegrationUsersResponse ListIntegrationUsers(ctx, id).XOrg(xOrg).DeviceId(deviceId).Execute()
 
-GET `/integrations/{id}/integration-users?device_id=...`.
+List the provider's users for an integration, joined with OpenApp users.
+
+
 
 ### Example
 
@@ -2548,6 +2410,159 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PaginatedResponse**](PaginatedResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## NotifyAccessInviteContact
+
+> NotifyContactsResponse NotifyAccessInviteContact(ctx, id, inviteLinkId, contactId).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	inviteLinkId := "inviteLinkId_example" // string |
+	contactId := "contactId_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.IntegrationsAPI.NotifyAccessInviteContact(context.Background(), id, inviteLinkId, contactId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.NotifyAccessInviteContact``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `NotifyAccessInviteContact`: NotifyContactsResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.NotifyAccessInviteContact`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+**inviteLinkId** | **string** |  |
+**contactId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiNotifyAccessInviteContactRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+
+### Return type
+
+[**NotifyContactsResponse**](NotifyContactsResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## NotifyAccessInviteContacts
+
+> NotifyContactsResponse NotifyAccessInviteContacts(ctx, id, inviteLinkId).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	inviteLinkId := "inviteLinkId_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.IntegrationsAPI.NotifyAccessInviteContacts(context.Background(), id, inviteLinkId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.NotifyAccessInviteContacts``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `NotifyAccessInviteContacts`: NotifyContactsResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.NotifyAccessInviteContacts`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+**inviteLinkId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiNotifyAccessInviteContactsRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+### Return type
+
+[**NotifyContactsResponse**](NotifyContactsResponse.md)
 
 ### Authorization
 
@@ -2717,11 +2732,11 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## PostIntegrationTransfer
+## PostIntegrationZoneSync
 
-> TransferIntegrationResponse PostIntegrationTransfer(ctx, id).XOrg(xOrg).TransferIntegrationRequest(transferIntegrationRequest).Execute()
+> ZoneSyncResponse PostIntegrationZoneSync(ctx, id).Execute()
 
-Move or duplicate an integration (and its dependents) into another org.
+Import provider zones and placements into the integration's org.
 
 
 
@@ -2739,8 +2754,6 @@ import (
 
 func main() {
 	id := "id_example" // string |
-	xOrg := "xOrg_example" // string |
-	transferIntegrationRequest := *openapiclient.NewTransferIntegrationRequest("TargetOrgId_example") // TransferIntegrationRequest |
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -2748,13 +2761,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.PostIntegrationTransfer(context.Background(), id).XOrg(xOrg).TransferIntegrationRequest(transferIntegrationRequest).Execute()
+	resp, r, err := apiClient.IntegrationsAPI.PostIntegrationZoneSync(context.Background(), id).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.PostIntegrationTransfer``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.PostIntegrationZoneSync``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `PostIntegrationTransfer`: TransferIntegrationResponse
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.PostIntegrationTransfer`: %v\n", resp)
+	// response from `PostIntegrationZoneSync`: ZoneSyncResponse
+	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.PostIntegrationZoneSync`: %v\n", resp)
 }
 ```
 
@@ -2768,18 +2781,16 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiPostIntegrationTransferRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiPostIntegrationZoneSyncRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **xOrg** | **string** |  |
- **transferIntegrationRequest** | [**TransferIntegrationRequest**](TransferIntegrationRequest.md) |  |
 
 ### Return type
 
-[**TransferIntegrationResponse**](TransferIntegrationResponse.md)
+[**ZoneSyncResponse**](ZoneSyncResponse.md)
 
 ### Authorization
 
@@ -2787,75 +2798,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostPalgateProbeLinkedAccount
-
-> PalgateProbeLinkedAccountResponse PostPalgateProbeLinkedAccount(ctx).PalgateProbeLinkedAccountRequest(palgateProbeLinkedAccountRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	palgateProbeLinkedAccountRequest := *openapiclient.NewPalgateProbeLinkedAccountRequest(interface{}(123), "DeviceId_example", "OrgId_example", interface{}(123)) // PalgateProbeLinkedAccountRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.PostPalgateProbeLinkedAccount(context.Background()).PalgateProbeLinkedAccountRequest(palgateProbeLinkedAccountRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.PostPalgateProbeLinkedAccount``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostPalgateProbeLinkedAccount`: PalgateProbeLinkedAccountResponse
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.PostPalgateProbeLinkedAccount`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostPalgateProbeLinkedAccountRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **palgateProbeLinkedAccountRequest** | [**PalgateProbeLinkedAccountRequest**](PalgateProbeLinkedAccountRequest.md) |  |
-
-### Return type
-
-[**PalgateProbeLinkedAccountResponse**](PalgateProbeLinkedAccountResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
@@ -3078,82 +3021,6 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostWaveshareProvisioningAck
-
-> IntegrationResponse PostWaveshareProvisioningAck(ctx, id).XOrg(xOrg).Body(body).Execute()
-
-Acknowledge that the device was reprovisioned (store the current connection config snapshot).
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	xOrg := "xOrg_example" // string |
-	body := interface{}(987) // interface{} |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.IntegrationsAPI.PostWaveshareProvisioningAck(context.Background(), id).XOrg(xOrg).Body(body).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `IntegrationsAPI.PostWaveshareProvisioningAck``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostWaveshareProvisioningAck`: IntegrationResponse
-	fmt.Fprintf(os.Stdout, "Response from `IntegrationsAPI.PostWaveshareProvisioningAck`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostWaveshareProvisioningAckRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **xOrg** | **string** |  |
- **body** | **interface{}** |  |
-
-### Return type
-
-[**IntegrationResponse**](IntegrationResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)

@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **City** | Pointer to [**LocalizedString**](LocalizedString.md) |  | [optional]
 **Country** | Pointer to [**NullableLocationResponseCountry**](LocationResponseCountry.md) |  | [optional]
+**CountryCode** | Pointer to **string** |  | [optional]
 **FormattedAddress** | Pointer to [**NullableLocationResponseCountry**](LocationResponseCountry.md) |  | [optional]
 **GeocodingProvider** | Pointer to [**GeocodingProviderId**](GeocodingProviderId.md) |  | [optional]
 **Id** | **string** |  |
@@ -99,6 +100,31 @@ HasCountry returns a boolean if a field has been set.
 `func (o *PaginatedResponseLocationListItemResponseItemsInner) UnsetCountry()`
 
 UnsetCountry ensures that no value is present for Country, not even an explicit nil
+### GetCountryCode
+
+`func (o *PaginatedResponseLocationListItemResponseItemsInner) GetCountryCode() string`
+
+GetCountryCode returns the CountryCode field if non-nil, zero value otherwise.
+
+### GetCountryCodeOk
+
+`func (o *PaginatedResponseLocationListItemResponseItemsInner) GetCountryCodeOk() (*string, bool)`
+
+GetCountryCodeOk returns a tuple with the CountryCode field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCountryCode
+
+`func (o *PaginatedResponseLocationListItemResponseItemsInner) SetCountryCode(v string)`
+
+SetCountryCode sets CountryCode field to given value.
+
+### HasCountryCode
+
+`func (o *PaginatedResponseLocationListItemResponseItemsInner) HasCountryCode() bool`
+
+HasCountryCode returns a boolean if a field has been set.
+
 ### GetFormattedAddress
 
 `func (o *PaginatedResponseLocationListItemResponseItemsInner) GetFormattedAddress() LocationResponseCountry`

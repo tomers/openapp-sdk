@@ -173,20 +173,6 @@ func Test_openapi_MediaAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test MediaAPIService PostDeviceImageCopyFrom", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		resp, httpRes, err := apiClient.MediaAPI.PostDeviceImageCopyFrom(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test MediaAPIService PostEntityImage", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -201,20 +187,6 @@ func Test_openapi_MediaAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test MediaAPIService PostEntityImageCopyFrom", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		resp, httpRes, err := apiClient.MediaAPI.PostEntityImageCopyFrom(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test MediaAPIService PostIntegrationImage", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -222,20 +194,6 @@ func Test_openapi_MediaAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.MediaAPI.PostIntegrationImage(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test MediaAPIService PostIntegrationImageCopyFrom", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		resp, httpRes, err := apiClient.MediaAPI.PostIntegrationImageCopyFrom(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

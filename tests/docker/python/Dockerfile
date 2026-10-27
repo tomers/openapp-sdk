@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # uv + Python + Rust (maturin/PyO3) for python/ without a host toolchain.
-FROM python:3.14.4-slim-trixie
+FROM python:3.14.4-slim-trixie@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
 
 ARG RUST_VERSION=invalid-version-must-be-provided
 
@@ -16,12 +16,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain "${RUST_VERSION}" \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
-    && mkdir -p /workspace/python/.venv /usr/local/cargo/registry /usr/local/cargo/git \
+    && mkdir -p /opt/uv-cache /usr/local/cargo/registry /usr/local/cargo/git \
     && rm -rf /usr/local/rustup/toolchains/*/share/doc /usr/local/rustup/tmp/* \
     && groupadd --gid 1000 sdk \
     && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash sdk \
     && chown -R sdk:sdk /usr/local/cargo /usr/local/rustup \
-    && chmod -R a+rwX /usr/local/cargo /usr/local/rustup /workspace/python/.venv
+    && chmod -R a+rwX /usr/local/cargo /usr/local/rustup /opt/uv-cache
 
 WORKDIR /workspace
 USER sdk

@@ -40,7 +40,7 @@ func (r ApiGetIntegrationLanAgentTasksRequest) Execute() (*http.Response, error)
 }
 
 /*
-GetIntegrationLanAgentTasks GET /integrations/{id}/lan-agent/tasks
+GetIntegrationLanAgentTasks List the LAN agent task IDs the integration's provider supports. Requires read access to the integration.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param integrationId Integration ULID
@@ -147,7 +147,7 @@ func (r ApiPostIntegrationLanAgentTaskSpecRequest) Execute() (*LanAgentTaskSpecR
 }
 
 /*
-PostIntegrationLanAgentTaskSpec POST /integrations/{id}/lan-agent/task-spec
+PostIntegrationLanAgentTaskSpec Build the spec for a LAN agent task to execute locally for this integration.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param integrationId Integration ULID

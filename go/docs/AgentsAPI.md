@@ -4,175 +4,25 @@ All URIs are relative to */api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CopilotChat**](AgentsAPI.md#CopilotChat) | **Post** /orgs/{org_id}/copilot/chat |
-[**CopilotCommit**](AgentsAPI.md#CopilotCommit) | **Post** /orgs/{org_id}/copilot/commit |
 [**CreateAgent**](AgentsAPI.md#CreateAgent) | **Post** /agents |
 [**CreateAgentCredential**](AgentsAPI.md#CreateAgentCredential) | **Post** /agents/{id}/credentials |
 [**CreateAlias**](AgentsAPI.md#CreateAlias) | **Post** /orgs/{org_id}/aliases |
 [**CreatePmsConnector**](AgentsAPI.md#CreatePmsConnector) | **Post** /orgs/{org_id}/connectors/pms |
 [**CreateSkill**](AgentsAPI.md#CreateSkill) | **Post** /orgs/{org_id}/skills |
 [**DeleteAlias**](AgentsAPI.md#DeleteAlias) | **Delete** /orgs/{org_id}/aliases/{id} |
+[**DeletePmsConnector**](AgentsAPI.md#DeletePmsConnector) | **Delete** /orgs/{org_id}/connectors/pms/{connector_id} | Delete a PMS connector and its signing secret. Deliveries signed with that secret are rejected from then on; this is how a leaked secret is retired (create a new connector and reconfigure the PMS).
 [**GetAgent**](AgentsAPI.md#GetAgent) | **Get** /agents/{id} |
 [**ListAgents**](AgentsAPI.md#ListAgents) | **Get** /agents |
 [**ListAliases**](AgentsAPI.md#ListAliases) | **Get** /orgs/{org_id}/aliases |
+[**ListPmsConnectors**](AgentsAPI.md#ListPmsConnectors) | **Get** /orgs/{org_id}/connectors/pms |
 [**ListSkills**](AgentsAPI.md#ListSkills) | **Get** /orgs/{org_id}/skills |
 [**McpJsonrpc**](AgentsAPI.md#McpJsonrpc) | **Post** /mcp |
 [**OauthProtectedResource**](AgentsAPI.md#OauthProtectedResource) | **Get** /.well-known/oauth-protected-resource |
-[**PerceptionLpr**](AgentsAPI.md#PerceptionLpr) | **Post** /orgs/{org_id}/perception/lpr |
-[**PerceptionVisitorPresent**](AgentsAPI.md#PerceptionVisitorPresent) | **Post** /orgs/{org_id}/perception/visitor-present |
-[**PmsInbound**](AgentsAPI.md#PmsInbound) | **Post** /pms/{connector_id}/inbound |
+[**PmsInbound**](AgentsAPI.md#PmsInbound) | **Post** /pms/{connector_id}/inbound | Receive a PMS event. Unauthenticated at the gateway; each request is authenticated by an HMAC-SHA256 signature made with the connector&#39;s signing secret.
 [**ResolveOrgQuery**](AgentsAPI.md#ResolveOrgQuery) | **Post** /orgs/{org_id}/resolve |
 [**RevokeAgent**](AgentsAPI.md#RevokeAgent) | **Delete** /agents/{id} |
 [**UpdateAgent**](AgentsAPI.md#UpdateAgent) | **Patch** /agents/{id} |
 
-
-
-## CopilotChat
-
-> CopilotChatResponse CopilotChat(ctx, orgId).CopilotChatRequest(copilotChatRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	orgId := "orgId_example" // string |
-	copilotChatRequest := *openapiclient.NewCopilotChatRequest("Message_example") // CopilotChatRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.AgentsAPI.CopilotChat(context.Background(), orgId).CopilotChatRequest(copilotChatRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.CopilotChat``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `CopilotChat`: CopilotChatResponse
-	fmt.Fprintf(os.Stdout, "Response from `AgentsAPI.CopilotChat`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**orgId** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiCopilotChatRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **copilotChatRequest** | [**CopilotChatRequest**](CopilotChatRequest.md) |  |
-
-### Return type
-
-[**CopilotChatResponse**](CopilotChatResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## CopilotCommit
-
-> CopilotCommitResponse CopilotCommit(ctx, orgId).CopilotCommitRequest(copilotCommitRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	orgId := "orgId_example" // string |
-	copilotCommitRequest := *openapiclient.NewCopilotCommitRequest([]openapiclient.CopilotProposedAction{*openapiclient.NewCopilotProposedAction(map[string]interface{}(123), "Tool_example")}) // CopilotCommitRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.AgentsAPI.CopilotCommit(context.Background(), orgId).CopilotCommitRequest(copilotCommitRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.CopilotCommit``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `CopilotCommit`: CopilotCommitResponse
-	fmt.Fprintf(os.Stdout, "Response from `AgentsAPI.CopilotCommit`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**orgId** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiCopilotCommitRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **copilotCommitRequest** | [**CopilotCommitRequest**](CopilotCommitRequest.md) |  |
-
-### Return type
-
-[**CopilotCommitResponse**](CopilotCommitResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
 
 
 ## CreateAgent
@@ -612,6 +462,79 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## DeletePmsConnector
+
+> DeletePmsConnector(ctx, orgId, connectorId).Execute()
+
+Delete a PMS connector and its signing secret. Deliveries signed with that secret are rejected from then on; this is how a leaked secret is retired (create a new connector and reconfigure the PMS).
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	orgId := "orgId_example" // string |
+	connectorId := "connectorId_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	r, err := apiClient.AgentsAPI.DeletePmsConnector(context.Background(), orgId, connectorId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.DeletePmsConnector``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**orgId** | **string** |  |
+**connectorId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiDeletePmsConnectorRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## GetAgent
 
 > AgentResponse GetAgent(ctx, id).Execute()
@@ -828,6 +751,78 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## ListPmsConnectors
+
+> []PmsConnectorResponse ListPmsConnectors(ctx, orgId).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	orgId := "orgId_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.AgentsAPI.ListPmsConnectors(context.Background(), orgId).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.ListPmsConnectors``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListPmsConnectors`: []PmsConnectorResponse
+	fmt.Fprintf(os.Stdout, "Response from `AgentsAPI.ListPmsConnectors`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**orgId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListPmsConnectorsRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**[]PmsConnectorResponse**](PmsConnectorResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## ListSkills
 
 > ListSkills(ctx, orgId).Execute()
@@ -1027,157 +1022,11 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## PerceptionLpr
-
-> PerceptionActionResponse PerceptionLpr(ctx, orgId).PerceptionLprRequest(perceptionLprRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	orgId := "orgId_example" // string |
-	perceptionLprRequest := *openapiclient.NewPerceptionLprRequest("EntityId_example", "Plate_example") // PerceptionLprRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.AgentsAPI.PerceptionLpr(context.Background(), orgId).PerceptionLprRequest(perceptionLprRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.PerceptionLpr``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PerceptionLpr`: PerceptionActionResponse
-	fmt.Fprintf(os.Stdout, "Response from `AgentsAPI.PerceptionLpr`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**orgId** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPerceptionLprRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **perceptionLprRequest** | [**PerceptionLprRequest**](PerceptionLprRequest.md) |  |
-
-### Return type
-
-[**PerceptionActionResponse**](PerceptionActionResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PerceptionVisitorPresent
-
-> PerceptionActionResponse PerceptionVisitorPresent(ctx, orgId).PerceptionVisitorRequest(perceptionVisitorRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	orgId := "orgId_example" // string |
-	perceptionVisitorRequest := *openapiclient.NewPerceptionVisitorRequest("EntityId_example") // PerceptionVisitorRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.AgentsAPI.PerceptionVisitorPresent(context.Background(), orgId).PerceptionVisitorRequest(perceptionVisitorRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.PerceptionVisitorPresent``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PerceptionVisitorPresent`: PerceptionActionResponse
-	fmt.Fprintf(os.Stdout, "Response from `AgentsAPI.PerceptionVisitorPresent`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**orgId** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPerceptionVisitorPresentRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **perceptionVisitorRequest** | [**PerceptionVisitorRequest**](PerceptionVisitorRequest.md) |  |
-
-### Return type
-
-[**PerceptionActionResponse**](PerceptionActionResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
 ## PmsInbound
 
-> PmsInbound(ctx, connectorId).PmsInboundPayload(pmsInboundPayload).Execute()
+> PmsInbound(ctx, connectorId).XOpenAppTimestamp(xOpenAppTimestamp).XOpenAppSignature(xOpenAppSignature).PmsInboundPayload(pmsInboundPayload).Execute()
+
+Receive a PMS event. Unauthenticated at the gateway; each request is authenticated by an HMAC-SHA256 signature made with the connector's signing secret.
 
 
 
@@ -1195,6 +1044,8 @@ import (
 
 func main() {
 	connectorId := "connectorId_example" // string |
+	xOpenAppTimestamp := "xOpenAppTimestamp_example" // string | Unix time (seconds) the request was signed
+	xOpenAppSignature := "xOpenAppSignature_example" // string | `sha256=<hex HMAC-SHA256 of \"{timestamp}.{body}\">`
 	pmsInboundPayload := *openapiclient.NewPmsInboundPayload("Event_example") // PmsInboundPayload |
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
@@ -1203,7 +1054,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	r, err := apiClient.AgentsAPI.PmsInbound(context.Background(), connectorId).PmsInboundPayload(pmsInboundPayload).Execute()
+	r, err := apiClient.AgentsAPI.PmsInbound(context.Background(), connectorId).XOpenAppTimestamp(xOpenAppTimestamp).XOpenAppSignature(xOpenAppSignature).PmsInboundPayload(pmsInboundPayload).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `AgentsAPI.PmsInbound``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -1227,6 +1078,8 @@ Other parameters are passed through a pointer to a apiPmsInboundRequest struct v
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
+ **xOpenAppTimestamp** | **string** | Unix time (seconds) the request was signed |
+ **xOpenAppSignature** | **string** | &#x60;sha256&#x3D;&lt;hex HMAC-SHA256 of \&quot;{timestamp}.{body}\&quot;&gt;&#x60; |
  **pmsInboundPayload** | [**PmsInboundPayload**](PmsInboundPayload.md) |  |
 
 ### Return type

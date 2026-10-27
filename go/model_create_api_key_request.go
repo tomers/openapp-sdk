@@ -24,10 +24,12 @@ type CreateApiKeyRequest struct {
 	// [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) absolute expiration timestamp (UTC). Mutually exclusive with `expires_in`.
 	ExpiresAt NullableString `json:"expires_at,omitempty"`
 	// Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 `P1D`, `PT1H`, …; no months/years) or compact tokens `s`/`m`/`h`/`d`/`w` (`M` is minutes). Max 3650d (10 years). `1y` is rejected. Mutually exclusive with `expires_at`.
-	ExpiresIn       NullableString `json:"expires_in,omitempty"`
-	Name            string         `json:"name"`
-	ScopedEntityIds []string       `json:"scoped_entity_ids,omitempty"`
-	ScopedRoles     []string       `json:"scoped_roles,omitempty"`
+	ExpiresIn NullableString `json:"expires_in,omitempty"`
+	Name      string         `json:"name"`
+	// Limit the key to these entities (doors, lights). A key limited to entities cannot list, create, or reach devices.
+	ScopedEntityIds []string `json:"scoped_entity_ids,omitempty"`
+	// Limit the key to these roles. Omitted: the key acts with all of its owner's roles. Each role must be one the owner holds in the org. Grantable roles: `entities:read`, `entities:list`, `entities:create`, `entities:update`, `entities:delete`, `entities:set_state`, `entities:set_hold`, `devices:read`, `devices:list`, `devices:create`, `devices:update`, `devices:delete`, `integrations:read`, `integrations:list`, `integrations:users:list`, `integrations:users:write`, `orgs:read`, `orgs:list`, `users:read`, `users:list`, `users:create` (invite people to the org), `zones:read`, `zones:list`, `zones:create`, `zones:update`, `zones:delete`. Group roles are not grantable to API keys; manage groups with an unscoped key.
+	ScopedRoles []string `json:"scoped_roles,omitempty"`
 }
 
 type _CreateApiKeyRequest CreateApiKeyRequest

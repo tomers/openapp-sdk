@@ -64,6 +64,20 @@ func Test_openapi_DevicesAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test DevicesAPIService GetDeviceHold", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.DevicesAPI.GetDeviceHold(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test DevicesAPIService GetDeviceMetadataDefinition", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -111,6 +125,62 @@ func Test_openapi_DevicesAPIService(t *testing.T) {
 		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.DevicesAPI.ListDevices(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test DevicesAPIService PostRefreshDeviceChannelCount", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.DevicesAPI.PostRefreshDeviceChannelCount(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test DevicesAPIService PostVirtualAccessOpen", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.DevicesAPI.PostVirtualAccessOpen(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test DevicesAPIService PutDeviceHold", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.DevicesAPI.PutDeviceHold(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test DevicesAPIService PutDoorRestrictions", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.DevicesAPI.PutDoorRestrictions(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

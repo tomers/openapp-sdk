@@ -19,7 +19,7 @@ import (
 // checks if the LimitSourceOneOf1 type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LimitSourceOneOf1{}
 
-// LimitSourceOneOf1 A row in `tier_quotas`; carries the tier slug.
+// LimitSourceOneOf1 The org's billing tier; carries the tier slug.
 type LimitSourceOneOf1 struct {
 	Kind string `json:"kind"`
 	Slug string `json:"slug"`

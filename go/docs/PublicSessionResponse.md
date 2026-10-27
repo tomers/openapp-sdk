@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 **CallerPeerId** | **string** |  |
 **ExpiresAt** | Pointer to **NullableString** |  | [optional]
 **HasLights** | Pointer to **NullableBool** | Whether the portal has light devices configured. Callee-only. | [optional]
-**Mode** | Pointer to **NullableString** | Call mode: \&quot;voice\&quot; or \&quot;video\&quot;. Video on by default when mode is \&quot;video\&quot;. | [optional]
+**Mode** | Pointer to **NullableString** | Session mode: &#x60;voice&#x60;, &#x60;video&#x60; or &#x60;message&#x60;. Video is on by default when the mode is &#x60;video&#x60;. | [optional]
 **Peerjs** | [**PeerJsConfig**](PeerJsConfig.md) |  |
 **PortalCameraDeviceIds** | Pointer to **[]string** |  | [optional]
 **Role** | [**PublicSessionRole**](PublicSessionRole.md) |  |

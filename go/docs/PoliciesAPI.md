@@ -12,7 +12,6 @@ Method | HTTP request | Description
 [**DeleteIntegrationPolicy**](PoliciesAPI.md#DeleteIntegrationPolicy) | **Delete** /integrations/{id}/policies/{policy_id} |
 [**DeleteOrgPolicy**](PoliciesAPI.md#DeleteOrgPolicy) | **Delete** /orgs/{org_id}/policies/{id} |
 [**DenyPolicyApproval**](PoliciesAPI.md#DenyPolicyApproval) | **Post** /orgs/{org_id}/policy-approvals/{id}/deny |
-[**GetDevicePhysicalStatus**](PoliciesAPI.md#GetDevicePhysicalStatus) | **Get** /integrations/{id}/devices/{device_id}/physical-device |
 [**GetIntegrationEffectivePolicies**](PoliciesAPI.md#GetIntegrationEffectivePolicies) | **Get** /integrations/{id}/effective-policies |
 [**GetOrgEffectivePolicies**](PoliciesAPI.md#GetOrgEffectivePolicies) | **Get** /orgs/{org_id}/effective-policies |
 [**GetOrgTimezone**](PoliciesAPI.md#GetOrgTimezone) | **Get** /orgs/{org_id}/timezone |
@@ -20,7 +19,6 @@ Method | HTTP request | Description
 [**ListIntegrationPolicies**](PoliciesAPI.md#ListIntegrationPolicies) | **Get** /integrations/{id}/policies |
 [**ListOrgPolicies**](PoliciesAPI.md#ListOrgPolicies) | **Get** /orgs/{org_id}/policies |
 [**ListPolicyApprovals**](PoliciesAPI.md#ListPolicyApprovals) | **Get** /orgs/{org_id}/policy-approvals |
-[**ReleaseSteward**](PoliciesAPI.md#ReleaseSteward) | **Post** /integrations/{id}/devices/{device_id}/steward/release |
 [**SetOrgTimezone**](PoliciesAPI.md#SetOrgTimezone) | **Patch** /orgs/{org_id}/timezone |
 [**UpdateDevicePolicy**](PoliciesAPI.md#UpdateDevicePolicy) | **Patch** /integrations/{id}/devices/{device_id}/policies/{policy_id} |
 [**UpdateIntegrationPolicy**](PoliciesAPI.md#UpdateIntegrationPolicy) | **Patch** /integrations/{id}/policies/{policy_id} |
@@ -625,81 +623,6 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## GetDevicePhysicalStatus
-
-> DevicePhysicalStatusResponse GetDevicePhysicalStatus(ctx, id, deviceId).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	deviceId := "deviceId_example" // string |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.PoliciesAPI.GetDevicePhysicalStatus(context.Background(), id, deviceId).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PoliciesAPI.GetDevicePhysicalStatus``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetDevicePhysicalStatus`: DevicePhysicalStatusResponse
-	fmt.Fprintf(os.Stdout, "Response from `PoliciesAPI.GetDevicePhysicalStatus`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-**deviceId** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetDevicePhysicalStatusRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
-
-
-### Return type
-
-[**DevicePhysicalStatusResponse**](DevicePhysicalStatusResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
 ## GetIntegrationEffectivePolicies
 
 > EffectivePoliciesResponse GetIntegrationEffectivePolicies(ctx, id).Execute()
@@ -1196,79 +1119,6 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**[]ApprovalRequestResponse**](ApprovalRequestResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## ReleaseSteward
-
-> ReleaseSteward(ctx, id, deviceId).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	deviceId := "deviceId_example" // string |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	r, err := apiClient.PoliciesAPI.ReleaseSteward(context.Background(), id, deviceId).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `PoliciesAPI.ReleaseSteward``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-**deviceId** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiReleaseStewardRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
-
-
-### Return type
-
- (empty response body)
 
 ### Authorization
 

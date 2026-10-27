@@ -19,8 +19,10 @@ var _ MappedNullable = &PatchMeProfileRequest{}
 
 // PatchMeProfileRequest struct for PatchMeProfileRequest
 type PatchMeProfileRequest struct {
-	Locale         NullableString             `json:"locale,omitempty"`
-	Name           NullableString             `json:"name,omitempty"`
+	// A supported locale code (`en`, `zh_cn`, `es`, `ru`, `pt_br`, `de`, `fr`, `ja`, `ar`, `it`, `he`); any other value is rejected with 422. JSON `null` clears the explicit choice so messages follow the app language; omitting it leaves the locale unchanged.
+	Locale NullableString `json:"locale,omitempty"`
+	// Replaces the whole stored name map. Requires OpenApp as the name source.
+	Name           NullableLocalizedString    `json:"name,omitempty"`
 	ProfileSources NullableProfileSourcePatch `json:"profile_sources,omitempty"`
 }
 
@@ -85,9 +87,9 @@ func (o *PatchMeProfileRequest) UnsetLocale() {
 }
 
 // GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *PatchMeProfileRequest) GetName() string {
+func (o *PatchMeProfileRequest) GetName() LocalizedString {
 	if o == nil || IsNil(o.Name.Get()) {
-		var ret string
+		var ret LocalizedString
 		return ret
 	}
 	return *o.Name.Get()
@@ -96,7 +98,7 @@ func (o *PatchMeProfileRequest) GetName() string {
 // GetNameOk returns a tuple with the Name field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *PatchMeProfileRequest) GetNameOk() (*string, bool) {
+func (o *PatchMeProfileRequest) GetNameOk() (*LocalizedString, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -112,8 +114,8 @@ func (o *PatchMeProfileRequest) HasName() bool {
 	return false
 }
 
-// SetName gets a reference to the given NullableString and assigns it to the Name field.
-func (o *PatchMeProfileRequest) SetName(v string) {
+// SetName gets a reference to the given NullableLocalizedString and assigns it to the Name field.
+func (o *PatchMeProfileRequest) SetName(v LocalizedString) {
 	o.Name.Set(&v)
 }
 

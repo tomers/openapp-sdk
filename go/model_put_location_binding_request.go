@@ -11,6 +11,7 @@ API version: v1
 package openapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -20,9 +21,8 @@ var _ MappedNullable = &PutLocationBindingRequest{}
 
 // PutLocationBindingRequest struct for PutLocationBindingRequest
 type PutLocationBindingRequest struct {
-	LocationId           NullableString      `json:"location_id,omitempty"`
-	Mode                 LocationBindingMode `json:"mode"`
-	AdditionalProperties map[string]interface{}
+	LocationId NullableString      `json:"location_id,omitempty"`
+	Mode       LocationBindingMode `json:"mode"`
 }
 
 type _PutLocationBindingRequest PutLocationBindingRequest
@@ -118,11 +118,6 @@ func (o PutLocationBindingRequest) ToMap() (map[string]interface{}, error) {
 		toSerialize["location_id"] = o.LocationId.Get()
 	}
 	toSerialize["mode"] = o.Mode
-
-	for key, value := range o.AdditionalProperties {
-		toSerialize[key] = value
-	}
-
 	return toSerialize, nil
 }
 
@@ -150,21 +145,15 @@ func (o *PutLocationBindingRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varPutLocationBindingRequest := _PutLocationBindingRequest{}
 
-	err = json.Unmarshal(data, &varPutLocationBindingRequest)
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varPutLocationBindingRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = PutLocationBindingRequest(varPutLocationBindingRequest)
-
-	additionalProperties := make(map[string]interface{})
-
-	if err = json.Unmarshal(data, &additionalProperties); err == nil {
-		delete(additionalProperties, "location_id")
-		delete(additionalProperties, "mode")
-		o.AdditionalProperties = additionalProperties
-	}
 
 	return err
 }

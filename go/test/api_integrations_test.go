@@ -36,6 +36,20 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test IntegrationsAPIService CreateIntegrationAccessInvite", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.CreateIntegrationAccessInvite(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test IntegrationsAPIService CreateIntegrationAccessPortal", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -46,6 +60,20 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService DeleteAccessInvitePhoto", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		httpRes, err := apiClient.IntegrationsAPI.DeleteAccessInvitePhoto(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})
@@ -78,6 +106,21 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test IntegrationsAPIService DismissIntegrationAccessInviteRenewalRequest", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+		var requestId string
+
+		httpRes, err := apiClient.IntegrationsAPI.DismissIntegrationAccessInviteRenewalRequest(context.Background(), id, inviteLinkId, requestId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test IntegrationsAPIService ExecuteIntegrationOp", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -88,6 +131,37 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 		httpRes, err := apiClient.IntegrationsAPI.ExecuteIntegrationOp(context.Background(), id, opId).Execute()
 
 		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService GetAccessInviteMessageMedia", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+		var slot string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.GetAccessInviteMessageMedia(context.Background(), id, inviteLinkId, slot).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService GetAccessInvitePhoto", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.GetAccessInvitePhoto(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})
@@ -161,6 +235,48 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test IntegrationsAPIService GetSiteAccessDevices", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.GetSiteAccessDevices(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService GetSiteAccessZones", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.GetSiteAccessZones(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService GetTasmotaProvisioning", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.GetTasmotaProvisioning(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test IntegrationsAPIService HardDeleteIntegration", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -175,6 +291,80 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test IntegrationsAPIService ListAccessInviteContactNotifications", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+		var contactId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListAccessInviteContactNotifications(context.Background(), id, inviteLinkId, contactId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService ListDeletedIntegrationAccessPortals", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListDeletedIntegrationAccessPortals(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService ListIntegrationAccessInviteRenewalRequests", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrationAccessInviteRenewalRequests(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService ListIntegrationAccessInviteUsage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrationAccessInviteUsage(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService ListIntegrationAccessInvites", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrationAccessInvites(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test IntegrationsAPIService ListIntegrationAccessPortals", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -182,6 +372,21 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrationAccessPortals(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService ListIntegrationDoorUsage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var deviceId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrationDoorUsage(context.Background(), id, deviceId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -228,11 +433,184 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test IntegrationsAPIService ListIntegrationUsers", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrationUsers(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test IntegrationsAPIService ListIntegrations", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.IntegrationsAPI.ListIntegrations(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService NotifyAccessInviteContact", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+		var contactId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.NotifyAccessInviteContact(context.Background(), id, inviteLinkId, contactId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService NotifyAccessInviteContacts", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.NotifyAccessInviteContacts(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PostAccessInviteMessageMedia", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.PostAccessInviteMessageMedia(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PostAccessInvitePhoto", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.PostAccessInvitePhoto(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PostIntegrationZoneSync", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.PostIntegrationZoneSync(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PostRefreshIntegrationDeviceChannelCounts", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.PostRefreshIntegrationDeviceChannelCounts(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PostTasmotaProvisionLan", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.IntegrationsAPI.PostTasmotaProvisionLan(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PostTasmotaRotateCredentials", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.PostTasmotaRotateCredentials(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService PreviewIntegrationAccessInvite", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.PreviewIntegrationAccessInvite(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService ReconcileIntegrationAccessInvite", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.ReconcileIntegrationAccessInvite(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService RegenerateIntegrationAccessInviteToken", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.RegenerateIntegrationAccessInviteToken(context.Background(), id, inviteLinkId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -262,6 +640,36 @@ func Test_openapi_IntegrationsAPIService(t *testing.T) {
 		var inviteLinkId string
 
 		resp, httpRes, err := apiClient.IntegrationsAPI.RestoreIntegrationAccessInvite(context.Background(), id, inviteLinkId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService RestoreIntegrationAccessPortal", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var portalId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.RestoreIntegrationAccessPortal(context.Background(), id, portalId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test IntegrationsAPIService RevokeIntegrationAccessInvite", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteLinkId string
+
+		resp, httpRes, err := apiClient.IntegrationsAPI.RevokeIntegrationAccessInvite(context.Background(), id, inviteLinkId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

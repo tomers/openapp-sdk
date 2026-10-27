@@ -21,6 +21,8 @@ var _ MappedNullable = &RedeemInvitationResponse{}
 
 // RedeemInvitationResponse struct for RedeemInvitationResponse
 type RedeemInvitationResponse struct {
+	// False when `merge` was created and the invitation is still pending. Omitted when the invitation was accepted, so older clients treat a missing field as accepted.
+	Accepted     *bool                 `json:"accepted,omitempty"`
 	DefaultRoles []string              `json:"default_roles"`
 	Merge        NullableMergeOfferDto `json:"merge,omitempty"`
 	OrgId        string                `json:"org_id"`
@@ -47,6 +49,38 @@ func NewRedeemInvitationResponse(defaultRoles []string, orgId string, userId str
 func NewRedeemInvitationResponseWithDefaults() *RedeemInvitationResponse {
 	this := RedeemInvitationResponse{}
 	return &this
+}
+
+// GetAccepted returns the Accepted field value if set, zero value otherwise.
+func (o *RedeemInvitationResponse) GetAccepted() bool {
+	if o == nil || IsNil(o.Accepted) {
+		var ret bool
+		return ret
+	}
+	return *o.Accepted
+}
+
+// GetAcceptedOk returns a tuple with the Accepted field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *RedeemInvitationResponse) GetAcceptedOk() (*bool, bool) {
+	if o == nil || IsNil(o.Accepted) {
+		return nil, false
+	}
+	return o.Accepted, true
+}
+
+// HasAccepted returns a boolean if a field has been set.
+func (o *RedeemInvitationResponse) HasAccepted() bool {
+	if o != nil && !IsNil(o.Accepted) {
+		return true
+	}
+
+	return false
+}
+
+// SetAccepted gets a reference to the given bool and assigns it to the Accepted field.
+func (o *RedeemInvitationResponse) SetAccepted(v bool) {
+	o.Accepted = &v
 }
 
 // GetDefaultRoles returns the DefaultRoles field value
@@ -166,6 +200,9 @@ func (o *RedeemInvitationResponse) SetUserId(v string) {
 
 func (o RedeemInvitationResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.Accepted) {
+		toSerialize["accepted"] = o.Accepted
+	}
 	toSerialize["default_roles"] = o.DefaultRoles
 	if o.Merge.IsSet() {
 		toSerialize["merge"] = o.Merge.Get()

@@ -102,12 +102,12 @@ class _RustClient(BridgeClient):
 
     async def zones_get_by_name(
         self,
-        integration_id: str,
+        org_id: str,
         name: str,
         *,
         match: str = "exact",
     ) -> Any:
-        return await self._resolve_call(self._inner.zones_get_by_name(integration_id, name, match))
+        return await self._resolve_call(self._inner.zones_get_by_name(org_id, name, match))
 
     async def orgs_get_by_name(self, name: str, *, match: str = "exact") -> Any:
         return await self._resolve_call(self._inner.orgs_get_by_name(name, match))

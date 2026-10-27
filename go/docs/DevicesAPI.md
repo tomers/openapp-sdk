@@ -9,13 +9,13 @@ Method | HTTP request | Description
 [**GetDevice**](DevicesAPI.md#GetDevice) | **Get** /devices/{id} | Get a device by ID.
 [**GetDeviceHold**](DevicesAPI.md#GetDeviceHold) | **Get** /devices/{id}/hold |
 [**GetDeviceMetadataDefinition**](DevicesAPI.md#GetDeviceMetadataDefinition) | **Get** /devices/{id}/metadata-definition | Get provider-specific JSON schema for &#x60;device_metadata&#x60;, for a given device.
-[**GetDoorRestrictions**](DevicesAPI.md#GetDoorRestrictions) | **Get** /devices/{id}/door-restrictions | GET /devices/{id}/door-restrictions — list listing entity IDs allowed to open this door. Empty &#x3D; no restrictions (all building members can open). Only for virtual_access_portal devices.
+[**GetDoorRestrictions**](DevicesAPI.md#GetDoorRestrictions) | **Get** /devices/{id}/door-restrictions | List the directory listings allowed to open this door.
 [**HardDeleteDevice**](DevicesAPI.md#HardDeleteDevice) | **Delete** /devices/{id}/purge | Permanently delete (purge) a device.
 [**ListDevices**](DevicesAPI.md#ListDevices) | **Get** /devices | List devices for the organization context (X-Org).
 [**PostRefreshDeviceChannelCount**](DevicesAPI.md#PostRefreshDeviceChannelCount) | **Post** /devices/{id}/channel-count/refresh | Refresh the provider-reported channel count for one linked device.
-[**PostVirtualAccessOpen**](DevicesAPI.md#PostVirtualAccessOpen) | **Post** /devices/{id}/virtual-access/open | POST /devices/{id}/virtual-access/open — open all configured openers on a portal device.
+[**PostVirtualAccessOpen**](DevicesAPI.md#PostVirtualAccessOpen) | **Post** /devices/{id}/virtual-access/open | Open all configured openers on a portal device.
 [**PutDeviceHold**](DevicesAPI.md#PutDeviceHold) | **Put** /devices/{id}/hold |
-[**PutDoorRestrictions**](DevicesAPI.md#PutDoorRestrictions) | **Put** /devices/{id}/door-restrictions | PUT /devices/{id}/door-restrictions — set which listings can open this door. Empty array &#x3D; no restrictions (all building residents). Only for virtual_access_portal devices.
+[**PutDoorRestrictions**](DevicesAPI.md#PutDoorRestrictions) | **Put** /devices/{id}/door-restrictions | Set which directory listings can open this door.
 [**RestoreDevice**](DevicesAPI.md#RestoreDevice) | **Post** /devices/{id}/restore | Restore a soft-deleted device.
 [**UpdateDevice**](DevicesAPI.md#UpdateDevice) | **Put** /devices/{id} | Update a device.
 
@@ -401,7 +401,9 @@ Name | Type | Description  | Notes
 
 > DoorRestrictionsResponse GetDoorRestrictions(ctx, id).Execute()
 
-GET /devices/{id}/door-restrictions — list listing entity IDs allowed to open this door. Empty = no restrictions (all building members can open). Only for virtual_access_portal devices.
+List the directory listings allowed to open this door.
+
+
 
 ### Example
 
@@ -549,7 +551,7 @@ Name | Type | Description  | Notes
 
 ## ListDevices
 
-> []DeviceResponse ListDevices(ctx).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).IntegrationId(integrationId).DeviceKind(deviceKind).ExternalId(externalId).Q(q).Sort(sort).Locale(locale).HasExternalId(hasExternalId).HasGo2rtcChannel(hasGo2rtcChannel).IncludeStale(includeStale).Execute()
+> []DeviceResponse ListDevices(ctx).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).IntegrationId(integrationId).ZoneId(zoneId).DeviceKind(deviceKind).ExternalId(externalId).Q(q).Sort(sort).Locale(locale).HasExternalId(hasExternalId).HasGo2rtcChannel(hasGo2rtcChannel).IncludeStale(includeStale).OrgScope(orgScope).Execute()
 
 List devices for the organization context (X-Org).
 
@@ -570,14 +572,16 @@ func main() {
 	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
 	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
 	integrationId := "integrationId_example" // string | Optional filter: only devices belonging to this integration. (optional)
-	deviceKind := "deviceKind_example" // string | Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id. Filtering done at SQL level. (optional)
-	externalId := "externalId_example" // string | Optional filter: only devices with this external_id. Requires integration_id and device_kind. Returns at most 1 device. Filtering done at SQL level. (optional)
-	q := "q_example" // string | Case-insensitive substring match on localized device name (JSON). Best-effort when `integration_id` is set (SQL ILIKE). (optional)
+	zoneId := "zoneId_example" // string | Optional filter: only devices placed directly in this zone. A malformed id is 400. Combines with `q`; cannot be combined with `integration_id`. (optional)
+	deviceKind := "deviceKind_example" // string | Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id. (optional)
+	externalId := "externalId_example" // string | Optional filter: only devices with this external_id. Requires integration_id and device_kind. Returns at most 1 device. (optional)
+	q := "q_example" // string | Case-insensitive substring match on the device name in any locale. Best-effort when `integration_id` is set. (optional)
 	sort := "sort_example" // string | Server-side ordering for org-wide lists: `name:asc`, `name:desc`, `created_at:asc`, `created_at:desc`. Ignored when `integration_id` is set. Defaults to insertion order when omitted. (optional)
 	locale := "locale_example" // string | Locale used to resolve the localized `name` when sorting by name (e.g. `en`). Defaults to `en`. (optional)
 	hasExternalId := true // bool | When true, only devices with a non-empty `external_id`. Requires `integration_id`. (optional)
 	hasGo2rtcChannel := true // bool | When true, only devices whose metadata JSON has a non-empty `channel` (go2rtc cameras). Requires `integration_id`. (optional)
 	includeStale := true // bool | When true with `integration_id`, include `stale` per device when the provider supports it. (optional)
+	orgScope := "orgScope_example" // string | `self` (default): org subtree of X-Org. `self_and_ancestors`: exact X-Org plus ancestor orgs where the caller has `devices:list` (door-wiring camera pickers). Cannot combine with `zone_id` or `integration_id`. (optional)
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -585,7 +589,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.DevicesAPI.ListDevices(context.Background()).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).IntegrationId(integrationId).DeviceKind(deviceKind).ExternalId(externalId).Q(q).Sort(sort).Locale(locale).HasExternalId(hasExternalId).HasGo2rtcChannel(hasGo2rtcChannel).IncludeStale(includeStale).Execute()
+	resp, r, err := apiClient.DevicesAPI.ListDevices(context.Background()).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).IntegrationId(integrationId).ZoneId(zoneId).DeviceKind(deviceKind).ExternalId(externalId).Q(q).Sort(sort).Locale(locale).HasExternalId(hasExternalId).HasGo2rtcChannel(hasGo2rtcChannel).IncludeStale(includeStale).OrgScope(orgScope).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `DevicesAPI.ListDevices``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -610,14 +614,16 @@ Name | Type | Description  | Notes
  **outputOptions** | [**MultiResourceOutputOptionsQuery**](MultiResourceOutputOptionsQuery.md) |  |
  **pagination** | [**PaginationQuery**](PaginationQuery.md) |  |
  **integrationId** | **string** | Optional filter: only devices belonging to this integration. |
- **deviceKind** | **string** | Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id. Filtering done at SQL level. |
- **externalId** | **string** | Optional filter: only devices with this external_id. Requires integration_id and device_kind. Returns at most 1 device. Filtering done at SQL level. |
- **q** | **string** | Case-insensitive substring match on localized device name (JSON). Best-effort when &#x60;integration_id&#x60; is set (SQL ILIKE). |
+ **zoneId** | **string** | Optional filter: only devices placed directly in this zone. A malformed id is 400. Combines with &#x60;q&#x60;; cannot be combined with &#x60;integration_id&#x60;. |
+ **deviceKind** | **string** | Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id. |
+ **externalId** | **string** | Optional filter: only devices with this external_id. Requires integration_id and device_kind. Returns at most 1 device. |
+ **q** | **string** | Case-insensitive substring match on the device name in any locale. Best-effort when &#x60;integration_id&#x60; is set. |
  **sort** | **string** | Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;integration_id&#x60; is set. Defaults to insertion order when omitted. |
  **locale** | **string** | Locale used to resolve the localized &#x60;name&#x60; when sorting by name (e.g. &#x60;en&#x60;). Defaults to &#x60;en&#x60;. |
  **hasExternalId** | **bool** | When true, only devices with a non-empty &#x60;external_id&#x60;. Requires &#x60;integration_id&#x60;. |
  **hasGo2rtcChannel** | **bool** | When true, only devices whose metadata JSON has a non-empty &#x60;channel&#x60; (go2rtc cameras). Requires &#x60;integration_id&#x60;. |
  **includeStale** | **bool** | When true with &#x60;integration_id&#x60;, include &#x60;stale&#x60; per device when the provider supports it. |
+ **orgScope** | **string** | &#x60;self&#x60; (default): org subtree of X-Org. &#x60;self_and_ancestors&#x60;: exact X-Org plus ancestor orgs where the caller has &#x60;devices:list&#x60; (door-wiring camera pickers). Cannot combine with &#x60;zone_id&#x60; or &#x60;integration_id&#x60;. |
 
 ### Return type
 
@@ -715,7 +721,7 @@ Name | Type | Description  | Notes
 
 > VirtualAccessOpenResponse PostVirtualAccessOpen(ctx, id).Execute()
 
-POST /devices/{id}/virtual-access/open — open all configured openers on a portal device.
+Open all configured openers on a portal device.
 
 ### Example
 
@@ -861,7 +867,9 @@ Name | Type | Description  | Notes
 
 > DoorRestrictionsResponse PutDoorRestrictions(ctx, id).SetDoorRestrictionsPayload(setDoorRestrictionsPayload).Execute()
 
-PUT /devices/{id}/door-restrictions — set which listings can open this door. Empty array = no restrictions (all building residents). Only for virtual_access_portal devices.
+Set which directory listings can open this door.
+
+
 
 ### Example
 

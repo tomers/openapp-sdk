@@ -5,16 +5,20 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Channel** | **string** |  |
+**DefaultRoles** | **[]string** | Org roles granted on accept. Reflects the invitation as it is now, not as it was when a message was sent. |
 **ExpiresAt** | **string** |  |
+**InvitedByName** | Pointer to **interface{}** |  | [optional]
 **OrgId** | **string** |  |
+**OrgName** | Pointer to **interface{}** |  | [optional]
+**SiteAccess** | Pointer to [**NullableInvitationPreviewSiteAccess**](InvitationPreviewSiteAccess.md) | Site (and listing) access granted on accept; absent when the invitation grants none. | [optional]
 **Status** | **string** |  |
-**TargetMasked** | **string** | Masked destination so the redeem page can confirm \&quot;we&#39;ll send the code to +9725…78\&quot;. |
+**TargetMasked** | **string** | Masked destination the code is sent to (for example &#x60;+9725…78&#x60;). |
 
 ## Methods
 
 ### NewInvitationPreviewResponse
 
-`func NewInvitationPreviewResponse(channel string, expiresAt string, orgId string, status string, targetMasked string, ) *InvitationPreviewResponse`
+`func NewInvitationPreviewResponse(channel string, defaultRoles []string, expiresAt string, orgId string, status string, targetMasked string, ) *InvitationPreviewResponse`
 
 NewInvitationPreviewResponse instantiates a new InvitationPreviewResponse object
 This constructor will assign default values to properties that have it defined,
@@ -49,6 +53,26 @@ and a boolean to check if the value has been set.
 SetChannel sets Channel field to given value.
 
 
+### GetDefaultRoles
+
+`func (o *InvitationPreviewResponse) GetDefaultRoles() []string`
+
+GetDefaultRoles returns the DefaultRoles field if non-nil, zero value otherwise.
+
+### GetDefaultRolesOk
+
+`func (o *InvitationPreviewResponse) GetDefaultRolesOk() (*[]string, bool)`
+
+GetDefaultRolesOk returns a tuple with the DefaultRoles field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDefaultRoles
+
+`func (o *InvitationPreviewResponse) SetDefaultRoles(v []string)`
+
+SetDefaultRoles sets DefaultRoles field to given value.
+
+
 ### GetExpiresAt
 
 `func (o *InvitationPreviewResponse) GetExpiresAt() string`
@@ -69,6 +93,41 @@ and a boolean to check if the value has been set.
 SetExpiresAt sets ExpiresAt field to given value.
 
 
+### GetInvitedByName
+
+`func (o *InvitationPreviewResponse) GetInvitedByName() interface{}`
+
+GetInvitedByName returns the InvitedByName field if non-nil, zero value otherwise.
+
+### GetInvitedByNameOk
+
+`func (o *InvitationPreviewResponse) GetInvitedByNameOk() (*interface{}, bool)`
+
+GetInvitedByNameOk returns a tuple with the InvitedByName field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetInvitedByName
+
+`func (o *InvitationPreviewResponse) SetInvitedByName(v interface{})`
+
+SetInvitedByName sets InvitedByName field to given value.
+
+### HasInvitedByName
+
+`func (o *InvitationPreviewResponse) HasInvitedByName() bool`
+
+HasInvitedByName returns a boolean if a field has been set.
+
+### SetInvitedByNameNil
+
+`func (o *InvitationPreviewResponse) SetInvitedByNameNil(b bool)`
+
+ SetInvitedByNameNil sets the value for InvitedByName to be an explicit nil
+
+### UnsetInvitedByName
+`func (o *InvitationPreviewResponse) UnsetInvitedByName()`
+
+UnsetInvitedByName ensures that no value is present for InvitedByName, not even an explicit nil
 ### GetOrgId
 
 `func (o *InvitationPreviewResponse) GetOrgId() string`
@@ -89,6 +148,76 @@ and a boolean to check if the value has been set.
 SetOrgId sets OrgId field to given value.
 
 
+### GetOrgName
+
+`func (o *InvitationPreviewResponse) GetOrgName() interface{}`
+
+GetOrgName returns the OrgName field if non-nil, zero value otherwise.
+
+### GetOrgNameOk
+
+`func (o *InvitationPreviewResponse) GetOrgNameOk() (*interface{}, bool)`
+
+GetOrgNameOk returns a tuple with the OrgName field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOrgName
+
+`func (o *InvitationPreviewResponse) SetOrgName(v interface{})`
+
+SetOrgName sets OrgName field to given value.
+
+### HasOrgName
+
+`func (o *InvitationPreviewResponse) HasOrgName() bool`
+
+HasOrgName returns a boolean if a field has been set.
+
+### SetOrgNameNil
+
+`func (o *InvitationPreviewResponse) SetOrgNameNil(b bool)`
+
+ SetOrgNameNil sets the value for OrgName to be an explicit nil
+
+### UnsetOrgName
+`func (o *InvitationPreviewResponse) UnsetOrgName()`
+
+UnsetOrgName ensures that no value is present for OrgName, not even an explicit nil
+### GetSiteAccess
+
+`func (o *InvitationPreviewResponse) GetSiteAccess() InvitationPreviewSiteAccess`
+
+GetSiteAccess returns the SiteAccess field if non-nil, zero value otherwise.
+
+### GetSiteAccessOk
+
+`func (o *InvitationPreviewResponse) GetSiteAccessOk() (*InvitationPreviewSiteAccess, bool)`
+
+GetSiteAccessOk returns a tuple with the SiteAccess field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSiteAccess
+
+`func (o *InvitationPreviewResponse) SetSiteAccess(v InvitationPreviewSiteAccess)`
+
+SetSiteAccess sets SiteAccess field to given value.
+
+### HasSiteAccess
+
+`func (o *InvitationPreviewResponse) HasSiteAccess() bool`
+
+HasSiteAccess returns a boolean if a field has been set.
+
+### SetSiteAccessNil
+
+`func (o *InvitationPreviewResponse) SetSiteAccessNil(b bool)`
+
+ SetSiteAccessNil sets the value for SiteAccess to be an explicit nil
+
+### UnsetSiteAccess
+`func (o *InvitationPreviewResponse) UnsetSiteAccess()`
+
+UnsetSiteAccess ensures that no value is present for SiteAccess, not even an explicit nil
 ### GetStatus
 
 `func (o *InvitationPreviewResponse) GetStatus() string`

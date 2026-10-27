@@ -20,22 +20,20 @@ import (
 // checks if the Zone type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &Zone{}
 
-// Zone A logical or physical space (recursive for hierarchy).  Example: Floor 1 > Living Room > TV Nook
+// Zone A physical space owned by an org (recursive for hierarchy).  Example: Floor 1 > Living Room > TV Nook. Placement of devices and entities is never constrained by vendor: any device or entity of the same org may be placed in any zone.
 type Zone struct {
 	CreatedAt    *time.Time `json:"created_at,omitempty"`
 	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
 	HardDeleteAt *time.Time `json:"hard_delete_at,omitempty"`
 	PurgeAt      *time.Time `json:"purge_at,omitempty"`
 	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
-	// External ID from the integration.
-	ExternalId NullableString `json:"external_id,omitempty"`
 	// Unique identifier (ULID).
 	Id string `json:"id"`
-	// Integration this zone belongs to.
-	IntegrationId string `json:"integration_id"`
 	// Zone name.
 	Name LocalizedString `json:"name"`
-	// Parent zone for hierarchy.
+	// Organization that owns this zone.
+	OrgId string `json:"org_id"`
+	// Parent zone (same org) for hierarchy.
 	ParentZoneId NullableString `json:"parent_zone_id,omitempty"`
 }
 
@@ -45,11 +43,11 @@ type _Zone Zone
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewZone(id string, integrationId string, name LocalizedString) *Zone {
+func NewZone(id string, name LocalizedString, orgId string) *Zone {
 	this := Zone{}
 	this.Id = id
-	this.IntegrationId = integrationId
 	this.Name = name
+	this.OrgId = orgId
 	return &this
 }
 
@@ -221,49 +219,6 @@ func (o *Zone) SetUpdatedAt(v time.Time) {
 	o.UpdatedAt = &v
 }
 
-// GetExternalId returns the ExternalId field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *Zone) GetExternalId() string {
-	if o == nil || IsNil(o.ExternalId.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.ExternalId.Get()
-}
-
-// GetExternalIdOk returns a tuple with the ExternalId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *Zone) GetExternalIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.ExternalId.Get(), o.ExternalId.IsSet()
-}
-
-// HasExternalId returns a boolean if a field has been set.
-func (o *Zone) HasExternalId() bool {
-	if o != nil && o.ExternalId.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetExternalId gets a reference to the given NullableString and assigns it to the ExternalId field.
-func (o *Zone) SetExternalId(v string) {
-	o.ExternalId.Set(&v)
-}
-
-// SetExternalIdNil sets the value for ExternalId to be an explicit nil
-func (o *Zone) SetExternalIdNil() {
-	o.ExternalId.Set(nil)
-}
-
-// UnsetExternalId ensures that no value is present for ExternalId, not even an explicit nil
-func (o *Zone) UnsetExternalId() {
-	o.ExternalId.Unset()
-}
-
 // GetId returns the Id field value
 func (o *Zone) GetId() string {
 	if o == nil {
@@ -288,30 +243,6 @@ func (o *Zone) SetId(v string) {
 	o.Id = v
 }
 
-// GetIntegrationId returns the IntegrationId field value
-func (o *Zone) GetIntegrationId() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.IntegrationId
-}
-
-// GetIntegrationIdOk returns a tuple with the IntegrationId field value
-// and a boolean to check if the value has been set.
-func (o *Zone) GetIntegrationIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IntegrationId, true
-}
-
-// SetIntegrationId sets field value
-func (o *Zone) SetIntegrationId(v string) {
-	o.IntegrationId = v
-}
-
 // GetName returns the Name field value
 func (o *Zone) GetName() LocalizedString {
 	if o == nil {
@@ -334,6 +265,30 @@ func (o *Zone) GetNameOk() (*LocalizedString, bool) {
 // SetName sets field value
 func (o *Zone) SetName(v LocalizedString) {
 	o.Name = v
+}
+
+// GetOrgId returns the OrgId field value
+func (o *Zone) GetOrgId() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.OrgId
+}
+
+// GetOrgIdOk returns a tuple with the OrgId field value
+// and a boolean to check if the value has been set.
+func (o *Zone) GetOrgIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.OrgId, true
+}
+
+// SetOrgId sets field value
+func (o *Zone) SetOrgId(v string) {
+	o.OrgId = v
 }
 
 // GetParentZoneId returns the ParentZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -396,12 +351,9 @@ func (o Zone) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UpdatedAt) {
 		toSerialize["updated_at"] = o.UpdatedAt
 	}
-	if o.ExternalId.IsSet() {
-		toSerialize["external_id"] = o.ExternalId.Get()
-	}
 	toSerialize["id"] = o.Id
-	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["name"] = o.Name
+	toSerialize["org_id"] = o.OrgId
 	if o.ParentZoneId.IsSet() {
 		toSerialize["parent_zone_id"] = o.ParentZoneId.Get()
 	}
@@ -414,8 +366,8 @@ func (o *Zone) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"id",
-		"integration_id",
 		"name",
+		"org_id",
 	}
 
 	allProperties := make(map[string]interface{})

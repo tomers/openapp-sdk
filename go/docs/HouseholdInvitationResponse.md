@@ -10,7 +10,10 @@ Name | Type | Description | Notes
 **GroupId** | **string** |  |
 **Id** | **string** |  |
 **InvitedByUserId** | **string** |  |
+**InviteeName** | Pointer to **NullableString** | Name you gave for the invitee. Omitted when none was given, and once the invitation is accepted or cancelled. | [optional]
 **LastSentAt** | Pointer to **NullableString** |  | [optional]
+**Locale** | Pointer to **NullableString** | Message language the sender chose, or &#x60;null&#x60; when none was chosen. | [optional]
+**PhoneTransport** | Pointer to **NullableString** |  | [optional]
 **RecipientEmail** | Pointer to **NullableString** |  | [optional]
 **RecipientPhone** | Pointer to **NullableString** |  | [optional]
 **RespondedAt** | Pointer to **NullableString** |  | [optional]
@@ -156,6 +159,41 @@ and a boolean to check if the value has been set.
 SetInvitedByUserId sets InvitedByUserId field to given value.
 
 
+### GetInviteeName
+
+`func (o *HouseholdInvitationResponse) GetInviteeName() string`
+
+GetInviteeName returns the InviteeName field if non-nil, zero value otherwise.
+
+### GetInviteeNameOk
+
+`func (o *HouseholdInvitationResponse) GetInviteeNameOk() (*string, bool)`
+
+GetInviteeNameOk returns a tuple with the InviteeName field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetInviteeName
+
+`func (o *HouseholdInvitationResponse) SetInviteeName(v string)`
+
+SetInviteeName sets InviteeName field to given value.
+
+### HasInviteeName
+
+`func (o *HouseholdInvitationResponse) HasInviteeName() bool`
+
+HasInviteeName returns a boolean if a field has been set.
+
+### SetInviteeNameNil
+
+`func (o *HouseholdInvitationResponse) SetInviteeNameNil(b bool)`
+
+ SetInviteeNameNil sets the value for InviteeName to be an explicit nil
+
+### UnsetInviteeName
+`func (o *HouseholdInvitationResponse) UnsetInviteeName()`
+
+UnsetInviteeName ensures that no value is present for InviteeName, not even an explicit nil
 ### GetLastSentAt
 
 `func (o *HouseholdInvitationResponse) GetLastSentAt() string`
@@ -191,6 +229,76 @@ HasLastSentAt returns a boolean if a field has been set.
 `func (o *HouseholdInvitationResponse) UnsetLastSentAt()`
 
 UnsetLastSentAt ensures that no value is present for LastSentAt, not even an explicit nil
+### GetLocale
+
+`func (o *HouseholdInvitationResponse) GetLocale() string`
+
+GetLocale returns the Locale field if non-nil, zero value otherwise.
+
+### GetLocaleOk
+
+`func (o *HouseholdInvitationResponse) GetLocaleOk() (*string, bool)`
+
+GetLocaleOk returns a tuple with the Locale field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetLocale
+
+`func (o *HouseholdInvitationResponse) SetLocale(v string)`
+
+SetLocale sets Locale field to given value.
+
+### HasLocale
+
+`func (o *HouseholdInvitationResponse) HasLocale() bool`
+
+HasLocale returns a boolean if a field has been set.
+
+### SetLocaleNil
+
+`func (o *HouseholdInvitationResponse) SetLocaleNil(b bool)`
+
+ SetLocaleNil sets the value for Locale to be an explicit nil
+
+### UnsetLocale
+`func (o *HouseholdInvitationResponse) UnsetLocale()`
+
+UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+### GetPhoneTransport
+
+`func (o *HouseholdInvitationResponse) GetPhoneTransport() string`
+
+GetPhoneTransport returns the PhoneTransport field if non-nil, zero value otherwise.
+
+### GetPhoneTransportOk
+
+`func (o *HouseholdInvitationResponse) GetPhoneTransportOk() (*string, bool)`
+
+GetPhoneTransportOk returns a tuple with the PhoneTransport field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPhoneTransport
+
+`func (o *HouseholdInvitationResponse) SetPhoneTransport(v string)`
+
+SetPhoneTransport sets PhoneTransport field to given value.
+
+### HasPhoneTransport
+
+`func (o *HouseholdInvitationResponse) HasPhoneTransport() bool`
+
+HasPhoneTransport returns a boolean if a field has been set.
+
+### SetPhoneTransportNil
+
+`func (o *HouseholdInvitationResponse) SetPhoneTransportNil(b bool)`
+
+ SetPhoneTransportNil sets the value for PhoneTransport to be an explicit nil
+
+### UnsetPhoneTransport
+`func (o *HouseholdInvitationResponse) UnsetPhoneTransport()`
+
+UnsetPhoneTransport ensures that no value is present for PhoneTransport, not even an explicit nil
 ### GetRecipientEmail
 
 `func (o *HouseholdInvitationResponse) GetRecipientEmail() string`

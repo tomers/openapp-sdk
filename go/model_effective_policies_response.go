@@ -24,25 +24,27 @@ type EffectivePoliciesResponse struct {
 	AllowedCreatorRoles []string `json:"allowed_creator_roles,omitempty"`
 	AllowedEntryKinds   []string `json:"allowed_entry_kinds,omitempty"`
 	// Present on integration effective-policies when listing-restrict binds this requester.
-	AllowedPortalIds          []string               `json:"allowed_portal_ids,omitempty"`
-	AllowedWeekdays           []int32                `json:"allowed_weekdays,omitempty"`
-	BlackoutDates             []string               `json:"blackout_dates,omitempty"`
-	CurfewWindows             []CurfewWindowResponse `json:"curfew_windows"`
-	MaxActivePerUser          NullableInt32          `json:"max_active_per_user,omitempty"`
-	MaxDoors                  NullableInt32          `json:"max_doors,omitempty"`
-	MaxDurationSeconds        NullableInt64          `json:"max_duration_seconds,omitempty"`
-	MaxUses                   NullableInt32          `json:"max_uses,omitempty"`
-	NoReshare                 *bool                  `json:"no_reshare,omitempty"`
-	NoTransitiveDelegation    *bool                  `json:"no_transitive_delegation,omitempty"`
-	ProhibitedMasterDoorIds   []string               `json:"prohibited_master_door_ids,omitempty"`
-	RequireExpiry             *bool                  `json:"require_expiry,omitempty"`
-	RequireJustification      *bool                  `json:"require_justification,omitempty"`
-	RequirePhoto              *bool                  `json:"require_photo,omitempty"`
-	RequirePin                *bool                  `json:"require_pin,omitempty"`
-	RequireVerifiedPhone      *bool                  `json:"require_verified_phone,omitempty"`
-	RestrictToOwnListingDoors *bool                  `json:"restrict_to_own_listing_doors,omitempty"`
-	ShareAllowUnlimited       *bool                  `json:"share_allow_unlimited,omitempty"`
-	ShareDefaultMaxUses       NullableInt32          `json:"share_default_max_uses,omitempty"`
+	AllowedPortalIds []string               `json:"allowed_portal_ids,omitempty"`
+	AllowedWeekdays  []int32                `json:"allowed_weekdays,omitempty"`
+	BlackoutDates    []string               `json:"blackout_dates,omitempty"`
+	CurfewWindows    []CurfewWindowResponse `json:"curfew_windows"`
+	// Device-tier rules on the integration's hardware. They bind only actions that fire that device (and output, when set), so they are not reflected in the integration-wide values above. Empty on the org preview without `integration_id`.
+	DeviceRules               []DeviceRuleResponse `json:"device_rules"`
+	MaxActivePerUser          NullableInt32        `json:"max_active_per_user,omitempty"`
+	MaxDoors                  NullableInt32        `json:"max_doors,omitempty"`
+	MaxDurationSeconds        NullableInt64        `json:"max_duration_seconds,omitempty"`
+	MaxUses                   NullableInt32        `json:"max_uses,omitempty"`
+	NoReshare                 *bool                `json:"no_reshare,omitempty"`
+	NoTransitiveDelegation    *bool                `json:"no_transitive_delegation,omitempty"`
+	ProhibitedMasterDoorIds   []string             `json:"prohibited_master_door_ids,omitempty"`
+	RequireExpiry             *bool                `json:"require_expiry,omitempty"`
+	RequireJustification      *bool                `json:"require_justification,omitempty"`
+	RequirePhoto              *bool                `json:"require_photo,omitempty"`
+	RequirePin                *bool                `json:"require_pin,omitempty"`
+	RequireVerifiedPhone      *bool                `json:"require_verified_phone,omitempty"`
+	RestrictToOwnListingDoors *bool                `json:"restrict_to_own_listing_doors,omitempty"`
+	ShareAllowUnlimited       *bool                `json:"share_allow_unlimited,omitempty"`
+	ShareDefaultMaxUses       NullableInt32        `json:"share_default_max_uses,omitempty"`
 	// Share-specific TTL cap in seconds. `86400` (1 day) when `share_max_duration` is unset. Org policy may raise this up to `31536000` (365d). Authoring uses the min of this and `max_duration_seconds`.
 	ShareMaxDurationSeconds NullableInt64 `json:"share_max_duration_seconds,omitempty"`
 	ShareMaxUses            NullableInt32 `json:"share_max_uses,omitempty"`
@@ -50,6 +52,8 @@ type EffectivePoliciesResponse struct {
 	Timezone string `json:"timezone"`
 	// Effective `user_sharing` mode: `none` | `admin_only` | `approval_required` | `all`.
 	UserSharingMode string `json:"user_sharing_mode"`
+	// Organization and integration rules scoped to a zone (`config.zone_id`). They bind only doors whose effective zone is that zone or below it, so they are not reflected in the integration-wide values above.
+	ZoneRules []ZoneRuleResponse `json:"zone_rules"`
 }
 
 type _EffectivePoliciesResponse EffectivePoliciesResponse
@@ -58,11 +62,13 @@ type _EffectivePoliciesResponse EffectivePoliciesResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEffectivePoliciesResponse(curfewWindows []CurfewWindowResponse, timezone string, userSharingMode string) *EffectivePoliciesResponse {
+func NewEffectivePoliciesResponse(curfewWindows []CurfewWindowResponse, deviceRules []DeviceRuleResponse, timezone string, userSharingMode string, zoneRules []ZoneRuleResponse) *EffectivePoliciesResponse {
 	this := EffectivePoliciesResponse{}
 	this.CurfewWindows = curfewWindows
+	this.DeviceRules = deviceRules
 	this.Timezone = timezone
 	this.UserSharingMode = userSharingMode
+	this.ZoneRules = zoneRules
 	return &this
 }
 
@@ -261,6 +267,30 @@ func (o *EffectivePoliciesResponse) GetCurfewWindowsOk() ([]CurfewWindowResponse
 // SetCurfewWindows sets field value
 func (o *EffectivePoliciesResponse) SetCurfewWindows(v []CurfewWindowResponse) {
 	o.CurfewWindows = v
+}
+
+// GetDeviceRules returns the DeviceRules field value
+func (o *EffectivePoliciesResponse) GetDeviceRules() []DeviceRuleResponse {
+	if o == nil {
+		var ret []DeviceRuleResponse
+		return ret
+	}
+
+	return o.DeviceRules
+}
+
+// GetDeviceRulesOk returns a tuple with the DeviceRules field value
+// and a boolean to check if the value has been set.
+func (o *EffectivePoliciesResponse) GetDeviceRulesOk() ([]DeviceRuleResponse, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DeviceRules, true
+}
+
+// SetDeviceRules sets field value
+func (o *EffectivePoliciesResponse) SetDeviceRules(v []DeviceRuleResponse) {
+	o.DeviceRules = v
 }
 
 // GetMaxActivePerUser returns the MaxActivePerUser field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -933,6 +963,30 @@ func (o *EffectivePoliciesResponse) SetUserSharingMode(v string) {
 	o.UserSharingMode = v
 }
 
+// GetZoneRules returns the ZoneRules field value
+func (o *EffectivePoliciesResponse) GetZoneRules() []ZoneRuleResponse {
+	if o == nil {
+		var ret []ZoneRuleResponse
+		return ret
+	}
+
+	return o.ZoneRules
+}
+
+// GetZoneRulesOk returns a tuple with the ZoneRules field value
+// and a boolean to check if the value has been set.
+func (o *EffectivePoliciesResponse) GetZoneRulesOk() ([]ZoneRuleResponse, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneRules, true
+}
+
+// SetZoneRules sets field value
+func (o *EffectivePoliciesResponse) SetZoneRules(v []ZoneRuleResponse) {
+	o.ZoneRules = v
+}
+
 func (o EffectivePoliciesResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.AllowedCreatorRoles != nil {
@@ -951,6 +1005,7 @@ func (o EffectivePoliciesResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["blackout_dates"] = o.BlackoutDates
 	}
 	toSerialize["curfew_windows"] = o.CurfewWindows
+	toSerialize["device_rules"] = o.DeviceRules
 	if o.MaxActivePerUser.IsSet() {
 		toSerialize["max_active_per_user"] = o.MaxActivePerUser.Get()
 	}
@@ -1004,6 +1059,7 @@ func (o EffectivePoliciesResponse) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["timezone"] = o.Timezone
 	toSerialize["user_sharing_mode"] = o.UserSharingMode
+	toSerialize["zone_rules"] = o.ZoneRules
 	return toSerialize, nil
 }
 
@@ -1013,8 +1069,10 @@ func (o *EffectivePoliciesResponse) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"curfew_windows",
+		"device_rules",
 		"timezone",
 		"user_sharing_mode",
+		"zone_rules",
 	}
 
 	allProperties := make(map[string]interface{})

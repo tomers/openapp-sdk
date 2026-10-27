@@ -14,14 +14,18 @@ class UsersClient(_BaseResource):
     async def create(
         self,
         *,
-        email: str,
-        org_id: str | None = None,
-        roles: list[str] | None = None,
+        name: dict[str, str],
+        email: str | None = None,
+        roles: dict[str, list[str]] | None = None,
         **extra: Any,
     ) -> dict[str, Any]:
-        body: dict[str, Any] = {"email": email, **extra}
-        if org_id is not None:
-            body["orgId"] = org_id
+        """Create a user (``CreateUserRequest``).
+
+        ``name`` maps locale codes to the display name; ``roles`` maps org ids to role names.
+        """
+        body: dict[str, Any] = {"name": name, **extra}
+        if email is not None:
+            body["email"] = email
         if roles is not None:
             body["roles"] = roles
         return await self._client._request("POST", "/users", body=body)
@@ -32,9 +36,9 @@ class UsersClient(_BaseResource):
         *,
         org_id: str | None = None,
         limit: int | None = None,
-        cursor: str | None = None,
+        offset: int | None = None,
     ) -> dict[str, Any]:
-        q = self._query(q=query, orgId=org_id, limit=limit, cursor=cursor)
+        q = self._query(q=query, org_id=org_id, limit=limit, offset=offset)
         return await self._client._request("GET", "/users/search", query=q)
 
     async def get(self, user_id: str) -> dict[str, Any]:

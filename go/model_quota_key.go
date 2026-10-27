@@ -15,7 +15,7 @@ import (
 	"fmt"
 )
 
-// QuotaKey A metered resource. Lifetime keys count current rows in their source-of-truth table; temporal keys accumulate via `usage_events` + `quota_counters`.  String form (used in DB columns and JSON responses) is snake_case via `EnumString`.
+// QuotaKey A metered resource. Lifetime keys count resources that currently exist; temporal keys count usage within a period.
 type QuotaKey string
 
 // List of QuotaKey
@@ -25,6 +25,8 @@ const (
 	QUOTAKEY_INTEGRATIONS                   QuotaKey = "integrations"
 	QUOTAKEY_DEVICES                        QuotaKey = "devices"
 	QUOTAKEY_ENTITIES                       QuotaKey = "entities"
+	QUOTAKEY_GROUPS                         QuotaKey = "groups"
+	QUOTAKEY_EXTERNAL_GROUP_MEMBERS         QuotaKey = "external_group_members"
 	QUOTAKEY_ZONES                          QuotaKey = "zones"
 	QUOTAKEY_API_KEYS                       QuotaKey = "api_keys"
 	QUOTAKEY_DOOR_OPENS                     QuotaKey = "door_opens"
@@ -35,6 +37,7 @@ const (
 	QUOTAKEY_SCRIPTING_EXECUTIONS           QuotaKey = "scripting_executions"
 	QUOTAKEY_AI_REQUESTS                    QuotaKey = "ai_requests"
 	QUOTAKEY_GEOCODING_REQUESTS             QuotaKey = "geocoding_requests"
+	QUOTAKEY_INVITATION_API_REQUESTS        QuotaKey = "invitation_api_requests"
 )
 
 // All allowed values of QuotaKey enum
@@ -44,6 +47,8 @@ var AllowedQuotaKeyEnumValues = []QuotaKey{
 	"integrations",
 	"devices",
 	"entities",
+	"groups",
+	"external_group_members",
 	"zones",
 	"api_keys",
 	"door_opens",
@@ -54,6 +59,7 @@ var AllowedQuotaKeyEnumValues = []QuotaKey{
 	"scripting_executions",
 	"ai_requests",
 	"geocoding_requests",
+	"invitation_api_requests",
 }
 
 func (v *QuotaKey) UnmarshalJSON(src []byte) error {

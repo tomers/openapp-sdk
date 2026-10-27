@@ -23,8 +23,6 @@ var _ MappedNullable = &ApprovalThresholdPolicyConfig{}
 type ApprovalThresholdPolicyConfig struct {
 	// Number of distinct organization-admin approve votes required.
 	Count int32 `json:"count"`
-	// Optional provider-derived output/channel selector.
-	Output NullablePolicyOutputSelector `json:"output,omitempty"`
 	// Only `org_admins` is currently supported.
 	Scope ApprovalThresholdScope `json:"scope"`
 }
@@ -74,49 +72,6 @@ func (o *ApprovalThresholdPolicyConfig) SetCount(v int32) {
 	o.Count = v
 }
 
-// GetOutput returns the Output field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *ApprovalThresholdPolicyConfig) GetOutput() PolicyOutputSelector {
-	if o == nil || IsNil(o.Output.Get()) {
-		var ret PolicyOutputSelector
-		return ret
-	}
-	return *o.Output.Get()
-}
-
-// GetOutputOk returns a tuple with the Output field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *ApprovalThresholdPolicyConfig) GetOutputOk() (*PolicyOutputSelector, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Output.Get(), o.Output.IsSet()
-}
-
-// HasOutput returns a boolean if a field has been set.
-func (o *ApprovalThresholdPolicyConfig) HasOutput() bool {
-	if o != nil && o.Output.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetOutput gets a reference to the given NullablePolicyOutputSelector and assigns it to the Output field.
-func (o *ApprovalThresholdPolicyConfig) SetOutput(v PolicyOutputSelector) {
-	o.Output.Set(&v)
-}
-
-// SetOutputNil sets the value for Output to be an explicit nil
-func (o *ApprovalThresholdPolicyConfig) SetOutputNil() {
-	o.Output.Set(nil)
-}
-
-// UnsetOutput ensures that no value is present for Output, not even an explicit nil
-func (o *ApprovalThresholdPolicyConfig) UnsetOutput() {
-	o.Output.Unset()
-}
-
 // GetScope returns the Scope field value
 func (o *ApprovalThresholdPolicyConfig) GetScope() ApprovalThresholdScope {
 	if o == nil {
@@ -144,9 +99,6 @@ func (o *ApprovalThresholdPolicyConfig) SetScope(v ApprovalThresholdScope) {
 func (o ApprovalThresholdPolicyConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["count"] = o.Count
-	if o.Output.IsSet() {
-		toSerialize["output"] = o.Output.Get()
-	}
 	toSerialize["scope"] = o.Scope
 	return toSerialize, nil
 }

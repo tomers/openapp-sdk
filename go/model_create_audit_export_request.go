@@ -25,6 +25,8 @@ type CreateAuditExportRequest struct {
 	OccurredAfter NullableString `json:"occurred_after,omitempty"`
 	// RFC 3339 upper bound (inclusive). Defaults to now.
 	OccurredBefore NullableString `json:"occurred_before,omitempty"`
+	// Zone ULID: export only events whose zone snapshot (`details.zone_path`) contains it (the zone and its descendants). 400 when not a ULID.
+	ZoneId NullableString `json:"zone_id,omitempty"`
 }
 
 // NewCreateAuditExportRequest instantiates a new CreateAuditExportRequest object
@@ -173,6 +175,49 @@ func (o *CreateAuditExportRequest) UnsetOccurredBefore() {
 	o.OccurredBefore.Unset()
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAuditExportRequest) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId.Get()
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAuditExportRequest) GetZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneId.Get(), o.ZoneId.IsSet()
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *CreateAuditExportRequest) HasZoneId() bool {
+	if o != nil && o.ZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
+func (o *CreateAuditExportRequest) SetZoneId(v string) {
+	o.ZoneId.Set(&v)
+}
+
+// SetZoneIdNil sets the value for ZoneId to be an explicit nil
+func (o *CreateAuditExportRequest) SetZoneIdNil() {
+	o.ZoneId.Set(nil)
+}
+
+// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
+func (o *CreateAuditExportRequest) UnsetZoneId() {
+	o.ZoneId.Unset()
+}
+
 func (o CreateAuditExportRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Format.IsSet() {
@@ -183,6 +228,9 @@ func (o CreateAuditExportRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if o.OccurredBefore.IsSet() {
 		toSerialize["occurred_before"] = o.OccurredBefore.Get()
+	}
+	if o.ZoneId.IsSet() {
+		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
 	return toSerialize, nil
 }

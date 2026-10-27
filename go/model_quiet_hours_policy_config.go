@@ -21,10 +21,10 @@ var _ MappedNullable = &QuietHoursPolicyConfig{}
 
 // QuietHoursPolicyConfig Typed `config` shape for `quiet_hours`.
 type QuietHoursPolicyConfig struct {
+	// Principal kinds the row binds; unknown and empty values are rejected. Omitted binds the type's default principals.
 	AppliesTo []PolicyPrincipalKind `json:"applies_to,omitempty"`
 	// Inclusive local end of the window, in `HH:MM`; a later end wraps midnight.
-	End    string                                                `json:"end"`
-	Output NullableInvitationAllowedEntryKindsPolicyConfigOutput `json:"output,omitempty"`
+	End string `json:"end"`
 	// Inclusive local start of the window, in `HH:MM`.
 	Start string `json:"start"`
 }
@@ -107,49 +107,6 @@ func (o *QuietHoursPolicyConfig) SetEnd(v string) {
 	o.End = v
 }
 
-// GetOutput returns the Output field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *QuietHoursPolicyConfig) GetOutput() InvitationAllowedEntryKindsPolicyConfigOutput {
-	if o == nil || IsNil(o.Output.Get()) {
-		var ret InvitationAllowedEntryKindsPolicyConfigOutput
-		return ret
-	}
-	return *o.Output.Get()
-}
-
-// GetOutputOk returns a tuple with the Output field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *QuietHoursPolicyConfig) GetOutputOk() (*InvitationAllowedEntryKindsPolicyConfigOutput, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Output.Get(), o.Output.IsSet()
-}
-
-// HasOutput returns a boolean if a field has been set.
-func (o *QuietHoursPolicyConfig) HasOutput() bool {
-	if o != nil && o.Output.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetOutput gets a reference to the given NullableInvitationAllowedEntryKindsPolicyConfigOutput and assigns it to the Output field.
-func (o *QuietHoursPolicyConfig) SetOutput(v InvitationAllowedEntryKindsPolicyConfigOutput) {
-	o.Output.Set(&v)
-}
-
-// SetOutputNil sets the value for Output to be an explicit nil
-func (o *QuietHoursPolicyConfig) SetOutputNil() {
-	o.Output.Set(nil)
-}
-
-// UnsetOutput ensures that no value is present for Output, not even an explicit nil
-func (o *QuietHoursPolicyConfig) UnsetOutput() {
-	o.Output.Unset()
-}
-
 // GetStart returns the Start field value
 func (o *QuietHoursPolicyConfig) GetStart() string {
 	if o == nil {
@@ -180,9 +137,6 @@ func (o QuietHoursPolicyConfig) ToMap() (map[string]interface{}, error) {
 		toSerialize["applies_to"] = o.AppliesTo
 	}
 	toSerialize["end"] = o.End
-	if o.Output.IsSet() {
-		toSerialize["output"] = o.Output.Get()
-	}
 	toSerialize["start"] = o.Start
 	return toSerialize, nil
 }

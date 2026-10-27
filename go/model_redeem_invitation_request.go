@@ -21,8 +21,14 @@ var _ MappedNullable = &RedeemInvitationRequest{}
 
 // RedeemInvitationRequest struct for RedeemInvitationRequest
 type RedeemInvitationRequest struct {
-	Pin   string `json:"pin"`
-	Token string `json:"token"`
+	// Attach the invitation to the signed-in account when its mailbox is not the invited email. The invited address is not stored. Required only in that case; omitted otherwise.
+	AcceptOnSignedInAccount *bool `json:"accept_on_signed_in_account,omitempty"`
+	// Start a combine-accounts offer when the invited email or phone already belongs to someone else. The invitation stays pending until that offer is confirmed and redeem is called again.
+	MergeAccounts *bool `json:"merge_accounts,omitempty"`
+	// `keep` leaves the account's phone unchanged. `replace` saves the invited number over it. Required when the account already has a different phone and the invited number is free.
+	PhoneAction NullableString `json:"phone_action,omitempty"`
+	Pin         string         `json:"pin"`
+	Token       string         `json:"token"`
 }
 
 type _RedeemInvitationRequest RedeemInvitationRequest
@@ -44,6 +50,113 @@ func NewRedeemInvitationRequest(pin string, token string) *RedeemInvitationReque
 func NewRedeemInvitationRequestWithDefaults() *RedeemInvitationRequest {
 	this := RedeemInvitationRequest{}
 	return &this
+}
+
+// GetAcceptOnSignedInAccount returns the AcceptOnSignedInAccount field value if set, zero value otherwise.
+func (o *RedeemInvitationRequest) GetAcceptOnSignedInAccount() bool {
+	if o == nil || IsNil(o.AcceptOnSignedInAccount) {
+		var ret bool
+		return ret
+	}
+	return *o.AcceptOnSignedInAccount
+}
+
+// GetAcceptOnSignedInAccountOk returns a tuple with the AcceptOnSignedInAccount field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *RedeemInvitationRequest) GetAcceptOnSignedInAccountOk() (*bool, bool) {
+	if o == nil || IsNil(o.AcceptOnSignedInAccount) {
+		return nil, false
+	}
+	return o.AcceptOnSignedInAccount, true
+}
+
+// HasAcceptOnSignedInAccount returns a boolean if a field has been set.
+func (o *RedeemInvitationRequest) HasAcceptOnSignedInAccount() bool {
+	if o != nil && !IsNil(o.AcceptOnSignedInAccount) {
+		return true
+	}
+
+	return false
+}
+
+// SetAcceptOnSignedInAccount gets a reference to the given bool and assigns it to the AcceptOnSignedInAccount field.
+func (o *RedeemInvitationRequest) SetAcceptOnSignedInAccount(v bool) {
+	o.AcceptOnSignedInAccount = &v
+}
+
+// GetMergeAccounts returns the MergeAccounts field value if set, zero value otherwise.
+func (o *RedeemInvitationRequest) GetMergeAccounts() bool {
+	if o == nil || IsNil(o.MergeAccounts) {
+		var ret bool
+		return ret
+	}
+	return *o.MergeAccounts
+}
+
+// GetMergeAccountsOk returns a tuple with the MergeAccounts field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *RedeemInvitationRequest) GetMergeAccountsOk() (*bool, bool) {
+	if o == nil || IsNil(o.MergeAccounts) {
+		return nil, false
+	}
+	return o.MergeAccounts, true
+}
+
+// HasMergeAccounts returns a boolean if a field has been set.
+func (o *RedeemInvitationRequest) HasMergeAccounts() bool {
+	if o != nil && !IsNil(o.MergeAccounts) {
+		return true
+	}
+
+	return false
+}
+
+// SetMergeAccounts gets a reference to the given bool and assigns it to the MergeAccounts field.
+func (o *RedeemInvitationRequest) SetMergeAccounts(v bool) {
+	o.MergeAccounts = &v
+}
+
+// GetPhoneAction returns the PhoneAction field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RedeemInvitationRequest) GetPhoneAction() string {
+	if o == nil || IsNil(o.PhoneAction.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhoneAction.Get()
+}
+
+// GetPhoneActionOk returns a tuple with the PhoneAction field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *RedeemInvitationRequest) GetPhoneActionOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhoneAction.Get(), o.PhoneAction.IsSet()
+}
+
+// HasPhoneAction returns a boolean if a field has been set.
+func (o *RedeemInvitationRequest) HasPhoneAction() bool {
+	if o != nil && o.PhoneAction.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhoneAction gets a reference to the given NullableString and assigns it to the PhoneAction field.
+func (o *RedeemInvitationRequest) SetPhoneAction(v string) {
+	o.PhoneAction.Set(&v)
+}
+
+// SetPhoneActionNil sets the value for PhoneAction to be an explicit nil
+func (o *RedeemInvitationRequest) SetPhoneActionNil() {
+	o.PhoneAction.Set(nil)
+}
+
+// UnsetPhoneAction ensures that no value is present for PhoneAction, not even an explicit nil
+func (o *RedeemInvitationRequest) UnsetPhoneAction() {
+	o.PhoneAction.Unset()
 }
 
 // GetPin returns the Pin field value
@@ -96,6 +209,15 @@ func (o *RedeemInvitationRequest) SetToken(v string) {
 
 func (o RedeemInvitationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.AcceptOnSignedInAccount) {
+		toSerialize["accept_on_signed_in_account"] = o.AcceptOnSignedInAccount
+	}
+	if !IsNil(o.MergeAccounts) {
+		toSerialize["merge_accounts"] = o.MergeAccounts
+	}
+	if o.PhoneAction.IsSet() {
+		toSerialize["phone_action"] = o.PhoneAction.Get()
+	}
 	toSerialize["pin"] = o.Pin
 	toSerialize["token"] = o.Token
 	return toSerialize, nil

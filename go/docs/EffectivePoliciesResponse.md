@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **AllowedWeekdays** | Pointer to **[]int32** |  | [optional]
 **BlackoutDates** | Pointer to **[]string** |  | [optional]
 **CurfewWindows** | [**[]CurfewWindowResponse**](CurfewWindowResponse.md) |  |
+**DeviceRules** | [**[]DeviceRuleResponse**](DeviceRuleResponse.md) | Device-tier rules on the integration&#39;s hardware. They bind only actions that fire that device (and output, when set), so they are not reflected in the integration-wide values above. Empty on the org preview without &#x60;integration_id&#x60;. |
 **MaxActivePerUser** | Pointer to **NullableInt32** |  | [optional]
 **MaxDoors** | Pointer to **NullableInt32** |  | [optional]
 **MaxDurationSeconds** | Pointer to **NullableInt64** |  | [optional]
@@ -29,12 +30,13 @@ Name | Type | Description | Notes
 **ShareMaxUses** | Pointer to **NullableInt32** |  | [optional]
 **Timezone** | **string** | IANA timezone used to evaluate curfews, or &#x60;\&quot;UTC\&quot;&#x60; when unset. |
 **UserSharingMode** | **string** | Effective &#x60;user_sharing&#x60; mode: &#x60;none&#x60; | &#x60;admin_only&#x60; | &#x60;approval_required&#x60; | &#x60;all&#x60;. |
+**ZoneRules** | [**[]ZoneRuleResponse**](ZoneRuleResponse.md) | Organization and integration rules scoped to a zone (&#x60;config.zone_id&#x60;). They bind only doors whose effective zone is that zone or below it, so they are not reflected in the integration-wide values above. |
 
 ## Methods
 
 ### NewEffectivePoliciesResponse
 
-`func NewEffectivePoliciesResponse(curfewWindows []CurfewWindowResponse, timezone string, userSharingMode string, ) *EffectivePoliciesResponse`
+`func NewEffectivePoliciesResponse(curfewWindows []CurfewWindowResponse, deviceRules []DeviceRuleResponse, timezone string, userSharingMode string, zoneRules []ZoneRuleResponse, ) *EffectivePoliciesResponse`
 
 NewEffectivePoliciesResponse instantiates a new EffectivePoliciesResponse object
 This constructor will assign default values to properties that have it defined,
@@ -242,6 +244,26 @@ and a boolean to check if the value has been set.
 `func (o *EffectivePoliciesResponse) SetCurfewWindows(v []CurfewWindowResponse)`
 
 SetCurfewWindows sets CurfewWindows field to given value.
+
+
+### GetDeviceRules
+
+`func (o *EffectivePoliciesResponse) GetDeviceRules() []DeviceRuleResponse`
+
+GetDeviceRules returns the DeviceRules field if non-nil, zero value otherwise.
+
+### GetDeviceRulesOk
+
+`func (o *EffectivePoliciesResponse) GetDeviceRulesOk() (*[]DeviceRuleResponse, bool)`
+
+GetDeviceRulesOk returns a tuple with the DeviceRules field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDeviceRules
+
+`func (o *EffectivePoliciesResponse) SetDeviceRules(v []DeviceRuleResponse)`
+
+SetDeviceRules sets DeviceRules field to given value.
 
 
 ### GetMaxActivePerUser
@@ -787,6 +809,26 @@ and a boolean to check if the value has been set.
 `func (o *EffectivePoliciesResponse) SetUserSharingMode(v string)`
 
 SetUserSharingMode sets UserSharingMode field to given value.
+
+
+### GetZoneRules
+
+`func (o *EffectivePoliciesResponse) GetZoneRules() []ZoneRuleResponse`
+
+GetZoneRules returns the ZoneRules field if non-nil, zero value otherwise.
+
+### GetZoneRulesOk
+
+`func (o *EffectivePoliciesResponse) GetZoneRulesOk() (*[]ZoneRuleResponse, bool)`
+
+GetZoneRulesOk returns a tuple with the ZoneRules field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneRules
+
+`func (o *EffectivePoliciesResponse) SetZoneRules(v []ZoneRuleResponse)`
+
+SetZoneRules sets ZoneRules field to given value.
 
 
 

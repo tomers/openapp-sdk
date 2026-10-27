@@ -146,11 +146,11 @@ func (a *DirectoryListingMembersAPIService) AddDirectoryListingMemberExecute(r A
 }
 
 type ApiAddPersonRequest struct {
-	ctx                    context.Context
-	ApiService             *DirectoryListingMembersAPIService
-	id                     string
-	xOrg                   *string
-	addBuildingUserPayload *AddBuildingUserPayload
+	ctx                  context.Context
+	ApiService           *DirectoryListingMembersAPIService
+	id                   string
+	xOrg                 *string
+	addSitePersonPayload *AddSitePersonPayload
 }
 
 func (r ApiAddPersonRequest) XOrg(xOrg string) ApiAddPersonRequest {
@@ -158,8 +158,8 @@ func (r ApiAddPersonRequest) XOrg(xOrg string) ApiAddPersonRequest {
 	return r
 }
 
-func (r ApiAddPersonRequest) AddBuildingUserPayload(addBuildingUserPayload AddBuildingUserPayload) ApiAddPersonRequest {
-	r.addBuildingUserPayload = &addBuildingUserPayload
+func (r ApiAddPersonRequest) AddSitePersonPayload(addSitePersonPayload AddSitePersonPayload) ApiAddPersonRequest {
+	r.addSitePersonPayload = &addSitePersonPayload
 	return r
 }
 
@@ -168,7 +168,10 @@ func (r ApiAddPersonRequest) Execute() (*http.Response, error) {
 }
 
 /*
-AddPerson Add user to building (adds org role; creates membership if missing).
+AddPerson Add a user to the site's people.
+
+Grants the given role on this access integration and creates the organization membership when
+missing. Requires `entities:update`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -204,8 +207,8 @@ func (a *DirectoryListingMembersAPIService) AddPersonExecute(r ApiAddPersonReque
 	if r.xOrg == nil {
 		return nil, reportError("xOrg is required and must be specified")
 	}
-	if r.addBuildingUserPayload == nil {
-		return nil, reportError("addBuildingUserPayload is required and must be specified")
+	if r.addSitePersonPayload == nil {
+		return nil, reportError("addSitePersonPayload is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -227,7 +230,7 @@ func (a *DirectoryListingMembersAPIService) AddPersonExecute(r ApiAddPersonReque
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
 	// body params
-	localVarPostBody = r.addBuildingUserPayload
+	localVarPostBody = r.addSitePersonPayload
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return nil, err
@@ -378,7 +381,10 @@ func (r ApiDeletePersonRequest) Execute() (*http.Response, error) {
 }
 
 /*
-DeletePerson Remove user from building (removes org roles and listing assignments).
+DeletePerson Remove a user from the site's people.
+
+Removes the user's roles on this access integration and their listing assignments. Requires
+`entities:update`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -687,11 +693,19 @@ func (a *DirectoryListingMembersAPIService) ListIntegrationDirectoryListingMembe
 }
 
 type ApiListPeopleRequest struct {
-	ctx        context.Context
-	ApiService *DirectoryListingMembersAPIService
-	id         string
-	xOrg       *string
-	locale     *string
+	ctx             context.Context
+	ApiService      *DirectoryListingMembersAPIService
+	id              string
+	xOrg            *string
+	locale          *string
+	q               *string
+	role            *string
+	groupId         *string
+	listingId       *string
+	hasListing      *bool
+	includeViaGroup *bool
+	limit           *int32
+	offset          *int32
 }
 
 func (r ApiListPeopleRequest) XOrg(xOrg string) ApiListPeopleRequest {
@@ -705,12 +719,63 @@ func (r ApiListPeopleRequest) Locale(locale string) ApiListPeopleRequest {
 	return r
 }
 
-func (r ApiListPeopleRequest) Execute() (*http.Response, error) {
+// Case-insensitive match on name or email
+func (r ApiListPeopleRequest) Q(q string) ApiListPeopleRequest {
+	r.q = &q
+	return r
+}
+
+// Site role: admin, resident, or technician
+func (r ApiListPeopleRequest) Role(role string) ApiListPeopleRequest {
+	r.role = &role
+	return r
+}
+
+// Only people in this group
+func (r ApiListPeopleRequest) GroupId(groupId string) ApiListPeopleRequest {
+	r.groupId = &groupId
+	return r
+}
+
+// Only people assigned to this listing
+func (r ApiListPeopleRequest) ListingId(listingId string) ApiListPeopleRequest {
+	r.listingId = &listingId
+	return r
+}
+
+// Whether the person has a listing assignment
+func (r ApiListPeopleRequest) HasListing(hasListing bool) ApiListPeopleRequest {
+	r.hasListing = &hasListing
+	return r
+}
+
+// Include household members who have no site role
+func (r ApiListPeopleRequest) IncludeViaGroup(includeViaGroup bool) ApiListPeopleRequest {
+	r.includeViaGroup = &includeViaGroup
+	return r
+}
+
+// Page size
+func (r ApiListPeopleRequest) Limit(limit int32) ApiListPeopleRequest {
+	r.limit = &limit
+	return r
+}
+
+// Rows to skip
+func (r ApiListPeopleRequest) Offset(offset int32) ApiListPeopleRequest {
+	r.offset = &offset
+	return r
+}
+
+func (r ApiListPeopleRequest) Execute() (*PaginatedResponse, *http.Response, error) {
 	return r.ApiService.ListPeopleExecute(r)
 }
 
 /*
-ListPeople List building users (users with virtual_access:integration:{id}:* role).
+ListPeople List the site's people and their directory listing assignments.
+
+Site people are the organization members who hold a role on this access integration. Requires
+`integrations:read`, `entities:read` or `entities:update`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -725,16 +790,19 @@ func (a *DirectoryListingMembersAPIService) ListPeople(ctx context.Context, id s
 }
 
 // Execute executes the request
-func (a *DirectoryListingMembersAPIService) ListPeopleExecute(r ApiListPeopleRequest) (*http.Response, error) {
+//
+//	@return PaginatedResponse
+func (a *DirectoryListingMembersAPIService) ListPeopleExecute(r ApiListPeopleRequest) (*PaginatedResponse, *http.Response, error) {
 	var (
-		localVarHTTPMethod = http.MethodGet
-		localVarPostBody   interface{}
-		formFiles          []formFile
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PaginatedResponse
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DirectoryListingMembersAPIService.ListPeople")
 	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/integrations/{id}/people"
@@ -744,11 +812,35 @@ func (a *DirectoryListingMembersAPIService) ListPeopleExecute(r ApiListPeopleReq
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 	if r.xOrg == nil {
-		return nil, reportError("xOrg is required and must be specified")
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
 
 	if r.locale != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "locale", r.locale, "form", "")
+	}
+	if r.q != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
+	}
+	if r.role != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "role", r.role, "form", "")
+	}
+	if r.groupId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "group_id", r.groupId, "form", "")
+	}
+	if r.listingId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "listing_id", r.listingId, "form", "")
+	}
+	if r.hasListing != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "has_listing", r.hasListing, "form", "")
+	}
+	if r.includeViaGroup != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_via_group", r.includeViaGroup, "form", "")
+	}
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	if r.offset != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "offset", r.offset, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -760,7 +852,7 @@ func (a *DirectoryListingMembersAPIService) ListPeopleExecute(r ApiListPeopleReq
 	}
 
 	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{}
+	localVarHTTPHeaderAccepts := []string{"application/json"}
 
 	// set Accept header
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
@@ -770,19 +862,19 @@ func (a *DirectoryListingMembersAPIService) ListPeopleExecute(r ApiListPeopleReq
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
@@ -790,10 +882,19 @@ func (a *DirectoryListingMembersAPIService) ListPeopleExecute(r ApiListPeopleReq
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
-		return localVarHTTPResponse, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarHTTPResponse, nil
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiUpdateDirectoryListingMemberRequest struct {
@@ -886,6 +987,136 @@ func (a *DirectoryListingMembersAPIService) UpdateDirectoryListingMemberExecute(
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
 	// body params
 	localVarPostBody = r.updateDirectoryListingMemberPayload
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiUpdatePersonRequest struct {
+	ctx                     context.Context
+	ApiService              *DirectoryListingMembersAPIService
+	id                      string
+	userId                  string
+	xOrg                    *string
+	updateSitePersonPayload *UpdateSitePersonPayload
+}
+
+func (r ApiUpdatePersonRequest) XOrg(xOrg string) ApiUpdatePersonRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiUpdatePersonRequest) UpdateSitePersonPayload(updateSitePersonPayload UpdateSitePersonPayload) ApiUpdatePersonRequest {
+	r.updateSitePersonPayload = &updateSitePersonPayload
+	return r
+}
+
+func (r ApiUpdatePersonRequest) Execute() (*SitePersonResponse, *http.Response, error) {
+	return r.ApiService.UpdatePersonExecute(r)
+}
+
+/*
+UpdatePerson Change a site person's role.
+
+Replaces the user's role on this access integration. Requires `entities:update`. A person who
+appears only through a group has no site role to change.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param userId
+	@return ApiUpdatePersonRequest
+*/
+func (a *DirectoryListingMembersAPIService) UpdatePerson(ctx context.Context, id string, userId string) ApiUpdatePersonRequest {
+	return ApiUpdatePersonRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+		userId:     userId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return SitePersonResponse
+func (a *DirectoryListingMembersAPIService) UpdatePersonExecute(r ApiUpdatePersonRequest) (*SitePersonResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *SitePersonResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DirectoryListingMembersAPIService.UpdatePerson")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integrations/{id}/people/{user_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"user_id"+"}", url.PathEscape(parameterValueToString(r.userId, "userId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+	if r.updateSitePersonPayload == nil {
+		return localVarReturnValue, nil, reportError("updateSitePersonPayload is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	// body params
+	localVarPostBody = r.updateSitePersonPayload
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

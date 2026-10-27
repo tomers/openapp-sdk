@@ -52,6 +52,20 @@ func Test_openapi_OrgInvitationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test OrgInvitationsAPIService HardDeleteInvitation", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteId string
+
+		httpRes, err := apiClient.OrgInvitationsAPI.HardDeleteInvitation(context.Background(), id, inviteId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test OrgInvitationsAPIService ListInvitations", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -74,6 +88,21 @@ func Test_openapi_OrgInvitationsAPIService(t *testing.T) {
 		var inviteId string
 
 		resp, httpRes, err := apiClient.OrgInvitationsAPI.ResendInvitation(context.Background(), id, inviteId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test OrgInvitationsAPIService UpdateInvitation", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var inviteId string
+
+		resp, httpRes, err := apiClient.OrgInvitationsAPI.UpdateInvitation(context.Background(), id, inviteId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

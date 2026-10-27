@@ -15,10 +15,13 @@ Name | Type | Description | Notes
 **Id** | **string** | Unique identifier (ULID). |
 **Metadata** | Pointer to **map[string]string** |  | [optional]
 **Name** | Pointer to **string** | Optional friendly name for the entity. | [optional]
-**ZoneId** | Pointer to **string** | Optional zone this entity belongs to. | [optional]
+**Zone** | Pointer to [**ZonePlacement**](ZonePlacement.md) | Zone placement: inherit the device&#39;s zone, name one explicitly, or none. | [optional]
+**EffectiveZoneId** | Pointer to **NullableString** | Derived, read-only: the zone the entity is effectively in (&#x60;zone&#x60; resolved against the device zone), or null. | [optional]
 **EntityMetadata** | Pointer to **map[string]string** |  | [optional]
 **EntryKind** | Pointer to **NullableString** | Derived, read-only entry kind for switchable entries on Virtual Access devices. Omitted when the entity is not an entry or the device has no Virtual Access config. | [optional]
 **State** | Pointer to **interface{}** |  | [optional]
+**ZoneDoorId** | Pointer to **NullableString** | Derived, read-only: the door that lists this entity and owns its zone. Present exactly when &#x60;zone_source&#x60; is &#x60;door&#x60;, and also when that door has no zone. | [optional]
+**ZoneSource** | Pointer to [**NullableZoneSource**](ZoneSource.md) | Derived, read-only: &#x60;entity&#x60; when the zone is explicit, &#x60;device&#x60; when inherited, &#x60;door&#x60; when a door that lists this entity owns the zone, null when there is no effective zone. | [optional]
 
 ## Methods
 
@@ -299,31 +302,66 @@ SetName sets Name field to given value.
 
 HasName returns a boolean if a field has been set.
 
-### GetZoneId
+### GetZone
 
-`func (o *EntityResponse) GetZoneId() string`
+`func (o *EntityResponse) GetZone() ZonePlacement`
 
-GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+GetZone returns the Zone field if non-nil, zero value otherwise.
 
-### GetZoneIdOk
+### GetZoneOk
 
-`func (o *EntityResponse) GetZoneIdOk() (*string, bool)`
+`func (o *EntityResponse) GetZoneOk() (*ZonePlacement, bool)`
 
-GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+GetZoneOk returns a tuple with the Zone field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetZoneId
+### SetZone
 
-`func (o *EntityResponse) SetZoneId(v string)`
+`func (o *EntityResponse) SetZone(v ZonePlacement)`
 
-SetZoneId sets ZoneId field to given value.
+SetZone sets Zone field to given value.
 
-### HasZoneId
+### HasZone
 
-`func (o *EntityResponse) HasZoneId() bool`
+`func (o *EntityResponse) HasZone() bool`
 
-HasZoneId returns a boolean if a field has been set.
+HasZone returns a boolean if a field has been set.
 
+### GetEffectiveZoneId
+
+`func (o *EntityResponse) GetEffectiveZoneId() string`
+
+GetEffectiveZoneId returns the EffectiveZoneId field if non-nil, zero value otherwise.
+
+### GetEffectiveZoneIdOk
+
+`func (o *EntityResponse) GetEffectiveZoneIdOk() (*string, bool)`
+
+GetEffectiveZoneIdOk returns a tuple with the EffectiveZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEffectiveZoneId
+
+`func (o *EntityResponse) SetEffectiveZoneId(v string)`
+
+SetEffectiveZoneId sets EffectiveZoneId field to given value.
+
+### HasEffectiveZoneId
+
+`func (o *EntityResponse) HasEffectiveZoneId() bool`
+
+HasEffectiveZoneId returns a boolean if a field has been set.
+
+### SetEffectiveZoneIdNil
+
+`func (o *EntityResponse) SetEffectiveZoneIdNil(b bool)`
+
+ SetEffectiveZoneIdNil sets the value for EffectiveZoneId to be an explicit nil
+
+### UnsetEffectiveZoneId
+`func (o *EntityResponse) UnsetEffectiveZoneId()`
+
+UnsetEffectiveZoneId ensures that no value is present for EffectiveZoneId, not even an explicit nil
 ### GetEntityMetadata
 
 `func (o *EntityResponse) GetEntityMetadata() map[string]string`
@@ -419,5 +457,75 @@ HasState returns a boolean if a field has been set.
 `func (o *EntityResponse) UnsetState()`
 
 UnsetState ensures that no value is present for State, not even an explicit nil
+### GetZoneDoorId
+
+`func (o *EntityResponse) GetZoneDoorId() string`
+
+GetZoneDoorId returns the ZoneDoorId field if non-nil, zero value otherwise.
+
+### GetZoneDoorIdOk
+
+`func (o *EntityResponse) GetZoneDoorIdOk() (*string, bool)`
+
+GetZoneDoorIdOk returns a tuple with the ZoneDoorId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneDoorId
+
+`func (o *EntityResponse) SetZoneDoorId(v string)`
+
+SetZoneDoorId sets ZoneDoorId field to given value.
+
+### HasZoneDoorId
+
+`func (o *EntityResponse) HasZoneDoorId() bool`
+
+HasZoneDoorId returns a boolean if a field has been set.
+
+### SetZoneDoorIdNil
+
+`func (o *EntityResponse) SetZoneDoorIdNil(b bool)`
+
+ SetZoneDoorIdNil sets the value for ZoneDoorId to be an explicit nil
+
+### UnsetZoneDoorId
+`func (o *EntityResponse) UnsetZoneDoorId()`
+
+UnsetZoneDoorId ensures that no value is present for ZoneDoorId, not even an explicit nil
+### GetZoneSource
+
+`func (o *EntityResponse) GetZoneSource() ZoneSource`
+
+GetZoneSource returns the ZoneSource field if non-nil, zero value otherwise.
+
+### GetZoneSourceOk
+
+`func (o *EntityResponse) GetZoneSourceOk() (*ZoneSource, bool)`
+
+GetZoneSourceOk returns a tuple with the ZoneSource field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneSource
+
+`func (o *EntityResponse) SetZoneSource(v ZoneSource)`
+
+SetZoneSource sets ZoneSource field to given value.
+
+### HasZoneSource
+
+`func (o *EntityResponse) HasZoneSource() bool`
+
+HasZoneSource returns a boolean if a field has been set.
+
+### SetZoneSourceNil
+
+`func (o *EntityResponse) SetZoneSourceNil(b bool)`
+
+ SetZoneSourceNil sets the value for ZoneSource to be an explicit nil
+
+### UnsetZoneSource
+`func (o *EntityResponse) UnsetZoneSource()`
+
+UnsetZoneSource ensures that no value is present for ZoneSource, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -85,7 +85,7 @@ Name | Type | Description  | Notes
 
 ## CreateScriptingExecution
 
-> ScriptingExecution CreateScriptingExecution(ctx).CreateScriptingExecutionRequest(createScriptingExecutionRequest).Execute()
+> ScriptingExecution CreateScriptingExecution(ctx).XOrg(xOrg).CreateScriptingExecutionRequest(createScriptingExecutionRequest).Execute()
 
 Submit an OpenApp Scripting program for asynchronous execution.
 
@@ -104,6 +104,7 @@ import (
 )
 
 func main() {
+	xOrg := "xOrg_example" // string | Organization that owns the execution; the caller needs the scripting execute role in it
 	createScriptingExecutionRequest := *openapiclient.NewCreateScriptingExecutionRequest("Script_example") // CreateScriptingExecutionRequest |
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
@@ -112,7 +113,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.ScriptingAPI.CreateScriptingExecution(context.Background()).CreateScriptingExecutionRequest(createScriptingExecutionRequest).Execute()
+	resp, r, err := apiClient.ScriptingAPI.CreateScriptingExecution(context.Background()).XOrg(xOrg).CreateScriptingExecutionRequest(createScriptingExecutionRequest).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `ScriptingAPI.CreateScriptingExecution``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -133,6 +134,7 @@ Other parameters are passed through a pointer to a apiCreateScriptingExecutionRe
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
+ **xOrg** | **string** | Organization that owns the execution; the caller needs the scripting execute role in it |
  **createScriptingExecutionRequest** | [**CreateScriptingExecutionRequest**](CreateScriptingExecutionRequest.md) |  |
 
 ### Return type

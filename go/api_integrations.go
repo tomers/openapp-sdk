@@ -719,6 +719,17 @@ func (a *IntegrationsAPIService) DeleteIntegrationAccessInviteExecute(r ApiDelet
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -1999,128 +2010,6 @@ func (a *IntegrationsAPIService) GetIntegrationProviderDefinitionExecute(r ApiGe
 	return localVarHTTPResponse, nil
 }
 
-type ApiGetIntegrationTransferPreviewRequest struct {
-	ctx        context.Context
-	ApiService *IntegrationsAPIService
-	id         string
-	xOrg       *string
-	mode       *string
-}
-
-func (r ApiGetIntegrationTransferPreviewRequest) XOrg(xOrg string) ApiGetIntegrationTransferPreviewRequest {
-	r.xOrg = &xOrg
-	return r
-}
-
-// &#x60;move&#x60; (default) or &#x60;duplicate&#x60;; controls which side-effect warnings apply.
-func (r ApiGetIntegrationTransferPreviewRequest) Mode(mode string) ApiGetIntegrationTransferPreviewRequest {
-	r.mode = &mode
-	return r
-}
-
-func (r ApiGetIntegrationTransferPreviewRequest) Execute() (*TransferPreviewResponse, *http.Response, error) {
-	return r.ApiService.GetIntegrationTransferPreviewExecute(r)
-}
-
-/*
-GetIntegrationTransferPreview Read-only preview of a transfer's impact.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param id
-	@return ApiGetIntegrationTransferPreviewRequest
-*/
-func (a *IntegrationsAPIService) GetIntegrationTransferPreview(ctx context.Context, id string) ApiGetIntegrationTransferPreviewRequest {
-	return ApiGetIntegrationTransferPreviewRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
-	}
-}
-
-// Execute executes the request
-//
-//	@return TransferPreviewResponse
-func (a *IntegrationsAPIService) GetIntegrationTransferPreviewExecute(r ApiGetIntegrationTransferPreviewRequest) (*TransferPreviewResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *TransferPreviewResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.GetIntegrationTransferPreview")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/integrations/{id}/transfer-preview"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.xOrg == nil {
-		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
-	}
-
-	if r.mode != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "mode", r.mode, "form", "")
-	}
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type ApiGetSiteAccessDevicesRequest struct {
 	ctx        context.Context
 	ApiService *IntegrationsAPIService
@@ -2276,31 +2165,35 @@ func (a *IntegrationsAPIService) GetSiteAccessDevicesExecute(r ApiGetSiteAccessD
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetSiteAccessOverviewRequest struct {
+type ApiGetSiteAccessZonesRequest struct {
 	ctx        context.Context
 	ApiService *IntegrationsAPIService
 	id         string
 	xOrg       *string
 }
 
-func (r ApiGetSiteAccessOverviewRequest) XOrg(xOrg string) ApiGetSiteAccessOverviewRequest {
+func (r ApiGetSiteAccessZonesRequest) XOrg(xOrg string) ApiGetSiteAccessZonesRequest {
 	r.xOrg = &xOrg
 	return r
 }
 
-func (r ApiGetSiteAccessOverviewRequest) Execute() (*SiteAccessOverviewResponse, *http.Response, error) {
-	return r.ApiService.GetSiteAccessOverviewExecute(r)
+func (r ApiGetSiteAccessZonesRequest) Execute() (*SiteAccessZonesResponse, *http.Response, error) {
+	return r.ApiService.GetSiteAccessZonesExecute(r)
 }
 
 /*
-GetSiteAccessOverview Counts and summaries for a virtual-access site overview.
+GetSiteAccessZones Zones and Wi-Fi of a virtual_access site, derived from its doors.
+
+A door owns one zone. The networks listed are those covering a door's zone or any ancestor of
+it, which is also what an invitation to that door offers. `zones` and `wifi_networks` are
+omitted without `zones:read`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
-	@return ApiGetSiteAccessOverviewRequest
+	@return ApiGetSiteAccessZonesRequest
 */
-func (a *IntegrationsAPIService) GetSiteAccessOverview(ctx context.Context, id string) ApiGetSiteAccessOverviewRequest {
-	return ApiGetSiteAccessOverviewRequest{
+func (a *IntegrationsAPIService) GetSiteAccessZones(ctx context.Context, id string) ApiGetSiteAccessZonesRequest {
+	return ApiGetSiteAccessZonesRequest{
 		ApiService: a,
 		ctx:        ctx,
 		id:         id,
@@ -2309,187 +2202,21 @@ func (a *IntegrationsAPIService) GetSiteAccessOverview(ctx context.Context, id s
 
 // Execute executes the request
 //
-//	@return SiteAccessOverviewResponse
-func (a *IntegrationsAPIService) GetSiteAccessOverviewExecute(r ApiGetSiteAccessOverviewRequest) (*SiteAccessOverviewResponse, *http.Response, error) {
+//	@return SiteAccessZonesResponse
+func (a *IntegrationsAPIService) GetSiteAccessZonesExecute(r ApiGetSiteAccessZonesRequest) (*SiteAccessZonesResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *SiteAccessOverviewResponse
+		localVarReturnValue *SiteAccessZonesResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.GetSiteAccessOverview")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.GetSiteAccessZones")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/integrations/{id}/access-overview"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.xOrg == nil {
-		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 500 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiGetSiteReadinessRequest struct {
-	ctx        context.Context
-	ApiService *IntegrationsAPIService
-	id         string
-	xOrg       *string
-}
-
-func (r ApiGetSiteReadinessRequest) XOrg(xOrg string) ApiGetSiteReadinessRequest {
-	r.xOrg = &xOrg
-	return r
-}
-
-func (r ApiGetSiteReadinessRequest) Execute() (*SiteReadiness, *http.Response, error) {
-	return r.ApiService.GetSiteReadinessExecute(r)
-}
-
-/*
-GetSiteReadiness Configuration completeness for a virtual_access site.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param id
-	@return ApiGetSiteReadinessRequest
-*/
-func (a *IntegrationsAPIService) GetSiteReadiness(ctx context.Context, id string) ApiGetSiteReadinessRequest {
-	return ApiGetSiteReadinessRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
-	}
-}
-
-// Execute executes the request
-//
-//	@return SiteReadiness
-func (a *IntegrationsAPIService) GetSiteReadinessExecute(r ApiGetSiteReadinessRequest) (*SiteReadiness, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *SiteReadiness
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.GetSiteReadiness")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/integrations/{id}/readiness"
+	localVarPath := localBasePath + "/integrations/{id}/access-zones"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
@@ -2614,7 +2341,10 @@ func (r ApiGetTasmotaProvisioningRequest) Execute() (*TasmotaProvisioningRespons
 }
 
 /*
-GetTasmotaProvisioning Method for GetTasmotaProvisioning
+GetTasmotaProvisioning Get Tasmota provisioning for a device.
+
+Returns the Tasmota Backlog plus MQTT and WebPassword credentials in plain text. The first
+call issues and stores new credentials. Requires `devices:update`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -2693,172 +2423,6 @@ func (a *IntegrationsAPIService) GetTasmotaProvisioningExecute(r ApiGetTasmotaPr
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiGetWaveshareProvisioningStatusRequest struct {
-	ctx        context.Context
-	ApiService *IntegrationsAPIService
-	id         string
-	xOrg       *string
-}
-
-func (r ApiGetWaveshareProvisioningStatusRequest) XOrg(xOrg string) ApiGetWaveshareProvisioningStatusRequest {
-	r.xOrg = &xOrg
-	return r
-}
-
-func (r ApiGetWaveshareProvisioningStatusRequest) Execute() (*WaveshareProvisioningStatusResponse, *http.Response, error) {
-	return r.ApiService.GetWaveshareProvisioningStatusExecute(r)
-}
-
-/*
-GetWaveshareProvisioningStatus Get Waveshare provisioning status for an integration.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param id
-	@return ApiGetWaveshareProvisioningStatusRequest
-*/
-func (a *IntegrationsAPIService) GetWaveshareProvisioningStatus(ctx context.Context, id string) ApiGetWaveshareProvisioningStatusRequest {
-	return ApiGetWaveshareProvisioningStatusRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
-	}
-}
-
-// Execute executes the request
-//
-//	@return WaveshareProvisioningStatusResponse
-func (a *IntegrationsAPIService) GetWaveshareProvisioningStatusExecute(r ApiGetWaveshareProvisioningStatusRequest) (*WaveshareProvisioningStatusResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *WaveshareProvisioningStatusResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.GetWaveshareProvisioningStatus")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/integrations/{id}/provisioning/status"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.xOrg == nil {
-		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 500 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -3045,6 +2609,116 @@ func (a *IntegrationsAPIService) HardDeleteIntegrationExecute(r ApiHardDeleteInt
 			}
 			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListAccessInviteContactNotificationsRequest struct {
+	ctx          context.Context
+	ApiService   *IntegrationsAPIService
+	id           string
+	inviteLinkId string
+	contactId    string
+}
+
+func (r ApiListAccessInviteContactNotificationsRequest) Execute() (*ContactNotificationsResponse, *http.Response, error) {
+	return r.ApiService.ListAccessInviteContactNotificationsExecute(r)
+}
+
+/*
+ListAccessInviteContactNotifications Method for ListAccessInviteContactNotifications
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param inviteLinkId
+	@param contactId
+	@return ApiListAccessInviteContactNotificationsRequest
+*/
+func (a *IntegrationsAPIService) ListAccessInviteContactNotifications(ctx context.Context, id string, inviteLinkId string, contactId string) ApiListAccessInviteContactNotificationsRequest {
+	return ApiListAccessInviteContactNotificationsRequest{
+		ApiService:   a,
+		ctx:          ctx,
+		id:           id,
+		inviteLinkId: inviteLinkId,
+		contactId:    contactId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ContactNotificationsResponse
+func (a *IntegrationsAPIService) ListAccessInviteContactNotificationsExecute(r ApiListAccessInviteContactNotificationsRequest) (*ContactNotificationsResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ContactNotificationsResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.ListAccessInviteContactNotifications")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integrations/{id}/access-invites/{invite_link_id}/contacts/{contact_id}/notifications"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"invite_link_id"+"}", url.PathEscape(parameterValueToString(r.inviteLinkId, "inviteLinkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"contact_id"+"}", url.PathEscape(parameterValueToString(r.contactId, "contactId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -3361,7 +3035,9 @@ func (r ApiListIntegrationAccessInviteUsageRequest) Execute() (*AccessUsageRespo
 }
 
 /*
-ListIntegrationAccessInviteUsage `GET /integrations/{id}/access-invites/{invite_link_id}/usage`
+ListIntegrationAccessInviteUsage List recent uses of an access invitation.
+
+Returns up to 200 uses from the last 30 days. Requires read access to the integration.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -3478,6 +3154,17 @@ func (a *IntegrationsAPIService) ListIntegrationAccessInviteUsageExecute(r ApiLi
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -3893,7 +3580,10 @@ func (r ApiListIntegrationDoorUsageRequest) Execute() (*AccessUsageResponse, *ht
 }
 
 /*
-ListIntegrationDoorUsage `GET /integrations/{id}/doors/{device_id}/usage`
+ListIntegrationDoorUsage List recent opens of a door through its public portal.
+
+Returns up to 200 opens from the last 30 days; empty when the door has no public portal.
+Requires read access to the integration.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -4010,6 +3700,17 @@ func (a *IntegrationsAPIService) ListIntegrationDoorUsageExecute(r ApiListIntegr
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -4461,7 +4162,13 @@ func (r ApiListIntegrationUsersRequest) Execute() (*IntegrationUsersResponse, *h
 }
 
 /*
-ListIntegrationUsers GET `/integrations/{id}/integration-users?device_id=...`.
+ListIntegrationUsers List the provider's users for an integration, joined with OpenApp users.
+
+Each item has a `status`: `linked` (an OpenApp user has the same verified phone or email),
+`invited` (a pending invitation exists for that phone or email in the integration's org), or
+`unlinked`. With `device_id`, only that provider device is queried; without it, every device
+of the integration that has an external id is queried and the results are merged. Requires
+`integrations:users:list` on the integration's org.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -4692,6 +4399,17 @@ func (a *IntegrationsAPIService) ListIntegrationsExecute(r ApiListIntegrationsRe
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -4723,6 +4441,222 @@ func (a *IntegrationsAPIService) ListIntegrationsExecute(r ApiListIntegrationsRe
 			}
 			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiNotifyAccessInviteContactRequest struct {
+	ctx          context.Context
+	ApiService   *IntegrationsAPIService
+	id           string
+	inviteLinkId string
+	contactId    string
+}
+
+func (r ApiNotifyAccessInviteContactRequest) Execute() (*NotifyContactsResponse, *http.Response, error) {
+	return r.ApiService.NotifyAccessInviteContactExecute(r)
+}
+
+/*
+NotifyAccessInviteContact Method for NotifyAccessInviteContact
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param inviteLinkId
+	@param contactId
+	@return ApiNotifyAccessInviteContactRequest
+*/
+func (a *IntegrationsAPIService) NotifyAccessInviteContact(ctx context.Context, id string, inviteLinkId string, contactId string) ApiNotifyAccessInviteContactRequest {
+	return ApiNotifyAccessInviteContactRequest{
+		ApiService:   a,
+		ctx:          ctx,
+		id:           id,
+		inviteLinkId: inviteLinkId,
+		contactId:    contactId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return NotifyContactsResponse
+func (a *IntegrationsAPIService) NotifyAccessInviteContactExecute(r ApiNotifyAccessInviteContactRequest) (*NotifyContactsResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *NotifyContactsResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.NotifyAccessInviteContact")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integrations/{id}/access-invites/{invite_link_id}/contacts/{contact_id}/notify"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"invite_link_id"+"}", url.PathEscape(parameterValueToString(r.inviteLinkId, "inviteLinkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"contact_id"+"}", url.PathEscape(parameterValueToString(r.contactId, "contactId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiNotifyAccessInviteContactsRequest struct {
+	ctx          context.Context
+	ApiService   *IntegrationsAPIService
+	id           string
+	inviteLinkId string
+}
+
+func (r ApiNotifyAccessInviteContactsRequest) Execute() (*NotifyContactsResponse, *http.Response, error) {
+	return r.ApiService.NotifyAccessInviteContactsExecute(r)
+}
+
+/*
+NotifyAccessInviteContacts Method for NotifyAccessInviteContacts
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param inviteLinkId
+	@return ApiNotifyAccessInviteContactsRequest
+*/
+func (a *IntegrationsAPIService) NotifyAccessInviteContacts(ctx context.Context, id string, inviteLinkId string) ApiNotifyAccessInviteContactsRequest {
+	return ApiNotifyAccessInviteContactsRequest{
+		ApiService:   a,
+		ctx:          ctx,
+		id:           id,
+		inviteLinkId: inviteLinkId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return NotifyContactsResponse
+func (a *IntegrationsAPIService) NotifyAccessInviteContactsExecute(r ApiNotifyAccessInviteContactsRequest) (*NotifyContactsResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *NotifyContactsResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.NotifyAccessInviteContacts")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integrations/{id}/access-invites/{invite_link_id}/notify"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"invite_link_id"+"}", url.PathEscape(parameterValueToString(r.inviteLinkId, "inviteLinkId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -4971,39 +4905,27 @@ func (a *IntegrationsAPIService) PostAccessInvitePhotoExecute(r ApiPostAccessInv
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiPostIntegrationTransferRequest struct {
-	ctx                        context.Context
-	ApiService                 *IntegrationsAPIService
-	id                         string
-	xOrg                       *string
-	transferIntegrationRequest *TransferIntegrationRequest
+type ApiPostIntegrationZoneSyncRequest struct {
+	ctx        context.Context
+	ApiService *IntegrationsAPIService
+	id         string
 }
 
-func (r ApiPostIntegrationTransferRequest) XOrg(xOrg string) ApiPostIntegrationTransferRequest {
-	r.xOrg = &xOrg
-	return r
-}
-
-func (r ApiPostIntegrationTransferRequest) TransferIntegrationRequest(transferIntegrationRequest TransferIntegrationRequest) ApiPostIntegrationTransferRequest {
-	r.transferIntegrationRequest = &transferIntegrationRequest
-	return r
-}
-
-func (r ApiPostIntegrationTransferRequest) Execute() (*TransferIntegrationResponse, *http.Response, error) {
-	return r.ApiService.PostIntegrationTransferExecute(r)
+func (r ApiPostIntegrationZoneSyncRequest) Execute() (*ZoneSyncResponse, *http.Response, error) {
+	return r.ApiService.PostIntegrationZoneSyncExecute(r)
 }
 
 /*
-PostIntegrationTransfer Move or duplicate an integration (and its dependents) into another org.
+PostIntegrationZoneSync Import provider zones and placements into the integration's org.
 
-Transfer an integration to another org. Quota: the target org's capacity is checked for `integrations` (+1) plus the dependent `devices`, `entities`, and `zones` it brings (unit: count, lifetime capacity); a full target quota returns 429 `quota_exceeded`.
+Import the provider's zones (e.g. Home Assistant areas) into the integration's org and place its devices and entities. A provider zone already linked keeps its zone; an unlinked one links to the single org zone with the same normalized name, otherwise a zone is created (quota: `zones`, 1 per created zone). Devices take their provider zone; an entity whose provider zone differs from its device's is placed explicitly, otherwise it inherits. A placement a user changed since the last sync is never overwritten (`skipped_manual`). Requires `zones:create`, `devices:update`, and `entities:update` on the integration's org. Providers advertise support with `supports_zone_sync` in their definition.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
-	@return ApiPostIntegrationTransferRequest
+	@return ApiPostIntegrationZoneSyncRequest
 */
-func (a *IntegrationsAPIService) PostIntegrationTransfer(ctx context.Context, id string) ApiPostIntegrationTransferRequest {
-	return ApiPostIntegrationTransferRequest{
+func (a *IntegrationsAPIService) PostIntegrationZoneSync(ctx context.Context, id string) ApiPostIntegrationZoneSyncRequest {
+	return ApiPostIntegrationZoneSyncRequest{
 		ApiService: a,
 		ctx:        ctx,
 		id:         id,
@@ -5012,35 +4934,29 @@ func (a *IntegrationsAPIService) PostIntegrationTransfer(ctx context.Context, id
 
 // Execute executes the request
 //
-//	@return TransferIntegrationResponse
-func (a *IntegrationsAPIService) PostIntegrationTransferExecute(r ApiPostIntegrationTransferRequest) (*TransferIntegrationResponse, *http.Response, error) {
+//	@return ZoneSyncResponse
+func (a *IntegrationsAPIService) PostIntegrationZoneSyncExecute(r ApiPostIntegrationZoneSyncRequest) (*ZoneSyncResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *TransferIntegrationResponse
+		localVarReturnValue *ZoneSyncResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.PostIntegrationTransfer")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.PostIntegrationZoneSync")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/integrations/{id}/transfer"
+	localVarPath := localBasePath + "/integrations/{id}/zone-sync"
 	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.xOrg == nil {
-		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
-	}
-	if r.transferIntegrationRequest == nil {
-		return localVarReturnValue, nil, reportError("transferIntegrationRequest is required and must be specified")
-	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
+	localVarHTTPContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -5056,9 +4972,6 @@ func (a *IntegrationsAPIService) PostIntegrationTransferExecute(r ApiPostIntegra
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
-	// body params
-	localVarPostBody = r.transferIntegrationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -5081,114 +4994,92 @@ func (a *IntegrationsAPIService) PostIntegrationTransferExecute(r ApiPostIntegra
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostPalgateProbeLinkedAccountRequest struct {
-	ctx                              context.Context
-	ApiService                       *IntegrationsAPIService
-	palgateProbeLinkedAccountRequest *PalgateProbeLinkedAccountRequest
-}
-
-func (r ApiPostPalgateProbeLinkedAccountRequest) PalgateProbeLinkedAccountRequest(palgateProbeLinkedAccountRequest PalgateProbeLinkedAccountRequest) ApiPostPalgateProbeLinkedAccountRequest {
-	r.palgateProbeLinkedAccountRequest = &palgateProbeLinkedAccountRequest
-	return r
-}
-
-func (r ApiPostPalgateProbeLinkedAccountRequest) Execute() (*PalgateProbeLinkedAccountResponse, *http.Response, error) {
-	return r.ApiService.PostPalgateProbeLinkedAccountExecute(r)
-}
-
-/*
-PostPalgateProbeLinkedAccount Method for PostPalgateProbeLinkedAccount
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiPostPalgateProbeLinkedAccountRequest
-*/
-func (a *IntegrationsAPIService) PostPalgateProbeLinkedAccount(ctx context.Context) ApiPostPalgateProbeLinkedAccountRequest {
-	return ApiPostPalgateProbeLinkedAccountRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return PalgateProbeLinkedAccountResponse
-func (a *IntegrationsAPIService) PostPalgateProbeLinkedAccountExecute(r ApiPostPalgateProbeLinkedAccountRequest) (*PalgateProbeLinkedAccountResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *PalgateProbeLinkedAccountResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.PostPalgateProbeLinkedAccount")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/integration-setup/v1/palgate/probe-linked-account"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.palgateProbeLinkedAccountRequest == nil {
-		return localVarReturnValue, nil, reportError("palgateProbeLinkedAccountRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.palgateProbeLinkedAccountRequest
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 422 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 429 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 502 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -5524,183 +5415,6 @@ func (a *IntegrationsAPIService) PostTasmotaRotateCredentialsExecute(r ApiPostTa
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostWaveshareProvisioningAckRequest struct {
-	ctx        context.Context
-	ApiService *IntegrationsAPIService
-	id         string
-	xOrg       *string
-	body       *interface{}
-}
-
-func (r ApiPostWaveshareProvisioningAckRequest) XOrg(xOrg string) ApiPostWaveshareProvisioningAckRequest {
-	r.xOrg = &xOrg
-	return r
-}
-
-func (r ApiPostWaveshareProvisioningAckRequest) Body(body interface{}) ApiPostWaveshareProvisioningAckRequest {
-	r.body = &body
-	return r
-}
-
-func (r ApiPostWaveshareProvisioningAckRequest) Execute() (*IntegrationResponse, *http.Response, error) {
-	return r.ApiService.PostWaveshareProvisioningAckExecute(r)
-}
-
-/*
-PostWaveshareProvisioningAck Acknowledge that the device was reprovisioned (store the current connection config snapshot).
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param id
-	@return ApiPostWaveshareProvisioningAckRequest
-*/
-func (a *IntegrationsAPIService) PostWaveshareProvisioningAck(ctx context.Context, id string) ApiPostWaveshareProvisioningAckRequest {
-	return ApiPostWaveshareProvisioningAckRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
-	}
-}
-
-// Execute executes the request
-//
-//	@return IntegrationResponse
-func (a *IntegrationsAPIService) PostWaveshareProvisioningAckExecute(r ApiPostWaveshareProvisioningAckRequest) (*IntegrationResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *IntegrationResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "IntegrationsAPIService.PostWaveshareProvisioningAck")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/integrations/{id}/provisioning/ack"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.xOrg == nil {
-		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
-	}
-	if r.body == nil {
-		return localVarReturnValue, nil, reportError("body is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
-	// body params
-	localVarPostBody = r.body
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		if localVarHTTPResponse.StatusCode == 400 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 401 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 403 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 404 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
-			return localVarReturnValue, localVarHTTPResponse, newErr
-		}
-		if localVarHTTPResponse.StatusCode == 500 {
-			var v ApiErrorResponse
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-			newErr.model = v
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}

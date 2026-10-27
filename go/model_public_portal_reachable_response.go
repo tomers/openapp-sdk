@@ -22,6 +22,8 @@ var _ MappedNullable = &PublicPortalReachableResponse{}
 // PublicPortalReachableResponse struct for PublicPortalReachableResponse
 type PublicPortalReachableResponse struct {
 	Reachable bool `json:"reachable"`
+	// Why the door is not reachable, when the server knows. `door_not_connected`: the portal has no door (it was purged, or never linked), so retrying cannot help. Omitted when reachable and when the cause is a door that exists but did not answer.
+	Reason NullableString `json:"reason,omitempty"`
 }
 
 type _PublicPortalReachableResponse PublicPortalReachableResponse
@@ -68,9 +70,55 @@ func (o *PublicPortalReachableResponse) SetReachable(v bool) {
 	o.Reachable = v
 }
 
+// GetReason returns the Reason field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalReachableResponse) GetReason() string {
+	if o == nil || IsNil(o.Reason.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Reason.Get()
+}
+
+// GetReasonOk returns a tuple with the Reason field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalReachableResponse) GetReasonOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Reason.Get(), o.Reason.IsSet()
+}
+
+// HasReason returns a boolean if a field has been set.
+func (o *PublicPortalReachableResponse) HasReason() bool {
+	if o != nil && o.Reason.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetReason gets a reference to the given NullableString and assigns it to the Reason field.
+func (o *PublicPortalReachableResponse) SetReason(v string) {
+	o.Reason.Set(&v)
+}
+
+// SetReasonNil sets the value for Reason to be an explicit nil
+func (o *PublicPortalReachableResponse) SetReasonNil() {
+	o.Reason.Set(nil)
+}
+
+// UnsetReason ensures that no value is present for Reason, not even an explicit nil
+func (o *PublicPortalReachableResponse) UnsetReason() {
+	o.Reason.Unset()
+}
+
 func (o PublicPortalReachableResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["reachable"] = o.Reachable
+	if o.Reason.IsSet() {
+		toSerialize["reason"] = o.Reason.Get()
+	}
 	return toSerialize, nil
 }
 

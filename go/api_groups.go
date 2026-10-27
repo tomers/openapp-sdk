@@ -1477,6 +1477,118 @@ func (a *GroupsAPIService) ListGroupMembersExecute(r ApiListGroupMembersRequest)
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiListIntegrationGroupsRequest struct {
+	ctx        context.Context
+	ApiService *GroupsAPIService
+	id         string
+	xOrg       *string
+}
+
+func (r ApiListIntegrationGroupsRequest) XOrg(xOrg string) ApiListIntegrationGroupsRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiListIntegrationGroupsRequest) Execute() ([]GroupResponse, *http.Response, error) {
+	return r.ApiService.ListIntegrationGroupsExecute(r)
+}
+
+/*
+ListIntegrationGroups Groups linked into the organization that owns this integration.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiListIntegrationGroupsRequest
+*/
+func (a *GroupsAPIService) ListIntegrationGroups(ctx context.Context, id string) ApiListIntegrationGroupsRequest {
+	return ApiListIntegrationGroupsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return []GroupResponse
+func (a *GroupsAPIService) ListIntegrationGroupsExecute(r ApiListIntegrationGroupsRequest) ([]GroupResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue []GroupResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GroupsAPIService.ListIntegrationGroups")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integrations/{id}/groups"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiListOrgGroupsRequest struct {
 	ctx        context.Context
 	ApiService *GroupsAPIService
@@ -1712,6 +1824,106 @@ func (a *GroupsAPIService) PostGroupImageExecute(r ApiPostGroupImageRequest) (*R
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiPurgeGroupRequest struct {
+	ctx        context.Context
+	ApiService *GroupsAPIService
+	id         string
+	xOrg       *string
+}
+
+func (r ApiPurgeGroupRequest) XOrg(xOrg string) ApiPurgeGroupRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiPurgeGroupRequest) Execute() (*http.Response, error) {
+	return r.ApiService.PurgeGroupExecute(r)
+}
+
+/*
+PurgeGroup Permanently delete a soft-deleted group.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiPurgeGroupRequest
+*/
+func (a *GroupsAPIService) PurgeGroup(ctx context.Context, id string) ApiPurgeGroupRequest {
+	return ApiPurgeGroupRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+func (a *GroupsAPIService) PurgeGroupExecute(r ApiPurgeGroupRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodDelete
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GroupsAPIService.PurgeGroup")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/groups/{id}/purge"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return nil, reportError("xOrg is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
 type ApiRedeemGroupShareOfferRequest struct {
 	ctx                          context.Context
 	ApiService                   *GroupsAPIService
@@ -1736,8 +1948,8 @@ func (r ApiRedeemGroupShareOfferRequest) Execute() (*GroupShareOfferResponse, *h
 /*
 RedeemGroupShareOffer Redeem an offer, creating a pending link into the acting org.
 
-The link is pending rather than active: accepting a roster is a decision for the receiving org,
-and it must admit the members before any of them grant access.
+The new link starts pending. The receiving org must accept it and admit the members before any
+of them can grant access.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiRedeemGroupShareOfferRequest
@@ -1832,6 +2044,106 @@ func (a *GroupsAPIService) RedeemGroupShareOfferExecute(r ApiRedeemGroupShareOff
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiRestoreGroupRequest struct {
+	ctx        context.Context
+	ApiService *GroupsAPIService
+	id         string
+	xOrg       *string
+}
+
+func (r ApiRestoreGroupRequest) XOrg(xOrg string) ApiRestoreGroupRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiRestoreGroupRequest) Execute() (*http.Response, error) {
+	return r.ApiService.RestoreGroupExecute(r)
+}
+
+/*
+RestoreGroup Restore a soft-deleted group. Memberships removed at delete are not recreated.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiRestoreGroupRequest
+*/
+func (a *GroupsAPIService) RestoreGroup(ctx context.Context, id string) ApiRestoreGroupRequest {
+	return ApiRestoreGroupRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+func (a *GroupsAPIService) RestoreGroupExecute(r ApiRestoreGroupRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodPost
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GroupsAPIService.RestoreGroup")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/groups/{id}/restore"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return nil, reportError("xOrg is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
 }
 
 type ApiRevokeGroupLinkRequest struct {
@@ -2186,4 +2498,119 @@ func (a *GroupsAPIService) UpdateGroupLinkExecute(r ApiUpdateGroupLinkRequest) (
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiUpdateGroupMemberRoleRequest struct {
+	ctx                      context.Context
+	ApiService               *GroupsAPIService
+	id                       string
+	memberRef                string
+	xOrg                     *string
+	updateGroupMemberPayload *UpdateGroupMemberPayload
+}
+
+func (r ApiUpdateGroupMemberRoleRequest) XOrg(xOrg string) ApiUpdateGroupMemberRoleRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiUpdateGroupMemberRoleRequest) UpdateGroupMemberPayload(updateGroupMemberPayload UpdateGroupMemberPayload) ApiUpdateGroupMemberRoleRequest {
+	r.updateGroupMemberPayload = &updateGroupMemberPayload
+	return r
+}
+
+func (r ApiUpdateGroupMemberRoleRequest) Execute() (*http.Response, error) {
+	return r.ApiService.UpdateGroupMemberRoleExecute(r)
+}
+
+/*
+UpdateGroupMemberRole Change a member's role after they have been added.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param memberRef
+	@return ApiUpdateGroupMemberRoleRequest
+*/
+func (a *GroupsAPIService) UpdateGroupMemberRole(ctx context.Context, id string, memberRef string) ApiUpdateGroupMemberRoleRequest {
+	return ApiUpdateGroupMemberRoleRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+		memberRef:  memberRef,
+	}
+}
+
+// Execute executes the request
+func (a *GroupsAPIService) UpdateGroupMemberRoleExecute(r ApiUpdateGroupMemberRoleRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GroupsAPIService.UpdateGroupMemberRole")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/groups/{id}/members/{member_ref}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"member_ref"+"}", url.PathEscape(parameterValueToString(r.memberRef, "memberRef")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return nil, reportError("xOrg is required and must be specified")
+	}
+	if r.updateGroupMemberPayload == nil {
+		return nil, reportError("updateGroupMemberPayload is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	// body params
+	localVarPostBody = r.updateGroupMemberPayload
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
 }

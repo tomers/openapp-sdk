@@ -17,8 +17,10 @@ _go_test_with_reports := "mkdir -p .tmp/sdk-reports && " \
 _:
     @just --list
 
-# Regenerate all Go sources from the repo OpenAPI spec (same image as CI).
+# Regenerate all Go sources from the repo OpenAPI spec (same image as CI). The generated files are
+# deleted first: the generator never removes a file for a schema the spec dropped.
 generate:
+    bash "{{ _pkg }}/scripts/clean_generated_go.sh" "{{ _pkg }}"
     docker run --rm \
         -u "$(id -u):$(id -g)" \
         -v "{{ _repo }}:/workspace" \

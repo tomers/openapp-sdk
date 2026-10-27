@@ -4,12 +4,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Email** | Pointer to **NullableString** | Login email. Omit for phone-only provisioning (Kratos uses &#x60;traits.phone&#x60; only; OpenApp stores a synthetic &#x60;{id}@phone.openapp.local&#x60; placeholder in &#x60;users.email&#x60;). | [optional]
+**Email** | Pointer to **NullableString** | Login email. Omit for phone-only accounts. | [optional]
 **FirstName** | Pointer to **NullableString** | Given name stored on the Kratos identity (&#x60;traits.name.first&#x60;) when creating the account. | [optional]
-**Id** | Pointer to **NullableString** | Optional ID parameter (admin-only, not documented in API docs) This field is intentionally not included in OpenAPI documentation | [optional]
 **LastName** | Pointer to **NullableString** | Family name stored on the Kratos identity (&#x60;traits.name.last&#x60;) when creating the account. | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) |  |
-**Password** | Pointer to **NullableString** | Optional password for Kratos identity (provisioning only; same permission as id). When set, the Kratos identity is created with this password so the user can log in immediately. | [optional]
 **Phone** | Pointer to **NullableString** | E.164 phone (&#x60;+[country][digits]&#x60;). When set, must satisfy the same pattern as Kratos. | [optional]
 **Roles** | Pointer to **map[string]interface{}** | Org ID (string) to list of role names. Optional. | [optional]
 
@@ -102,41 +100,6 @@ HasFirstName returns a boolean if a field has been set.
 `func (o *CreateUserRequest) UnsetFirstName()`
 
 UnsetFirstName ensures that no value is present for FirstName, not even an explicit nil
-### GetId
-
-`func (o *CreateUserRequest) GetId() string`
-
-GetId returns the Id field if non-nil, zero value otherwise.
-
-### GetIdOk
-
-`func (o *CreateUserRequest) GetIdOk() (*string, bool)`
-
-GetIdOk returns a tuple with the Id field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetId
-
-`func (o *CreateUserRequest) SetId(v string)`
-
-SetId sets Id field to given value.
-
-### HasId
-
-`func (o *CreateUserRequest) HasId() bool`
-
-HasId returns a boolean if a field has been set.
-
-### SetIdNil
-
-`func (o *CreateUserRequest) SetIdNil(b bool)`
-
- SetIdNil sets the value for Id to be an explicit nil
-
-### UnsetId
-`func (o *CreateUserRequest) UnsetId()`
-
-UnsetId ensures that no value is present for Id, not even an explicit nil
 ### GetLastName
 
 `func (o *CreateUserRequest) GetLastName() string`
@@ -192,41 +155,6 @@ and a boolean to check if the value has been set.
 SetName sets Name field to given value.
 
 
-### GetPassword
-
-`func (o *CreateUserRequest) GetPassword() string`
-
-GetPassword returns the Password field if non-nil, zero value otherwise.
-
-### GetPasswordOk
-
-`func (o *CreateUserRequest) GetPasswordOk() (*string, bool)`
-
-GetPasswordOk returns a tuple with the Password field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetPassword
-
-`func (o *CreateUserRequest) SetPassword(v string)`
-
-SetPassword sets Password field to given value.
-
-### HasPassword
-
-`func (o *CreateUserRequest) HasPassword() bool`
-
-HasPassword returns a boolean if a field has been set.
-
-### SetPasswordNil
-
-`func (o *CreateUserRequest) SetPasswordNil(b bool)`
-
- SetPasswordNil sets the value for Password to be an explicit nil
-
-### UnsetPassword
-`func (o *CreateUserRequest) UnsetPassword()`
-
-UnsetPassword ensures that no value is present for Password, not even an explicit nil
 ### GetPhone
 
 `func (o *CreateUserRequest) GetPhone() string`

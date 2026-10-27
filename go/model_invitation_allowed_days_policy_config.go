@@ -19,14 +19,16 @@ var _ MappedNullable = &InvitationAllowedDaysPolicyConfig{}
 
 // InvitationAllowedDaysPolicyConfig Typed `config` shape for `invitation_allowed_days`.
 type InvitationAllowedDaysPolicyConfig struct {
-	AppliesTo []PolicyPrincipalKind `json:"applies_to,omitempty"`
 	// Organization-local ISO dates that invitations cannot use.
 	BlackoutDates []*string `json:"blackout_dates,omitempty"`
-	// Include dates from applicable `holiday_calendar` rows.
-	HolidayCalendar NullableBool                 `json:"holiday_calendar,omitempty"`
-	Output          NullablePolicyOutputSelector `json:"output,omitempty"`
+	// Also block the dates from applicable `holiday_calendar` policies.
+	HolidayCalendar NullableBool `json:"holiday_calendar,omitempty"`
+	// Provider-derived output/channel selector: the row binds only actions on that output.
+	Output NullablePolicyOutputSelector `json:"output,omitempty"`
 	// Sunday is 0; Saturday is 6. Omit to leave weekdays unrestricted for this row.
 	Weekdays []int32 `json:"weekdays,omitempty"`
+	// Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy's org.
+	ZoneId NullableString `json:"zone_id,omitempty"`
 }
 
 // NewInvitationAllowedDaysPolicyConfig instantiates a new InvitationAllowedDaysPolicyConfig object
@@ -44,39 +46,6 @@ func NewInvitationAllowedDaysPolicyConfig() *InvitationAllowedDaysPolicyConfig {
 func NewInvitationAllowedDaysPolicyConfigWithDefaults() *InvitationAllowedDaysPolicyConfig {
 	this := InvitationAllowedDaysPolicyConfig{}
 	return &this
-}
-
-// GetAppliesTo returns the AppliesTo field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *InvitationAllowedDaysPolicyConfig) GetAppliesTo() []PolicyPrincipalKind {
-	if o == nil {
-		var ret []PolicyPrincipalKind
-		return ret
-	}
-	return o.AppliesTo
-}
-
-// GetAppliesToOk returns a tuple with the AppliesTo field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *InvitationAllowedDaysPolicyConfig) GetAppliesToOk() ([]PolicyPrincipalKind, bool) {
-	if o == nil || IsNil(o.AppliesTo) {
-		return nil, false
-	}
-	return o.AppliesTo, true
-}
-
-// HasAppliesTo returns a boolean if a field has been set.
-func (o *InvitationAllowedDaysPolicyConfig) HasAppliesTo() bool {
-	if o != nil && !IsNil(o.AppliesTo) {
-		return true
-	}
-
-	return false
-}
-
-// SetAppliesTo gets a reference to the given []PolicyPrincipalKind and assigns it to the AppliesTo field.
-func (o *InvitationAllowedDaysPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind) {
-	o.AppliesTo = v
 }
 
 // GetBlackoutDates returns the BlackoutDates field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -231,11 +200,51 @@ func (o *InvitationAllowedDaysPolicyConfig) SetWeekdays(v []int32) {
 	o.Weekdays = v
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InvitationAllowedDaysPolicyConfig) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId.Get()
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InvitationAllowedDaysPolicyConfig) GetZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneId.Get(), o.ZoneId.IsSet()
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *InvitationAllowedDaysPolicyConfig) HasZoneId() bool {
+	if o != nil && o.ZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
+func (o *InvitationAllowedDaysPolicyConfig) SetZoneId(v string) {
+	o.ZoneId.Set(&v)
+}
+
+// SetZoneIdNil sets the value for ZoneId to be an explicit nil
+func (o *InvitationAllowedDaysPolicyConfig) SetZoneIdNil() {
+	o.ZoneId.Set(nil)
+}
+
+// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
+func (o *InvitationAllowedDaysPolicyConfig) UnsetZoneId() {
+	o.ZoneId.Unset()
+}
+
 func (o InvitationAllowedDaysPolicyConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.AppliesTo != nil {
-		toSerialize["applies_to"] = o.AppliesTo
-	}
 	if o.BlackoutDates != nil {
 		toSerialize["blackout_dates"] = o.BlackoutDates
 	}
@@ -247,6 +256,9 @@ func (o InvitationAllowedDaysPolicyConfig) ToMap() (map[string]interface{}, erro
 	}
 	if o.Weekdays != nil {
 		toSerialize["weekdays"] = o.Weekdays
+	}
+	if o.ZoneId.IsSet() {
+		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
 	return toSerialize, nil
 }

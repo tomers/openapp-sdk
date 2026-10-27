@@ -6,13 +6,15 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **AllowedActions** | **[]string** |  |
 **CallAvailable** | Pointer to **NullableBool** | True when at least one resident (receives_calls) exists. When false, voice/video are excluded from allowed_actions. | [optional]
-**DenialReasons** | Pointer to **[]string** | Why this entry cannot be called: &#x60;no_callees&#x60;, &#x60;dnd&#x60;, or &#x60;guest_disabled&#x60;.  The server already computes each of these to decide &#x60;allowed_actions&#x60;; publishing them means the client can explain a greyed-out call button instead of leaving the visitor to guess. | [optional]
+**DenialReasons** | Pointer to **[]string** | Why this entry cannot be called; empty when nothing blocks a call. &#x60;no_callees&#x60;: nobody at this entry receives calls. &#x60;dnd&#x60;: Do Not Disturb is on for this entry, or no callee can currently be notified. &#x60;guest_disabled&#x60;: visitor access to this entry is turned off by policy. | [optional]
 **DisplayName** | **interface{}** |  |
+**EffectiveDisplayName** | **string** | Server-resolved visitor name. Clients render this and do not recompute it. |
 **Floor** | **interface{}** |  |
 **FloorNumber** | Pointer to **NullableInt64** |  | [optional]
 **Image** | Pointer to **NullableString** |  | [optional]
 **ListingLabel** | Pointer to **interface{}** |  | [optional]
 **ListingNumber** | Pointer to **NullableInt64** |  | [optional]
+**LocationDetail** | Pointer to **interface{}** |  | [optional]
 **RequireVideo** | Pointer to **NullableBool** |  | [optional]
 **TargetId** | **string** |  |
 
@@ -20,7 +22,7 @@ Name | Type | Description | Notes
 
 ### NewPublicPortalTarget
 
-`func NewPublicPortalTarget(allowedActions []string, displayName interface{}, floor interface{}, targetId string, ) *PublicPortalTarget`
+`func NewPublicPortalTarget(allowedActions []string, displayName interface{}, effectiveDisplayName string, floor interface{}, targetId string, ) *PublicPortalTarget`
 
 NewPublicPortalTarget instantiates a new PublicPortalTarget object
 This constructor will assign default values to properties that have it defined,
@@ -145,6 +147,26 @@ SetDisplayName sets DisplayName field to given value.
 `func (o *PublicPortalTarget) UnsetDisplayName()`
 
 UnsetDisplayName ensures that no value is present for DisplayName, not even an explicit nil
+### GetEffectiveDisplayName
+
+`func (o *PublicPortalTarget) GetEffectiveDisplayName() string`
+
+GetEffectiveDisplayName returns the EffectiveDisplayName field if non-nil, zero value otherwise.
+
+### GetEffectiveDisplayNameOk
+
+`func (o *PublicPortalTarget) GetEffectiveDisplayNameOk() (*string, bool)`
+
+GetEffectiveDisplayNameOk returns a tuple with the EffectiveDisplayName field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEffectiveDisplayName
+
+`func (o *PublicPortalTarget) SetEffectiveDisplayName(v string)`
+
+SetEffectiveDisplayName sets EffectiveDisplayName field to given value.
+
+
 ### GetFloor
 
 `func (o *PublicPortalTarget) GetFloor() interface{}`
@@ -315,6 +337,41 @@ HasListingNumber returns a boolean if a field has been set.
 `func (o *PublicPortalTarget) UnsetListingNumber()`
 
 UnsetListingNumber ensures that no value is present for ListingNumber, not even an explicit nil
+### GetLocationDetail
+
+`func (o *PublicPortalTarget) GetLocationDetail() interface{}`
+
+GetLocationDetail returns the LocationDetail field if non-nil, zero value otherwise.
+
+### GetLocationDetailOk
+
+`func (o *PublicPortalTarget) GetLocationDetailOk() (*interface{}, bool)`
+
+GetLocationDetailOk returns a tuple with the LocationDetail field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetLocationDetail
+
+`func (o *PublicPortalTarget) SetLocationDetail(v interface{})`
+
+SetLocationDetail sets LocationDetail field to given value.
+
+### HasLocationDetail
+
+`func (o *PublicPortalTarget) HasLocationDetail() bool`
+
+HasLocationDetail returns a boolean if a field has been set.
+
+### SetLocationDetailNil
+
+`func (o *PublicPortalTarget) SetLocationDetailNil(b bool)`
+
+ SetLocationDetailNil sets the value for LocationDetail to be an explicit nil
+
+### UnsetLocationDetail
+`func (o *PublicPortalTarget) UnsetLocationDetail()`
+
+UnsetLocationDetail ensures that no value is present for LocationDetail, not even an explicit nil
 ### GetRequireVideo
 
 `func (o *PublicPortalTarget) GetRequireVideo() bool`

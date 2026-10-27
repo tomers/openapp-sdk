@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **Kind** | **string** |  |
 **Label** | Pointer to **interface{}** |  | [optional]
 **Payload** | Pointer to **interface{}** |  | [optional]
+**WifiAvailable** | Pointer to **bool** | The acted-on device&#39;s zone is covered by a Wi-Fi network (see &#x60;PortalOpen&#x60;). | [optional]
 
 ## Methods
 
@@ -180,5 +181,30 @@ HasPayload returns a boolean if a field has been set.
 `func (o *PublicInviteGrantOneOf1) UnsetPayload()`
 
 UnsetPayload ensures that no value is present for Payload, not even an explicit nil
+### GetWifiAvailable
+
+`func (o *PublicInviteGrantOneOf1) GetWifiAvailable() bool`
+
+GetWifiAvailable returns the WifiAvailable field if non-nil, zero value otherwise.
+
+### GetWifiAvailableOk
+
+`func (o *PublicInviteGrantOneOf1) GetWifiAvailableOk() (*bool, bool)`
+
+GetWifiAvailableOk returns a tuple with the WifiAvailable field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetWifiAvailable
+
+`func (o *PublicInviteGrantOneOf1) SetWifiAvailable(v bool)`
+
+SetWifiAvailable sets WifiAvailable field to given value.
+
+### HasWifiAvailable
+
+`func (o *PublicInviteGrantOneOf1) HasWifiAvailable() bool`
+
+HasWifiAvailable returns a boolean if a field has been set.
+
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

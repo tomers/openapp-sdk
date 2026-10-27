@@ -75,4 +75,4 @@ Never commit real API keys. Fixture values in the test tree are intentional fake
 | `tests/docker/` | Docker-based test runs (`just test-docker`) |
 | `justfile` | Test entrypoints — see [`TESTING.md`](TESTING.md) |
 
-**Synced:** `sdk-python-v1.0.1` · [PyPI](https://pypi.org/project/openapp-sdk/) · [Go module](https://pkg.go.dev/github.com/tomers/openapp-sdk/go) · [crates.io](https://crates.io/crates/openapp-sdk) · [npm](https://www.npmjs.com/package/@tomers/openapp-sdk) · [Test report](https://tomers.github.io/openapp-sdk/) · [Issues](https://github.com/tomers/openapp-sdk/issues)
+**Synced:** `sdk-python-v2.0.0` · [PyPI](https://pypi.org/project/openapp-sdk/) · [Go module](https://pkg.go.dev/github.com/tomers/openapp-sdk/go) · [crates.io](https://crates.io/crates/openapp-sdk) · [npm](https://www.npmjs.com/package/@tomers/openapp-sdk) · [Test report](https://tomers.github.io/openapp-sdk/) · [Issues](https://github.com/tomers/openapp-sdk/issues)

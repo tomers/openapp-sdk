@@ -53,12 +53,12 @@ class _ResolveBridgeClient(BridgeClient):
 
     async def zones_get_by_name(
         self,
-        integration_id: str,
+        org_id: str,
         name: str,
         *,
         match: str = "exact",
     ) -> dict[str, Any]:
-        return {"id": "01HZONE", "name": {"en": name}, "integration_id": integration_id}
+        return {"id": "01HZONE", "name": {"en": name}, "org_id": org_id}
 
     async def orgs_get_by_name(self, name: str, *, match: str = "exact") -> dict[str, Any]:
         return {"id": "01HORG", "name": {"en": name}}
@@ -113,8 +113,9 @@ async def test_devices_get_by_name(client: AsyncClient) -> None:
 
 @pytest.mark.asyncio
 async def test_zones_get_by_name(client: AsyncClient) -> None:
-    zone = await client.zones.get_by_name("01HINT", "Building A")
+    zone = await client.zones.get_by_name("01HORG", "Building A")
     assert zone["id"] == "01HZONE"
+    assert zone["org_id"] == "01HORG"
 
 
 @pytest.mark.asyncio

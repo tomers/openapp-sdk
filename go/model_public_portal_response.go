@@ -24,12 +24,14 @@ type PublicPortalResponse struct {
 	// Access-control integration summary (building name, address, photo).
 	AccessControl NullablePublicPortalAccessControl `json:"access_control,omitempty"`
 	// Visitor directory device summary for this portal (building directory name, photo).
-	AccessDirectory              NullablePublicPortalAccessControl `json:"access_directory,omitempty"`
-	Branding                     interface{}                       `json:"branding,omitempty"`
-	DoorEffectiveAutoOffDuration NullableInt64                     `json:"door_effective_auto_off_duration,omitempty"`
+	AccessDirectory NullablePublicPortalAccessControl `json:"access_directory,omitempty"`
+	Branding        interface{}                       `json:"branding,omitempty"`
+	// False when the portal has no door to open: the door was purged, or the portal was never linked to one. The printed QR code stays valid; an admin can link a door again.
+	DoorConnected                bool          `json:"door_connected"`
+	DoorEffectiveAutoOffDuration NullableInt64 `json:"door_effective_auto_off_duration,omitempty"`
 	// Image URL for the door (presigned S3 URL from media service).
 	DoorImageUrl NullableString `json:"door_image_url,omitempty"`
-	// Entry type from linked portal device (`virtual_access.entry_kind`). Default `door`.
+	// Entry type configured on the linked portal device (`entry_kind` in its `virtual_access` metadata). Default `door`.
 	EntryKind string `json:"entry_kind"`
 	// Effective door hold when any opener is held (guest-visible).
 	Hold           NullablePublicHoldView            `json:"hold,omitempty"`
@@ -46,8 +48,9 @@ type _PublicPortalResponse PublicPortalResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicPortalResponse(entryKind string, mode PublicPortalMode, publicPortalId string) *PublicPortalResponse {
+func NewPublicPortalResponse(doorConnected bool, entryKind string, mode PublicPortalMode, publicPortalId string) *PublicPortalResponse {
 	this := PublicPortalResponse{}
+	this.DoorConnected = doorConnected
 	this.EntryKind = entryKind
 	this.Mode = mode
 	this.PublicPortalId = publicPortalId
@@ -179,6 +182,30 @@ func (o *PublicPortalResponse) HasBranding() bool {
 // SetBranding gets a reference to the given interface{} and assigns it to the Branding field.
 func (o *PublicPortalResponse) SetBranding(v interface{}) {
 	o.Branding = v
+}
+
+// GetDoorConnected returns the DoorConnected field value
+func (o *PublicPortalResponse) GetDoorConnected() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.DoorConnected
+}
+
+// GetDoorConnectedOk returns a tuple with the DoorConnected field value
+// and a boolean to check if the value has been set.
+func (o *PublicPortalResponse) GetDoorConnectedOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DoorConnected, true
+}
+
+// SetDoorConnected sets field value
+func (o *PublicPortalResponse) SetDoorConnected(v bool) {
+	o.DoorConnected = v
 }
 
 // GetDoorEffectiveAutoOffDuration returns the DoorEffectiveAutoOffDuration field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -512,6 +539,7 @@ func (o PublicPortalResponse) ToMap() (map[string]interface{}, error) {
 	if o.Branding != nil {
 		toSerialize["branding"] = o.Branding
 	}
+	toSerialize["door_connected"] = o.DoorConnected
 	if o.DoorEffectiveAutoOffDuration.IsSet() {
 		toSerialize["door_effective_auto_off_duration"] = o.DoorEffectiveAutoOffDuration.Get()
 	}
@@ -541,6 +569,7 @@ func (o *PublicPortalResponse) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"door_connected",
 		"entry_kind",
 		"mode",
 		"public_portal_id",

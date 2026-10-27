@@ -4,8 +4,8 @@ All URIs are relative to */api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**GetIntegrationLanAgentTasks**](LANAgentAPI.md#GetIntegrationLanAgentTasks) | **Get** /integrations/{integration_id}/lan-agent/tasks | GET /integrations/{id}/lan-agent/tasks
-[**PostIntegrationLanAgentTaskSpec**](LANAgentAPI.md#PostIntegrationLanAgentTaskSpec) | **Post** /integrations/{integration_id}/lan-agent/task-spec | POST /integrations/{id}/lan-agent/task-spec
+[**GetIntegrationLanAgentTasks**](LANAgentAPI.md#GetIntegrationLanAgentTasks) | **Get** /integrations/{integration_id}/lan-agent/tasks | List the LAN agent task IDs the integration&#39;s provider supports. Requires read access to the integration.
+[**PostIntegrationLanAgentTaskSpec**](LANAgentAPI.md#PostIntegrationLanAgentTaskSpec) | **Post** /integrations/{integration_id}/lan-agent/task-spec | Build the spec for a LAN agent task to execute locally for this integration.
 
 
 
@@ -13,7 +13,7 @@ Method | HTTP request | Description
 
 > GetIntegrationLanAgentTasks(ctx, integrationId).XOrg(xOrg).Execute()
 
-GET /integrations/{id}/lan-agent/tasks
+List the LAN agent task IDs the integration's provider supports. Requires read access to the integration.
 
 ### Example
 
@@ -85,7 +85,7 @@ Name | Type | Description  | Notes
 
 > LanAgentTaskSpecResponse PostIntegrationLanAgentTaskSpec(ctx, integrationId).XOrg(xOrg).LanAgentTaskSpecRequest(lanAgentTaskSpecRequest).Execute()
 
-POST /integrations/{id}/lan-agent/task-spec
+Build the spec for a LAN agent task to execute locally for this integration.
 
 ### Example
 

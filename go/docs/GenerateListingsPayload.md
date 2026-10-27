@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ListingKind** | Pointer to **NullableString** |  | [optional]
+**ListingKind** | **string** | The kind written onto every listing this request generates. |
 **NamingPattern** | Pointer to **NullableString** |  | [optional]
 **SourceGroupIds** | **[]string** |  |
 
@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 
 ### NewGenerateListingsPayload
 
-`func NewGenerateListingsPayload(sourceGroupIds []string, ) *GenerateListingsPayload`
+`func NewGenerateListingsPayload(listingKind string, sourceGroupIds []string, ) *GenerateListingsPayload`
 
 NewGenerateListingsPayload instantiates a new GenerateListingsPayload object
 This constructor will assign default values to properties that have it defined,
@@ -46,22 +46,7 @@ and a boolean to check if the value has been set.
 
 SetListingKind sets ListingKind field to given value.
 
-### HasListingKind
 
-`func (o *GenerateListingsPayload) HasListingKind() bool`
-
-HasListingKind returns a boolean if a field has been set.
-
-### SetListingKindNil
-
-`func (o *GenerateListingsPayload) SetListingKindNil(b bool)`
-
- SetListingKindNil sets the value for ListingKind to be an explicit nil
-
-### UnsetListingKind
-`func (o *GenerateListingsPayload) UnsetListingKind()`
-
-UnsetListingKind ensures that no value is present for ListingKind, not even an explicit nil
 ### GetNamingPattern
 
 `func (o *GenerateListingsPayload) GetNamingPattern() string`

@@ -17,13 +17,14 @@ import (
 // checks if the InvitationIdentityPolicyConfig type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &InvitationIdentityPolicyConfig{}
 
-// InvitationIdentityPolicyConfig Typed `config` shape for invitation policies that prohibit or require a boolean behavior.
+// InvitationIdentityPolicyConfig Typed `config` shape for `invitation_require_identity`. Checked when the invitee redeems, where the author is not the actor, so it takes no `applies_to`.
 type InvitationIdentityPolicyConfig struct {
-	AppliesTo            []PolicyPrincipalKind                                 `json:"applies_to,omitempty"`
 	Output               NullableInvitationAllowedEntryKindsPolicyConfigOutput `json:"output,omitempty"`
 	RequirePhoto         NullableBool                                          `json:"require_photo,omitempty"`
 	RequirePin           NullableBool                                          `json:"require_pin,omitempty"`
 	RequireVerifiedPhone NullableBool                                          `json:"require_verified_phone,omitempty"`
+	// Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy's org.
+	ZoneId NullableString `json:"zone_id,omitempty"`
 }
 
 // NewInvitationIdentityPolicyConfig instantiates a new InvitationIdentityPolicyConfig object
@@ -41,39 +42,6 @@ func NewInvitationIdentityPolicyConfig() *InvitationIdentityPolicyConfig {
 func NewInvitationIdentityPolicyConfigWithDefaults() *InvitationIdentityPolicyConfig {
 	this := InvitationIdentityPolicyConfig{}
 	return &this
-}
-
-// GetAppliesTo returns the AppliesTo field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *InvitationIdentityPolicyConfig) GetAppliesTo() []PolicyPrincipalKind {
-	if o == nil {
-		var ret []PolicyPrincipalKind
-		return ret
-	}
-	return o.AppliesTo
-}
-
-// GetAppliesToOk returns a tuple with the AppliesTo field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *InvitationIdentityPolicyConfig) GetAppliesToOk() ([]PolicyPrincipalKind, bool) {
-	if o == nil || IsNil(o.AppliesTo) {
-		return nil, false
-	}
-	return o.AppliesTo, true
-}
-
-// HasAppliesTo returns a boolean if a field has been set.
-func (o *InvitationIdentityPolicyConfig) HasAppliesTo() bool {
-	if o != nil && !IsNil(o.AppliesTo) {
-		return true
-	}
-
-	return false
-}
-
-// SetAppliesTo gets a reference to the given []PolicyPrincipalKind and assigns it to the AppliesTo field.
-func (o *InvitationIdentityPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind) {
-	o.AppliesTo = v
 }
 
 // GetOutput returns the Output field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -248,11 +216,51 @@ func (o *InvitationIdentityPolicyConfig) UnsetRequireVerifiedPhone() {
 	o.RequireVerifiedPhone.Unset()
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InvitationIdentityPolicyConfig) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId.Get()
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InvitationIdentityPolicyConfig) GetZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneId.Get(), o.ZoneId.IsSet()
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *InvitationIdentityPolicyConfig) HasZoneId() bool {
+	if o != nil && o.ZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
+func (o *InvitationIdentityPolicyConfig) SetZoneId(v string) {
+	o.ZoneId.Set(&v)
+}
+
+// SetZoneIdNil sets the value for ZoneId to be an explicit nil
+func (o *InvitationIdentityPolicyConfig) SetZoneIdNil() {
+	o.ZoneId.Set(nil)
+}
+
+// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
+func (o *InvitationIdentityPolicyConfig) UnsetZoneId() {
+	o.ZoneId.Unset()
+}
+
 func (o InvitationIdentityPolicyConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.AppliesTo != nil {
-		toSerialize["applies_to"] = o.AppliesTo
-	}
 	if o.Output.IsSet() {
 		toSerialize["output"] = o.Output.Get()
 	}
@@ -264,6 +272,9 @@ func (o InvitationIdentityPolicyConfig) ToMap() (map[string]interface{}, error) 
 	}
 	if o.RequireVerifiedPhone.IsSet() {
 		toSerialize["require_verified_phone"] = o.RequireVerifiedPhone.Get()
+	}
+	if o.ZoneId.IsSet() {
+		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
 	return toSerialize, nil
 }

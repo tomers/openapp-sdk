@@ -23,6 +23,7 @@ var _ MappedNullable = &LocationResponse{}
 type LocationResponse struct {
 	City              NullableLocalizedString         `json:"city,omitempty"`
 	Country           NullableLocationResponseCountry `json:"country,omitempty"`
+	CountryCode       NullableString                  `json:"country_code,omitempty"`
 	FormattedAddress  NullableLocationResponseCountry `json:"formatted_address,omitempty"`
 	GeocodingProvider NullableGeocodingProviderId     `json:"geocoding_provider,omitempty"`
 	Id                NullableString                  `json:"id"`
@@ -141,6 +142,49 @@ func (o *LocationResponse) SetCountryNil() {
 // UnsetCountry ensures that no value is present for Country, not even an explicit nil
 func (o *LocationResponse) UnsetCountry() {
 	o.Country.Unset()
+}
+
+// GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *LocationResponse) GetCountryCode() string {
+	if o == nil || IsNil(o.CountryCode.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.CountryCode.Get()
+}
+
+// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *LocationResponse) GetCountryCodeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CountryCode.Get(), o.CountryCode.IsSet()
+}
+
+// HasCountryCode returns a boolean if a field has been set.
+func (o *LocationResponse) HasCountryCode() bool {
+	if o != nil && o.CountryCode.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCountryCode gets a reference to the given NullableString and assigns it to the CountryCode field.
+func (o *LocationResponse) SetCountryCode(v string) {
+	o.CountryCode.Set(&v)
+}
+
+// SetCountryCodeNil sets the value for CountryCode to be an explicit nil
+func (o *LocationResponse) SetCountryCodeNil() {
+	o.CountryCode.Set(nil)
+}
+
+// UnsetCountryCode ensures that no value is present for CountryCode, not even an explicit nil
+func (o *LocationResponse) UnsetCountryCode() {
+	o.CountryCode.Unset()
 }
 
 // GetFormattedAddress returns the FormattedAddress field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -544,6 +588,9 @@ func (o LocationResponse) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Country.IsSet() {
 		toSerialize["country"] = o.Country.Get()
+	}
+	if o.CountryCode.IsSet() {
+		toSerialize["country_code"] = o.CountryCode.Get()
 	}
 	if o.FormattedAddress.IsSet() {
 		toSerialize["formatted_address"] = o.FormattedAddress.Get()

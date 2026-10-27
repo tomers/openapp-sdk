@@ -27,7 +27,7 @@ type CreatePolicyRequest struct {
 	Config map[string]interface{} `json:"config"`
 	// Defaults to true.
 	Enabled NullableBool `json:"enabled,omitempty"`
-	// `enforce` (default) | `require_approval` | `audit_only`.
+	// `enforce` (default) or `require_approval`. Each `policy_type` declares which modes it accepts (only `user_sharing` accepts `require_approval`); any other value is rejected with 400.
 	Enforcement NullableString `json:"enforcement,omitempty"`
 	// e.g. `invitation_curfew`, `user_sharing`.
 	PolicyType string `json:"policy_type"`

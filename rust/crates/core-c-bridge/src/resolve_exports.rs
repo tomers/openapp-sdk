@@ -275,11 +275,11 @@ pub unsafe extern "C" fn openapp_sdk_client_devices_get_by_name_async(
     })
 }
 
-/// Resolve a zone by localized name under an integration.
+/// Resolve a zone by localized name in an organization.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn openapp_sdk_client_zones_get_by_name_async(
     client: *mut BridgeClient,
-    integration_id_utf8: *const std::os::raw::c_char,
+    org_id_utf8: *const std::os::raw::c_char,
     name_utf8: *const std::os::raw::c_char,
     match_mode: c_int,
     complete: Option<OpenAppSdkRequestComplete>,
@@ -288,11 +288,11 @@ pub unsafe extern "C" fn openapp_sdk_client_zones_get_by_name_async(
     let Some(complete_fn) = complete else {
         return BridgeStatus::InvalidArgument;
     };
-    if client.is_null() || integration_id_utf8.is_null() || name_utf8.is_null() {
+    if client.is_null() || org_id_utf8.is_null() || name_utf8.is_null() {
         return BridgeStatus::InvalidArgument;
     }
     let client = unsafe { &*client };
-    let integration_id = match read_cstr(integration_id_utf8) {
+    let org_id = match read_cstr(org_id_utf8) {
         Ok(s) => s.to_owned(),
         Err(e) => return e,
     };
@@ -302,7 +302,7 @@ pub unsafe extern "C" fn openapp_sdk_client_zones_get_by_name_async(
     };
     let mode = name_match_from_i32(match_mode);
     schedule_client_future(client, complete_fn, user_data, move |core| async move {
-        core.zones().get_by_name(&integration_id, &name, mode).await
+        core.zones().get_by_name(&org_id, &name, mode).await
     })
 }
 
@@ -422,25 +422,21 @@ pub unsafe extern "C" fn openapp_sdk_client_devices_get_by_name(
     })
 }
 
-/// Blocking resolve for zones under an integration.
+/// Blocking resolve for zones in an organization.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn openapp_sdk_client_zones_get_by_name(
     client: *mut BridgeClient,
-    integration_id_utf8: *const std::os::raw::c_char,
+    org_id_utf8: *const std::os::raw::c_char,
     name_utf8: *const std::os::raw::c_char,
     match_mode: c_int,
     out_body: *mut *mut std::os::raw::c_char,
     out_status: *mut c_int,
 ) -> BridgeStatus {
-    if client.is_null()
-        || integration_id_utf8.is_null()
-        || name_utf8.is_null()
-        || out_body.is_null()
-    {
+    if client.is_null() || org_id_utf8.is_null() || name_utf8.is_null() || out_body.is_null() {
         return BridgeStatus::InvalidArgument;
     }
     let client = unsafe { &*client };
-    let integration_id = match read_cstr(integration_id_utf8) {
+    let org_id = match read_cstr(org_id_utf8) {
         Ok(s) => s.to_owned(),
         Err(e) => return e,
     };
@@ -450,7 +446,7 @@ pub unsafe extern "C" fn openapp_sdk_client_zones_get_by_name(
     };
     let mode = name_match_from_i32(match_mode);
     block_on_get_by_name(client, out_body, out_status, move |core| async move {
-        core.zones().get_by_name(&integration_id, &name, mode).await
+        core.zones().get_by_name(&org_id, &name, mode).await
     })
 }
 

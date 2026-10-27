@@ -314,7 +314,7 @@ Name | Type | Description  | Notes
 
 ## ListAuditEvents
 
-> AuditEventsPage ListAuditEvents(ctx, orgId).EventType(eventType).Outcome(outcome).ResourceType(resourceType).ResourceId(resourceId).ResourceName(resourceName).DoorName(doorName).TargetId(targetId).ActorUserId(actorUserId).ActorGuestId(actorGuestId).ActorKind(actorKind).OrgScope(orgScope).CorrelationId(correlationId).OccurredAfter(occurredAfter).OccurredBefore(occurredBefore).Cursor(cursor).Limit(limit).Execute()
+> AuditEventsPage ListAuditEvents(ctx, orgId).EventType(eventType).Outcome(outcome).Source(source).ResourceType(resourceType).ResourceId(resourceId).ResourceName(resourceName).DoorName(doorName).TargetId(targetId).ZoneId(zoneId).ActorUserId(actorUserId).ActorGuestId(actorGuestId).ActorKind(actorKind).OrgScope(orgScope).CorrelationId(correlationId).OccurredAfter(occurredAfter).OccurredBefore(occurredBefore).Cursor(cursor).Limit(limit).Execute()
 
 
 
@@ -334,11 +334,13 @@ func main() {
 	orgId := "orgId_example" // string |
 	eventType := "eventType_example" // string |  (optional)
 	outcome := "outcome_example" // string |  (optional)
+	source := "source_example" // string | Originating surface: `api`, `dashboard`, `public_access`, `smarthome`, `scripting`, or `system`. (optional)
 	resourceType := "resourceType_example" // string |  (optional)
 	resourceId := "resourceId_example" // string |  (optional)
 	resourceName := "resourceName_example" // string | Case-insensitive substring match on the resource's snapshotted display name (`details.resource_name`), e.g. `shelly`. (optional)
-	doorName := "doorName_example" // string | Case-insensitive substring match on the snapshotted door name (`details.door_name`), e.g. `lobby`. Lets the Activity table answer \"who opened this door\" across every event that names it. (optional)
+	doorName := "doorName_example" // string | Case-insensitive substring match on the snapshotted door name (`details.door_name`), e.g. `lobby`. Matches every event that names the door, so it answers \"who opened this door\". (optional)
 	targetId := "targetId_example" // string | Exact match against the snapshotted portal target ID (`details.public_portal_id`). (optional)
+	zoneId := "zoneId_example" // string | Zone ULID. Matches events whose zone snapshot (`details.zone_path`) contains the zone, so events in descendant zones are included. Only events recorded with a zone snapshot match. 400 when not a ULID. (optional)
 	actorUserId := "actorUserId_example" // string |  (optional)
 	actorGuestId := "actorGuestId_example" // string | Filter to a single guest fingerprint. Disjoint from `actor_user_id`. (optional)
 	actorKind := "actorKind_example" // string |  (optional)
@@ -355,7 +357,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.AuditAPI.ListAuditEvents(context.Background(), orgId).EventType(eventType).Outcome(outcome).ResourceType(resourceType).ResourceId(resourceId).ResourceName(resourceName).DoorName(doorName).TargetId(targetId).ActorUserId(actorUserId).ActorGuestId(actorGuestId).ActorKind(actorKind).OrgScope(orgScope).CorrelationId(correlationId).OccurredAfter(occurredAfter).OccurredBefore(occurredBefore).Cursor(cursor).Limit(limit).Execute()
+	resp, r, err := apiClient.AuditAPI.ListAuditEvents(context.Background(), orgId).EventType(eventType).Outcome(outcome).Source(source).ResourceType(resourceType).ResourceId(resourceId).ResourceName(resourceName).DoorName(doorName).TargetId(targetId).ZoneId(zoneId).ActorUserId(actorUserId).ActorGuestId(actorGuestId).ActorKind(actorKind).OrgScope(orgScope).CorrelationId(correlationId).OccurredAfter(occurredAfter).OccurredBefore(occurredBefore).Cursor(cursor).Limit(limit).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `AuditAPI.ListAuditEvents``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -383,11 +385,13 @@ Name | Type | Description  | Notes
 
  **eventType** | **string** |  |
  **outcome** | **string** |  |
+ **source** | **string** | Originating surface: &#x60;api&#x60;, &#x60;dashboard&#x60;, &#x60;public_access&#x60;, &#x60;smarthome&#x60;, &#x60;scripting&#x60;, or &#x60;system&#x60;. |
  **resourceType** | **string** |  |
  **resourceId** | **string** |  |
  **resourceName** | **string** | Case-insensitive substring match on the resource&#39;s snapshotted display name (&#x60;details.resource_name&#x60;), e.g. &#x60;shelly&#x60;. |
- **doorName** | **string** | Case-insensitive substring match on the snapshotted door name (&#x60;details.door_name&#x60;), e.g. &#x60;lobby&#x60;. Lets the Activity table answer \&quot;who opened this door\&quot; across every event that names it. |
+ **doorName** | **string** | Case-insensitive substring match on the snapshotted door name (&#x60;details.door_name&#x60;), e.g. &#x60;lobby&#x60;. Matches every event that names the door, so it answers \&quot;who opened this door\&quot;. |
  **targetId** | **string** | Exact match against the snapshotted portal target ID (&#x60;details.public_portal_id&#x60;). |
+ **zoneId** | **string** | Zone ULID. Matches events whose zone snapshot (&#x60;details.zone_path&#x60;) contains the zone, so events in descendant zones are included. Only events recorded with a zone snapshot match. 400 when not a ULID. |
  **actorUserId** | **string** |  |
  **actorGuestId** | **string** | Filter to a single guest fingerprint. Disjoint from &#x60;actor_user_id&#x60;. |
  **actorKind** | **string** |  |

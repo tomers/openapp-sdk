@@ -21,10 +21,8 @@ var _ MappedNullable = &NotificationPolicyConfig{}
 
 // NotificationPolicyConfig Shared typed `config` shape for notification policies.
 type NotificationPolicyConfig struct {
-	AppliesTo []PolicyPrincipalKind `json:"applies_to,omitempty"`
 	// Notification destinations. Only `audit` is currently supported.
-	Channels []NotificationChannel                                 `json:"channels"`
-	Output   NullableInvitationAllowedEntryKindsPolicyConfigOutput `json:"output,omitempty"`
+	Channels []NotificationChannel `json:"channels"`
 }
 
 type _NotificationPolicyConfig NotificationPolicyConfig
@@ -45,39 +43,6 @@ func NewNotificationPolicyConfig(channels []NotificationChannel) *NotificationPo
 func NewNotificationPolicyConfigWithDefaults() *NotificationPolicyConfig {
 	this := NotificationPolicyConfig{}
 	return &this
-}
-
-// GetAppliesTo returns the AppliesTo field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *NotificationPolicyConfig) GetAppliesTo() []PolicyPrincipalKind {
-	if o == nil {
-		var ret []PolicyPrincipalKind
-		return ret
-	}
-	return o.AppliesTo
-}
-
-// GetAppliesToOk returns a tuple with the AppliesTo field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *NotificationPolicyConfig) GetAppliesToOk() ([]PolicyPrincipalKind, bool) {
-	if o == nil || IsNil(o.AppliesTo) {
-		return nil, false
-	}
-	return o.AppliesTo, true
-}
-
-// HasAppliesTo returns a boolean if a field has been set.
-func (o *NotificationPolicyConfig) HasAppliesTo() bool {
-	if o != nil && !IsNil(o.AppliesTo) {
-		return true
-	}
-
-	return false
-}
-
-// SetAppliesTo gets a reference to the given []PolicyPrincipalKind and assigns it to the AppliesTo field.
-func (o *NotificationPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind) {
-	o.AppliesTo = v
 }
 
 // GetChannels returns the Channels field value
@@ -104,58 +69,9 @@ func (o *NotificationPolicyConfig) SetChannels(v []NotificationChannel) {
 	o.Channels = v
 }
 
-// GetOutput returns the Output field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *NotificationPolicyConfig) GetOutput() InvitationAllowedEntryKindsPolicyConfigOutput {
-	if o == nil || IsNil(o.Output.Get()) {
-		var ret InvitationAllowedEntryKindsPolicyConfigOutput
-		return ret
-	}
-	return *o.Output.Get()
-}
-
-// GetOutputOk returns a tuple with the Output field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *NotificationPolicyConfig) GetOutputOk() (*InvitationAllowedEntryKindsPolicyConfigOutput, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Output.Get(), o.Output.IsSet()
-}
-
-// HasOutput returns a boolean if a field has been set.
-func (o *NotificationPolicyConfig) HasOutput() bool {
-	if o != nil && o.Output.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetOutput gets a reference to the given NullableInvitationAllowedEntryKindsPolicyConfigOutput and assigns it to the Output field.
-func (o *NotificationPolicyConfig) SetOutput(v InvitationAllowedEntryKindsPolicyConfigOutput) {
-	o.Output.Set(&v)
-}
-
-// SetOutputNil sets the value for Output to be an explicit nil
-func (o *NotificationPolicyConfig) SetOutputNil() {
-	o.Output.Set(nil)
-}
-
-// UnsetOutput ensures that no value is present for Output, not even an explicit nil
-func (o *NotificationPolicyConfig) UnsetOutput() {
-	o.Output.Unset()
-}
-
 func (o NotificationPolicyConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.AppliesTo != nil {
-		toSerialize["applies_to"] = o.AppliesTo
-	}
 	toSerialize["channels"] = o.Channels
-	if o.Output.IsSet() {
-		toSerialize["output"] = o.Output.Get()
-	}
 	return toSerialize, nil
 }
 

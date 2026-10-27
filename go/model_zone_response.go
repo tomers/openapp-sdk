@@ -27,16 +27,17 @@ type ZoneResponse struct {
 	HardDeleteAt *time.Time `json:"hard_delete_at,omitempty"`
 	PurgeAt      *time.Time `json:"purge_at,omitempty"`
 	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
-	// External ID from the integration.
-	ExternalId *string `json:"external_id,omitempty"`
 	// Unique identifier (ULID).
 	Id string `json:"id"`
-	// Integration this zone belongs to.
-	IntegrationId string `json:"integration_id"`
 	// Zone name.
 	Name LocalizedString `json:"name"`
-	// Parent zone for hierarchy.
-	ParentZoneId *string `json:"parent_zone_id,omitempty"`
+	// Organization that owns this zone.
+	OrgId string `json:"org_id"`
+	// Parent zone (same org) for hierarchy.
+	ParentZoneId  *string                    `json:"parent_zone_id,omitempty"`
+	ProviderLinks []ZoneProviderLinkResponse `json:"provider_links"`
+	// Access sites (`virtual_access` integrations) this zone is a member of, sorted. Empty means unbound (Resources-only until bound; never offered on Access pickers).
+	SiteIds []string `json:"site_ids"`
 }
 
 type _ZoneResponse ZoneResponse
@@ -45,11 +46,13 @@ type _ZoneResponse ZoneResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewZoneResponse(id string, integrationId string, name LocalizedString) *ZoneResponse {
+func NewZoneResponse(id string, name LocalizedString, orgId string, providerLinks []ZoneProviderLinkResponse, siteIds []string) *ZoneResponse {
 	this := ZoneResponse{}
 	this.Id = id
-	this.IntegrationId = integrationId
 	this.Name = name
+	this.OrgId = orgId
+	this.ProviderLinks = providerLinks
+	this.SiteIds = siteIds
 	return &this
 }
 
@@ -221,38 +224,6 @@ func (o *ZoneResponse) SetUpdatedAt(v time.Time) {
 	o.UpdatedAt = &v
 }
 
-// GetExternalId returns the ExternalId field value if set, zero value otherwise.
-func (o *ZoneResponse) GetExternalId() string {
-	if o == nil || IsNil(o.ExternalId) {
-		var ret string
-		return ret
-	}
-	return *o.ExternalId
-}
-
-// GetExternalIdOk returns a tuple with the ExternalId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ZoneResponse) GetExternalIdOk() (*string, bool) {
-	if o == nil || IsNil(o.ExternalId) {
-		return nil, false
-	}
-	return o.ExternalId, true
-}
-
-// HasExternalId returns a boolean if a field has been set.
-func (o *ZoneResponse) HasExternalId() bool {
-	if o != nil && !IsNil(o.ExternalId) {
-		return true
-	}
-
-	return false
-}
-
-// SetExternalId gets a reference to the given string and assigns it to the ExternalId field.
-func (o *ZoneResponse) SetExternalId(v string) {
-	o.ExternalId = &v
-}
-
 // GetId returns the Id field value
 func (o *ZoneResponse) GetId() string {
 	if o == nil {
@@ -277,30 +248,6 @@ func (o *ZoneResponse) SetId(v string) {
 	o.Id = v
 }
 
-// GetIntegrationId returns the IntegrationId field value
-func (o *ZoneResponse) GetIntegrationId() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.IntegrationId
-}
-
-// GetIntegrationIdOk returns a tuple with the IntegrationId field value
-// and a boolean to check if the value has been set.
-func (o *ZoneResponse) GetIntegrationIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IntegrationId, true
-}
-
-// SetIntegrationId sets field value
-func (o *ZoneResponse) SetIntegrationId(v string) {
-	o.IntegrationId = v
-}
-
 // GetName returns the Name field value
 func (o *ZoneResponse) GetName() LocalizedString {
 	if o == nil {
@@ -323,6 +270,30 @@ func (o *ZoneResponse) GetNameOk() (*LocalizedString, bool) {
 // SetName sets field value
 func (o *ZoneResponse) SetName(v LocalizedString) {
 	o.Name = v
+}
+
+// GetOrgId returns the OrgId field value
+func (o *ZoneResponse) GetOrgId() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.OrgId
+}
+
+// GetOrgIdOk returns a tuple with the OrgId field value
+// and a boolean to check if the value has been set.
+func (o *ZoneResponse) GetOrgIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.OrgId, true
+}
+
+// SetOrgId sets field value
+func (o *ZoneResponse) SetOrgId(v string) {
+	o.OrgId = v
 }
 
 // GetParentZoneId returns the ParentZoneId field value if set, zero value otherwise.
@@ -357,6 +328,54 @@ func (o *ZoneResponse) SetParentZoneId(v string) {
 	o.ParentZoneId = &v
 }
 
+// GetProviderLinks returns the ProviderLinks field value
+func (o *ZoneResponse) GetProviderLinks() []ZoneProviderLinkResponse {
+	if o == nil {
+		var ret []ZoneProviderLinkResponse
+		return ret
+	}
+
+	return o.ProviderLinks
+}
+
+// GetProviderLinksOk returns a tuple with the ProviderLinks field value
+// and a boolean to check if the value has been set.
+func (o *ZoneResponse) GetProviderLinksOk() ([]ZoneProviderLinkResponse, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ProviderLinks, true
+}
+
+// SetProviderLinks sets field value
+func (o *ZoneResponse) SetProviderLinks(v []ZoneProviderLinkResponse) {
+	o.ProviderLinks = v
+}
+
+// GetSiteIds returns the SiteIds field value
+func (o *ZoneResponse) GetSiteIds() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.SiteIds
+}
+
+// GetSiteIdsOk returns a tuple with the SiteIds field value
+// and a boolean to check if the value has been set.
+func (o *ZoneResponse) GetSiteIdsOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.SiteIds, true
+}
+
+// SetSiteIds sets field value
+func (o *ZoneResponse) SetSiteIds(v []string) {
+	o.SiteIds = v
+}
+
 func (o ZoneResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.CreatedAt) {
@@ -374,15 +393,14 @@ func (o ZoneResponse) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UpdatedAt) {
 		toSerialize["updated_at"] = o.UpdatedAt
 	}
-	if !IsNil(o.ExternalId) {
-		toSerialize["external_id"] = o.ExternalId
-	}
 	toSerialize["id"] = o.Id
-	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["name"] = o.Name
+	toSerialize["org_id"] = o.OrgId
 	if !IsNil(o.ParentZoneId) {
 		toSerialize["parent_zone_id"] = o.ParentZoneId
 	}
+	toSerialize["provider_links"] = o.ProviderLinks
+	toSerialize["site_ids"] = o.SiteIds
 	return toSerialize, nil
 }
 
@@ -392,8 +410,10 @@ func (o *ZoneResponse) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"id",
-		"integration_id",
 		"name",
+		"org_id",
+		"provider_links",
+		"site_ids",
 	}
 
 	allProperties := make(map[string]interface{})

@@ -23,7 +23,7 @@ var _ MappedNullable = &UsageActor{}
 type UsageActor struct {
 	// Per-device guest fingerprint. Present only when `kind == \"guest\"`.
 	GuestId NullableString `json:"guest_id,omitempty"`
-	// `user`, `guest`, `system`, `api_key`, … (mirrors `audit_events.actor_kind`).
+	// Who performed the action: `user`, `guest`, `agent` or `system`.
 	Kind string `json:"kind"`
 	// Trusted registered-user id. Present only when `kind == \"user\"`.
 	UserId NullableString `json:"user_id,omitempty"`

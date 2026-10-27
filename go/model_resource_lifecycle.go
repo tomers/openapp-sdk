@@ -18,7 +18,7 @@ import (
 // checks if the ResourceLifecycle type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ResourceLifecycle{}
 
-// ResourceLifecycle Soft-delete and audit timestamps on a persisted resource.  Flattened onto HTTP JSON so `created_at` sits next to `id` / `name`. Absent fields are omitted (`None`).
+// ResourceLifecycle Lifecycle timestamps of a resource (created, updated, soft-deleted, scheduled purge and hard delete), at the top level of the resource object. Timestamps that are not set are omitted.
 type ResourceLifecycle struct {
 	CreatedAt    NullableTime `json:"created_at,omitempty"`
 	DeletedAt    NullableTime `json:"deleted_at,omitempty"`

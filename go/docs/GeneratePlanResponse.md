@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Create** | [**[]GeneratePlanEntry**](GeneratePlanEntry.md) |  |
+**Orphaned** | [**[]GeneratePlanEntry**](GeneratePlanEntry.md) |  |
 **Skipped** | [**[]GeneratePlanEntry**](GeneratePlanEntry.md) |  |
 **Unchanged** | [**[]GeneratePlanEntry**](GeneratePlanEntry.md) |  |
 **Update** | [**[]GeneratePlanEntry**](GeneratePlanEntry.md) |  |
@@ -13,7 +14,7 @@ Name | Type | Description | Notes
 
 ### NewGeneratePlanResponse
 
-`func NewGeneratePlanResponse(create []GeneratePlanEntry, skipped []GeneratePlanEntry, unchanged []GeneratePlanEntry, update []GeneratePlanEntry, ) *GeneratePlanResponse`
+`func NewGeneratePlanResponse(create []GeneratePlanEntry, orphaned []GeneratePlanEntry, skipped []GeneratePlanEntry, unchanged []GeneratePlanEntry, update []GeneratePlanEntry, ) *GeneratePlanResponse`
 
 NewGeneratePlanResponse instantiates a new GeneratePlanResponse object
 This constructor will assign default values to properties that have it defined,
@@ -46,6 +47,26 @@ and a boolean to check if the value has been set.
 `func (o *GeneratePlanResponse) SetCreate(v []GeneratePlanEntry)`
 
 SetCreate sets Create field to given value.
+
+
+### GetOrphaned
+
+`func (o *GeneratePlanResponse) GetOrphaned() []GeneratePlanEntry`
+
+GetOrphaned returns the Orphaned field if non-nil, zero value otherwise.
+
+### GetOrphanedOk
+
+`func (o *GeneratePlanResponse) GetOrphanedOk() (*[]GeneratePlanEntry, bool)`
+
+GetOrphanedOk returns a tuple with the Orphaned field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOrphaned
+
+`func (o *GeneratePlanResponse) SetOrphaned(v []GeneratePlanEntry)`
+
+SetOrphaned sets Orphaned field to given value.
 
 
 ### GetSkipped

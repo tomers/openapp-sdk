@@ -4,14 +4,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Items** | [**[]Zone**](Zone.md) |  |
+**Items** | [**[]PaginatedResponseZoneResponseItemsInner**](PaginatedResponseZoneResponseItemsInner.md) |  |
 **Total** | **int64** |  |
 
 ## Methods
 
 ### NewPaginatedResponseZoneResponse
 
-`func NewPaginatedResponseZoneResponse(items []Zone, total int64, ) *PaginatedResponseZoneResponse`
+`func NewPaginatedResponseZoneResponse(items []PaginatedResponseZoneResponseItemsInner, total int64, ) *PaginatedResponseZoneResponse`
 
 NewPaginatedResponseZoneResponse instantiates a new PaginatedResponseZoneResponse object
 This constructor will assign default values to properties that have it defined,
@@ -28,20 +28,20 @@ but it doesn't guarantee that properties required by API are set
 
 ### GetItems
 
-`func (o *PaginatedResponseZoneResponse) GetItems() []Zone`
+`func (o *PaginatedResponseZoneResponse) GetItems() []PaginatedResponseZoneResponseItemsInner`
 
 GetItems returns the Items field if non-nil, zero value otherwise.
 
 ### GetItemsOk
 
-`func (o *PaginatedResponseZoneResponse) GetItemsOk() (*[]Zone, bool)`
+`func (o *PaginatedResponseZoneResponse) GetItemsOk() (*[]PaginatedResponseZoneResponseItemsInner, bool)`
 
 GetItemsOk returns a tuple with the Items field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetItems
 
-`func (o *PaginatedResponseZoneResponse) SetItems(v []Zone)`
+`func (o *PaginatedResponseZoneResponse) SetItems(v []PaginatedResponseZoneResponseItemsInner)`
 
 SetItems sets Items field to given value.
 

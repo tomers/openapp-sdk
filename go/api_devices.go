@@ -835,7 +835,10 @@ func (r ApiGetDoorRestrictionsRequest) Execute() (*DoorRestrictionsResponse, *ht
 }
 
 /*
-GetDoorRestrictions GET /devices/{id}/door-restrictions — list listing entity IDs allowed to open this door. Empty = no restrictions (all building members can open). Only for virtual_access_portal devices.
+GetDoorRestrictions List the directory listings allowed to open this door.
+
+An empty list means no restriction: every site listing can open the door. Only for
+`virtual_access_portal` devices.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -1129,6 +1132,7 @@ type ApiListDevicesRequest struct {
 	outputOptions    *MultiResourceOutputOptionsQuery
 	pagination       *PaginationQuery
 	integrationId    *string
+	zoneId           *string
 	deviceKind       *string
 	externalId       *string
 	q                *string
@@ -1137,6 +1141,7 @@ type ApiListDevicesRequest struct {
 	hasExternalId    *bool
 	hasGo2rtcChannel *bool
 	includeStale     *bool
+	orgScope         *string
 }
 
 func (r ApiListDevicesRequest) XOrg(xOrg string) ApiListDevicesRequest {
@@ -1160,19 +1165,25 @@ func (r ApiListDevicesRequest) IntegrationId(integrationId string) ApiListDevice
 	return r
 }
 
-// Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id. Filtering done at SQL level.
+// Optional filter: only devices placed directly in this zone. A malformed id is 400. Combines with &#x60;q&#x60;; cannot be combined with &#x60;integration_id&#x60;.
+func (r ApiListDevicesRequest) ZoneId(zoneId string) ApiListDevicesRequest {
+	r.zoneId = &zoneId
+	return r
+}
+
+// Optional filter: only devices with metadata.kind equal to this value (e.g. virtual_access_portal). Requires integration_id.
 func (r ApiListDevicesRequest) DeviceKind(deviceKind string) ApiListDevicesRequest {
 	r.deviceKind = &deviceKind
 	return r
 }
 
-// Optional filter: only devices with this external_id. Requires integration_id and device_kind. Returns at most 1 device. Filtering done at SQL level.
+// Optional filter: only devices with this external_id. Requires integration_id and device_kind. Returns at most 1 device.
 func (r ApiListDevicesRequest) ExternalId(externalId string) ApiListDevicesRequest {
 	r.externalId = &externalId
 	return r
 }
 
-// Case-insensitive substring match on localized device name (JSON). Best-effort when &#x60;integration_id&#x60; is set (SQL ILIKE).
+// Case-insensitive substring match on the device name in any locale. Best-effort when &#x60;integration_id&#x60; is set.
 func (r ApiListDevicesRequest) Q(q string) ApiListDevicesRequest {
 	r.q = &q
 	return r
@@ -1205,6 +1216,12 @@ func (r ApiListDevicesRequest) HasGo2rtcChannel(hasGo2rtcChannel bool) ApiListDe
 // When true with &#x60;integration_id&#x60;, include &#x60;stale&#x60; per device when the provider supports it.
 func (r ApiListDevicesRequest) IncludeStale(includeStale bool) ApiListDevicesRequest {
 	r.includeStale = &includeStale
+	return r
+}
+
+// &#x60;self&#x60; (default): org subtree of X-Org. &#x60;self_and_ancestors&#x60;: exact X-Org plus ancestor orgs where the caller has &#x60;devices:list&#x60; (door-wiring camera pickers). Cannot combine with &#x60;zone_id&#x60; or &#x60;integration_id&#x60;.
+func (r ApiListDevicesRequest) OrgScope(orgScope string) ApiListDevicesRequest {
+	r.orgScope = &orgScope
 	return r
 }
 
@@ -1261,6 +1278,9 @@ func (a *DevicesAPIService) ListDevicesExecute(r ApiListDevicesRequest) ([]Devic
 	if r.integrationId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "integration_id", r.integrationId, "form", "")
 	}
+	if r.zoneId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "zone_id", r.zoneId, "form", "")
+	}
 	if r.deviceKind != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "device_kind", r.deviceKind, "form", "")
 	}
@@ -1284,6 +1304,9 @@ func (a *DevicesAPIService) ListDevicesExecute(r ApiListDevicesRequest) ([]Devic
 	}
 	if r.includeStale != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "include_stale", r.includeStale, "form", "")
+	}
+	if r.orgScope != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "org_scope", r.orgScope, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1324,6 +1347,17 @@ func (a *DevicesAPIService) ListDevicesExecute(r ApiListDevicesRequest) ([]Devic
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v ApiErrorResponse
@@ -1560,7 +1594,7 @@ func (r ApiPostVirtualAccessOpenRequest) Execute() (*VirtualAccessOpenResponse, 
 }
 
 /*
-PostVirtualAccessOpen POST /devices/{id}/virtual-access/open — open all configured openers on a portal device.
+PostVirtualAccessOpen Open all configured openers on a portal device.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -1791,7 +1825,10 @@ func (r ApiPutDoorRestrictionsRequest) Execute() (*DoorRestrictionsResponse, *ht
 }
 
 /*
-PutDoorRestrictions PUT /devices/{id}/door-restrictions — set which listings can open this door. Empty array = no restrictions (all building residents). Only for virtual_access_portal devices.
+PutDoorRestrictions Set which directory listings can open this door.
+
+An empty array removes the restriction: every site listing can open the door. Only for
+`virtual_access_portal` devices.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id

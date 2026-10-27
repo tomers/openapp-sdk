@@ -21,6 +21,7 @@ Name | Type | Description | Notes
 **InviteeMessage** | Pointer to **interface{}** |  | [optional]
 **LocationMode** | [**LocationBindingMode**](LocationBindingMode.md) | How the invite resolves its event location: &#x60;none&#x60; (hide all location, including the building address), &#x60;explicit&#x60; (own location), or &#x60;inherit&#x60; (building location). Lets the guest UI suppress the building address when the invite opts out of location entirely. |
 **MaxDevices** | Pointer to **NullableInt32** |  | [optional]
+**MaxUses** | Pointer to **NullableInt32** | Total uses allowed; omitted when the invitation has no use limit. | [optional]
 **Name** | Pointer to **NullableString** | Optional admin-defined label (management UI \&quot;name\&quot;); exposed for link previews and guests who already know the invite by name. | [optional]
 **PhotoUrl** | Pointer to **NullableString** | Presigned URL for the invite&#39;s main photo (best-effort). | [optional]
 **RenewalRequested** | Pointer to **NullableBool** | True when the authenticated requester already submitted a pending renewal request. | [optional]
@@ -32,8 +33,10 @@ Name | Type | Description | Notes
 **ScheduleKind** | Pointer to [**NullableInviteScheduleKind**](InviteScheduleKind.md) |  | [optional]
 **State** | [**PublicInviteState**](PublicInviteState.md) |  |
 **Timezone** | Pointer to **NullableString** | Org IANA timezone used to evaluate invitation curfews (&#x60;UTC&#x60; when unset). | [optional]
+**UsesRemaining** | Pointer to **NullableInt32** | Uses left before the limit is consumed; omitted when the invitation has no use limit. | [optional]
 **ValidFrom** | Pointer to **NullableString** |  | [optional]
 **ValidTo** | Pointer to **NullableString** |  | [optional]
+**WifiNetworks** | Pointer to [**[]PublicInviteWifiNetwork**](PublicInviteWifiNetwork.md) | Wi-Fi networks that cover the invitation&#39;s doors, with credentials, ordered by priority. Present only for an active invitation whose grants are shown, and only when at least one grant has &#x60;wifi_available&#x60;. Never part of a link preview. | [optional]
 
 ## Methods
 
@@ -564,6 +567,41 @@ HasMaxDevices returns a boolean if a field has been set.
 `func (o *PublicInviteResponse) UnsetMaxDevices()`
 
 UnsetMaxDevices ensures that no value is present for MaxDevices, not even an explicit nil
+### GetMaxUses
+
+`func (o *PublicInviteResponse) GetMaxUses() int32`
+
+GetMaxUses returns the MaxUses field if non-nil, zero value otherwise.
+
+### GetMaxUsesOk
+
+`func (o *PublicInviteResponse) GetMaxUsesOk() (*int32, bool)`
+
+GetMaxUsesOk returns a tuple with the MaxUses field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMaxUses
+
+`func (o *PublicInviteResponse) SetMaxUses(v int32)`
+
+SetMaxUses sets MaxUses field to given value.
+
+### HasMaxUses
+
+`func (o *PublicInviteResponse) HasMaxUses() bool`
+
+HasMaxUses returns a boolean if a field has been set.
+
+### SetMaxUsesNil
+
+`func (o *PublicInviteResponse) SetMaxUsesNil(b bool)`
+
+ SetMaxUsesNil sets the value for MaxUses to be an explicit nil
+
+### UnsetMaxUses
+`func (o *PublicInviteResponse) UnsetMaxUses()`
+
+UnsetMaxUses ensures that no value is present for MaxUses, not even an explicit nil
 ### GetName
 
 `func (o *PublicInviteResponse) GetName() string`
@@ -914,6 +952,41 @@ HasTimezone returns a boolean if a field has been set.
 `func (o *PublicInviteResponse) UnsetTimezone()`
 
 UnsetTimezone ensures that no value is present for Timezone, not even an explicit nil
+### GetUsesRemaining
+
+`func (o *PublicInviteResponse) GetUsesRemaining() int32`
+
+GetUsesRemaining returns the UsesRemaining field if non-nil, zero value otherwise.
+
+### GetUsesRemainingOk
+
+`func (o *PublicInviteResponse) GetUsesRemainingOk() (*int32, bool)`
+
+GetUsesRemainingOk returns a tuple with the UsesRemaining field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUsesRemaining
+
+`func (o *PublicInviteResponse) SetUsesRemaining(v int32)`
+
+SetUsesRemaining sets UsesRemaining field to given value.
+
+### HasUsesRemaining
+
+`func (o *PublicInviteResponse) HasUsesRemaining() bool`
+
+HasUsesRemaining returns a boolean if a field has been set.
+
+### SetUsesRemainingNil
+
+`func (o *PublicInviteResponse) SetUsesRemainingNil(b bool)`
+
+ SetUsesRemainingNil sets the value for UsesRemaining to be an explicit nil
+
+### UnsetUsesRemaining
+`func (o *PublicInviteResponse) UnsetUsesRemaining()`
+
+UnsetUsesRemaining ensures that no value is present for UsesRemaining, not even an explicit nil
 ### GetValidFrom
 
 `func (o *PublicInviteResponse) GetValidFrom() string`
@@ -984,5 +1057,30 @@ HasValidTo returns a boolean if a field has been set.
 `func (o *PublicInviteResponse) UnsetValidTo()`
 
 UnsetValidTo ensures that no value is present for ValidTo, not even an explicit nil
+### GetWifiNetworks
+
+`func (o *PublicInviteResponse) GetWifiNetworks() []PublicInviteWifiNetwork`
+
+GetWifiNetworks returns the WifiNetworks field if non-nil, zero value otherwise.
+
+### GetWifiNetworksOk
+
+`func (o *PublicInviteResponse) GetWifiNetworksOk() (*[]PublicInviteWifiNetwork, bool)`
+
+GetWifiNetworksOk returns a tuple with the WifiNetworks field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetWifiNetworks
+
+`func (o *PublicInviteResponse) SetWifiNetworks(v []PublicInviteWifiNetwork)`
+
+SetWifiNetworks sets WifiNetworks field to given value.
+
+### HasWifiNetworks
+
+`func (o *PublicInviteResponse) HasWifiNetworks() bool`
+
+HasWifiNetworks returns a boolean if a field has been set.
+
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

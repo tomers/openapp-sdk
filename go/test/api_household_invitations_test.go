@@ -11,73 +11,98 @@ package openapi
 
 import (
 	"context"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	openapiclient "github.com/tomers/openapp-sdk/go"
+	"testing"
 )
 
 func Test_openapi_HouseholdInvitationsAPIService(t *testing.T) {
+
 	apiKey := "http://127.0.0.1:1_openapp_testsecret"
 	apiClient, err := openapiclient.NewAPIClient(apiKey)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
-	t.Run("Cancel", func(t *testing.T) {
-		t.Skip("generated API smoke test requires a configured server")
-		var groupID, id string
-		httpRes, err := apiClient.HouseholdInvitationsAPI.Cancel(context.Background(), groupID, id).Execute()
-		require.NoError(t, err)
-		assert.Equal(t, 204, httpRes.StatusCode)
+	t.Run("Test HouseholdInvitationsAPIService Cancel", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var groupId string
+		var id string
+
+		httpRes, err := apiClient.HouseholdInvitationsAPI.Cancel(context.Background(), groupId, id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
 	})
 
-	t.Run("Create", func(t *testing.T) {
-		t.Skip("generated API smoke test requires a configured server")
-		var groupID string
-		request := openapiclient.CreateHouseholdInvitation{}
-		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Create(context.Background(), groupID).
-			CreateHouseholdInvitation(request).Execute()
-		require.NoError(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 201, httpRes.StatusCode)
-	})
+	t.Run("Test HouseholdInvitationsAPIService Create", func(t *testing.T) {
 
-	t.Run("ListManager", func(t *testing.T) {
-		t.Skip("generated API smoke test requires a configured server")
-		var groupID string
-		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.ListManager(context.Background(), groupID).Execute()
-		require.NoError(t, err)
+		t.Skip("skip test") // remove to run test
+
+		var groupId string
+
+		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Create(context.Background(), groupId).Execute()
+
+		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
+
 	})
 
-	t.Run("Preview", func(t *testing.T) {
-		t.Skip("generated API smoke test requires a configured server")
-		request := openapiclient.InvitationTokenRequest{}
-		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Preview(context.Background()).
-			InvitationTokenRequest(request).Execute()
-		require.NoError(t, err)
+	t.Run("Test HouseholdInvitationsAPIService ListManager", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var groupId string
+
+		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.ListManager(context.Background(), groupId).Execute()
+
+		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
+
 	})
 
-	t.Run("Redeem", func(t *testing.T) {
-		t.Skip("generated API smoke test requires a configured server")
-		request := openapiclient.RedeemHouseholdInvitationRequest{}
-		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Redeem(context.Background()).
-			RedeemHouseholdInvitationRequest(request).Execute()
-		require.NoError(t, err)
+	t.Run("Test HouseholdInvitationsAPIService Preview", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Preview(context.Background()).Execute()
+
+		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
+
 	})
 
-	t.Run("Resend", func(t *testing.T) {
-		t.Skip("generated API smoke test requires a configured server")
-		var groupID, id string
-		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Resend(context.Background(), groupID, id).Execute()
-		require.NoError(t, err)
+	t.Run("Test HouseholdInvitationsAPIService Redeem", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Redeem(context.Background()).Execute()
+
+		require.Nil(t, err)
 		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
+
 	})
+
+	t.Run("Test HouseholdInvitationsAPIService Resend", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var groupId string
+		var id string
+
+		resp, httpRes, err := apiClient.HouseholdInvitationsAPI.Resend(context.Background(), groupId, id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 }

@@ -19,7 +19,7 @@ import (
 // checks if the DirectoryFloorSummary type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &DirectoryFloorSummary{}
 
-// DirectoryFloorSummary One distinct floor row for a directory device (directory listing entities).
+// DirectoryFloorSummary One distinct floor among the listings of a directory device.
 type DirectoryFloorSummary struct {
 	Floor       interface{}   `json:"floor"`
 	FloorNumber NullableInt64 `json:"floor_number,omitempty"`

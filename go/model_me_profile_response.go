@@ -21,17 +21,30 @@ var _ MappedNullable = &MeProfileResponse{}
 
 // MeProfileResponse struct for MeProfileResponse
 type MeProfileResponse struct {
-	Email          NullableString         `json:"email,omitempty"`
-	EmailVerified  bool                   `json:"email_verified"`
-	IdpLinks       []IdpLinkResponse      `json:"idp_links"`
-	ImageSyncError NullableString         `json:"image_sync_error,omitempty"`
-	ImageThumbUrl  NullableString         `json:"image_thumb_url,omitempty"`
-	ImageUrl       NullableString         `json:"image_url,omitempty"`
-	Locale         NullableString         `json:"locale,omitempty"`
-	Name           NullableString         `json:"name,omitempty"`
-	Phone          NullableString         `json:"phone,omitempty"`
-	PhoneVerified  bool                   `json:"phone_verified"`
-	ProfileSources ProfileSourcesResponse `json:"profile_sources"`
+	Email            NullableString `json:"email,omitempty"`
+	EmailVerified    bool           `json:"email_verified"`
+	IdpImageThumbUrl NullableString `json:"idp_image_thumb_url,omitempty"`
+	// OpenApp-hosted preview of the last imported identity-provider portrait.
+	IdpImageUrl    NullableString    `json:"idp_image_url,omitempty"`
+	IdpLinks       []IdpLinkResponse `json:"idp_links"`
+	ImageSyncError NullableString    `json:"image_sync_error,omitempty"`
+	ImageThumbUrl  NullableString    `json:"image_thumb_url,omitempty"`
+	// Portrait others see, from the selected photo choice (`idp`, `openapp`, or `none`).
+	ImageUrl NullableString `json:"image_url,omitempty"`
+	// Explicit preferred locale: a supported locale code, or `null` to use the app language. Messages use it ahead of `observed_locale`.
+	Locale NullableString `json:"locale,omitempty"`
+	// Display name as a locale-to-string map. May be empty when the account has no name yet.
+	Name LocalizedString `json:"name"`
+	// True while the account still owes a name confirmation after accepting an invitation: the name is the inviter's spelling, or there is none. Clears once a name is saved through `PATCH /me/profile`, or when an identity provider supplies the name.
+	NameConfirmationPending bool `json:"name_confirmation_pending"`
+	// Last app/device language reported through `PUT /me/locale/observed`. Read-only here.
+	ObservedLocale       NullableString `json:"observed_locale,omitempty"`
+	OpenappImageThumbUrl NullableString `json:"openapp_image_thumb_url,omitempty"`
+	// OpenApp-hosted preview of the optional account override portrait.
+	OpenappImageUrl NullableString         `json:"openapp_image_url,omitempty"`
+	Phone           NullableString         `json:"phone,omitempty"`
+	PhoneVerified   bool                   `json:"phone_verified"`
+	ProfileSources  ProfileSourcesResponse `json:"profile_sources"`
 }
 
 type _MeProfileResponse MeProfileResponse
@@ -40,10 +53,12 @@ type _MeProfileResponse MeProfileResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMeProfileResponse(emailVerified bool, idpLinks []IdpLinkResponse, phoneVerified bool, profileSources ProfileSourcesResponse) *MeProfileResponse {
+func NewMeProfileResponse(emailVerified bool, idpLinks []IdpLinkResponse, name LocalizedString, nameConfirmationPending bool, phoneVerified bool, profileSources ProfileSourcesResponse) *MeProfileResponse {
 	this := MeProfileResponse{}
 	this.EmailVerified = emailVerified
 	this.IdpLinks = idpLinks
+	this.Name = name
+	this.NameConfirmationPending = nameConfirmationPending
 	this.PhoneVerified = phoneVerified
 	this.ProfileSources = profileSources
 	return &this
@@ -122,6 +137,92 @@ func (o *MeProfileResponse) GetEmailVerifiedOk() (*bool, bool) {
 // SetEmailVerified sets field value
 func (o *MeProfileResponse) SetEmailVerified(v bool) {
 	o.EmailVerified = v
+}
+
+// GetIdpImageThumbUrl returns the IdpImageThumbUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeProfileResponse) GetIdpImageThumbUrl() string {
+	if o == nil || IsNil(o.IdpImageThumbUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.IdpImageThumbUrl.Get()
+}
+
+// GetIdpImageThumbUrlOk returns a tuple with the IdpImageThumbUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeProfileResponse) GetIdpImageThumbUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.IdpImageThumbUrl.Get(), o.IdpImageThumbUrl.IsSet()
+}
+
+// HasIdpImageThumbUrl returns a boolean if a field has been set.
+func (o *MeProfileResponse) HasIdpImageThumbUrl() bool {
+	if o != nil && o.IdpImageThumbUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetIdpImageThumbUrl gets a reference to the given NullableString and assigns it to the IdpImageThumbUrl field.
+func (o *MeProfileResponse) SetIdpImageThumbUrl(v string) {
+	o.IdpImageThumbUrl.Set(&v)
+}
+
+// SetIdpImageThumbUrlNil sets the value for IdpImageThumbUrl to be an explicit nil
+func (o *MeProfileResponse) SetIdpImageThumbUrlNil() {
+	o.IdpImageThumbUrl.Set(nil)
+}
+
+// UnsetIdpImageThumbUrl ensures that no value is present for IdpImageThumbUrl, not even an explicit nil
+func (o *MeProfileResponse) UnsetIdpImageThumbUrl() {
+	o.IdpImageThumbUrl.Unset()
+}
+
+// GetIdpImageUrl returns the IdpImageUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeProfileResponse) GetIdpImageUrl() string {
+	if o == nil || IsNil(o.IdpImageUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.IdpImageUrl.Get()
+}
+
+// GetIdpImageUrlOk returns a tuple with the IdpImageUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeProfileResponse) GetIdpImageUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.IdpImageUrl.Get(), o.IdpImageUrl.IsSet()
+}
+
+// HasIdpImageUrl returns a boolean if a field has been set.
+func (o *MeProfileResponse) HasIdpImageUrl() bool {
+	if o != nil && o.IdpImageUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetIdpImageUrl gets a reference to the given NullableString and assigns it to the IdpImageUrl field.
+func (o *MeProfileResponse) SetIdpImageUrl(v string) {
+	o.IdpImageUrl.Set(&v)
+}
+
+// SetIdpImageUrlNil sets the value for IdpImageUrl to be an explicit nil
+func (o *MeProfileResponse) SetIdpImageUrlNil() {
+	o.IdpImageUrl.Set(nil)
+}
+
+// UnsetIdpImageUrl ensures that no value is present for IdpImageUrl, not even an explicit nil
+func (o *MeProfileResponse) UnsetIdpImageUrl() {
+	o.IdpImageUrl.Unset()
 }
 
 // GetIdpLinks returns the IdpLinks field value
@@ -320,47 +421,181 @@ func (o *MeProfileResponse) UnsetLocale() {
 	o.Locale.Unset()
 }
 
-// GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *MeProfileResponse) GetName() string {
-	if o == nil || IsNil(o.Name.Get()) {
-		var ret string
+// GetName returns the Name field value
+func (o *MeProfileResponse) GetName() LocalizedString {
+	if o == nil {
+		var ret LocalizedString
 		return ret
 	}
-	return *o.Name.Get()
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *MeProfileResponse) GetNameOk() (*string, bool) {
+func (o *MeProfileResponse) GetNameOk() (*LocalizedString, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.Name.Get(), o.Name.IsSet()
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *MeProfileResponse) HasName() bool {
-	if o != nil && o.Name.IsSet() {
+// SetName sets field value
+func (o *MeProfileResponse) SetName(v LocalizedString) {
+	o.Name = v
+}
+
+// GetNameConfirmationPending returns the NameConfirmationPending field value
+func (o *MeProfileResponse) GetNameConfirmationPending() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.NameConfirmationPending
+}
+
+// GetNameConfirmationPendingOk returns a tuple with the NameConfirmationPending field value
+// and a boolean to check if the value has been set.
+func (o *MeProfileResponse) GetNameConfirmationPendingOk() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.NameConfirmationPending, true
+}
+
+// SetNameConfirmationPending sets field value
+func (o *MeProfileResponse) SetNameConfirmationPending(v bool) {
+	o.NameConfirmationPending = v
+}
+
+// GetObservedLocale returns the ObservedLocale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeProfileResponse) GetObservedLocale() string {
+	if o == nil || IsNil(o.ObservedLocale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ObservedLocale.Get()
+}
+
+// GetObservedLocaleOk returns a tuple with the ObservedLocale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeProfileResponse) GetObservedLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ObservedLocale.Get(), o.ObservedLocale.IsSet()
+}
+
+// HasObservedLocale returns a boolean if a field has been set.
+func (o *MeProfileResponse) HasObservedLocale() bool {
+	if o != nil && o.ObservedLocale.IsSet() {
 		return true
 	}
 
 	return false
 }
 
-// SetName gets a reference to the given NullableString and assigns it to the Name field.
-func (o *MeProfileResponse) SetName(v string) {
-	o.Name.Set(&v)
+// SetObservedLocale gets a reference to the given NullableString and assigns it to the ObservedLocale field.
+func (o *MeProfileResponse) SetObservedLocale(v string) {
+	o.ObservedLocale.Set(&v)
 }
 
-// SetNameNil sets the value for Name to be an explicit nil
-func (o *MeProfileResponse) SetNameNil() {
-	o.Name.Set(nil)
+// SetObservedLocaleNil sets the value for ObservedLocale to be an explicit nil
+func (o *MeProfileResponse) SetObservedLocaleNil() {
+	o.ObservedLocale.Set(nil)
 }
 
-// UnsetName ensures that no value is present for Name, not even an explicit nil
-func (o *MeProfileResponse) UnsetName() {
-	o.Name.Unset()
+// UnsetObservedLocale ensures that no value is present for ObservedLocale, not even an explicit nil
+func (o *MeProfileResponse) UnsetObservedLocale() {
+	o.ObservedLocale.Unset()
+}
+
+// GetOpenappImageThumbUrl returns the OpenappImageThumbUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeProfileResponse) GetOpenappImageThumbUrl() string {
+	if o == nil || IsNil(o.OpenappImageThumbUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.OpenappImageThumbUrl.Get()
+}
+
+// GetOpenappImageThumbUrlOk returns a tuple with the OpenappImageThumbUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeProfileResponse) GetOpenappImageThumbUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OpenappImageThumbUrl.Get(), o.OpenappImageThumbUrl.IsSet()
+}
+
+// HasOpenappImageThumbUrl returns a boolean if a field has been set.
+func (o *MeProfileResponse) HasOpenappImageThumbUrl() bool {
+	if o != nil && o.OpenappImageThumbUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOpenappImageThumbUrl gets a reference to the given NullableString and assigns it to the OpenappImageThumbUrl field.
+func (o *MeProfileResponse) SetOpenappImageThumbUrl(v string) {
+	o.OpenappImageThumbUrl.Set(&v)
+}
+
+// SetOpenappImageThumbUrlNil sets the value for OpenappImageThumbUrl to be an explicit nil
+func (o *MeProfileResponse) SetOpenappImageThumbUrlNil() {
+	o.OpenappImageThumbUrl.Set(nil)
+}
+
+// UnsetOpenappImageThumbUrl ensures that no value is present for OpenappImageThumbUrl, not even an explicit nil
+func (o *MeProfileResponse) UnsetOpenappImageThumbUrl() {
+	o.OpenappImageThumbUrl.Unset()
+}
+
+// GetOpenappImageUrl returns the OpenappImageUrl field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeProfileResponse) GetOpenappImageUrl() string {
+	if o == nil || IsNil(o.OpenappImageUrl.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.OpenappImageUrl.Get()
+}
+
+// GetOpenappImageUrlOk returns a tuple with the OpenappImageUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeProfileResponse) GetOpenappImageUrlOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.OpenappImageUrl.Get(), o.OpenappImageUrl.IsSet()
+}
+
+// HasOpenappImageUrl returns a boolean if a field has been set.
+func (o *MeProfileResponse) HasOpenappImageUrl() bool {
+	if o != nil && o.OpenappImageUrl.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetOpenappImageUrl gets a reference to the given NullableString and assigns it to the OpenappImageUrl field.
+func (o *MeProfileResponse) SetOpenappImageUrl(v string) {
+	o.OpenappImageUrl.Set(&v)
+}
+
+// SetOpenappImageUrlNil sets the value for OpenappImageUrl to be an explicit nil
+func (o *MeProfileResponse) SetOpenappImageUrlNil() {
+	o.OpenappImageUrl.Set(nil)
+}
+
+// UnsetOpenappImageUrl ensures that no value is present for OpenappImageUrl, not even an explicit nil
+func (o *MeProfileResponse) UnsetOpenappImageUrl() {
+	o.OpenappImageUrl.Unset()
 }
 
 // GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -460,6 +695,12 @@ func (o MeProfileResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["email"] = o.Email.Get()
 	}
 	toSerialize["email_verified"] = o.EmailVerified
+	if o.IdpImageThumbUrl.IsSet() {
+		toSerialize["idp_image_thumb_url"] = o.IdpImageThumbUrl.Get()
+	}
+	if o.IdpImageUrl.IsSet() {
+		toSerialize["idp_image_url"] = o.IdpImageUrl.Get()
+	}
 	toSerialize["idp_links"] = o.IdpLinks
 	if o.ImageSyncError.IsSet() {
 		toSerialize["image_sync_error"] = o.ImageSyncError.Get()
@@ -473,8 +714,16 @@ func (o MeProfileResponse) ToMap() (map[string]interface{}, error) {
 	if o.Locale.IsSet() {
 		toSerialize["locale"] = o.Locale.Get()
 	}
-	if o.Name.IsSet() {
-		toSerialize["name"] = o.Name.Get()
+	toSerialize["name"] = o.Name
+	toSerialize["name_confirmation_pending"] = o.NameConfirmationPending
+	if o.ObservedLocale.IsSet() {
+		toSerialize["observed_locale"] = o.ObservedLocale.Get()
+	}
+	if o.OpenappImageThumbUrl.IsSet() {
+		toSerialize["openapp_image_thumb_url"] = o.OpenappImageThumbUrl.Get()
+	}
+	if o.OpenappImageUrl.IsSet() {
+		toSerialize["openapp_image_url"] = o.OpenappImageUrl.Get()
 	}
 	if o.Phone.IsSet() {
 		toSerialize["phone"] = o.Phone.Get()
@@ -491,6 +740,8 @@ func (o *MeProfileResponse) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"email_verified",
 		"idp_links",
+		"name",
+		"name_confirmation_pending",
 		"phone_verified",
 		"profile_sources",
 	}

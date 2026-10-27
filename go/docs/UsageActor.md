@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **GuestId** | Pointer to **NullableString** | Per-device guest fingerprint. Present only when &#x60;kind &#x3D;&#x3D; \&quot;guest\&quot;&#x60;. | [optional]
-**Kind** | **string** | &#x60;user&#x60;, &#x60;guest&#x60;, &#x60;system&#x60;, &#x60;api_key&#x60;, … (mirrors &#x60;audit_events.actor_kind&#x60;). |
+**Kind** | **string** | Who performed the action: &#x60;user&#x60;, &#x60;guest&#x60;, &#x60;agent&#x60; or &#x60;system&#x60;. |
 **UserId** | Pointer to **NullableString** | Trusted registered-user id. Present only when &#x60;kind &#x3D;&#x3D; \&quot;user\&quot;&#x60;. | [optional]
 
 ## Methods

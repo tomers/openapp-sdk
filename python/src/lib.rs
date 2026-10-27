@@ -284,11 +284,11 @@ impl Client {
         })
     }
 
-    #[pyo3(signature = (integration_id, name, match_mode = "exact"))]
+    #[pyo3(signature = (org_id, name, match_mode = "exact"))]
     fn zones_get_by_name<'py>(
         &self,
         py: Python<'py>,
-        integration_id: String,
+        org_id: String,
         name: String,
         match_mode: &str,
     ) -> PyResult<Bound<'py, PyAny>> {
@@ -297,7 +297,7 @@ impl Client {
         future_into_py(py, async move {
             translate(
                 core.zones()
-                    .get_by_name(&integration_id, &name, mode)
+                    .get_by_name(&org_id, &name, mode)
                     .await,
             )
         })

@@ -21,6 +21,7 @@ type LimitSource struct {
 	LimitSourceOneOf  *LimitSourceOneOf
 	LimitSourceOneOf1 *LimitSourceOneOf1
 	LimitSourceOneOf2 *LimitSourceOneOf2
+	LimitSourceOneOf3 *LimitSourceOneOf3
 }
 
 // LimitSourceOneOfAsLimitSource is a convenience function that returns LimitSourceOneOf wrapped in LimitSource
@@ -41,6 +42,13 @@ func LimitSourceOneOf1AsLimitSource(v *LimitSourceOneOf1) LimitSource {
 func LimitSourceOneOf2AsLimitSource(v *LimitSourceOneOf2) LimitSource {
 	return LimitSource{
 		LimitSourceOneOf2: v,
+	}
+}
+
+// LimitSourceOneOf3AsLimitSource is a convenience function that returns LimitSourceOneOf3 wrapped in LimitSource
+func LimitSourceOneOf3AsLimitSource(v *LimitSourceOneOf3) LimitSource {
+	return LimitSource{
+		LimitSourceOneOf3: v,
 	}
 }
 
@@ -99,11 +107,29 @@ func (dst *LimitSource) UnmarshalJSON(data []byte) error {
 		dst.LimitSourceOneOf2 = nil
 	}
 
+	// try to unmarshal data into LimitSourceOneOf3
+	err = newStrictDecoder(data).Decode(&dst.LimitSourceOneOf3)
+	if err == nil {
+		jsonLimitSourceOneOf3, _ := json.Marshal(dst.LimitSourceOneOf3)
+		if string(jsonLimitSourceOneOf3) == "{}" { // empty struct
+			dst.LimitSourceOneOf3 = nil
+		} else {
+			if err = validator.Validate(dst.LimitSourceOneOf3); err != nil {
+				dst.LimitSourceOneOf3 = nil
+			} else {
+				match++
+			}
+		}
+	} else {
+		dst.LimitSourceOneOf3 = nil
+	}
+
 	if match > 1 { // more than 1 match
 		// reset to nil
 		dst.LimitSourceOneOf = nil
 		dst.LimitSourceOneOf1 = nil
 		dst.LimitSourceOneOf2 = nil
+		dst.LimitSourceOneOf3 = nil
 
 		return fmt.Errorf("data matches more than one schema in oneOf(LimitSource)")
 	} else if match == 1 {
@@ -127,6 +153,10 @@ func (src LimitSource) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.LimitSourceOneOf2)
 	}
 
+	if src.LimitSourceOneOf3 != nil {
+		return json.Marshal(&src.LimitSourceOneOf3)
+	}
+
 	return nil, nil // no data in oneOf schemas
 }
 
@@ -147,6 +177,10 @@ func (obj *LimitSource) GetActualInstance() interface{} {
 		return obj.LimitSourceOneOf2
 	}
 
+	if obj.LimitSourceOneOf3 != nil {
+		return obj.LimitSourceOneOf3
+	}
+
 	// all schemas are nil
 	return nil
 }
@@ -163,6 +197,10 @@ func (obj LimitSource) GetActualInstanceValue() interface{} {
 
 	if obj.LimitSourceOneOf2 != nil {
 		return *obj.LimitSourceOneOf2
+	}
+
+	if obj.LimitSourceOneOf3 != nil {
+		return *obj.LimitSourceOneOf3
 	}
 
 	// all schemas are nil

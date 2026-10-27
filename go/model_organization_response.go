@@ -39,7 +39,7 @@ type OrganizationResponse struct {
 	ParentId *string `json:"parent_id,omitempty"`
 	// User ID to roles mapping for this org (keys are org IDs as strings).
 	UserRoles map[string][]string `json:"user_roles"`
-	// Whether this org has at least one child visible to the requester.  Populated only by the tree endpoints (children / search); `None` elsewhere. Lets the org selector render an expand affordance without first fetching the node's children.
+	// Whether this org has at least one child visible to the requester.  Present only in responses from the org children and search endpoints; omitted elsewhere. Lets a client show whether a node can be expanded without fetching its children.
 	HasChildren NullableBool `json:"has_children,omitempty"`
 	// Localized name of the parent org when `parent_id` is set (for UI hierarchy). Resolved server-side; does not require the client to `GET` the parent.
 	ParentName NullableLocalizedString `json:"parent_name,omitempty"`

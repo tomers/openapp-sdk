@@ -26,8 +26,13 @@ type DirectoryListingMemberWithUserResponse struct {
 	// Calendar date `YYYY-MM-DD`. Only set for listing managers.
 	DateOfBirth NullableString                 `json:"date_of_birth,omitempty"`
 	Member      DirectoryListingMemberResponse `json:"member"`
-	UserEmail   NullableString                 `json:"user_email,omitempty"`
-	UserName    interface{}                    `json:"user_name,omitempty"`
+	// Shipped locale code (`en`, `he`, `pt_br`) of the language messages to this person are written in: their own choice, the language last seen in their app, then the org default.
+	MessageLocale string `json:"message_locale"`
+	// Mailbox the person can sign in with. Omitted when the account has only a placeholder email.
+	UserEmail NullableString `json:"user_email,omitempty"`
+	UserName  interface{}    `json:"user_name,omitempty"`
+	// Verified E.164 phone on the account, when one is set.
+	UserPhone NullableString `json:"user_phone,omitempty"`
 }
 
 type _DirectoryListingMemberWithUserResponse DirectoryListingMemberWithUserResponse
@@ -36,9 +41,10 @@ type _DirectoryListingMemberWithUserResponse DirectoryListingMemberWithUserRespo
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDirectoryListingMemberWithUserResponse(member DirectoryListingMemberResponse) *DirectoryListingMemberWithUserResponse {
+func NewDirectoryListingMemberWithUserResponse(member DirectoryListingMemberResponse, messageLocale string) *DirectoryListingMemberWithUserResponse {
 	this := DirectoryListingMemberWithUserResponse{}
 	this.Member = member
+	this.MessageLocale = messageLocale
 	return &this
 }
 
@@ -160,6 +166,30 @@ func (o *DirectoryListingMemberWithUserResponse) SetMember(v DirectoryListingMem
 	o.Member = v
 }
 
+// GetMessageLocale returns the MessageLocale field value
+func (o *DirectoryListingMemberWithUserResponse) GetMessageLocale() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.MessageLocale
+}
+
+// GetMessageLocaleOk returns a tuple with the MessageLocale field value
+// and a boolean to check if the value has been set.
+func (o *DirectoryListingMemberWithUserResponse) GetMessageLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MessageLocale, true
+}
+
+// SetMessageLocale sets field value
+func (o *DirectoryListingMemberWithUserResponse) SetMessageLocale(v string) {
+	o.MessageLocale = v
+}
+
 // GetUserEmail returns the UserEmail field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *DirectoryListingMemberWithUserResponse) GetUserEmail() string {
 	if o == nil || IsNil(o.UserEmail.Get()) {
@@ -236,6 +266,49 @@ func (o *DirectoryListingMemberWithUserResponse) SetUserName(v interface{}) {
 	o.UserName = v
 }
 
+// GetUserPhone returns the UserPhone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *DirectoryListingMemberWithUserResponse) GetUserPhone() string {
+	if o == nil || IsNil(o.UserPhone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.UserPhone.Get()
+}
+
+// GetUserPhoneOk returns a tuple with the UserPhone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *DirectoryListingMemberWithUserResponse) GetUserPhoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.UserPhone.Get(), o.UserPhone.IsSet()
+}
+
+// HasUserPhone returns a boolean if a field has been set.
+func (o *DirectoryListingMemberWithUserResponse) HasUserPhone() bool {
+	if o != nil && o.UserPhone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetUserPhone gets a reference to the given NullableString and assigns it to the UserPhone field.
+func (o *DirectoryListingMemberWithUserResponse) SetUserPhone(v string) {
+	o.UserPhone.Set(&v)
+}
+
+// SetUserPhoneNil sets the value for UserPhone to be an explicit nil
+func (o *DirectoryListingMemberWithUserResponse) SetUserPhoneNil() {
+	o.UserPhone.Set(nil)
+}
+
+// UnsetUserPhone ensures that no value is present for UserPhone, not even an explicit nil
+func (o *DirectoryListingMemberWithUserResponse) UnsetUserPhone() {
+	o.UserPhone.Unset()
+}
+
 func (o DirectoryListingMemberWithUserResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.AgeClass.IsSet() {
@@ -245,11 +318,15 @@ func (o DirectoryListingMemberWithUserResponse) ToMap() (map[string]interface{},
 		toSerialize["date_of_birth"] = o.DateOfBirth.Get()
 	}
 	toSerialize["member"] = o.Member
+	toSerialize["message_locale"] = o.MessageLocale
 	if o.UserEmail.IsSet() {
 		toSerialize["user_email"] = o.UserEmail.Get()
 	}
 	if o.UserName != nil {
 		toSerialize["user_name"] = o.UserName
+	}
+	if o.UserPhone.IsSet() {
+		toSerialize["user_phone"] = o.UserPhone.Get()
 	}
 	return toSerialize, nil
 }
@@ -260,6 +337,7 @@ func (o *DirectoryListingMemberWithUserResponse) UnmarshalJSON(data []byte) (err
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"member",
+		"message_locale",
 	}
 
 	allProperties := make(map[string]interface{})

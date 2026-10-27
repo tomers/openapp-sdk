@@ -21,7 +21,9 @@ var _ MappedNullable = &CreateAgentCredentialRequest{}
 type CreateAgentCredentialRequest struct {
 	ExpiresAt NullableString `json:"expires_at,omitempty"`
 	ExpiresIn NullableString `json:"expires_in,omitempty"`
-	Name      NullableString `json:"name,omitempty"`
+	// Group roles to add to the credential's default roles: any of `groups:create`, `groups:read`, `groups:update`, `groups:delete`, `groups:list`, `groups:share`, `groups:link`. Refused (403) unless the agent's organization has an enforcing `agent_group_write` policy and the caller holds each role there. The credential can use them only in the agent's organization, and only while that policy stays enforced.
+	GroupRoles []string       `json:"group_roles,omitempty"`
+	Name       NullableString `json:"name,omitempty"`
 }
 
 // NewCreateAgentCredentialRequest instantiates a new CreateAgentCredentialRequest object
@@ -127,6 +129,39 @@ func (o *CreateAgentCredentialRequest) UnsetExpiresIn() {
 	o.ExpiresIn.Unset()
 }
 
+// GetGroupRoles returns the GroupRoles field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateAgentCredentialRequest) GetGroupRoles() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+	return o.GroupRoles
+}
+
+// GetGroupRolesOk returns a tuple with the GroupRoles field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateAgentCredentialRequest) GetGroupRolesOk() ([]string, bool) {
+	if o == nil || IsNil(o.GroupRoles) {
+		return nil, false
+	}
+	return o.GroupRoles, true
+}
+
+// HasGroupRoles returns a boolean if a field has been set.
+func (o *CreateAgentCredentialRequest) HasGroupRoles() bool {
+	if o != nil && !IsNil(o.GroupRoles) {
+		return true
+	}
+
+	return false
+}
+
+// SetGroupRoles gets a reference to the given []string and assigns it to the GroupRoles field.
+func (o *CreateAgentCredentialRequest) SetGroupRoles(v []string) {
+	o.GroupRoles = v
+}
+
 // GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *CreateAgentCredentialRequest) GetName() string {
 	if o == nil || IsNil(o.Name.Get()) {
@@ -177,6 +212,9 @@ func (o CreateAgentCredentialRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if o.ExpiresIn.IsSet() {
 		toSerialize["expires_in"] = o.ExpiresIn.Get()
+	}
+	if o.GroupRoles != nil {
+		toSerialize["group_roles"] = o.GroupRoles
 	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()

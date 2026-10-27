@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **DegradationLevel** | **float32** |  |
 **Flagged** | [**[]FlaggedResource**](FlaggedResource.md) |  |
-**OrgId** | **NullableString** |  |
+**OrgId** | **string** |  |
 **OverCapacity** | **bool** |  |
 **OverCapacitySince** | Pointer to **NullableString** |  | [optional]
 **Overages** | [**[]KeyOverage**](KeyOverage.md) |  |
@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 
 ### NewDegradationStatus
 
-`func NewDegradationStatus(degradationLevel float32, flagged []FlaggedResource, orgId NullableString, overCapacity bool, overages []KeyOverage, selectionPolicy SelectionPolicy, stage DegradationStage, ) *DegradationStatus`
+`func NewDegradationStatus(degradationLevel float32, flagged []FlaggedResource, orgId string, overCapacity bool, overages []KeyOverage, selectionPolicy SelectionPolicy, stage DegradationStage, ) *DegradationStatus`
 
 NewDegradationStatus instantiates a new DegradationStatus object
 This constructor will assign default values to properties that have it defined,
@@ -92,16 +92,6 @@ and a boolean to check if the value has been set.
 SetOrgId sets OrgId field to given value.
 
 
-### SetOrgIdNil
-
-`func (o *DegradationStatus) SetOrgIdNil(b bool)`
-
- SetOrgIdNil sets the value for OrgId to be an explicit nil
-
-### UnsetOrgId
-`func (o *DegradationStatus) UnsetOrgId()`
-
-UnsetOrgId ensures that no value is present for OrgId, not even an explicit nil
 ### GetOverCapacity
 
 `func (o *DegradationStatus) GetOverCapacity() bool`

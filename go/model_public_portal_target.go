@@ -24,16 +24,19 @@ type PublicPortalTarget struct {
 	AllowedActions []string `json:"allowed_actions"`
 	// True when at least one resident (receives_calls) exists. When false, voice/video are excluded from allowed_actions.
 	CallAvailable NullableBool `json:"call_available,omitempty"`
-	// Why this entry cannot be called: `no_callees`, `dnd`, or `guest_disabled`.  The server already computes each of these to decide `allowed_actions`; publishing them means the client can explain a greyed-out call button instead of leaving the visitor to guess.
-	DenialReasons []string       `json:"denial_reasons,omitempty"`
-	DisplayName   interface{}    `json:"display_name"`
-	Floor         interface{}    `json:"floor"`
-	FloorNumber   NullableInt64  `json:"floor_number,omitempty"`
-	Image         NullableString `json:"image,omitempty"`
-	ListingLabel  interface{}    `json:"listing_label,omitempty"`
-	ListingNumber NullableInt64  `json:"listing_number,omitempty"`
-	RequireVideo  NullableBool   `json:"require_video,omitempty"`
-	TargetId      string         `json:"target_id"`
+	// Why this entry cannot be called; empty when nothing blocks a call. `no_callees`: nobody at this entry receives calls. `dnd`: Do Not Disturb is on for this entry, or no callee can currently be notified. `guest_disabled`: visitor access to this entry is turned off by policy.
+	DenialReasons []string    `json:"denial_reasons,omitempty"`
+	DisplayName   interface{} `json:"display_name"`
+	// Server-resolved visitor name. Clients render this and do not recompute it.
+	EffectiveDisplayName string         `json:"effective_display_name"`
+	Floor                interface{}    `json:"floor"`
+	FloorNumber          NullableInt64  `json:"floor_number,omitempty"`
+	Image                NullableString `json:"image,omitempty"`
+	ListingLabel         interface{}    `json:"listing_label,omitempty"`
+	ListingNumber        NullableInt64  `json:"listing_number,omitempty"`
+	LocationDetail       interface{}    `json:"location_detail,omitempty"`
+	RequireVideo         NullableBool   `json:"require_video,omitempty"`
+	TargetId             string         `json:"target_id"`
 }
 
 type _PublicPortalTarget PublicPortalTarget
@@ -42,10 +45,11 @@ type _PublicPortalTarget PublicPortalTarget
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPublicPortalTarget(allowedActions []string, displayName interface{}, floor interface{}, targetId string) *PublicPortalTarget {
+func NewPublicPortalTarget(allowedActions []string, displayName interface{}, effectiveDisplayName string, floor interface{}, targetId string) *PublicPortalTarget {
 	this := PublicPortalTarget{}
 	this.AllowedActions = allowedActions
 	this.DisplayName = displayName
+	this.EffectiveDisplayName = effectiveDisplayName
 	this.Floor = floor
 	this.TargetId = targetId
 	return &this
@@ -182,6 +186,30 @@ func (o *PublicPortalTarget) GetDisplayNameOk() (*interface{}, bool) {
 // SetDisplayName sets field value
 func (o *PublicPortalTarget) SetDisplayName(v interface{}) {
 	o.DisplayName = v
+}
+
+// GetEffectiveDisplayName returns the EffectiveDisplayName field value
+func (o *PublicPortalTarget) GetEffectiveDisplayName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.EffectiveDisplayName
+}
+
+// GetEffectiveDisplayNameOk returns a tuple with the EffectiveDisplayName field value
+// and a boolean to check if the value has been set.
+func (o *PublicPortalTarget) GetEffectiveDisplayNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.EffectiveDisplayName, true
+}
+
+// SetEffectiveDisplayName sets field value
+func (o *PublicPortalTarget) SetEffectiveDisplayName(v string) {
+	o.EffectiveDisplayName = v
 }
 
 // GetFloor returns the Floor field value
@@ -372,6 +400,39 @@ func (o *PublicPortalTarget) UnsetListingNumber() {
 	o.ListingNumber.Unset()
 }
 
+// GetLocationDetail returns the LocationDetail field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicPortalTarget) GetLocationDetail() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.LocationDetail
+}
+
+// GetLocationDetailOk returns a tuple with the LocationDetail field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicPortalTarget) GetLocationDetailOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.LocationDetail) {
+		return nil, false
+	}
+	return &o.LocationDetail, true
+}
+
+// HasLocationDetail returns a boolean if a field has been set.
+func (o *PublicPortalTarget) HasLocationDetail() bool {
+	if o != nil && !IsNil(o.LocationDetail) {
+		return true
+	}
+
+	return false
+}
+
+// SetLocationDetail gets a reference to the given interface{} and assigns it to the LocationDetail field.
+func (o *PublicPortalTarget) SetLocationDetail(v interface{}) {
+	o.LocationDetail = v
+}
+
 // GetRequireVideo returns the RequireVideo field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicPortalTarget) GetRequireVideo() bool {
 	if o == nil || IsNil(o.RequireVideo.Get()) {
@@ -451,6 +512,7 @@ func (o PublicPortalTarget) ToMap() (map[string]interface{}, error) {
 	if o.DisplayName != nil {
 		toSerialize["display_name"] = o.DisplayName
 	}
+	toSerialize["effective_display_name"] = o.EffectiveDisplayName
 	if o.Floor != nil {
 		toSerialize["floor"] = o.Floor
 	}
@@ -466,6 +528,9 @@ func (o PublicPortalTarget) ToMap() (map[string]interface{}, error) {
 	if o.ListingNumber.IsSet() {
 		toSerialize["listing_number"] = o.ListingNumber.Get()
 	}
+	if o.LocationDetail != nil {
+		toSerialize["location_detail"] = o.LocationDetail
+	}
 	if o.RequireVideo.IsSet() {
 		toSerialize["require_video"] = o.RequireVideo.Get()
 	}
@@ -480,6 +545,7 @@ func (o *PublicPortalTarget) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"allowed_actions",
 		"display_name",
+		"effective_display_name",
 		"floor",
 		"target_id",
 	}

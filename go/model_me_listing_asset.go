@@ -26,21 +26,24 @@ type MeListingAsset struct {
 	CallEligible bool        `json:"call_eligible"`
 	DisplayName  interface{} `json:"display_name,omitempty"`
 	// True when calls are silenced for this listing (global DND or per-listing DND).
-	DndEnabled  NullableBool  `json:"dnd_enabled,omitempty"`
-	EntityId    string        `json:"entity_id"`
-	Floor       interface{}   `json:"floor,omitempty"`
-	FloorNumber NullableInt64 `json:"floor_number,omitempty"`
+	DndEnabled NullableBool `json:"dnd_enabled,omitempty"`
+	// Server-resolved listing title. Clients render this and do not recompute it.
+	EffectiveDisplayName string        `json:"effective_display_name"`
+	EntityId             string        `json:"entity_id"`
+	Floor                interface{}   `json:"floor,omitempty"`
+	FloorNumber          NullableInt64 `json:"floor_number,omitempty"`
 	// Presigned URL for the `thumb` rendition of the listing photo, for small renders. Absent when the source is already thumb-sized; fall back to `image_url`.
 	ImageThumbUrl NullableString `json:"image_thumb_url,omitempty"`
 	// Presigned listing (entity) photo URL (best-effort).
-	ImageUrl      NullableString `json:"image_url,omitempty"`
-	IntegrationId string         `json:"integration_id"`
-	ListingLabel  interface{}    `json:"listing_label,omitempty"`
-	ListingNumber NullableInt64  `json:"listing_number,omitempty"`
-	OrgId         string         `json:"org_id"`
-	OrgName       interface{}    `json:"org_name,omitempty"`
-	ReceivesCalls bool           `json:"receives_calls"`
-	Role          string         `json:"role"`
+	ImageUrl       NullableString `json:"image_url,omitempty"`
+	IntegrationId  string         `json:"integration_id"`
+	ListingLabel   interface{}    `json:"listing_label,omitempty"`
+	ListingNumber  NullableInt64  `json:"listing_number,omitempty"`
+	LocationDetail interface{}    `json:"location_detail,omitempty"`
+	OrgId          string         `json:"org_id"`
+	OrgName        interface{}    `json:"org_name,omitempty"`
+	ReceivesCalls  bool           `json:"receives_calls"`
+	Role           string         `json:"role"`
 }
 
 type _MeListingAsset MeListingAsset
@@ -49,9 +52,10 @@ type _MeListingAsset MeListingAsset
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMeListingAsset(callEligible bool, entityId string, integrationId string, orgId string, receivesCalls bool, role string) *MeListingAsset {
+func NewMeListingAsset(callEligible bool, effectiveDisplayName string, entityId string, integrationId string, orgId string, receivesCalls bool, role string) *MeListingAsset {
 	this := MeListingAsset{}
 	this.CallEligible = callEligible
+	this.EffectiveDisplayName = effectiveDisplayName
 	this.EntityId = entityId
 	this.IntegrationId = integrationId
 	this.OrgId = orgId
@@ -199,6 +203,30 @@ func (o *MeListingAsset) SetDndEnabledNil() {
 // UnsetDndEnabled ensures that no value is present for DndEnabled, not even an explicit nil
 func (o *MeListingAsset) UnsetDndEnabled() {
 	o.DndEnabled.Unset()
+}
+
+// GetEffectiveDisplayName returns the EffectiveDisplayName field value
+func (o *MeListingAsset) GetEffectiveDisplayName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.EffectiveDisplayName
+}
+
+// GetEffectiveDisplayNameOk returns a tuple with the EffectiveDisplayName field value
+// and a boolean to check if the value has been set.
+func (o *MeListingAsset) GetEffectiveDisplayNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.EffectiveDisplayName, true
+}
+
+// SetEffectiveDisplayName sets field value
+func (o *MeListingAsset) SetEffectiveDisplayName(v string) {
+	o.EffectiveDisplayName = v
 }
 
 // GetEntityId returns the EntityId field value
@@ -487,6 +515,39 @@ func (o *MeListingAsset) UnsetListingNumber() {
 	o.ListingNumber.Unset()
 }
 
+// GetLocationDetail returns the LocationDetail field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeListingAsset) GetLocationDetail() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.LocationDetail
+}
+
+// GetLocationDetailOk returns a tuple with the LocationDetail field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeListingAsset) GetLocationDetailOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.LocationDetail) {
+		return nil, false
+	}
+	return &o.LocationDetail, true
+}
+
+// HasLocationDetail returns a boolean if a field has been set.
+func (o *MeListingAsset) HasLocationDetail() bool {
+	if o != nil && !IsNil(o.LocationDetail) {
+		return true
+	}
+
+	return false
+}
+
+// SetLocationDetail gets a reference to the given interface{} and assigns it to the LocationDetail field.
+func (o *MeListingAsset) SetLocationDetail(v interface{}) {
+	o.LocationDetail = v
+}
+
 // GetOrgId returns the OrgId field value
 func (o *MeListingAsset) GetOrgId() string {
 	if o == nil {
@@ -604,6 +665,7 @@ func (o MeListingAsset) ToMap() (map[string]interface{}, error) {
 	if o.DndEnabled.IsSet() {
 		toSerialize["dnd_enabled"] = o.DndEnabled.Get()
 	}
+	toSerialize["effective_display_name"] = o.EffectiveDisplayName
 	toSerialize["entity_id"] = o.EntityId
 	if o.Floor != nil {
 		toSerialize["floor"] = o.Floor
@@ -624,6 +686,9 @@ func (o MeListingAsset) ToMap() (map[string]interface{}, error) {
 	if o.ListingNumber.IsSet() {
 		toSerialize["listing_number"] = o.ListingNumber.Get()
 	}
+	if o.LocationDetail != nil {
+		toSerialize["location_detail"] = o.LocationDetail
+	}
 	toSerialize["org_id"] = o.OrgId
 	if o.OrgName != nil {
 		toSerialize["org_name"] = o.OrgName
@@ -639,6 +704,7 @@ func (o *MeListingAsset) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"call_eligible",
+		"effective_display_name",
 		"entity_id",
 		"integration_id",
 		"org_id",

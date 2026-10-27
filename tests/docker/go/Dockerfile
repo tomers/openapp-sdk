@@ -9,7 +9,7 @@ COPY rust /build/core
 WORKDIR /build/core
 RUN cargo build -p openapp-sdk-core-c-bridge --release
 
-FROM golang:1.26.2-trixie
+FROM golang:1.26.2-trixie@sha256:4a7137ea573f79c86ae451ff05817ed762ef5597fcf732259e97abeb3108d873
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

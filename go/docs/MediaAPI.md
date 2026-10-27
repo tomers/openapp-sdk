@@ -15,11 +15,8 @@ Method | HTTP request | Description
 [**GetOrgImage**](MediaAPI.md#GetOrgImage) | **Get** /orgs/{id}/image |
 [**GetUserImage**](MediaAPI.md#GetUserImage) | **Get** /users/{id}/image |
 [**PostDeviceImage**](MediaAPI.md#PostDeviceImage) | **Post** /devices/{id}/image |
-[**PostDeviceImageCopyFrom**](MediaAPI.md#PostDeviceImageCopyFrom) | **Post** /devices/{id}/image/copy-from |
 [**PostEntityImage**](MediaAPI.md#PostEntityImage) | **Post** /entities/{id}/image |
-[**PostEntityImageCopyFrom**](MediaAPI.md#PostEntityImageCopyFrom) | **Post** /entities/{id}/image/copy-from |
 [**PostIntegrationImage**](MediaAPI.md#PostIntegrationImage) | **Post** /integrations/{id}/image |
-[**PostIntegrationImageCopyFrom**](MediaAPI.md#PostIntegrationImageCopyFrom) | **Post** /integrations/{id}/image/copy-from |
 [**PostOrgImage**](MediaAPI.md#PostOrgImage) | **Post** /orgs/{id}/image |
 [**PostUserImage**](MediaAPI.md#PostUserImage) | **Post** /users/{id}/image |
 
@@ -813,80 +810,6 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## PostDeviceImageCopyFrom
-
-> ResourceImageUrlResponse PostDeviceImageCopyFrom(ctx, id).CopyDeviceImageRequest(copyDeviceImageRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	copyDeviceImageRequest := *openapiclient.NewCopyDeviceImageRequest("SourceDeviceId_example") // CopyDeviceImageRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MediaAPI.PostDeviceImageCopyFrom(context.Background(), id).CopyDeviceImageRequest(copyDeviceImageRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MediaAPI.PostDeviceImageCopyFrom``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostDeviceImageCopyFrom`: ResourceImageUrlResponse
-	fmt.Fprintf(os.Stdout, "Response from `MediaAPI.PostDeviceImageCopyFrom`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostDeviceImageCopyFromRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **copyDeviceImageRequest** | [**CopyDeviceImageRequest**](CopyDeviceImageRequest.md) |  |
-
-### Return type
-
-[**ResourceImageUrlResponse**](ResourceImageUrlResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
 ## PostEntityImage
 
 > ResourceImageUrlResponse PostEntityImage(ctx, id).File(file).Execute()
@@ -961,80 +884,6 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## PostEntityImageCopyFrom
-
-> ResourceImageUrlResponse PostEntityImageCopyFrom(ctx, id).CopyEntityImageRequest(copyEntityImageRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	copyEntityImageRequest := *openapiclient.NewCopyEntityImageRequest("SourceEntityId_example") // CopyEntityImageRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MediaAPI.PostEntityImageCopyFrom(context.Background(), id).CopyEntityImageRequest(copyEntityImageRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MediaAPI.PostEntityImageCopyFrom``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostEntityImageCopyFrom`: ResourceImageUrlResponse
-	fmt.Fprintf(os.Stdout, "Response from `MediaAPI.PostEntityImageCopyFrom`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostEntityImageCopyFromRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **copyEntityImageRequest** | [**CopyEntityImageRequest**](CopyEntityImageRequest.md) |  |
-
-### Return type
-
-[**ResourceImageUrlResponse**](ResourceImageUrlResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
 ## PostIntegrationImage
 
 > ResourceImageUrlResponse PostIntegrationImage(ctx, id).File(file).Execute()
@@ -1102,80 +951,6 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: multipart/form-data
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostIntegrationImageCopyFrom
-
-> ResourceImageUrlResponse PostIntegrationImageCopyFrom(ctx, id).CopyIntegrationImageRequest(copyIntegrationImageRequest).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string |
-	copyIntegrationImageRequest := *openapiclient.NewCopyIntegrationImageRequest("SourceIntegrationId_example") // CopyIntegrationImageRequest |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MediaAPI.PostIntegrationImageCopyFrom(context.Background(), id).CopyIntegrationImageRequest(copyIntegrationImageRequest).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MediaAPI.PostIntegrationImageCopyFrom``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostIntegrationImageCopyFrom`: ResourceImageUrlResponse
-	fmt.Fprintf(os.Stdout, "Response from `MediaAPI.PostIntegrationImageCopyFrom`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** |  |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostIntegrationImageCopyFromRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
- **copyIntegrationImageRequest** | [**CopyIntegrationImageRequest**](CopyIntegrationImageRequest.md) |  |
-
-### Return type
-
-[**ResourceImageUrlResponse**](ResourceImageUrlResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)

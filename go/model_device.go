@@ -38,6 +38,8 @@ type Device struct {
 	Name LocalizedString `json:"name"`
 	// Organization that owns this device.
 	OrgId string `json:"org_id"`
+	// Zone the device is placed in (same org). Entities with `zone.mode = inherit` take it.
+	ZoneId NullableString `json:"zone_id,omitempty"`
 }
 
 type _Device Device
@@ -395,6 +397,49 @@ func (o *Device) SetOrgId(v string) {
 	o.OrgId = v
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *Device) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId.Get()
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *Device) GetZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneId.Get(), o.ZoneId.IsSet()
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *Device) HasZoneId() bool {
+	if o != nil && o.ZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
+func (o *Device) SetZoneId(v string) {
+	o.ZoneId.Set(&v)
+}
+
+// SetZoneIdNil sets the value for ZoneId to be an explicit nil
+func (o *Device) SetZoneIdNil() {
+	o.ZoneId.Set(nil)
+}
+
+// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
+func (o *Device) UnsetZoneId() {
+	o.ZoneId.Unset()
+}
+
 func (o Device) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if !IsNil(o.CreatedAt) {
@@ -422,6 +467,9 @@ func (o Device) ToMap() (map[string]interface{}, error) {
 	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["name"] = o.Name
 	toSerialize["org_id"] = o.OrgId
+	if o.ZoneId.IsSet() {
+		toSerialize["zone_id"] = o.ZoneId.Get()
+	}
 	return toSerialize, nil
 }
 

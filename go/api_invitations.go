@@ -16,10 +16,218 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 // InvitationsAPIService InvitationsAPI service
 type InvitationsAPIService service
+
+type ApiAcceptMyPendingInvitationRequest struct {
+	ctx        context.Context
+	ApiService *InvitationsAPIService
+	id         string
+}
+
+func (r ApiAcceptMyPendingInvitationRequest) Execute() (*RedeemInvitationResponse, *http.Response, error) {
+	return r.ApiService.AcceptMyPendingInvitationExecute(r)
+}
+
+/*
+AcceptMyPendingInvitation Accept an invitation addressed to the caller's verified phone or email, without the PIN.
+
+The verified contact is the proof, so no PIN is needed. Grants the same org roles, groups, and
+site access as `POST /invitations/redeem`. Use that endpoint when the invitation was sent to a
+contact this account has not verified.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id Invitation ID from `GET /me/org-invitations`
+	@return ApiAcceptMyPendingInvitationRequest
+*/
+func (a *InvitationsAPIService) AcceptMyPendingInvitation(ctx context.Context, id string) ApiAcceptMyPendingInvitationRequest {
+	return ApiAcceptMyPendingInvitationRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return RedeemInvitationResponse
+func (a *InvitationsAPIService) AcceptMyPendingInvitationExecute(r ApiAcceptMyPendingInvitationRequest) (*RedeemInvitationResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *RedeemInvitationResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvitationsAPIService.AcceptMyPendingInvitation")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/me/org-invitations/{id}/accept"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListMyPendingInvitationsRequest struct {
+	ctx        context.Context
+	ApiService *InvitationsAPIService
+}
+
+func (r ApiListMyPendingInvitationsRequest) Execute() (*PendingInvitationListResponse, *http.Response, error) {
+	return r.ApiService.ListMyPendingInvitationsExecute(r)
+}
+
+/*
+ListMyPendingInvitations List pending invitations addressed to the signed-in account's verified phone or email.
+
+Lets someone who signed in with a different method than the one the invitation was sent to
+(for example Google, after an SMS invitation) still see and accept it.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiListMyPendingInvitationsRequest
+*/
+func (a *InvitationsAPIService) ListMyPendingInvitations(ctx context.Context) ApiListMyPendingInvitationsRequest {
+	return ApiListMyPendingInvitationsRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PendingInvitationListResponse
+func (a *InvitationsAPIService) ListMyPendingInvitationsExecute(r ApiListMyPendingInvitationsRequest) (*PendingInvitationListResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PendingInvitationListResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InvitationsAPIService.ListMyPendingInvitations")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/me/org-invitations"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
 
 type ApiPreviewInvitationRequest struct {
 	ctx                      context.Context
@@ -37,7 +245,10 @@ func (r ApiPreviewInvitationRequest) Execute() (*InvitationPreviewResponse, *htt
 }
 
 /*
-PreviewInvitation POST `/invitations/preview` — public-ish; returns enough metadata to render the redeem page without leaking the PIN.
+PreviewInvitation Preview an invitation by its token.
+
+Needs only the invitation token, no session. Returns enough to show the redeem page; never
+returns the PIN.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiPreviewInvitationRequest
@@ -146,11 +357,18 @@ func (r ApiRedeemInvitationRequest) Execute() (*RedeemInvitationResponse, *http.
 }
 
 /*
-RedeemInvitation POST `/invitations/redeem` — exchange `token` + `pin` for org membership.
+RedeemInvitation Redeem an invitation: exchange `token` + `pin` for org membership.
 
-Requires an authenticated Kratos session (we attach the invite to that user). If the
-session's user does not yet match `invite.phone` or `invite.email`, we still attach
-— the invite's secrets are themselves the proof of identity for this flow.
+Token and PIN are checked before the session. A wrong PIN yields 422 even when signed out,
+so the redeem page can show feedback without sending the visitor to login. A correct PIN
+with no session yields 401; the invitation stays pending. With a session, the invitation is
+attached to that account unless its email or phone already belongs to someone else. Set
+`merge_accounts` to start a combine-accounts offer instead of rejecting; the invitation
+stays pending until that offer is confirmed. When the invitation names an email and the
+signed-in mailbox is different, the caller must set `accept_on_signed_in_account`. That
+keeps the membership on the current account and does not store the invited address. When
+the account already has a different phone, `phone_action` chooses whether to keep that
+number or replace it with the invited one.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiRedeemInvitationRequest

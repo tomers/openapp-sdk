@@ -6,11 +6,12 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **AccessControl** | Pointer to [**NullablePublicPortalAccessControl**](PublicPortalAccessControl.md) | Integration / building summary with photo (best-effort). | [optional]
 **BuildingName** | Pointer to **interface{}** |  | [optional]
-**CanRead** | **bool** | True when the requester has &#x60;integrations:read&#x60; on the invite&#39;s org, i.e. may open the invitation&#39;s management page. Mirrors the authz check in &#x60;list_integration_access_invites&#x60;. |
+**CanRead** | **bool** | True when the requester has &#x60;integrations:read&#x60; on the invite&#39;s org, i.e. may open the invitation&#39;s management page. |
 **ClaimedAt** | Pointer to **NullableString** |  | [optional]
 **Grants** | [**[]PublicInviteGrant**](PublicInviteGrant.md) | One entry per grant in the invite, with label / door image / lights flag enriched the same way as &#x60;GET /public/access/invites/{token}&#x60;. Lets clients render multi-door invitations without an extra round trip. |
 **IntegrationId** | **string** |  |
 **InviteLinkId** | **string** |  |
+**InviteToken** | Pointer to **NullableString** | Guest bearer from when this user claimed the invite. Present so the personal access page can link to the share URL (&#x60;/invite/{token}&#x60;). Absent for claims created before the column existed or via admin DSL. | [optional]
 **InviteeMessage** | Pointer to **interface{}** |  | [optional]
 **LastUsedAt** | Pointer to **NullableString** |  | [optional]
 **MaxUses** | Pointer to **NullableInt32** |  | [optional]
@@ -229,6 +230,41 @@ and a boolean to check if the value has been set.
 SetInviteLinkId sets InviteLinkId field to given value.
 
 
+### GetInviteToken
+
+`func (o *MeInvitationAsset) GetInviteToken() string`
+
+GetInviteToken returns the InviteToken field if non-nil, zero value otherwise.
+
+### GetInviteTokenOk
+
+`func (o *MeInvitationAsset) GetInviteTokenOk() (*string, bool)`
+
+GetInviteTokenOk returns a tuple with the InviteToken field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetInviteToken
+
+`func (o *MeInvitationAsset) SetInviteToken(v string)`
+
+SetInviteToken sets InviteToken field to given value.
+
+### HasInviteToken
+
+`func (o *MeInvitationAsset) HasInviteToken() bool`
+
+HasInviteToken returns a boolean if a field has been set.
+
+### SetInviteTokenNil
+
+`func (o *MeInvitationAsset) SetInviteTokenNil(b bool)`
+
+ SetInviteTokenNil sets the value for InviteToken to be an explicit nil
+
+### UnsetInviteToken
+`func (o *MeInvitationAsset) UnsetInviteToken()`
+
+UnsetInviteToken ensures that no value is present for InviteToken, not even an explicit nil
 ### GetInviteeMessage
 
 `func (o *MeInvitationAsset) GetInviteeMessage() interface{}`

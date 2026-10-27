@@ -24,6 +24,32 @@ func Test_openapi_InvitationsAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
+	t.Run("Test InvitationsAPIService AcceptMyPendingInvitation", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.InvitationsAPI.AcceptMyPendingInvitation(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test InvitationsAPIService ListMyPendingInvitations", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.InvitationsAPI.ListMyPendingInvitations(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test InvitationsAPIService PreviewInvitation", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test

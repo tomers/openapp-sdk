@@ -4,9 +4,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) |  | [optional]
 **Dates** | **[]string** | Organization-local ISO dates in &#x60;YYYY-MM-DD&#x60; format. |
-**Output** | Pointer to [**NullablePolicyOutputSelector**](PolicyOutputSelector.md) |  | [optional]
+**Output** | Pointer to [**NullablePolicyOutputSelector**](PolicyOutputSelector.md) | Provider-derived output/channel selector: the row binds only actions on that output. | [optional]
+**ZoneId** | Pointer to **NullableString** | Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy&#39;s org. | [optional]
 
 ## Methods
 
@@ -27,41 +27,6 @@ NewHolidayCalendarPolicyConfigWithDefaults instantiates a new HolidayCalendarPol
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetAppliesTo
-
-`func (o *HolidayCalendarPolicyConfig) GetAppliesTo() []PolicyPrincipalKind`
-
-GetAppliesTo returns the AppliesTo field if non-nil, zero value otherwise.
-
-### GetAppliesToOk
-
-`func (o *HolidayCalendarPolicyConfig) GetAppliesToOk() (*[]PolicyPrincipalKind, bool)`
-
-GetAppliesToOk returns a tuple with the AppliesTo field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetAppliesTo
-
-`func (o *HolidayCalendarPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind)`
-
-SetAppliesTo sets AppliesTo field to given value.
-
-### HasAppliesTo
-
-`func (o *HolidayCalendarPolicyConfig) HasAppliesTo() bool`
-
-HasAppliesTo returns a boolean if a field has been set.
-
-### SetAppliesToNil
-
-`func (o *HolidayCalendarPolicyConfig) SetAppliesToNil(b bool)`
-
- SetAppliesToNil sets the value for AppliesTo to be an explicit nil
-
-### UnsetAppliesTo
-`func (o *HolidayCalendarPolicyConfig) UnsetAppliesTo()`
-
-UnsetAppliesTo ensures that no value is present for AppliesTo, not even an explicit nil
 ### GetDates
 
 `func (o *HolidayCalendarPolicyConfig) GetDates() []*string`
@@ -117,5 +82,40 @@ HasOutput returns a boolean if a field has been set.
 `func (o *HolidayCalendarPolicyConfig) UnsetOutput()`
 
 UnsetOutput ensures that no value is present for Output, not even an explicit nil
+### GetZoneId
+
+`func (o *HolidayCalendarPolicyConfig) GetZoneId() string`
+
+GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+
+### GetZoneIdOk
+
+`func (o *HolidayCalendarPolicyConfig) GetZoneIdOk() (*string, bool)`
+
+GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneId
+
+`func (o *HolidayCalendarPolicyConfig) SetZoneId(v string)`
+
+SetZoneId sets ZoneId field to given value.
+
+### HasZoneId
+
+`func (o *HolidayCalendarPolicyConfig) HasZoneId() bool`
+
+HasZoneId returns a boolean if a field has been set.
+
+### SetZoneIdNil
+
+`func (o *HolidayCalendarPolicyConfig) SetZoneIdNil(b bool)`
+
+ SetZoneIdNil sets the value for ZoneId to be an explicit nil
+
+### UnsetZoneId
+`func (o *HolidayCalendarPolicyConfig) UnsetZoneId()`
+
+UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

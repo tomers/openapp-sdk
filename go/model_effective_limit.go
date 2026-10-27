@@ -19,11 +19,11 @@ import (
 // checks if the EffectiveLimit type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &EffectiveLimit{}
 
-// EffectiveLimit Resolved limit for `(subject, key, period)`, with provenance so the dashboard can explain to admins which line of policy is in effect.
+// EffectiveLimit Resolved limit for a subject, quota key, and period, with the source that set it.
 type EffectiveLimit struct {
-	// Where this value came from: an override, the org's tier, or the system default.
+	// Where this value came from: an override, the org's tier, the system default, or the platform exemption.
 	Source LimitSource `json:"source"`
-	// The effective cap. `None` means \"unlimited\".
+	// The effective cap, in the quota's unit. Null means unlimited.
 	Value NullableInt64 `json:"value,omitempty"`
 }
 

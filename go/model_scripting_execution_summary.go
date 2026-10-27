@@ -20,7 +20,7 @@ import (
 // checks if the ScriptingExecutionSummary type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &ScriptingExecutionSummary{}
 
-// ScriptingExecutionSummary List projection: identical to [`ScriptingExecution`] minus `result`, so listing executions does not pull every stored result body.
+// ScriptingExecutionSummary A scripting execution as returned by list endpoints: every field of a scripting execution except `result`. Fetch the execution by id to read its result.
 type ScriptingExecutionSummary struct {
 	CompletedAt NullableTime    `json:"completed_at,omitempty"`
 	CreatedAt   time.Time       `json:"created_at"`

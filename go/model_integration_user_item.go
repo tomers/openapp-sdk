@@ -28,9 +28,11 @@ type IntegrationUserItem struct {
 	LastSeenAt  NullableString `json:"last_seen_at,omitempty"`
 	// Present when `status == linked`. ULID string of the OpenApp user.
 	OpenappUserId NullableString `json:"openapp_user_id,omitempty"`
-	// Present when `status == invited`. ULID string of the matching `user_invitations` row.
+	// Present when `status == invited`. ULID of the matching pending org invitation.
 	PendingInvitationId NullableString `json:"pending_invitation_id,omitempty"`
 	Phone               NullableString `json:"phone,omitempty"`
+	// `sms` or `whatsapp` when `status == invited` and a phone PIN was sent.
+	PhoneTransport NullableString `json:"phone_transport,omitempty"`
 	// `linked` | `invited` | `unlinked`.
 	Status string `json:"status"`
 	// True when the vendor user is on the gate but not linked to an OpenApp user (flag only).
@@ -384,6 +386,49 @@ func (o *IntegrationUserItem) UnsetPhone() {
 	o.Phone.Unset()
 }
 
+// GetPhoneTransport returns the PhoneTransport field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *IntegrationUserItem) GetPhoneTransport() string {
+	if o == nil || IsNil(o.PhoneTransport.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhoneTransport.Get()
+}
+
+// GetPhoneTransportOk returns a tuple with the PhoneTransport field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *IntegrationUserItem) GetPhoneTransportOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhoneTransport.Get(), o.PhoneTransport.IsSet()
+}
+
+// HasPhoneTransport returns a boolean if a field has been set.
+func (o *IntegrationUserItem) HasPhoneTransport() bool {
+	if o != nil && o.PhoneTransport.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhoneTransport gets a reference to the given NullableString and assigns it to the PhoneTransport field.
+func (o *IntegrationUserItem) SetPhoneTransport(v string) {
+	o.PhoneTransport.Set(&v)
+}
+
+// SetPhoneTransportNil sets the value for PhoneTransport to be an explicit nil
+func (o *IntegrationUserItem) SetPhoneTransportNil() {
+	o.PhoneTransport.Set(nil)
+}
+
+// UnsetPhoneTransport ensures that no value is present for PhoneTransport, not even an explicit nil
+func (o *IntegrationUserItem) UnsetPhoneTransport() {
+	o.PhoneTransport.Unset()
+}
+
 // GetStatus returns the Status field value
 func (o *IntegrationUserItem) GetStatus() string {
 	if o == nil {
@@ -455,6 +500,9 @@ func (o IntegrationUserItem) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Phone.IsSet() {
 		toSerialize["phone"] = o.Phone.Get()
+	}
+	if o.PhoneTransport.IsSet() {
+		toSerialize["phone_transport"] = o.PhoneTransport.Get()
 	}
 	toSerialize["status"] = o.Status
 	toSerialize["unmanaged"] = o.Unmanaged

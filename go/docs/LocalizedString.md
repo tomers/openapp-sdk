@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Value** | **map[string]string** | OpenAPI representation: &#x60;HashMap&lt;String, String&gt;&#x60; (JSON object). |
+**Value** | **map[string]string** |  |
 
 ## Methods
 

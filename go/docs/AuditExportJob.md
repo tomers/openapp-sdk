@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **OrgId** | **string** |  |
 **RowCount** | Pointer to **NullableInt64** |  | [optional]
 **Status** | **string** |  |
+**ZoneId** | Pointer to **NullableString** | Zone filter the job was created with. | [optional]
 
 ## Methods
 
@@ -360,5 +361,40 @@ and a boolean to check if the value has been set.
 SetStatus sets Status field to given value.
 
 
+### GetZoneId
+
+`func (o *AuditExportJob) GetZoneId() string`
+
+GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+
+### GetZoneIdOk
+
+`func (o *AuditExportJob) GetZoneIdOk() (*string, bool)`
+
+GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneId
+
+`func (o *AuditExportJob) SetZoneId(v string)`
+
+SetZoneId sets ZoneId field to given value.
+
+### HasZoneId
+
+`func (o *AuditExportJob) HasZoneId() bool`
+
+HasZoneId returns a boolean if a field has been set.
+
+### SetZoneIdNil
+
+`func (o *AuditExportJob) SetZoneIdNil(b bool)`
+
+ SetZoneIdNil sets the value for ZoneId to be an explicit nil
+
+### UnsetZoneId
+`func (o *AuditExportJob) UnsetZoneId()`
+
+UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

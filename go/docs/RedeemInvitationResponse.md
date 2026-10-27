@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Accepted** | Pointer to **bool** | False when &#x60;merge&#x60; was created and the invitation is still pending. Omitted when the invitation was accepted, so older clients treat a missing field as accepted. | [optional]
 **DefaultRoles** | **[]string** |  |
 **Merge** | Pointer to [**NullableMergeOfferDto**](MergeOfferDto.md) |  | [optional]
 **OrgId** | **string** |  |
@@ -27,6 +28,31 @@ will change when the set of required properties is changed
 NewRedeemInvitationResponseWithDefaults instantiates a new RedeemInvitationResponse object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetAccepted
+
+`func (o *RedeemInvitationResponse) GetAccepted() bool`
+
+GetAccepted returns the Accepted field if non-nil, zero value otherwise.
+
+### GetAcceptedOk
+
+`func (o *RedeemInvitationResponse) GetAcceptedOk() (*bool, bool)`
+
+GetAcceptedOk returns a tuple with the Accepted field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAccepted
+
+`func (o *RedeemInvitationResponse) SetAccepted(v bool)`
+
+SetAccepted sets Accepted field to given value.
+
+### HasAccepted
+
+`func (o *RedeemInvitationResponse) HasAccepted() bool`
+
+HasAccepted returns a boolean if a field has been set.
 
 ### GetDefaultRoles
 

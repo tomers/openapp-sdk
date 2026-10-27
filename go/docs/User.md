@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **UpdatedAt** | Pointer to **time.Time** |  | [optional]
 **Email** | **string** | Email address (used for login and provisioning). May be an internal placeholder when no verified email is available. |
 **Id** | **string** | Unique identifier (ULID). |
-**MergedIntoUserId** | Pointer to **NullableString** | When set, this row was absorbed into another user. Follow for live identity. | [optional]
+**MergedIntoUserId** | Pointer to **NullableString** | When set, this user was merged into the user with this id; use that user as the live identity. | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) | Display name. |
 **Phone** | Pointer to **NullableString** | Verified E.164 phone when set. | [optional]
 **PhoneVerifiedAt** | Pointer to **NullableString** |  | [optional]

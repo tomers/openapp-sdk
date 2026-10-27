@@ -19,7 +19,7 @@ import (
 // checks if the IntegrationDeviceMetadataSchemaResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &IntegrationDeviceMetadataSchemaResponse{}
 
-// IntegrationDeviceMetadataSchemaResponse JSON Schema for `devices.device_metadata` for an integration's provider (no device instance required).
+// IntegrationDeviceMetadataSchemaResponse JSON Schema for device `device_metadata` under an integration's provider (no device instance required).
 type IntegrationDeviceMetadataSchemaResponse struct {
 	ProviderType string      `json:"provider_type"`
 	Schema       interface{} `json:"schema"`

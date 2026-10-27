@@ -7,8 +7,8 @@ Name | Type | Description | Notes
 **ExpiresAt** | Pointer to **NullableString** | [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) absolute expiration timestamp (UTC). Mutually exclusive with &#x60;expires_in&#x60;. | [optional]
 **ExpiresIn** | Pointer to **NullableString** | Duration per [RFC 5545 §3.3.6](https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6) (ISO 8601 &#x60;P1D&#x60;, &#x60;PT1H&#x60;, …; no months/years) or compact tokens &#x60;s&#x60;/&#x60;m&#x60;/&#x60;h&#x60;/&#x60;d&#x60;/&#x60;w&#x60; (&#x60;M&#x60; is minutes). Max 3650d (10 years). &#x60;1y&#x60; is rejected. Mutually exclusive with &#x60;expires_at&#x60;. | [optional]
 **Name** | **string** |  |
-**ScopedEntityIds** | Pointer to **[]string** |  | [optional]
-**ScopedRoles** | Pointer to **[]string** |  | [optional]
+**ScopedEntityIds** | Pointer to **[]string** | Limit the key to these entities (doors, lights). A key limited to entities cannot list, create, or reach devices. | [optional]
+**ScopedRoles** | Pointer to **[]string** | Limit the key to these roles. Omitted: the key acts with all of its owner&#39;s roles. Each role must be one the owner holds in the org. Grantable roles: &#x60;entities:read&#x60;, &#x60;entities:list&#x60;, &#x60;entities:create&#x60;, &#x60;entities:update&#x60;, &#x60;entities:delete&#x60;, &#x60;entities:set_state&#x60;, &#x60;entities:set_hold&#x60;, &#x60;devices:read&#x60;, &#x60;devices:list&#x60;, &#x60;devices:create&#x60;, &#x60;devices:update&#x60;, &#x60;devices:delete&#x60;, &#x60;integrations:read&#x60;, &#x60;integrations:list&#x60;, &#x60;integrations:users:list&#x60;, &#x60;integrations:users:write&#x60;, &#x60;orgs:read&#x60;, &#x60;orgs:list&#x60;, &#x60;users:read&#x60;, &#x60;users:list&#x60;, &#x60;users:create&#x60; (invite people to the org), &#x60;zones:read&#x60;, &#x60;zones:list&#x60;, &#x60;zones:create&#x60;, &#x60;zones:update&#x60;, &#x60;zones:delete&#x60;. Group roles are not grantable to API keys; manage groups with an unscoped key. | [optional]
 
 ## Methods
 

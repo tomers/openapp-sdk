@@ -1,0 +1,884 @@
+{
+  "policy_types": {
+    "invitation_curfew": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "start",
+        "end"
+      ],
+      "org_only_keys": []
+    },
+    "user_sharing": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [
+        "invitations",
+        "users_admin"
+      ],
+      "config_keys": [
+        "mode"
+      ],
+      "org_only_keys": []
+    },
+    "linked_account_admin": {
+      "scopes": [
+        "org"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "mode"
+      ],
+      "org_only_keys": []
+    },
+    "hold_require_expiry": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "hold_max_duration": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_seconds"
+      ],
+      "org_only_keys": []
+    },
+    "hold_forbid_recurring": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "hold_allowed_modes": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "modes"
+      ],
+      "org_only_keys": []
+    },
+    "hold_forbidden": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "invitation_max_duration": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_seconds"
+      ],
+      "org_only_keys": []
+    },
+    "share_max_duration": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_seconds"
+      ],
+      "org_only_keys": []
+    },
+    "share_default_max_uses": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_uses"
+      ],
+      "org_only_keys": []
+    },
+    "share_max_uses": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_uses",
+        "allow_unlimited"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_max_uses": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_uses"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_max_devices": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max_devices"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_max_active_per_user": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "max"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_require_expiry": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "invitation_allowed_entry_kinds": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "kinds"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_require_justification": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "max_doors_per_invite": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max"
+      ],
+      "org_only_keys": []
+    },
+    "restrict_to_own_listing_doors": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "prohibit_master_door_invites": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "master_door_ids"
+      ],
+      "org_only_keys": []
+    },
+    "invite_creator_roles": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "allowed_roles"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_no_reshare": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "no_transitive_delegation": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [
+        "invitations",
+        "users_admin"
+      ],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "rate_limit": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "agent",
+          "api_key",
+          "invitation",
+          "member",
+          "resident",
+          "admin"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "per_user",
+        "per_org",
+        "window_seconds"
+      ],
+      "org_only_keys": []
+    },
+    "require_step_up": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "agent",
+          "api_key",
+          "invitation",
+          "member",
+          "resident",
+          "admin"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "resource_selector"
+      ],
+      "org_only_keys": []
+    },
+    "quiet_hours": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "agent",
+          "api_key",
+          "invitation",
+          "member",
+          "resident",
+          "admin"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "start",
+        "end"
+      ],
+      "org_only_keys": []
+    },
+    "emergency_lockdown": {
+      "scopes": [
+        "org"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "active"
+      ],
+      "org_only_keys": []
+    },
+    "emergency_free_egress": {
+      "scopes": [
+        "org"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "active"
+      ],
+      "org_only_keys": []
+    },
+    "notify_on_curfew_attempt": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "channels"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_require_identity": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "require_pin",
+        "require_photo",
+        "require_verified_phone"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_allowed_days": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "weekdays",
+        "blackout_dates",
+        "holiday_calendar"
+      ],
+      "org_only_keys": []
+    },
+    "holiday_calendar": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "dates"
+      ],
+      "org_only_keys": []
+    },
+    "approval_threshold": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "count",
+        "scope"
+      ],
+      "org_only_keys": []
+    },
+    "anti_tailgating_cooldown": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "agent",
+          "api_key",
+          "invitation",
+          "member",
+          "resident",
+          "admin"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "cooldown_seconds"
+      ],
+      "org_only_keys": []
+    },
+    "auto_revoke_on_moveout": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "auto_expire_dormant_users": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "days"
+      ],
+      "org_only_keys": []
+    },
+    "maintenance_window": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": {
+        "kinds": [
+          "agent",
+          "api_key",
+          "invitation",
+          "member",
+          "resident",
+          "admin"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "start",
+        "end",
+        "allowed_roles"
+      ],
+      "org_only_keys": []
+    },
+    "notify_on_first_use": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "channels"
+      ],
+      "org_only_keys": []
+    },
+    "notify_on_new_sharing": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "channels"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_require_named_audience": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    },
+    "invitation_allowed_contact_kinds": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "kinds"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_max_contacts": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max"
+      ],
+      "org_only_keys": []
+    },
+    "invitation_notify_max_per_contact_per_day": {
+      "scopes": [
+        "org",
+        "integration",
+        "device"
+      ],
+      "output": true,
+      "zone": true,
+      "applies_to": {
+        "kinds": [
+          "admin",
+          "member",
+          "resident"
+        ]
+      },
+      "capabilities": [],
+      "config_keys": [
+        "max"
+      ],
+      "org_only_keys": []
+    },
+    "external_group_sharing": {
+      "scopes": [
+        "org",
+        "integration"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "member_proposals",
+        "external_orgs",
+        "require_admission_approval",
+        "max_members"
+      ],
+      "org_only_keys": [
+        "external_orgs"
+      ]
+    },
+    "notify_on_group_membership_change": {
+      "scopes": [
+        "org"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [
+        "channels"
+      ],
+      "org_only_keys": []
+    },
+    "agent_group_write": {
+      "scopes": [
+        "org"
+      ],
+      "output": false,
+      "zone": false,
+      "applies_to": null,
+      "capabilities": [],
+      "config_keys": [],
+      "org_only_keys": []
+    }
+  }
+}

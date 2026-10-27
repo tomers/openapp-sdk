@@ -23,20 +23,34 @@ var _ MappedNullable = &UserInvitationDto{}
 type UserInvitationDto struct {
 	AcceptedUserId NullableString `json:"accepted_user_id,omitempty"`
 	// `sms`, `email`, or `both`.
-	Channel         string         `json:"channel"`
-	CreatedAt       string         `json:"created_at"`
+	Channel   string `json:"channel"`
+	CreatedAt string `json:"created_at"`
+	// Parent-declared date of birth (`YYYY-MM-DD`). Present only while the invitation is pending. Applied to the account at redeem when the account has none.
+	DateOfBirth NullableString `json:"date_of_birth,omitempty"`
+	// Groups joined when the invitation is redeemed, in the same transaction as the org role.
+	DefaultGroupIds []string       `json:"default_group_ids,omitempty"`
 	DefaultRoles    []string       `json:"default_roles"`
 	Email           NullableString `json:"email,omitempty"`
 	ExpiresAt       string         `json:"expires_at"`
 	Id              string         `json:"id"`
 	InvitedByUserId string         `json:"invited_by_user_id"`
-	LastSentAt      NullableString `json:"last_sent_at,omitempty"`
-	OrgId           string         `json:"org_id"`
+	// Name the inviter gave for the invitee. Present only while the invitation is pending.
+	InviteeName NullableString `json:"invitee_name,omitempty"`
+	LastSentAt  NullableString `json:"last_sent_at,omitempty"`
+	// Message language the sender chose, or `null` when none was chosen.
+	Locale NullableString `json:"locale,omitempty"`
+	// Shipped locale code of the language the invitation messages are written in: the invitee's own account language, else `locale`, else the org default, else English. Present only while the invitation is pending.
+	MessageLocale NullableString `json:"message_locale,omitempty"`
+	OrgId         string         `json:"org_id"`
 	// SMS recipient when the invite includes a phone (E.164).
-	Phone      NullableString                  `json:"phone,omitempty"`
-	SentCount  int32                           `json:"sent_count"`
-	SiteAccess NullableInvitationSiteAccessDto `json:"site_access,omitempty"`
-	Status     string                          `json:"status"`
+	Phone NullableString `json:"phone,omitempty"`
+	// `sms` or `whatsapp` when a phone PIN was sent.
+	PhoneTransport NullableString `json:"phone_transport,omitempty"`
+	// When a resend is next accepted (RFC 3339). Present only while the invitation is pending; a resend before this time is refused with 429.
+	ResendAvailableAt NullableString                  `json:"resend_available_at,omitempty"`
+	SentCount         int32                           `json:"sent_count"`
+	SiteAccess        NullableInvitationSiteAccessDto `json:"site_access,omitempty"`
+	Status            string                          `json:"status"`
 }
 
 type _UserInvitationDto UserInvitationDto
@@ -156,6 +170,81 @@ func (o *UserInvitationDto) GetCreatedAtOk() (*string, bool) {
 // SetCreatedAt sets field value
 func (o *UserInvitationDto) SetCreatedAt(v string) {
 	o.CreatedAt = v
+}
+
+// GetDateOfBirth returns the DateOfBirth field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UserInvitationDto) GetDateOfBirth() string {
+	if o == nil || IsNil(o.DateOfBirth.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DateOfBirth.Get()
+}
+
+// GetDateOfBirthOk returns a tuple with the DateOfBirth field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UserInvitationDto) GetDateOfBirthOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DateOfBirth.Get(), o.DateOfBirth.IsSet()
+}
+
+// HasDateOfBirth returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasDateOfBirth() bool {
+	if o != nil && o.DateOfBirth.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDateOfBirth gets a reference to the given NullableString and assigns it to the DateOfBirth field.
+func (o *UserInvitationDto) SetDateOfBirth(v string) {
+	o.DateOfBirth.Set(&v)
+}
+
+// SetDateOfBirthNil sets the value for DateOfBirth to be an explicit nil
+func (o *UserInvitationDto) SetDateOfBirthNil() {
+	o.DateOfBirth.Set(nil)
+}
+
+// UnsetDateOfBirth ensures that no value is present for DateOfBirth, not even an explicit nil
+func (o *UserInvitationDto) UnsetDateOfBirth() {
+	o.DateOfBirth.Unset()
+}
+
+// GetDefaultGroupIds returns the DefaultGroupIds field value if set, zero value otherwise.
+func (o *UserInvitationDto) GetDefaultGroupIds() []string {
+	if o == nil || IsNil(o.DefaultGroupIds) {
+		var ret []string
+		return ret
+	}
+	return o.DefaultGroupIds
+}
+
+// GetDefaultGroupIdsOk returns a tuple with the DefaultGroupIds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserInvitationDto) GetDefaultGroupIdsOk() ([]string, bool) {
+	if o == nil || IsNil(o.DefaultGroupIds) {
+		return nil, false
+	}
+	return o.DefaultGroupIds, true
+}
+
+// HasDefaultGroupIds returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasDefaultGroupIds() bool {
+	if o != nil && !IsNil(o.DefaultGroupIds) {
+		return true
+	}
+
+	return false
+}
+
+// SetDefaultGroupIds gets a reference to the given []string and assigns it to the DefaultGroupIds field.
+func (o *UserInvitationDto) SetDefaultGroupIds(v []string) {
+	o.DefaultGroupIds = v
 }
 
 // GetDefaultRoles returns the DefaultRoles field value
@@ -297,6 +386,49 @@ func (o *UserInvitationDto) SetInvitedByUserId(v string) {
 	o.InvitedByUserId = v
 }
 
+// GetInviteeName returns the InviteeName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UserInvitationDto) GetInviteeName() string {
+	if o == nil || IsNil(o.InviteeName.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.InviteeName.Get()
+}
+
+// GetInviteeNameOk returns a tuple with the InviteeName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UserInvitationDto) GetInviteeNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InviteeName.Get(), o.InviteeName.IsSet()
+}
+
+// HasInviteeName returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasInviteeName() bool {
+	if o != nil && o.InviteeName.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInviteeName gets a reference to the given NullableString and assigns it to the InviteeName field.
+func (o *UserInvitationDto) SetInviteeName(v string) {
+	o.InviteeName.Set(&v)
+}
+
+// SetInviteeNameNil sets the value for InviteeName to be an explicit nil
+func (o *UserInvitationDto) SetInviteeNameNil() {
+	o.InviteeName.Set(nil)
+}
+
+// UnsetInviteeName ensures that no value is present for InviteeName, not even an explicit nil
+func (o *UserInvitationDto) UnsetInviteeName() {
+	o.InviteeName.Unset()
+}
+
 // GetLastSentAt returns the LastSentAt field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *UserInvitationDto) GetLastSentAt() string {
 	if o == nil || IsNil(o.LastSentAt.Get()) {
@@ -338,6 +470,92 @@ func (o *UserInvitationDto) SetLastSentAtNil() {
 // UnsetLastSentAt ensures that no value is present for LastSentAt, not even an explicit nil
 func (o *UserInvitationDto) UnsetLastSentAt() {
 	o.LastSentAt.Unset()
+}
+
+// GetLocale returns the Locale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UserInvitationDto) GetLocale() string {
+	if o == nil || IsNil(o.Locale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Locale.Get()
+}
+
+// GetLocaleOk returns a tuple with the Locale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UserInvitationDto) GetLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Locale.Get(), o.Locale.IsSet()
+}
+
+// HasLocale returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasLocale() bool {
+	if o != nil && o.Locale.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocale gets a reference to the given NullableString and assigns it to the Locale field.
+func (o *UserInvitationDto) SetLocale(v string) {
+	o.Locale.Set(&v)
+}
+
+// SetLocaleNil sets the value for Locale to be an explicit nil
+func (o *UserInvitationDto) SetLocaleNil() {
+	o.Locale.Set(nil)
+}
+
+// UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+func (o *UserInvitationDto) UnsetLocale() {
+	o.Locale.Unset()
+}
+
+// GetMessageLocale returns the MessageLocale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UserInvitationDto) GetMessageLocale() string {
+	if o == nil || IsNil(o.MessageLocale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.MessageLocale.Get()
+}
+
+// GetMessageLocaleOk returns a tuple with the MessageLocale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UserInvitationDto) GetMessageLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MessageLocale.Get(), o.MessageLocale.IsSet()
+}
+
+// HasMessageLocale returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasMessageLocale() bool {
+	if o != nil && o.MessageLocale.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMessageLocale gets a reference to the given NullableString and assigns it to the MessageLocale field.
+func (o *UserInvitationDto) SetMessageLocale(v string) {
+	o.MessageLocale.Set(&v)
+}
+
+// SetMessageLocaleNil sets the value for MessageLocale to be an explicit nil
+func (o *UserInvitationDto) SetMessageLocaleNil() {
+	o.MessageLocale.Set(nil)
+}
+
+// UnsetMessageLocale ensures that no value is present for MessageLocale, not even an explicit nil
+func (o *UserInvitationDto) UnsetMessageLocale() {
+	o.MessageLocale.Unset()
 }
 
 // GetOrgId returns the OrgId field value
@@ -405,6 +623,92 @@ func (o *UserInvitationDto) SetPhoneNil() {
 // UnsetPhone ensures that no value is present for Phone, not even an explicit nil
 func (o *UserInvitationDto) UnsetPhone() {
 	o.Phone.Unset()
+}
+
+// GetPhoneTransport returns the PhoneTransport field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UserInvitationDto) GetPhoneTransport() string {
+	if o == nil || IsNil(o.PhoneTransport.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhoneTransport.Get()
+}
+
+// GetPhoneTransportOk returns a tuple with the PhoneTransport field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UserInvitationDto) GetPhoneTransportOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhoneTransport.Get(), o.PhoneTransport.IsSet()
+}
+
+// HasPhoneTransport returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasPhoneTransport() bool {
+	if o != nil && o.PhoneTransport.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhoneTransport gets a reference to the given NullableString and assigns it to the PhoneTransport field.
+func (o *UserInvitationDto) SetPhoneTransport(v string) {
+	o.PhoneTransport.Set(&v)
+}
+
+// SetPhoneTransportNil sets the value for PhoneTransport to be an explicit nil
+func (o *UserInvitationDto) SetPhoneTransportNil() {
+	o.PhoneTransport.Set(nil)
+}
+
+// UnsetPhoneTransport ensures that no value is present for PhoneTransport, not even an explicit nil
+func (o *UserInvitationDto) UnsetPhoneTransport() {
+	o.PhoneTransport.Unset()
+}
+
+// GetResendAvailableAt returns the ResendAvailableAt field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *UserInvitationDto) GetResendAvailableAt() string {
+	if o == nil || IsNil(o.ResendAvailableAt.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ResendAvailableAt.Get()
+}
+
+// GetResendAvailableAtOk returns a tuple with the ResendAvailableAt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *UserInvitationDto) GetResendAvailableAtOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ResendAvailableAt.Get(), o.ResendAvailableAt.IsSet()
+}
+
+// HasResendAvailableAt returns a boolean if a field has been set.
+func (o *UserInvitationDto) HasResendAvailableAt() bool {
+	if o != nil && o.ResendAvailableAt.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetResendAvailableAt gets a reference to the given NullableString and assigns it to the ResendAvailableAt field.
+func (o *UserInvitationDto) SetResendAvailableAt(v string) {
+	o.ResendAvailableAt.Set(&v)
+}
+
+// SetResendAvailableAtNil sets the value for ResendAvailableAt to be an explicit nil
+func (o *UserInvitationDto) SetResendAvailableAtNil() {
+	o.ResendAvailableAt.Set(nil)
+}
+
+// UnsetResendAvailableAt ensures that no value is present for ResendAvailableAt, not even an explicit nil
+func (o *UserInvitationDto) UnsetResendAvailableAt() {
+	o.ResendAvailableAt.Unset()
 }
 
 // GetSentCount returns the SentCount field value
@@ -505,6 +809,12 @@ func (o UserInvitationDto) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["channel"] = o.Channel
 	toSerialize["created_at"] = o.CreatedAt
+	if o.DateOfBirth.IsSet() {
+		toSerialize["date_of_birth"] = o.DateOfBirth.Get()
+	}
+	if !IsNil(o.DefaultGroupIds) {
+		toSerialize["default_group_ids"] = o.DefaultGroupIds
+	}
 	toSerialize["default_roles"] = o.DefaultRoles
 	if o.Email.IsSet() {
 		toSerialize["email"] = o.Email.Get()
@@ -512,12 +822,27 @@ func (o UserInvitationDto) ToMap() (map[string]interface{}, error) {
 	toSerialize["expires_at"] = o.ExpiresAt
 	toSerialize["id"] = o.Id
 	toSerialize["invited_by_user_id"] = o.InvitedByUserId
+	if o.InviteeName.IsSet() {
+		toSerialize["invitee_name"] = o.InviteeName.Get()
+	}
 	if o.LastSentAt.IsSet() {
 		toSerialize["last_sent_at"] = o.LastSentAt.Get()
+	}
+	if o.Locale.IsSet() {
+		toSerialize["locale"] = o.Locale.Get()
+	}
+	if o.MessageLocale.IsSet() {
+		toSerialize["message_locale"] = o.MessageLocale.Get()
 	}
 	toSerialize["org_id"] = o.OrgId
 	if o.Phone.IsSet() {
 		toSerialize["phone"] = o.Phone.Get()
+	}
+	if o.PhoneTransport.IsSet() {
+		toSerialize["phone_transport"] = o.PhoneTransport.Get()
+	}
+	if o.ResendAvailableAt.IsSet() {
+		toSerialize["resend_available_at"] = o.ResendAvailableAt.Get()
 	}
 	toSerialize["sent_count"] = o.SentCount
 	if o.SiteAccess.IsSet() {

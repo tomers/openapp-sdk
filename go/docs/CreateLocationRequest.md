@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **City** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
 **Country** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
+**CountryCode** | Pointer to **NullableString** |  | [optional]
 **FormattedAddress** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
 **Geocode** | Pointer to **bool** |  | [optional]
 **GeocodingProvider** | Pointer to [**NullableGeocodingProviderId**](GeocodingProviderId.md) |  | [optional]
@@ -105,6 +106,41 @@ HasCountry returns a boolean if a field has been set.
 `func (o *CreateLocationRequest) UnsetCountry()`
 
 UnsetCountry ensures that no value is present for Country, not even an explicit nil
+### GetCountryCode
+
+`func (o *CreateLocationRequest) GetCountryCode() string`
+
+GetCountryCode returns the CountryCode field if non-nil, zero value otherwise.
+
+### GetCountryCodeOk
+
+`func (o *CreateLocationRequest) GetCountryCodeOk() (*string, bool)`
+
+GetCountryCodeOk returns a tuple with the CountryCode field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCountryCode
+
+`func (o *CreateLocationRequest) SetCountryCode(v string)`
+
+SetCountryCode sets CountryCode field to given value.
+
+### HasCountryCode
+
+`func (o *CreateLocationRequest) HasCountryCode() bool`
+
+HasCountryCode returns a boolean if a field has been set.
+
+### SetCountryCodeNil
+
+`func (o *CreateLocationRequest) SetCountryCodeNil(b bool)`
+
+ SetCountryCodeNil sets the value for CountryCode to be an explicit nil
+
+### UnsetCountryCode
+`func (o *CreateLocationRequest) UnsetCountryCode()`
+
+UnsetCountryCode ensures that no value is present for CountryCode, not even an explicit nil
 ### GetFormattedAddress
 
 `func (o *CreateLocationRequest) GetFormattedAddress() LocalizedString`

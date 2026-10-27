@@ -19,7 +19,7 @@ import (
 // checks if the DirectoryFloorListResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &DirectoryFloorListResponse{}
 
-// DirectoryFloorListResponse Distinct directory floors for a directory device (efficient SQL).
+// DirectoryFloorListResponse Distinct directory floors for a directory device.
 type DirectoryFloorListResponse struct {
 	Floors []DirectoryFloorSummary `json:"floors"`
 }

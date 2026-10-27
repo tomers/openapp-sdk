@@ -19,11 +19,11 @@ import (
 // checks if the DegradationStatus type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &DegradationStatus{}
 
-// DegradationStatus Full degradation snapshot for an org. Powers the dashboard panel + non-admin friction.
+// DegradationStatus Full over-capacity degradation snapshot for an org.
 type DegradationStatus struct {
 	DegradationLevel  float32           `json:"degradation_level"`
 	Flagged           []FlaggedResource `json:"flagged"`
-	OrgId             NullableString    `json:"org_id"`
+	OrgId             string            `json:"org_id"`
 	OverCapacity      bool              `json:"over_capacity"`
 	OverCapacitySince NullableString    `json:"over_capacity_since,omitempty"`
 	Overages          []KeyOverage      `json:"overages"`
@@ -37,7 +37,7 @@ type _DegradationStatus DegradationStatus
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDegradationStatus(degradationLevel float32, flagged []FlaggedResource, orgId NullableString, overCapacity bool, overages []KeyOverage, selectionPolicy SelectionPolicy, stage DegradationStage) *DegradationStatus {
+func NewDegradationStatus(degradationLevel float32, flagged []FlaggedResource, orgId string, overCapacity bool, overages []KeyOverage, selectionPolicy SelectionPolicy, stage DegradationStage) *DegradationStatus {
 	this := DegradationStatus{}
 	this.DegradationLevel = degradationLevel
 	this.Flagged = flagged
@@ -106,29 +106,27 @@ func (o *DegradationStatus) SetFlagged(v []FlaggedResource) {
 }
 
 // GetOrgId returns the OrgId field value
-// If the value is explicit nil, the zero value for string will be returned
 func (o *DegradationStatus) GetOrgId() string {
-	if o == nil || o.OrgId.Get() == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return *o.OrgId.Get()
+	return o.OrgId
 }
 
 // GetOrgIdOk returns a tuple with the OrgId field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *DegradationStatus) GetOrgIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.OrgId.Get(), o.OrgId.IsSet()
+	return &o.OrgId, true
 }
 
 // SetOrgId sets field value
 func (o *DegradationStatus) SetOrgId(v string) {
-	o.OrgId.Set(&v)
+	o.OrgId = v
 }
 
 // GetOverCapacity returns the OverCapacity field value
@@ -274,7 +272,7 @@ func (o DegradationStatus) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["degradation_level"] = o.DegradationLevel
 	toSerialize["flagged"] = o.Flagged
-	toSerialize["org_id"] = o.OrgId.Get()
+	toSerialize["org_id"] = o.OrgId
 	toSerialize["over_capacity"] = o.OverCapacity
 	if o.OverCapacitySince.IsSet() {
 		toSerialize["over_capacity_since"] = o.OverCapacitySince.Get()

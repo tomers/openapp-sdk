@@ -21,18 +21,23 @@ var _ MappedNullable = &HouseholdInvitationResponse{}
 
 // HouseholdInvitationResponse struct for HouseholdInvitationResponse
 type HouseholdInvitationResponse struct {
-	Channel         string         `json:"channel"`
-	CreatedAt       string         `json:"created_at"`
-	ExpiresAt       string         `json:"expires_at"`
-	GroupId         string         `json:"group_id"`
-	Id              string         `json:"id"`
-	InvitedByUserId string         `json:"invited_by_user_id"`
-	LastSentAt      NullableString `json:"last_sent_at,omitempty"`
-	RecipientEmail  NullableString `json:"recipient_email,omitempty"`
-	RecipientPhone  NullableString `json:"recipient_phone,omitempty"`
-	RespondedAt     NullableString `json:"responded_at,omitempty"`
-	SentCount       int32          `json:"sent_count"`
-	Status          string         `json:"status"`
+	Channel         string `json:"channel"`
+	CreatedAt       string `json:"created_at"`
+	ExpiresAt       string `json:"expires_at"`
+	GroupId         string `json:"group_id"`
+	Id              string `json:"id"`
+	InvitedByUserId string `json:"invited_by_user_id"`
+	// Name you gave for the invitee. Omitted when none was given, and once the invitation is accepted or cancelled.
+	InviteeName NullableString `json:"invitee_name,omitempty"`
+	LastSentAt  NullableString `json:"last_sent_at,omitempty"`
+	// Message language the sender chose, or `null` when none was chosen.
+	Locale         NullableString `json:"locale,omitempty"`
+	PhoneTransport NullableString `json:"phone_transport,omitempty"`
+	RecipientEmail NullableString `json:"recipient_email,omitempty"`
+	RecipientPhone NullableString `json:"recipient_phone,omitempty"`
+	RespondedAt    NullableString `json:"responded_at,omitempty"`
+	SentCount      int32          `json:"sent_count"`
+	Status         string         `json:"status"`
 }
 
 type _HouseholdInvitationResponse HouseholdInvitationResponse
@@ -206,6 +211,49 @@ func (o *HouseholdInvitationResponse) SetInvitedByUserId(v string) {
 	o.InvitedByUserId = v
 }
 
+// GetInviteeName returns the InviteeName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HouseholdInvitationResponse) GetInviteeName() string {
+	if o == nil || IsNil(o.InviteeName.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.InviteeName.Get()
+}
+
+// GetInviteeNameOk returns a tuple with the InviteeName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HouseholdInvitationResponse) GetInviteeNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InviteeName.Get(), o.InviteeName.IsSet()
+}
+
+// HasInviteeName returns a boolean if a field has been set.
+func (o *HouseholdInvitationResponse) HasInviteeName() bool {
+	if o != nil && o.InviteeName.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInviteeName gets a reference to the given NullableString and assigns it to the InviteeName field.
+func (o *HouseholdInvitationResponse) SetInviteeName(v string) {
+	o.InviteeName.Set(&v)
+}
+
+// SetInviteeNameNil sets the value for InviteeName to be an explicit nil
+func (o *HouseholdInvitationResponse) SetInviteeNameNil() {
+	o.InviteeName.Set(nil)
+}
+
+// UnsetInviteeName ensures that no value is present for InviteeName, not even an explicit nil
+func (o *HouseholdInvitationResponse) UnsetInviteeName() {
+	o.InviteeName.Unset()
+}
+
 // GetLastSentAt returns the LastSentAt field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *HouseholdInvitationResponse) GetLastSentAt() string {
 	if o == nil || IsNil(o.LastSentAt.Get()) {
@@ -247,6 +295,92 @@ func (o *HouseholdInvitationResponse) SetLastSentAtNil() {
 // UnsetLastSentAt ensures that no value is present for LastSentAt, not even an explicit nil
 func (o *HouseholdInvitationResponse) UnsetLastSentAt() {
 	o.LastSentAt.Unset()
+}
+
+// GetLocale returns the Locale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HouseholdInvitationResponse) GetLocale() string {
+	if o == nil || IsNil(o.Locale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Locale.Get()
+}
+
+// GetLocaleOk returns a tuple with the Locale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HouseholdInvitationResponse) GetLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Locale.Get(), o.Locale.IsSet()
+}
+
+// HasLocale returns a boolean if a field has been set.
+func (o *HouseholdInvitationResponse) HasLocale() bool {
+	if o != nil && o.Locale.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocale gets a reference to the given NullableString and assigns it to the Locale field.
+func (o *HouseholdInvitationResponse) SetLocale(v string) {
+	o.Locale.Set(&v)
+}
+
+// SetLocaleNil sets the value for Locale to be an explicit nil
+func (o *HouseholdInvitationResponse) SetLocaleNil() {
+	o.Locale.Set(nil)
+}
+
+// UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+func (o *HouseholdInvitationResponse) UnsetLocale() {
+	o.Locale.Unset()
+}
+
+// GetPhoneTransport returns the PhoneTransport field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HouseholdInvitationResponse) GetPhoneTransport() string {
+	if o == nil || IsNil(o.PhoneTransport.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.PhoneTransport.Get()
+}
+
+// GetPhoneTransportOk returns a tuple with the PhoneTransport field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HouseholdInvitationResponse) GetPhoneTransportOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.PhoneTransport.Get(), o.PhoneTransport.IsSet()
+}
+
+// HasPhoneTransport returns a boolean if a field has been set.
+func (o *HouseholdInvitationResponse) HasPhoneTransport() bool {
+	if o != nil && o.PhoneTransport.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetPhoneTransport gets a reference to the given NullableString and assigns it to the PhoneTransport field.
+func (o *HouseholdInvitationResponse) SetPhoneTransport(v string) {
+	o.PhoneTransport.Set(&v)
+}
+
+// SetPhoneTransportNil sets the value for PhoneTransport to be an explicit nil
+func (o *HouseholdInvitationResponse) SetPhoneTransportNil() {
+	o.PhoneTransport.Set(nil)
+}
+
+// UnsetPhoneTransport ensures that no value is present for PhoneTransport, not even an explicit nil
+func (o *HouseholdInvitationResponse) UnsetPhoneTransport() {
+	o.PhoneTransport.Unset()
 }
 
 // GetRecipientEmail returns the RecipientEmail field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -434,8 +568,17 @@ func (o HouseholdInvitationResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize["group_id"] = o.GroupId
 	toSerialize["id"] = o.Id
 	toSerialize["invited_by_user_id"] = o.InvitedByUserId
+	if o.InviteeName.IsSet() {
+		toSerialize["invitee_name"] = o.InviteeName.Get()
+	}
 	if o.LastSentAt.IsSet() {
 		toSerialize["last_sent_at"] = o.LastSentAt.Get()
+	}
+	if o.Locale.IsSet() {
+		toSerialize["locale"] = o.Locale.Get()
+	}
+	if o.PhoneTransport.IsSet() {
+		toSerialize["phone_transport"] = o.PhoneTransport.Get()
 	}
 	if o.RecipientEmail.IsSet() {
 		toSerialize["recipient_email"] = o.RecipientEmail.Get()

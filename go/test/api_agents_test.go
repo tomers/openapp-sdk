@@ -24,34 +24,6 @@ func Test_openapi_AgentsAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
-	t.Run("Test AgentsAPIService CopilotChat", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var orgId string
-
-		resp, httpRes, err := apiClient.AgentsAPI.CopilotChat(context.Background(), orgId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test AgentsAPIService CopilotCommit", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var orgId string
-
-		resp, httpRes, err := apiClient.AgentsAPI.CopilotCommit(context.Background(), orgId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test AgentsAPIService CreateAgent", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -134,6 +106,20 @@ func Test_openapi_AgentsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test AgentsAPIService DeletePmsConnector", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var orgId string
+		var connectorId string
+
+		httpRes, err := apiClient.AgentsAPI.DeletePmsConnector(context.Background(), orgId, connectorId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test AgentsAPIService GetAgent", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -173,6 +159,20 @@ func Test_openapi_AgentsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test AgentsAPIService ListPmsConnectors", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var orgId string
+
+		resp, httpRes, err := apiClient.AgentsAPI.ListPmsConnectors(context.Background(), orgId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test AgentsAPIService ListSkills", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -205,34 +205,6 @@ func Test_openapi_AgentsAPIService(t *testing.T) {
 		httpRes, err := apiClient.AgentsAPI.OauthProtectedResource(context.Background()).Execute()
 
 		require.Nil(t, err)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test AgentsAPIService PerceptionLpr", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var orgId string
-
-		resp, httpRes, err := apiClient.AgentsAPI.PerceptionLpr(context.Background(), orgId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test AgentsAPIService PerceptionVisitorPresent", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var orgId string
-
-		resp, httpRes, err := apiClient.AgentsAPI.PerceptionVisitorPresent(context.Background(), orgId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})

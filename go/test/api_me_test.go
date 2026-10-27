@@ -24,11 +24,202 @@ func Test_openapi_MeAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
+	t.Run("Test MeAPIService AcceptManagerTransfer", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.MeAPI.AcceptManagerTransfer(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService CreateManagerTransfer", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.MeAPI.CreateManagerTransfer(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService CreateMeGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.CreateMeGroup(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService DeclineManagerTransfer", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.MeAPI.DeclineManagerTransfer(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService DeleteMeAccessInvite", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var inviteId string
+
+		httpRes, err := apiClient.MeAPI.DeleteMeAccessInvite(context.Background(), inviteId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService DeleteMeCallBlock", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var publicPortalId string
+
+		resp, httpRes, err := apiClient.MeAPI.DeleteMeCallBlock(context.Background(), publicPortalId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService DeleteMeGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.MeAPI.DeleteMeGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService DeleteMeGroupMember", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.MeAPI.DeleteMeGroupMember(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService DeleteMeProfileImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		httpRes, err := apiClient.MeAPI.DeleteMeProfileImage(context.Background()).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService GetMeAccessInvites", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.GetMeAccessInvites(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService GetMeCallBlocks", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.GetMeCallBlocks(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test MeAPIService GetMeDirectoryListings", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.MeAPI.GetMeDirectoryListings(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService GetMeGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.MeAPI.GetMeGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService GetMeGroupAdmissions", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.MeAPI.GetMeGroupAdmissions(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService GetMeGroupProposals", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.GetMeGroupProposals(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService GetMeGroups", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.GetMeGroups(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -48,11 +239,11 @@ func Test_openapi_MeAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test MeAPIService GetMePushSubscriptionStatus", func(t *testing.T) {
+	t.Run("Test MeAPIService GetMeMemberships", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		resp, httpRes, err := apiClient.MeAPI.GetMePushSubscriptionStatus(context.Background()).Execute()
+		resp, httpRes, err := apiClient.MeAPI.GetMeMemberships(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -60,11 +251,11 @@ func Test_openapi_MeAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test MeAPIService GetMePushVapidPublicKey", func(t *testing.T) {
+	t.Run("Test MeAPIService GetMeNotificationPreferences", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		resp, httpRes, err := apiClient.MeAPI.GetMePushVapidPublicKey(context.Background()).Execute()
+		resp, httpRes, err := apiClient.MeAPI.GetMeNotificationPreferences(context.Background()).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -72,13 +263,168 @@ func Test_openapi_MeAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test MeAPIService PostMePushSubscription", func(t *testing.T) {
+	t.Run("Test MeAPIService GetMeProfile", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		httpRes, err := apiClient.MeAPI.PostMePushSubscription(context.Background()).Execute()
+		resp, httpRes, err := apiClient.MeAPI.GetMeProfile(context.Background()).Execute()
 
 		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService ListMeGroupMembers", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.MeAPI.ListMeGroupMembers(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PatchMeDirectoryListingDnd", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var entityId string
+
+		httpRes, err := apiClient.MeAPI.PatchMeDirectoryListingDnd(context.Background(), entityId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PatchMeDnd", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		httpRes, err := apiClient.MeAPI.PatchMeDnd(context.Background()).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PatchMeProfile", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.PatchMeProfile(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PostMeAccessInviteKeep", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var inviteId string
+
+		httpRes, err := apiClient.MeAPI.PostMeAccessInviteKeep(context.Background(), inviteId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PostMeCallBlock", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.PostMeCallBlock(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PostMeProfileImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.PostMeProfileImage(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService ProposeMeGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.MeAPI.ProposeMeGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService PutMeNotificationPreferences", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.MeAPI.PutMeNotificationPreferences(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService RemoveMeGroupMember", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var userId string
+
+		httpRes, err := apiClient.MeAPI.RemoveMeGroupMember(context.Background(), id, userId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService RevokeMeGroupLink", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var integrationId string
+
+		httpRes, err := apiClient.MeAPI.RevokeMeGroupLink(context.Background(), id, integrationId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test MeAPIService UpdateMeGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.MeAPI.UpdateMeGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})

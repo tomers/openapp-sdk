@@ -120,6 +120,17 @@ func (a *AuditAPIService) CreateAuditExportExecute(r ApiCreateAuditExportRequest
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
 		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -505,11 +516,13 @@ type ApiListAuditEventsRequest struct {
 	orgId          string
 	eventType      *string
 	outcome        *string
+	source         *string
 	resourceType   *string
 	resourceId     *string
 	resourceName   *string
 	doorName       *string
 	targetId       *string
+	zoneId         *string
 	actorUserId    *string
 	actorGuestId   *string
 	actorKind      *string
@@ -531,6 +544,12 @@ func (r ApiListAuditEventsRequest) Outcome(outcome string) ApiListAuditEventsReq
 	return r
 }
 
+// Originating surface: &#x60;api&#x60;, &#x60;dashboard&#x60;, &#x60;public_access&#x60;, &#x60;smarthome&#x60;, &#x60;scripting&#x60;, or &#x60;system&#x60;.
+func (r ApiListAuditEventsRequest) Source(source string) ApiListAuditEventsRequest {
+	r.source = &source
+	return r
+}
+
 func (r ApiListAuditEventsRequest) ResourceType(resourceType string) ApiListAuditEventsRequest {
 	r.resourceType = &resourceType
 	return r
@@ -547,7 +566,7 @@ func (r ApiListAuditEventsRequest) ResourceName(resourceName string) ApiListAudi
 	return r
 }
 
-// Case-insensitive substring match on the snapshotted door name (&#x60;details.door_name&#x60;), e.g. &#x60;lobby&#x60;. Lets the Activity table answer \&quot;who opened this door\&quot; across every event that names it.
+// Case-insensitive substring match on the snapshotted door name (&#x60;details.door_name&#x60;), e.g. &#x60;lobby&#x60;. Matches every event that names the door, so it answers \&quot;who opened this door\&quot;.
 func (r ApiListAuditEventsRequest) DoorName(doorName string) ApiListAuditEventsRequest {
 	r.doorName = &doorName
 	return r
@@ -556,6 +575,12 @@ func (r ApiListAuditEventsRequest) DoorName(doorName string) ApiListAuditEventsR
 // Exact match against the snapshotted portal target ID (&#x60;details.public_portal_id&#x60;).
 func (r ApiListAuditEventsRequest) TargetId(targetId string) ApiListAuditEventsRequest {
 	r.targetId = &targetId
+	return r
+}
+
+// Zone ULID. Matches events whose zone snapshot (&#x60;details.zone_path&#x60;) contains the zone, so events in descendant zones are included. Only events recorded with a zone snapshot match. 400 when not a ULID.
+func (r ApiListAuditEventsRequest) ZoneId(zoneId string) ApiListAuditEventsRequest {
+	r.zoneId = &zoneId
 	return r
 }
 
@@ -658,6 +683,9 @@ func (a *AuditAPIService) ListAuditEventsExecute(r ApiListAuditEventsRequest) (*
 	if r.outcome != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "outcome", r.outcome, "form", "")
 	}
+	if r.source != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "source", r.source, "form", "")
+	}
 	if r.resourceType != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "resource_type", r.resourceType, "form", "")
 	}
@@ -672,6 +700,9 @@ func (a *AuditAPIService) ListAuditEventsExecute(r ApiListAuditEventsRequest) (*
 	}
 	if r.targetId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "target_id", r.targetId, "form", "")
+	}
+	if r.zoneId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "zone_id", r.zoneId, "form", "")
 	}
 	if r.actorUserId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "actor_user_id", r.actorUserId, "form", "")

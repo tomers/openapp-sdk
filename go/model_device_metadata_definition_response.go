@@ -21,9 +21,11 @@ var _ MappedNullable = &DeviceMetadataDefinitionResponse{}
 
 // DeviceMetadataDefinitionResponse Device metadata definition response (schema + current data) for schema-driven edit UI.
 type DeviceMetadataDefinitionResponse struct {
-	Data         interface{} `json:"data"`
-	ProviderType string      `json:"provider_type"`
-	Schema       interface{} `json:"schema"`
+	// JSON Pointers into `data` of write-only credential fields that currently hold a value.
+	CredentialsSet []string    `json:"credentials_set"`
+	Data           interface{} `json:"data"`
+	ProviderType   string      `json:"provider_type"`
+	Schema         interface{} `json:"schema"`
 }
 
 type _DeviceMetadataDefinitionResponse DeviceMetadataDefinitionResponse
@@ -32,8 +34,9 @@ type _DeviceMetadataDefinitionResponse DeviceMetadataDefinitionResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDeviceMetadataDefinitionResponse(data interface{}, providerType string, schema interface{}) *DeviceMetadataDefinitionResponse {
+func NewDeviceMetadataDefinitionResponse(credentialsSet []string, data interface{}, providerType string, schema interface{}) *DeviceMetadataDefinitionResponse {
 	this := DeviceMetadataDefinitionResponse{}
+	this.CredentialsSet = credentialsSet
 	this.Data = data
 	this.ProviderType = providerType
 	this.Schema = schema
@@ -46,6 +49,30 @@ func NewDeviceMetadataDefinitionResponse(data interface{}, providerType string, 
 func NewDeviceMetadataDefinitionResponseWithDefaults() *DeviceMetadataDefinitionResponse {
 	this := DeviceMetadataDefinitionResponse{}
 	return &this
+}
+
+// GetCredentialsSet returns the CredentialsSet field value
+func (o *DeviceMetadataDefinitionResponse) GetCredentialsSet() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.CredentialsSet
+}
+
+// GetCredentialsSetOk returns a tuple with the CredentialsSet field value
+// and a boolean to check if the value has been set.
+func (o *DeviceMetadataDefinitionResponse) GetCredentialsSetOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CredentialsSet, true
+}
+
+// SetCredentialsSet sets field value
+func (o *DeviceMetadataDefinitionResponse) SetCredentialsSet(v []string) {
+	o.CredentialsSet = v
 }
 
 // GetData returns the Data field value
@@ -126,6 +153,7 @@ func (o *DeviceMetadataDefinitionResponse) SetSchema(v interface{}) {
 
 func (o DeviceMetadataDefinitionResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	toSerialize["credentials_set"] = o.CredentialsSet
 	if o.Data != nil {
 		toSerialize["data"] = o.Data
 	}
@@ -141,6 +169,7 @@ func (o *DeviceMetadataDefinitionResponse) UnmarshalJSON(data []byte) (err error
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"credentials_set",
 		"data",
 		"provider_type",
 		"schema",

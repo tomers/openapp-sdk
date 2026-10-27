@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) | Principal kinds requiring confirmation; unknown and empty values are rejected. | [optional]
-**Output** | Pointer to [**NullablePolicyOutputSelector**](PolicyOutputSelector.md) | Optional provider-derived output/channel selector. | [optional]
+**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) | Principal kinds the row binds; unknown and empty values are rejected. Omitted binds the type&#39;s default principals. | [optional]
+**ResourceSelector** | Pointer to **map[string]interface{}** | Entities requiring confirmation: &#x60;\&quot;*\&quot;&#x60;, one entity ULID, or a non-empty array of entity ULIDs. Omitted applies to every entity. | [optional]
 
 ## Methods
 
@@ -61,40 +61,40 @@ HasAppliesTo returns a boolean if a field has been set.
 `func (o *RequireStepUpPolicyConfig) UnsetAppliesTo()`
 
 UnsetAppliesTo ensures that no value is present for AppliesTo, not even an explicit nil
-### GetOutput
+### GetResourceSelector
 
-`func (o *RequireStepUpPolicyConfig) GetOutput() PolicyOutputSelector`
+`func (o *RequireStepUpPolicyConfig) GetResourceSelector() map[string]interface{}`
 
-GetOutput returns the Output field if non-nil, zero value otherwise.
+GetResourceSelector returns the ResourceSelector field if non-nil, zero value otherwise.
 
-### GetOutputOk
+### GetResourceSelectorOk
 
-`func (o *RequireStepUpPolicyConfig) GetOutputOk() (*PolicyOutputSelector, bool)`
+`func (o *RequireStepUpPolicyConfig) GetResourceSelectorOk() (*map[string]interface{}, bool)`
 
-GetOutputOk returns a tuple with the Output field if it's non-nil, zero value otherwise
+GetResourceSelectorOk returns a tuple with the ResourceSelector field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetOutput
+### SetResourceSelector
 
-`func (o *RequireStepUpPolicyConfig) SetOutput(v PolicyOutputSelector)`
+`func (o *RequireStepUpPolicyConfig) SetResourceSelector(v map[string]interface{})`
 
-SetOutput sets Output field to given value.
+SetResourceSelector sets ResourceSelector field to given value.
 
-### HasOutput
+### HasResourceSelector
 
-`func (o *RequireStepUpPolicyConfig) HasOutput() bool`
+`func (o *RequireStepUpPolicyConfig) HasResourceSelector() bool`
 
-HasOutput returns a boolean if a field has been set.
+HasResourceSelector returns a boolean if a field has been set.
 
-### SetOutputNil
+### SetResourceSelectorNil
 
-`func (o *RequireStepUpPolicyConfig) SetOutputNil(b bool)`
+`func (o *RequireStepUpPolicyConfig) SetResourceSelectorNil(b bool)`
 
- SetOutputNil sets the value for Output to be an explicit nil
+ SetResourceSelectorNil sets the value for ResourceSelector to be an explicit nil
 
-### UnsetOutput
-`func (o *RequireStepUpPolicyConfig) UnsetOutput()`
+### UnsetResourceSelector
+`func (o *RequireStepUpPolicyConfig) UnsetResourceSelector()`
 
-UnsetOutput ensures that no value is present for Output, not even an explicit nil
+UnsetResourceSelector ensures that no value is present for ResourceSelector, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

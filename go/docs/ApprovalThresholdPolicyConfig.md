@@ -5,7 +5,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Count** | **int32** | Number of distinct organization-admin approve votes required. |
-**Output** | Pointer to [**NullablePolicyOutputSelector**](PolicyOutputSelector.md) | Optional provider-derived output/channel selector. | [optional]
 **Scope** | [**ApprovalThresholdScope**](ApprovalThresholdScope.md) | Only &#x60;org_admins&#x60; is currently supported. |
 
 ## Methods
@@ -47,41 +46,6 @@ and a boolean to check if the value has been set.
 SetCount sets Count field to given value.
 
 
-### GetOutput
-
-`func (o *ApprovalThresholdPolicyConfig) GetOutput() PolicyOutputSelector`
-
-GetOutput returns the Output field if non-nil, zero value otherwise.
-
-### GetOutputOk
-
-`func (o *ApprovalThresholdPolicyConfig) GetOutputOk() (*PolicyOutputSelector, bool)`
-
-GetOutputOk returns a tuple with the Output field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetOutput
-
-`func (o *ApprovalThresholdPolicyConfig) SetOutput(v PolicyOutputSelector)`
-
-SetOutput sets Output field to given value.
-
-### HasOutput
-
-`func (o *ApprovalThresholdPolicyConfig) HasOutput() bool`
-
-HasOutput returns a boolean if a field has been set.
-
-### SetOutputNil
-
-`func (o *ApprovalThresholdPolicyConfig) SetOutputNil(b bool)`
-
- SetOutputNil sets the value for Output to be an explicit nil
-
-### UnsetOutput
-`func (o *ApprovalThresholdPolicyConfig) UnsetOutput()`
-
-UnsetOutput ensures that no value is present for Output, not even an explicit nil
 ### GetScope
 
 `func (o *ApprovalThresholdPolicyConfig) GetScope() ApprovalThresholdScope`

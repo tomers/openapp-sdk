@@ -32,7 +32,7 @@ type PublicSessionResponse struct {
 	ExpiresAt       NullableString `json:"expires_at,omitempty"`
 	// Whether the portal has light devices configured. Callee-only.
 	HasLights NullableBool `json:"has_lights,omitempty"`
-	// Call mode: \"voice\" or \"video\". Video on by default when mode is \"video\".
+	// Session mode: `voice`, `video` or `message`. Video is on by default when the mode is `video`.
 	Mode                  NullableString    `json:"mode,omitempty"`
 	Peerjs                PeerJsConfig      `json:"peerjs"`
 	PortalCameraDeviceIds []string          `json:"portal_camera_device_ids,omitempty"`

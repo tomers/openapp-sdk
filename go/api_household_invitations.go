@@ -456,7 +456,10 @@ func (r ApiRedeemRequest) Execute() (*RedeemHouseholdInvitationResponse, *http.R
 }
 
 /*
-Redeem Method for Redeem
+Redeem Redeem a household invitation with `token` + `pin`.
+
+Token and PIN are checked before the session. A wrong PIN yields 422 even when signed out.
+A correct PIN with no session yields 401; the invitation stays pending.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiRedeemRequest
@@ -550,10 +553,16 @@ func (a *HouseholdInvitationsAPIService) RedeemExecute(r ApiRedeemRequest) (*Red
 }
 
 type ApiResendRequest struct {
-	ctx        context.Context
-	ApiService *HouseholdInvitationsAPIService
-	groupId    string
-	id         string
+	ctx                       context.Context
+	ApiService                *HouseholdInvitationsAPIService
+	groupId                   string
+	id                        string
+	resendHouseholdInvitation *ResendHouseholdInvitation
+}
+
+func (r ApiResendRequest) ResendHouseholdInvitation(resendHouseholdInvitation ResendHouseholdInvitation) ApiResendRequest {
+	r.resendHouseholdInvitation = &resendHouseholdInvitation
+	return r
 }
 
 func (r ApiResendRequest) Execute() (*HouseholdInvitationResponse, *http.Response, error) {
@@ -600,9 +609,12 @@ func (a *HouseholdInvitationsAPIService) ResendExecute(r ApiResendRequest) (*Hou
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.resendHouseholdInvitation == nil {
+		return localVarReturnValue, nil, reportError("resendHouseholdInvitation is required and must be specified")
+	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -618,6 +630,8 @@ func (a *HouseholdInvitationsAPIService) ResendExecute(r ApiResendRequest) (*Hou
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	// body params
+	localVarPostBody = r.resendHouseholdInvitation
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

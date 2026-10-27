@@ -7,14 +7,16 @@ Name | Type | Description | Notes
 **AgeClass** | Pointer to [**NullableAgeClass**](AgeClass.md) | Derived age class. Only set for listing managers. | [optional]
 **DateOfBirth** | Pointer to **NullableString** | Calendar date &#x60;YYYY-MM-DD&#x60;. Only set for listing managers. | [optional]
 **Member** | [**DirectoryListingMemberResponse**](DirectoryListingMemberResponse.md) |  |
-**UserEmail** | Pointer to **NullableString** |  | [optional]
+**MessageLocale** | **string** | Shipped locale code (&#x60;en&#x60;, &#x60;he&#x60;, &#x60;pt_br&#x60;) of the language messages to this person are written in: their own choice, the language last seen in their app, then the org default. |
+**UserEmail** | Pointer to **NullableString** | Mailbox the person can sign in with. Omitted when the account has only a placeholder email. | [optional]
 **UserName** | Pointer to **interface{}** |  | [optional]
+**UserPhone** | Pointer to **NullableString** | Verified E.164 phone on the account, when one is set. | [optional]
 
 ## Methods
 
 ### NewDirectoryListingMemberWithUserResponse
 
-`func NewDirectoryListingMemberWithUserResponse(member DirectoryListingMemberResponse, ) *DirectoryListingMemberWithUserResponse`
+`func NewDirectoryListingMemberWithUserResponse(member DirectoryListingMemberResponse, messageLocale string, ) *DirectoryListingMemberWithUserResponse`
 
 NewDirectoryListingMemberWithUserResponse instantiates a new DirectoryListingMemberWithUserResponse object
 This constructor will assign default values to properties that have it defined,
@@ -119,6 +121,26 @@ and a boolean to check if the value has been set.
 SetMember sets Member field to given value.
 
 
+### GetMessageLocale
+
+`func (o *DirectoryListingMemberWithUserResponse) GetMessageLocale() string`
+
+GetMessageLocale returns the MessageLocale field if non-nil, zero value otherwise.
+
+### GetMessageLocaleOk
+
+`func (o *DirectoryListingMemberWithUserResponse) GetMessageLocaleOk() (*string, bool)`
+
+GetMessageLocaleOk returns a tuple with the MessageLocale field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessageLocale
+
+`func (o *DirectoryListingMemberWithUserResponse) SetMessageLocale(v string)`
+
+SetMessageLocale sets MessageLocale field to given value.
+
+
 ### GetUserEmail
 
 `func (o *DirectoryListingMemberWithUserResponse) GetUserEmail() string`
@@ -189,5 +211,40 @@ HasUserName returns a boolean if a field has been set.
 `func (o *DirectoryListingMemberWithUserResponse) UnsetUserName()`
 
 UnsetUserName ensures that no value is present for UserName, not even an explicit nil
+### GetUserPhone
+
+`func (o *DirectoryListingMemberWithUserResponse) GetUserPhone() string`
+
+GetUserPhone returns the UserPhone field if non-nil, zero value otherwise.
+
+### GetUserPhoneOk
+
+`func (o *DirectoryListingMemberWithUserResponse) GetUserPhoneOk() (*string, bool)`
+
+GetUserPhoneOk returns a tuple with the UserPhone field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUserPhone
+
+`func (o *DirectoryListingMemberWithUserResponse) SetUserPhone(v string)`
+
+SetUserPhone sets UserPhone field to given value.
+
+### HasUserPhone
+
+`func (o *DirectoryListingMemberWithUserResponse) HasUserPhone() bool`
+
+HasUserPhone returns a boolean if a field has been set.
+
+### SetUserPhoneNil
+
+`func (o *DirectoryListingMemberWithUserResponse) SetUserPhoneNil(b bool)`
+
+ SetUserPhoneNil sets the value for UserPhone to be an explicit nil
+
+### UnsetUserPhone
+`func (o *DirectoryListingMemberWithUserResponse) UnsetUserPhone()`
+
+UnsetUserPhone ensures that no value is present for UserPhone, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

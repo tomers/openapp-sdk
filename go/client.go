@@ -48,8 +48,6 @@ type APIClient struct {
 
 	// API Services
 
-	AIAPI *AIAPIService
-
 	APIKeysAPI *APIKeysAPIService
 
 	AgentsAPI *AgentsAPIService
@@ -84,8 +82,6 @@ type APIClient struct {
 
 	OrgInvitationsAPI *OrgInvitationsAPIService
 
-	OrganizationsAPI *OrganizationsAPIService
-
 	OrgsAPI *OrgsAPIService
 
 	PoliciesAPI *PoliciesAPIService
@@ -100,7 +96,7 @@ type APIClient struct {
 
 	UsersAPI *UsersAPIService
 
-	VirtualAccessAPI *VirtualAccessAPIService
+	WiFiNetworksAPI *WiFiNetworksAPIService
 
 	ZonesAPI *ZonesAPIService
 }
@@ -118,7 +114,6 @@ func newAPIClientFromConfig(cfg *Configuration) *APIClient {
 	c.common.client = c
 
 	// API Services
-	c.AIAPI = (*AIAPIService)(&c.common)
 	c.APIKeysAPI = (*APIKeysAPIService)(&c.common)
 	c.AgentsAPI = (*AgentsAPIService)(&c.common)
 	c.AuditAPI = (*AuditAPIService)(&c.common)
@@ -136,7 +131,6 @@ func newAPIClientFromConfig(cfg *Configuration) *APIClient {
 	c.MeAPI = (*MeAPIService)(&c.common)
 	c.MediaAPI = (*MediaAPIService)(&c.common)
 	c.OrgInvitationsAPI = (*OrgInvitationsAPIService)(&c.common)
-	c.OrganizationsAPI = (*OrganizationsAPIService)(&c.common)
 	c.OrgsAPI = (*OrgsAPIService)(&c.common)
 	c.PoliciesAPI = (*PoliciesAPIService)(&c.common)
 	c.PublicAccessAPI = (*PublicAccessAPIService)(&c.common)
@@ -144,7 +138,7 @@ func newAPIClientFromConfig(cfg *Configuration) *APIClient {
 	c.StatusAPI = (*StatusAPIService)(&c.common)
 	c.StoreAPI = (*StoreAPIService)(&c.common)
 	c.UsersAPI = (*UsersAPIService)(&c.common)
-	c.VirtualAccessAPI = (*VirtualAccessAPIService)(&c.common)
+	c.WiFiNetworksAPI = (*WiFiNetworksAPIService)(&c.common)
 	c.ZonesAPI = (*ZonesAPIService)(&c.common)
 
 	return c

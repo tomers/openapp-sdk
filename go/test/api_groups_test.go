@@ -24,6 +24,21 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
+	t.Run("Test GroupsAPIService AcceptGroupLink", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var orgId string
+
+		resp, httpRes, err := apiClient.GroupsAPI.AcceptGroupLink(context.Background(), id, orgId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test GroupsAPIService AddGroupMember", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -51,14 +66,54 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test GroupsAPIService CreateGroupShareOffer", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.GroupsAPI.CreateGroupShareOffer(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test GroupsAPIService DecideGroupAdmission", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		var id string
-		var userId string
+		var memberRef string
 
-		httpRes, err := apiClient.GroupsAPI.DecideGroupAdmission(context.Background(), id, userId).Execute()
+		httpRes, err := apiClient.GroupsAPI.DecideGroupAdmission(context.Background(), id, memberRef).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService DeleteGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.GroupsAPI.DeleteGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService DeleteGroupImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.GroupsAPI.DeleteGroupImage(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
@@ -70,9 +125,9 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 		t.Skip("skip test") // remove to run test
 
 		var id string
-		var userId string
+		var memberRef string
 
-		httpRes, err := apiClient.GroupsAPI.DeleteGroupMember(context.Background(), id, userId).Execute()
+		httpRes, err := apiClient.GroupsAPI.DeleteGroupMember(context.Background(), id, memberRef).Execute()
 
 		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
@@ -86,6 +141,20 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.GroupsAPI.GetGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService GetGroupImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.GroupsAPI.GetGroupImage(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -107,6 +176,20 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test GroupsAPIService ListGroupLinks", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.GroupsAPI.ListGroupLinks(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test GroupsAPIService ListGroupMembers", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -114,6 +197,20 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.GroupsAPI.ListGroupMembers(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService ListIntegrationGroups", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.GroupsAPI.ListIntegrationGroups(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -135,6 +232,72 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test GroupsAPIService PostGroupImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.GroupsAPI.PostGroupImage(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService PurgeGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.GroupsAPI.PurgeGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService RedeemGroupShareOffer", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.GroupsAPI.RedeemGroupShareOffer(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService RestoreGroup", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.GroupsAPI.RestoreGroup(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService RevokeGroupLink", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var orgId string
+
+		httpRes, err := apiClient.GroupsAPI.RevokeGroupLink(context.Background(), id, orgId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test GroupsAPIService UpdateGroup", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -145,6 +308,35 @@ func Test_openapi_GroupsAPIService(t *testing.T) {
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService UpdateGroupLink", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var orgId string
+
+		resp, httpRes, err := apiClient.GroupsAPI.UpdateGroupLink(context.Background(), id, orgId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test GroupsAPIService UpdateGroupMemberRole", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var memberRef string
+
+		httpRes, err := apiClient.GroupsAPI.UpdateGroupMemberRole(context.Background(), id, memberRef).Execute()
+
+		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})

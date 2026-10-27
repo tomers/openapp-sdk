@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from collections.abc import Sequence
 from types import SimpleNamespace
 from typing import Any
@@ -92,6 +93,8 @@ class _FakeBridgeClient(BridgeClient):
         headers = {"x-api-key": self._api_key}
         if self._org is not None:
             headers["x-org"] = self._org
+        for name, value in (req.headers or {}).items():
+            headers[name.lower()] = value
         body = b""
         if req.multipart is None and req.body_json is not None:
             body = req.body_json.encode()
@@ -192,6 +195,42 @@ async def test_with_org_scopes_requests(_routes: _FakeBridge) -> None:
     assert route.calls[0].request.headers["x-org"] == "org_1"
 
 
+@pytest.mark.asyncio
+async def test_zones_org_scoped_calls(_routes: _FakeBridge) -> None:
+    list_route = _routes.get("/zones").mock(
+        return_value=httpx.Response(200, json={"items": [], "total": 0})
+    )
+    tree_route = _routes.get("/zones/tree").mock(
+        return_value=httpx.Response(200, json={"items": []})
+    )
+    create_route = _routes.post("/zones").mock(
+        return_value=httpx.Response(200, json={"id": "z1", "org_id": "org_1"})
+    )
+    merge_route = _routes.post("/zones/z1/merge").mock(
+        return_value=httpx.Response(200, json={"zone": {"id": "z1"}, "moved_devices": 1})
+    )
+    delete_route = _routes.delete("/zones/z1").mock(return_value=httpx.Response(200))
+    client = await _connect()
+    try:
+        await client.zones.list("org_1", root=True, q="Kit")
+        await client.zones.tree("org_1")
+        await client.zones.create("org_1", name={"en": "Kitchen"})
+        merged = await client.zones.merge("z1", ["z2"])
+        await client.zones.delete("z1", detach=True)
+    finally:
+        await client.close()
+    list_req = list_route.calls[0].request
+    assert list_req.headers["x-org"] == "org_1"
+    assert ("root", "true") in list_req.query
+    assert ("q", "Kit") in list_req.query
+    assert tree_route.calls[0].request.headers["x-org"] == "org_1"
+    assert create_route.calls[0].request.headers["x-org"] == "org_1"
+    assert b'"Kitchen"' in create_route.calls[0].request.read()
+    assert b'"source_zone_ids"' in merge_route.calls[0].request.read()
+    assert merged["moved_devices"] == 1
+    assert ("cascade", "detach") in delete_route.calls[0].request.query
+
+
 @pytest.mark.tier_0
 @pytest.mark.asyncio
 async def test_orgs_create_propagates_body(_routes: _FakeBridge) -> None:
@@ -205,6 +244,42 @@ async def test_orgs_create_propagates_body(_routes: _FakeBridge) -> None:
         assert route.called
         request = route.calls[0].request
         assert request.read().decode() == '{"name": "Acme"}'
+    finally:
+        await client.close()
+
+
+@pytest.mark.tier_0
+@pytest.mark.asyncio
+async def test_users_create_sends_only_create_user_request_fields(_routes: _FakeBridge) -> None:
+    route = _routes.post("/users").mock(return_value=httpx.Response(201, json={"id": "usr_1"}))
+    client = await _connect()
+    try:
+        await client.users.create(
+            name={"en": "Alice"},
+            email="alice@example.com",
+            roles={"org_1": ["users:read"]},
+        )
+        body = json.loads(route.calls[0].request.read())
+        assert body == {
+            "name": {"en": "Alice"},
+            "email": "alice@example.com",
+            "roles": {"org_1": ["users:read"]},
+        }
+    finally:
+        await client.close()
+
+
+@pytest.mark.tier_0
+@pytest.mark.asyncio
+async def test_users_search_sends_snake_case_query(_routes: _FakeBridge) -> None:
+    route = _routes.get("/users/search").mock(
+        return_value=httpx.Response(200, json={"items": [], "total": 0})
+    )
+    client = await _connect()
+    try:
+        await client.users.search("alice", org_id="org_1", limit=5, offset=10)
+        query = dict(route.calls[0].request.query)
+        assert query == {"q": "alice", "org_id": "org_1", "limit": "5", "offset": "10"}
     finally:
         await client.close()
 

@@ -21,10 +21,10 @@ var _ MappedNullable = &CreateZoneRequest{}
 
 // CreateZoneRequest struct for CreateZoneRequest
 type CreateZoneRequest struct {
-	ExternalId    NullableString  `json:"external_id,omitempty"`
-	IntegrationId string          `json:"integration_id"`
-	Name          LocalizedString `json:"name"`
-	ParentZoneId  NullableString  `json:"parent_zone_id,omitempty"`
+	Name         LocalizedString `json:"name"`
+	ParentZoneId NullableString  `json:"parent_zone_id,omitempty"`
+	// Access sites this zone belongs to. When omitted: inherit the parent's memberships if a parent is set, otherwise unbound (empty).
+	SiteIds []string `json:"site_ids,omitempty"`
 }
 
 type _CreateZoneRequest CreateZoneRequest
@@ -33,9 +33,8 @@ type _CreateZoneRequest CreateZoneRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateZoneRequest(integrationId string, name LocalizedString) *CreateZoneRequest {
+func NewCreateZoneRequest(name LocalizedString) *CreateZoneRequest {
 	this := CreateZoneRequest{}
-	this.IntegrationId = integrationId
 	this.Name = name
 	return &this
 }
@@ -46,73 +45,6 @@ func NewCreateZoneRequest(integrationId string, name LocalizedString) *CreateZon
 func NewCreateZoneRequestWithDefaults() *CreateZoneRequest {
 	this := CreateZoneRequest{}
 	return &this
-}
-
-// GetExternalId returns the ExternalId field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateZoneRequest) GetExternalId() string {
-	if o == nil || IsNil(o.ExternalId.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.ExternalId.Get()
-}
-
-// GetExternalIdOk returns a tuple with the ExternalId field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateZoneRequest) GetExternalIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.ExternalId.Get(), o.ExternalId.IsSet()
-}
-
-// HasExternalId returns a boolean if a field has been set.
-func (o *CreateZoneRequest) HasExternalId() bool {
-	if o != nil && o.ExternalId.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetExternalId gets a reference to the given NullableString and assigns it to the ExternalId field.
-func (o *CreateZoneRequest) SetExternalId(v string) {
-	o.ExternalId.Set(&v)
-}
-
-// SetExternalIdNil sets the value for ExternalId to be an explicit nil
-func (o *CreateZoneRequest) SetExternalIdNil() {
-	o.ExternalId.Set(nil)
-}
-
-// UnsetExternalId ensures that no value is present for ExternalId, not even an explicit nil
-func (o *CreateZoneRequest) UnsetExternalId() {
-	o.ExternalId.Unset()
-}
-
-// GetIntegrationId returns the IntegrationId field value
-func (o *CreateZoneRequest) GetIntegrationId() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.IntegrationId
-}
-
-// GetIntegrationIdOk returns a tuple with the IntegrationId field value
-// and a boolean to check if the value has been set.
-func (o *CreateZoneRequest) GetIntegrationIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.IntegrationId, true
-}
-
-// SetIntegrationId sets field value
-func (o *CreateZoneRequest) SetIntegrationId(v string) {
-	o.IntegrationId = v
 }
 
 // GetName returns the Name field value
@@ -182,15 +114,47 @@ func (o *CreateZoneRequest) UnsetParentZoneId() {
 	o.ParentZoneId.Unset()
 }
 
+// GetSiteIds returns the SiteIds field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateZoneRequest) GetSiteIds() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+	return o.SiteIds
+}
+
+// GetSiteIdsOk returns a tuple with the SiteIds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateZoneRequest) GetSiteIdsOk() ([]string, bool) {
+	if o == nil || IsNil(o.SiteIds) {
+		return nil, false
+	}
+	return o.SiteIds, true
+}
+
+// HasSiteIds returns a boolean if a field has been set.
+func (o *CreateZoneRequest) HasSiteIds() bool {
+	if o != nil && !IsNil(o.SiteIds) {
+		return true
+	}
+
+	return false
+}
+
+// SetSiteIds gets a reference to the given []string and assigns it to the SiteIds field.
+func (o *CreateZoneRequest) SetSiteIds(v []string) {
+	o.SiteIds = v
+}
+
 func (o CreateZoneRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.ExternalId.IsSet() {
-		toSerialize["external_id"] = o.ExternalId.Get()
-	}
-	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["name"] = o.Name
 	if o.ParentZoneId.IsSet() {
 		toSerialize["parent_zone_id"] = o.ParentZoneId.Get()
+	}
+	if o.SiteIds != nil {
+		toSerialize["site_ids"] = o.SiteIds
 	}
 	return toSerialize, nil
 }
@@ -200,7 +164,6 @@ func (o *CreateZoneRequest) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"integration_id",
 		"name",
 	}
 

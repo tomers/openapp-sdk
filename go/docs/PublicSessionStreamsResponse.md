@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**DeviceIds** | **[]string** | Camera device IDs for the portal. Stream URLs resolved client-side or via future API. |
+**DeviceIds** | **[]string** | IDs of the camera devices configured on the session&#39;s portal (cameras outside the portal&#39;s organization are excluded). Empty when the session has no portal device. Stream URLs are not included. |
 
 ## Methods
 

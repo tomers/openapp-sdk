@@ -19,7 +19,7 @@ import (
 // checks if the LimitSourceOneOf2 type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LimitSourceOneOf2{}
 
-// LimitSourceOneOf2 The hardcoded fallback in `catalog::DEFAULT_TIER_FOR_PERSONAL` when no tier is configured for the org (e.g. brand-new personal workspace).
+// LimitSourceOneOf2 The system default, used when no tier is configured for the org (for example a new personal workspace).
 type LimitSourceOneOf2 struct {
 	Kind string `json:"kind"`
 }

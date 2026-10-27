@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **CallEligible** | **bool** | True when this user would be a callee for intercom calls (policy + role + receives_calls). |
 **DisplayName** | Pointer to **interface{}** |  | [optional]
 **DndEnabled** | Pointer to **NullableBool** | True when calls are silenced for this listing (global DND or per-listing DND). | [optional]
+**EffectiveDisplayName** | **string** | Server-resolved listing title. Clients render this and do not recompute it. |
 **EntityId** | **string** |  |
 **Floor** | Pointer to **interface{}** |  | [optional]
 **FloorNumber** | Pointer to **NullableInt64** |  | [optional]
@@ -16,6 +17,7 @@ Name | Type | Description | Notes
 **IntegrationId** | **string** |  |
 **ListingLabel** | Pointer to **interface{}** |  | [optional]
 **ListingNumber** | Pointer to **NullableInt64** |  | [optional]
+**LocationDetail** | Pointer to **interface{}** |  | [optional]
 **OrgId** | **string** |  |
 **OrgName** | Pointer to **interface{}** |  | [optional]
 **ReceivesCalls** | **bool** |  |
@@ -25,7 +27,7 @@ Name | Type | Description | Notes
 
 ### NewMeListingAsset
 
-`func NewMeListingAsset(callEligible bool, entityId string, integrationId string, orgId string, receivesCalls bool, role string, ) *MeListingAsset`
+`func NewMeListingAsset(callEligible bool, effectiveDisplayName string, entityId string, integrationId string, orgId string, receivesCalls bool, role string, ) *MeListingAsset`
 
 NewMeListingAsset instantiates a new MeListingAsset object
 This constructor will assign default values to properties that have it defined,
@@ -165,6 +167,26 @@ HasDndEnabled returns a boolean if a field has been set.
 `func (o *MeListingAsset) UnsetDndEnabled()`
 
 UnsetDndEnabled ensures that no value is present for DndEnabled, not even an explicit nil
+### GetEffectiveDisplayName
+
+`func (o *MeListingAsset) GetEffectiveDisplayName() string`
+
+GetEffectiveDisplayName returns the EffectiveDisplayName field if non-nil, zero value otherwise.
+
+### GetEffectiveDisplayNameOk
+
+`func (o *MeListingAsset) GetEffectiveDisplayNameOk() (*string, bool)`
+
+GetEffectiveDisplayNameOk returns a tuple with the EffectiveDisplayName field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetEffectiveDisplayName
+
+`func (o *MeListingAsset) SetEffectiveDisplayName(v string)`
+
+SetEffectiveDisplayName sets EffectiveDisplayName field to given value.
+
+
 ### GetEntityId
 
 `func (o *MeListingAsset) GetEntityId() string`
@@ -415,6 +437,41 @@ HasListingNumber returns a boolean if a field has been set.
 `func (o *MeListingAsset) UnsetListingNumber()`
 
 UnsetListingNumber ensures that no value is present for ListingNumber, not even an explicit nil
+### GetLocationDetail
+
+`func (o *MeListingAsset) GetLocationDetail() interface{}`
+
+GetLocationDetail returns the LocationDetail field if non-nil, zero value otherwise.
+
+### GetLocationDetailOk
+
+`func (o *MeListingAsset) GetLocationDetailOk() (*interface{}, bool)`
+
+GetLocationDetailOk returns a tuple with the LocationDetail field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetLocationDetail
+
+`func (o *MeListingAsset) SetLocationDetail(v interface{})`
+
+SetLocationDetail sets LocationDetail field to given value.
+
+### HasLocationDetail
+
+`func (o *MeListingAsset) HasLocationDetail() bool`
+
+HasLocationDetail returns a boolean if a field has been set.
+
+### SetLocationDetailNil
+
+`func (o *MeListingAsset) SetLocationDetailNil(b bool)`
+
+ SetLocationDetailNil sets the value for LocationDetail to be an explicit nil
+
+### UnsetLocationDetail
+`func (o *MeListingAsset) UnsetLocationDetail()`
+
+UnsetLocationDetail ensures that no value is present for LocationDetail, not even an explicit nil
 ### GetOrgId
 
 `func (o *MeListingAsset) GetOrgId() string`

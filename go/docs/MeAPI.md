@@ -10,34 +10,29 @@ Method | HTTP request | Description
 [**DeclineManagerTransfer**](MeAPI.md#DeclineManagerTransfer) | **Post** /me/groups/{id}/manager-transfer/decline |
 [**DeleteMeAccessInvite**](MeAPI.md#DeleteMeAccessInvite) | **Delete** /me/access-invites/{invite_id} |
 [**DeleteMeCallBlock**](MeAPI.md#DeleteMeCallBlock) | **Delete** /me/call-blocks/{publicPortalId} |
-[**DeleteMeDeviceToken**](MeAPI.md#DeleteMeDeviceToken) | **Delete** /me/device-tokens/{id} | DELETE /me/device-tokens/{id} — remove a previously registered native token (logout / rotation).
 [**DeleteMeGroup**](MeAPI.md#DeleteMeGroup) | **Delete** /me/groups/{id} | Delete a household. Managers only.
 [**DeleteMeGroupMember**](MeAPI.md#DeleteMeGroupMember) | **Delete** /me/groups/{id}/members/me | Remove myself from a household.
+[**DeleteMeProfileImage**](MeAPI.md#DeleteMeProfileImage) | **Delete** /me/profile/image |
 [**GetMeAccessInvites**](MeAPI.md#GetMeAccessInvites) | **Get** /me/access-invites |
 [**GetMeCallBlocks**](MeAPI.md#GetMeCallBlocks) | **Get** /me/call-blocks |
-[**GetMeDirectoryListings**](MeAPI.md#GetMeDirectoryListings) | **Get** /me/directory-listings | GET /me/directory-listings — returns listings the current user is a member of.
+[**GetMeDirectoryListings**](MeAPI.md#GetMeDirectoryListings) | **Get** /me/directory-listings | List the directory listings the current user is a member of.
 [**GetMeGroup**](MeAPI.md#GetMeGroup) | **Get** /me/groups/{id} | One household the caller belongs to, with the sites it grants access to.
 [**GetMeGroupAdmissions**](MeAPI.md#GetMeGroupAdmissions) | **Get** /me/groups/{id}/admissions | Per-organization admission states visible to household managers.
 [**GetMeGroupProposals**](MeAPI.md#GetMeGroupProposals) | **Get** /me/group-proposals | Proposals and per-member admission status for the households I manage.
 [**GetMeGroups**](MeAPI.md#GetMeGroups) | **Get** /me/groups | The groups the caller belongs to, and where each one grants access.
-[**GetMeInvitations**](MeAPI.md#GetMeInvitations) | **Get** /me/invitations | GET /me/invitations — returns invitations the current user has claimed.
-[**GetMePrivacyExport**](MeAPI.md#GetMePrivacyExport) | **Get** /me/privacy-export |
+[**GetMeInvitations**](MeAPI.md#GetMeInvitations) | **Get** /me/invitations | List the invitations the current user has claimed.
+[**GetMeMemberships**](MeAPI.md#GetMeMemberships) | **Get** /me/memberships |
+[**GetMeNotificationPreferences**](MeAPI.md#GetMeNotificationPreferences) | **Get** /me/notification-preferences | Get which optional channels the signed-in user receives notices on.
 [**GetMeProfile**](MeAPI.md#GetMeProfile) | **Get** /me/profile |
-[**GetMePushSubscriptionStatus**](MeAPI.md#GetMePushSubscriptionStatus) | **Get** /me/push-subscription-status | GET /me/push-subscription-status — returns whether the current user has any push subscription.
-[**GetMePushVapidPublicKey**](MeAPI.md#GetMePushVapidPublicKey) | **Get** /me/push-vapid-public-key | GET /me/push-vapid-public-key — returns VAPID public key for client subscription. 404 when not configured.
-[**GetMeShareAuthoring**](MeAPI.md#GetMeShareAuthoring) | **Get** /me/share-authoring |
 [**ListMeGroupMembers**](MeAPI.md#ListMeGroupMembers) | **Get** /me/groups/{id}/members | The members of a household the caller belongs to.
-[**PatchMeDirectoryListingDnd**](MeAPI.md#PatchMeDirectoryListingDnd) | **Patch** /me/directory-listings/{entityId}/dnd | PATCH /me/directory-listings/{entityId}/dnd — update DND state for a listing.
-[**PatchMeDnd**](MeAPI.md#PatchMeDnd) | **Patch** /me/dnd | PATCH /me/dnd — update global DND state.
+[**PatchMeDirectoryListingDnd**](MeAPI.md#PatchMeDirectoryListingDnd) | **Patch** /me/directory-listings/{entityId}/dnd | Update DND state for a listing.
+[**PatchMeDnd**](MeAPI.md#PatchMeDnd) | **Patch** /me/dnd | Update global DND state.
 [**PatchMeProfile**](MeAPI.md#PatchMeProfile) | **Patch** /me/profile |
 [**PostMeAccessInviteKeep**](MeAPI.md#PostMeAccessInviteKeep) | **Post** /me/access-invites/{invite_id}/keep |
 [**PostMeCallBlock**](MeAPI.md#PostMeCallBlock) | **Post** /me/call-blocks |
-[**PostMeCallReport**](MeAPI.md#PostMeCallReport) | **Post** /me/call-reports |
-[**PostMeDeletionRequest**](MeAPI.md#PostMeDeletionRequest) | **Post** /me/deletion-request |
-[**PostMeDeviceToken**](MeAPI.md#PostMeDeviceToken) | **Post** /me/device-tokens | POST /me/device-tokens — register a native push token for call notifications.
-[**PostMeProfileSync**](MeAPI.md#PostMeProfileSync) | **Post** /me/profile/sync |
-[**PostMePushSubscription**](MeAPI.md#PostMePushSubscription) | **Post** /me/push-subscriptions | POST /me/push-subscriptions — store Web Push subscription for call notifications.
+[**PostMeProfileImage**](MeAPI.md#PostMeProfileImage) | **Post** /me/profile/image |
 [**ProposeMeGroup**](MeAPI.md#ProposeMeGroup) | **Post** /me/groups/{id}/proposals | Propose a household to a site the caller belongs to.
+[**PutMeNotificationPreferences**](MeAPI.md#PutMeNotificationPreferences) | **Put** /me/notification-preferences | Set which optional channels the signed-in user receives notices on.
 [**RemoveMeGroupMember**](MeAPI.md#RemoveMeGroupMember) | **Delete** /me/groups/{id}/members/{user_id} | Remove another member from a household. Managers only.
 [**RevokeMeGroupLink**](MeAPI.md#RevokeMeGroupLink) | **Delete** /me/groups/{id}/links/{integration_id} | Revoke a household&#39;s access to a site.
 [**UpdateMeGroup**](MeAPI.md#UpdateMeGroup) | **Put** /me/groups/{id} | Rename a household. Managers only: the roster name is shared, not personal.
@@ -470,78 +465,6 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## DeleteMeDeviceToken
-
-> DeleteMeDeviceToken(ctx, id).Execute()
-
-DELETE /me/device-tokens/{id} — remove a previously registered native token (logout / rotation).
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	id := "id_example" // string | Row ULID from POST response, or URL-encoded raw device token
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	r, err := apiClient.MeAPI.DeleteMeDeviceToken(context.Background(), id).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.DeleteMeDeviceToken``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-}
-```
-
-### Path Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**id** | **string** | Row ULID from POST response, or URL-encoded raw device token |
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiDeleteMeDeviceTokenRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
-
-
-### Return type
-
- (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: Not defined
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
 ## DeleteMeGroup
 
 > DeleteMeGroup(ctx, id).XOrg(xOrg).Execute()
@@ -669,6 +592,67 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
  **xOrg** | **string** |  |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## DeleteMeProfileImage
+
+> DeleteMeProfileImage(ctx).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	r, err := apiClient.MeAPI.DeleteMeProfileImage(context.Background()).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.DeleteMeProfileImage``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+This endpoint does not need any parameter.
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiDeleteMeProfileImageRequest struct via the builder pattern
+
 
 ### Return type
 
@@ -823,7 +807,7 @@ Other parameters are passed through a pointer to a apiGetMeCallBlocksRequest str
 
 > MeListingsResponse GetMeDirectoryListings(ctx).Execute()
 
-GET /me/directory-listings — returns listings the current user is a member of.
+List the directory listings the current user is a member of.
 
 ### Example
 
@@ -1165,7 +1149,7 @@ Other parameters are passed through a pointer to a apiGetMeGroupsRequest struct 
 
 > MeInvitationsResponse GetMeInvitations(ctx).Execute()
 
-GET /me/invitations — returns invitations the current user has claimed.
+List the invitations the current user has claimed.
 
 ### Example
 
@@ -1224,9 +1208,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## GetMePrivacyExport
+## GetMeMemberships
 
-> PrivacyExportResponse GetMePrivacyExport(ctx).Execute()
+> MeMembershipsResponse GetMeMemberships(ctx).Execute()
 
 
 
@@ -1250,13 +1234,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.GetMePrivacyExport(context.Background()).Execute()
+	resp, r, err := apiClient.MeAPI.GetMeMemberships(context.Background()).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.GetMePrivacyExport``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.GetMeMemberships``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `GetMePrivacyExport`: PrivacyExportResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.GetMePrivacyExport`: %v\n", resp)
+	// response from `GetMeMemberships`: MeMembershipsResponse
+	fmt.Fprintf(os.Stdout, "Response from `MeAPI.GetMeMemberships`: %v\n", resp)
 }
 ```
 
@@ -1266,12 +1250,77 @@ This endpoint does not need any parameter.
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetMePrivacyExportRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetMeMembershipsRequest struct via the builder pattern
 
 
 ### Return type
 
-[**PrivacyExportResponse**](PrivacyExportResponse.md)
+[**MeMembershipsResponse**](MeMembershipsResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## GetMeNotificationPreferences
+
+> NotificationPreferences GetMeNotificationPreferences(ctx).Execute()
+
+Get which optional channels the signed-in user receives notices on.
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.MeAPI.GetMeNotificationPreferences(context.Background()).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.GetMeNotificationPreferences``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `GetMeNotificationPreferences`: NotificationPreferences
+	fmt.Fprintf(os.Stdout, "Response from `MeAPI.GetMeNotificationPreferences`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+This endpoint does not need any parameter.
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetMeNotificationPreferencesRequest struct via the builder pattern
+
+
+### Return type
+
+[**NotificationPreferences**](NotificationPreferences.md)
 
 ### Authorization
 
@@ -1335,202 +1384,6 @@ Other parameters are passed through a pointer to a apiGetMeProfileRequest struct
 ### Return type
 
 [**MeProfileResponse**](MeProfileResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## GetMePushSubscriptionStatus
-
-> MePushSubscriptionStatusResponse GetMePushSubscriptionStatus(ctx).Execute()
-
-GET /me/push-subscription-status — returns whether the current user has any push subscription.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.GetMePushSubscriptionStatus(context.Background()).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.GetMePushSubscriptionStatus``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetMePushSubscriptionStatus`: MePushSubscriptionStatusResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.GetMePushSubscriptionStatus`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-This endpoint does not need any parameter.
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetMePushSubscriptionStatusRequest struct via the builder pattern
-
-
-### Return type
-
-[**MePushSubscriptionStatusResponse**](MePushSubscriptionStatusResponse.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## GetMePushVapidPublicKey
-
-> MePushVapidPublicKeyResponse GetMePushVapidPublicKey(ctx).Execute()
-
-GET /me/push-vapid-public-key — returns VAPID public key for client subscription. 404 when not configured.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.GetMePushVapidPublicKey(context.Background()).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.GetMePushVapidPublicKey``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetMePushVapidPublicKey`: MePushVapidPublicKeyResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.GetMePushVapidPublicKey`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-This endpoint does not need any parameter.
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetMePushVapidPublicKeyRequest struct via the builder pattern
-
-
-### Return type
-
-[**MePushVapidPublicKeyResponse**](MePushVapidPublicKeyResponse.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## GetMeShareAuthoring
-
-> MeShareAuthoringResponse GetMeShareAuthoring(ctx).OrgId(orgId).IntegrationId(integrationId).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	orgId := "orgId_example" // string |
-	integrationId := "integrationId_example" // string |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.GetMeShareAuthoring(context.Background()).OrgId(orgId).IntegrationId(integrationId).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.GetMeShareAuthoring``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `GetMeShareAuthoring`: MeShareAuthoringResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.GetMeShareAuthoring`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiGetMeShareAuthoringRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **orgId** | **string** |  |
- **integrationId** | **string** |  |
-
-### Return type
-
-[**MeShareAuthoringResponse**](MeShareAuthoringResponse.md)
 
 ### Authorization
 
@@ -1624,7 +1477,7 @@ Name | Type | Description  | Notes
 
 > PatchMeDirectoryListingDnd(ctx, entityId).PatchMeListingDndPayload(patchMeListingDndPayload).Execute()
 
-PATCH /me/directory-listings/{entityId}/dnd — update DND state for a listing.
+Update DND state for a listing.
 
 ### Example
 
@@ -1696,7 +1549,7 @@ No authorization required
 
 > PatchMeDnd(ctx).PatchMeDndPayload(patchMeDndPayload).Execute()
 
-PATCH /me/dnd — update global DND state.
+Update global DND state.
 
 ### Example
 
@@ -1964,9 +1817,9 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## PostMeCallReport
+## PostMeProfileImage
 
-> MeCallSafetyOkResponse PostMeCallReport(ctx).PostMeCallReportPayload(postMeCallReportPayload).Execute()
+> ResourceImageUrlResponse PostMeProfileImage(ctx).File(file).Execute()
 
 
 
@@ -1983,7 +1836,7 @@ import (
 )
 
 func main() {
-	postMeCallReportPayload := *openapiclient.NewPostMeCallReportPayload("Reason_example", "SessionId_example") // PostMeCallReportPayload |
+	file := os.NewFile(1234, "some_file") // *os.File | Image file bytes (JPEG, PNG, or WebP).
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -1991,13 +1844,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.PostMeCallReport(context.Background()).PostMeCallReportPayload(postMeCallReportPayload).Execute()
+	resp, r, err := apiClient.MeAPI.PostMeProfileImage(context.Background()).File(file).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PostMeCallReport``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PostMeProfileImage``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `PostMeCallReport`: MeCallSafetyOkResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.PostMeCallReport`: %v\n", resp)
+	// response from `PostMeProfileImage`: ResourceImageUrlResponse
+	fmt.Fprintf(os.Stdout, "Response from `MeAPI.PostMeProfileImage`: %v\n", resp)
 }
 ```
 
@@ -2007,16 +1860,16 @@ func main() {
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiPostMeCallReportRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiPostMeProfileImageRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **postMeCallReportPayload** | [**PostMeCallReportPayload**](PostMeCallReportPayload.md) |  |
+ **file** | ***os.File** | Image file bytes (JPEG, PNG, or WebP). |
 
 ### Return type
 
-[**MeCallSafetyOkResponse**](MeCallSafetyOkResponse.md)
+[**ResourceImageUrlResponse**](ResourceImageUrlResponse.md)
 
 ### Authorization
 
@@ -2024,268 +1877,8 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
+- **Content-Type**: multipart/form-data
 - **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostMeDeletionRequest
-
-> DeletionRequestResponse PostMeDeletionRequest(ctx).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.PostMeDeletionRequest(context.Background()).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PostMeDeletionRequest``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostMeDeletionRequest`: DeletionRequestResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.PostMeDeletionRequest`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-This endpoint does not need any parameter.
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostMeDeletionRequestRequest struct via the builder pattern
-
-
-### Return type
-
-[**DeletionRequestResponse**](DeletionRequestResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostMeDeviceToken
-
-> PostMeDeviceTokenResponse PostMeDeviceToken(ctx).PostMeDeviceTokenPayload(postMeDeviceTokenPayload).Execute()
-
-POST /me/device-tokens — register a native push token for call notifications.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	postMeDeviceTokenPayload := *openapiclient.NewPostMeDeviceTokenPayload("Platform_example", "Token_example") // PostMeDeviceTokenPayload |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.PostMeDeviceToken(context.Background()).PostMeDeviceTokenPayload(postMeDeviceTokenPayload).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PostMeDeviceToken``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostMeDeviceToken`: PostMeDeviceTokenResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.PostMeDeviceToken`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostMeDeviceTokenRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **postMeDeviceTokenPayload** | [**PostMeDeviceTokenPayload**](PostMeDeviceTokenPayload.md) |  |
-
-### Return type
-
-[**PostMeDeviceTokenResponse**](PostMeDeviceTokenResponse.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostMeProfileSync
-
-> MeProfileResponse PostMeProfileSync(ctx).Execute()
-
-
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	resp, r, err := apiClient.MeAPI.PostMeProfileSync(context.Background()).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PostMeProfileSync``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-	// response from `PostMeProfileSync`: MeProfileResponse
-	fmt.Fprintf(os.Stdout, "Response from `MeAPI.PostMeProfileSync`: %v\n", resp)
-}
-```
-
-### Path Parameters
-
-This endpoint does not need any parameter.
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostMeProfileSyncRequest struct via the builder pattern
-
-
-### Return type
-
-[**MeProfileResponse**](MeProfileResponse.md)
-
-### Authorization
-
-[api_key](../README.md#api_key)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: application/json
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
-[[Back to Model list]](../README.md#documentation-for-models)
-[[Back to README]](../README.md)
-
-
-## PostMePushSubscription
-
-> PostMePushSubscription(ctx).PostMePushSubscriptionPayload(postMePushSubscriptionPayload).Execute()
-
-POST /me/push-subscriptions — store Web Push subscription for call notifications.
-
-### Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"os"
-	openapiclient "github.com/tomers/openapp-sdk/go"
-)
-
-func main() {
-	postMePushSubscriptionPayload := *openapiclient.NewPostMePushSubscriptionPayload("Auth_example", "Endpoint_example", "P256dh_example") // PostMePushSubscriptionPayload |
-
-	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
-		os.Exit(1)
-	}
-	defer apiClient.Close()
-	r, err := apiClient.MeAPI.PostMePushSubscription(context.Background()).PostMePushSubscriptionPayload(postMePushSubscriptionPayload).Execute()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PostMePushSubscription``: %v\n", err)
-		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
-	}
-}
-```
-
-### Path Parameters
-
-
-
-### Other Parameters
-
-Other parameters are passed through a pointer to a apiPostMePushSubscriptionRequest struct via the builder pattern
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **postMePushSubscriptionPayload** | [**PostMePushSubscriptionPayload**](PostMePushSubscriptionPayload.md) |  |
-
-### Return type
-
- (empty response body)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
 [[Back to Model list]](../README.md#documentation-for-models)
@@ -2362,6 +1955,76 @@ Name | Type | Description  | Notes
 
 - **Content-Type**: application/json
 - **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## PutMeNotificationPreferences
+
+> NotificationPreferences PutMeNotificationPreferences(ctx).NotificationPreferences(notificationPreferences).Execute()
+
+Set which optional channels the signed-in user receives notices on.
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	notificationPreferences := *openapiclient.NewNotificationPreferences(false, false, false) // NotificationPreferences |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.MeAPI.PutMeNotificationPreferences(context.Background()).NotificationPreferences(notificationPreferences).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `MeAPI.PutMeNotificationPreferences``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `PutMeNotificationPreferences`: NotificationPreferences
+	fmt.Fprintf(os.Stdout, "Response from `MeAPI.PutMeNotificationPreferences`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPutMeNotificationPreferencesRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **notificationPreferences** | [**NotificationPreferences**](NotificationPreferences.md) |  |
+
+### Return type
+
+[**NotificationPreferences**](NotificationPreferences.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
 [[Back to Model list]](../README.md#documentation-for-models)

@@ -21,7 +21,7 @@ var _ MappedNullable = &PublicSessionStreamsResponse{}
 
 // PublicSessionStreamsResponse struct for PublicSessionStreamsResponse
 type PublicSessionStreamsResponse struct {
-	// Camera device IDs for the portal. Stream URLs resolved client-side or via future API.
+	// IDs of the camera devices configured on the session's portal (cameras outside the portal's organization are excluded). Empty when the session has no portal device. Stream URLs are not included.
 	DeviceIds []string `json:"device_ids"`
 }
 

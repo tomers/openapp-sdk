@@ -19,7 +19,7 @@ import (
 // checks if the OrgPermissionsResponse type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &OrgPermissionsResponse{}
 
-// OrgPermissionsResponse Permissions the current user has in this org (for UI: gray out / tooltips). Returns permission keys (e.g. `users:create`, `admin`) granted directly or via inheritance.
+// OrgPermissionsResponse Permissions the current user has in this org (for UI: gray out / tooltips). Returns permission keys (e.g. `users:create`, `admin`) granted directly or via inheritance. `system:*` keys are reported only for the root organization, where they are enforced.
 type OrgPermissionsResponse struct {
 	Permissions []string `json:"permissions"`
 }

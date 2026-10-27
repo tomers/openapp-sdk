@@ -21,16 +21,17 @@ var _ MappedNullable = &PatchLocationRequest{}
 type PatchLocationRequest struct {
 	City              NullableLocalizedString     `json:"city,omitempty"`
 	Country           NullableLocalizedString     `json:"country,omitempty"`
+	CountryCode       NullableString              `json:"country_code,omitempty"`
 	FormattedAddress  NullableLocalizedString     `json:"formatted_address,omitempty"`
 	Geocode           *bool                       `json:"geocode,omitempty"`
 	GeocodingProvider NullableGeocodingProviderId `json:"geocoding_provider,omitempty"`
 	Kind              NullableLocationKind        `json:"kind,omitempty"`
 	Lat               NullableFloat64             `json:"lat,omitempty"`
 	Lng               NullableFloat64             `json:"lng,omitempty"`
-	// Preferred locale (app code or BCP-47) for geocoding (see `CreateLocationRequest::locale`).
+	// Preferred locale (app code or BCP-47) for geocoding: controls the language of geocoded text and the locale key it is tagged under. Defaults to `en` when omitted.
 	Locale NullableString          `json:"locale,omitempty"`
 	Notes  NullableLocalizedString `json:"notes,omitempty"`
-	// Replaces the stored place reference. Both fields must be sent together (see `CreateLocationRequest::provider_place_id`).
+	// Opaque place id issued by `geocoding_provider`; replaces the stored place reference. Both fields must be sent together: a place id cannot be resolved without naming its issuer.
 	ProviderPlaceId NullableString `json:"provider_place_id,omitempty"`
 }
 
@@ -135,6 +136,49 @@ func (o *PatchLocationRequest) SetCountryNil() {
 // UnsetCountry ensures that no value is present for Country, not even an explicit nil
 func (o *PatchLocationRequest) UnsetCountry() {
 	o.Country.Unset()
+}
+
+// GetCountryCode returns the CountryCode field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PatchLocationRequest) GetCountryCode() string {
+	if o == nil || IsNil(o.CountryCode.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.CountryCode.Get()
+}
+
+// GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PatchLocationRequest) GetCountryCodeOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CountryCode.Get(), o.CountryCode.IsSet()
+}
+
+// HasCountryCode returns a boolean if a field has been set.
+func (o *PatchLocationRequest) HasCountryCode() bool {
+	if o != nil && o.CountryCode.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCountryCode gets a reference to the given NullableString and assigns it to the CountryCode field.
+func (o *PatchLocationRequest) SetCountryCode(v string) {
+	o.CountryCode.Set(&v)
+}
+
+// SetCountryCodeNil sets the value for CountryCode to be an explicit nil
+func (o *PatchLocationRequest) SetCountryCodeNil() {
+	o.CountryCode.Set(nil)
+}
+
+// UnsetCountryCode ensures that no value is present for CountryCode, not even an explicit nil
+func (o *PatchLocationRequest) UnsetCountryCode() {
+	o.CountryCode.Unset()
 }
 
 // GetFormattedAddress returns the FormattedAddress field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -520,6 +564,9 @@ func (o PatchLocationRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Country.IsSet() {
 		toSerialize["country"] = o.Country.Get()
+	}
+	if o.CountryCode.IsSet() {
+		toSerialize["country_code"] = o.CountryCode.Get()
 	}
 	if o.FormattedAddress.IsSet() {
 		toSerialize["formatted_address"] = o.FormattedAddress.Get()

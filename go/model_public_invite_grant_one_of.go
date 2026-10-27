@@ -25,7 +25,7 @@ type PublicInviteGrantOneOf struct {
 	DoorImageThumbUrl NullableString `json:"door_image_thumb_url,omitempty"`
 	// Presigned URL for door image (loaded asynchronously as card background).
 	DoorImageUrl NullableString `json:"door_image_url,omitempty"`
-	// Entry type from linked portal device (`virtual_access.entry_kind`). Default `door`.
+	// Entry type configured on the linked portal device (`entry_kind` in its `virtual_access` metadata). Default `door`.
 	EntryKind string `json:"entry_kind"`
 	// Whether the portal has light devices configured (controls light button visibility).
 	HasLights bool `json:"has_lights"`
@@ -39,6 +39,8 @@ type PublicInviteGrantOneOf struct {
 	// Whether the portal is linked to a live door device (i.e. can actually be opened). When false, the invite UI disables the open action (a misconfigured/unlinked portal).
 	Openable       bool   `json:"openable"`
 	PublicPortalId string `json:"public_portal_id"`
+	// The door's zone is covered by a Wi-Fi network the guest may join, for example where the door has no cellular signal. A suggestion only: the door opens either way. The networks are in `wifi_networks` on the response.
+	WifiAvailable *bool `json:"wifi_available,omitempty"`
 }
 
 type _PublicInviteGrantOneOf PublicInviteGrantOneOf
@@ -415,6 +417,38 @@ func (o *PublicInviteGrantOneOf) SetPublicPortalId(v string) {
 	o.PublicPortalId = v
 }
 
+// GetWifiAvailable returns the WifiAvailable field value if set, zero value otherwise.
+func (o *PublicInviteGrantOneOf) GetWifiAvailable() bool {
+	if o == nil || IsNil(o.WifiAvailable) {
+		var ret bool
+		return ret
+	}
+	return *o.WifiAvailable
+}
+
+// GetWifiAvailableOk returns a tuple with the WifiAvailable field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicInviteGrantOneOf) GetWifiAvailableOk() (*bool, bool) {
+	if o == nil || IsNil(o.WifiAvailable) {
+		return nil, false
+	}
+	return o.WifiAvailable, true
+}
+
+// HasWifiAvailable returns a boolean if a field has been set.
+func (o *PublicInviteGrantOneOf) HasWifiAvailable() bool {
+	if o != nil && !IsNil(o.WifiAvailable) {
+		return true
+	}
+
+	return false
+}
+
+// SetWifiAvailable gets a reference to the given bool and assigns it to the WifiAvailable field.
+func (o *PublicInviteGrantOneOf) SetWifiAvailable(v bool) {
+	o.WifiAvailable = &v
+}
+
 func (o PublicInviteGrantOneOf) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.DoorImageThumbUrl.IsSet() {
@@ -438,6 +472,9 @@ func (o PublicInviteGrantOneOf) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["openable"] = o.Openable
 	toSerialize["public_portal_id"] = o.PublicPortalId
+	if !IsNil(o.WifiAvailable) {
+		toSerialize["wifi_available"] = o.WifiAvailable
+	}
 	return toSerialize, nil
 }
 

@@ -4,9 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) |  | [optional]
+**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) | Principal kinds the row binds; unknown and empty values are rejected. Omitted binds the type&#39;s default principals. | [optional]
 **End** | **string** | Inclusive local end of the window, in &#x60;HH:MM&#x60;; a later end wraps midnight. |
-**Output** | Pointer to [**NullableInvitationAllowedEntryKindsPolicyConfigOutput**](InvitationAllowedEntryKindsPolicyConfigOutput.md) |  | [optional]
 **Start** | **string** | Inclusive local start of the window, in &#x60;HH:MM&#x60;. |
 
 ## Methods
@@ -83,41 +82,6 @@ and a boolean to check if the value has been set.
 SetEnd sets End field to given value.
 
 
-### GetOutput
-
-`func (o *QuietHoursPolicyConfig) GetOutput() InvitationAllowedEntryKindsPolicyConfigOutput`
-
-GetOutput returns the Output field if non-nil, zero value otherwise.
-
-### GetOutputOk
-
-`func (o *QuietHoursPolicyConfig) GetOutputOk() (*InvitationAllowedEntryKindsPolicyConfigOutput, bool)`
-
-GetOutputOk returns a tuple with the Output field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetOutput
-
-`func (o *QuietHoursPolicyConfig) SetOutput(v InvitationAllowedEntryKindsPolicyConfigOutput)`
-
-SetOutput sets Output field to given value.
-
-### HasOutput
-
-`func (o *QuietHoursPolicyConfig) HasOutput() bool`
-
-HasOutput returns a boolean if a field has been set.
-
-### SetOutputNil
-
-`func (o *QuietHoursPolicyConfig) SetOutputNil(b bool)`
-
- SetOutputNil sets the value for Output to be an explicit nil
-
-### UnsetOutput
-`func (o *QuietHoursPolicyConfig) UnsetOutput()`
-
-UnsetOutput ensures that no value is present for Output, not even an explicit nil
 ### GetStart
 
 `func (o *QuietHoursPolicyConfig) GetStart() string`

@@ -40,7 +40,9 @@ orgs = client.orgs.list()
 
 # Create an org and user
 org = client.orgs.create(name="Acme")
-user = client.users.create(email="alice@example.com", org_id=org["id"])
+user = client.users.create(
+    name={"en": "Alice"}, email="alice@example.com", roles={org["id"]: ["users:read"]}
+)
 
 # Invoke entity actions via a fluent entity handle
 entity = client.entities.by_id("01J00000000000000000000000")

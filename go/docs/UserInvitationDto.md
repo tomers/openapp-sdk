@@ -7,14 +7,21 @@ Name | Type | Description | Notes
 **AcceptedUserId** | Pointer to **NullableString** |  | [optional]
 **Channel** | **string** | &#x60;sms&#x60;, &#x60;email&#x60;, or &#x60;both&#x60;. |
 **CreatedAt** | **string** |  |
+**DateOfBirth** | Pointer to **NullableString** | Parent-declared date of birth (&#x60;YYYY-MM-DD&#x60;). Present only while the invitation is pending. Applied to the account at redeem when the account has none. | [optional]
+**DefaultGroupIds** | Pointer to **[]string** | Groups joined when the invitation is redeemed, in the same transaction as the org role. | [optional]
 **DefaultRoles** | **[]string** |  |
 **Email** | Pointer to **NullableString** |  | [optional]
 **ExpiresAt** | **string** |  |
 **Id** | **string** |  |
 **InvitedByUserId** | **string** |  |
+**InviteeName** | Pointer to **NullableString** | Name the inviter gave for the invitee. Present only while the invitation is pending. | [optional]
 **LastSentAt** | Pointer to **NullableString** |  | [optional]
+**Locale** | Pointer to **NullableString** | Message language the sender chose, or &#x60;null&#x60; when none was chosen. | [optional]
+**MessageLocale** | Pointer to **NullableString** | Shipped locale code of the language the invitation messages are written in: the invitee&#39;s own account language, else &#x60;locale&#x60;, else the org default, else English. Present only while the invitation is pending. | [optional]
 **OrgId** | **string** |  |
 **Phone** | Pointer to **NullableString** | SMS recipient when the invite includes a phone (E.164). | [optional]
+**PhoneTransport** | Pointer to **NullableString** | &#x60;sms&#x60; or &#x60;whatsapp&#x60; when a phone PIN was sent. | [optional]
+**ResendAvailableAt** | Pointer to **NullableString** | When a resend is next accepted (RFC 3339). Present only while the invitation is pending; a resend before this time is refused with 429. | [optional]
 **SentCount** | **int32** |  |
 **SiteAccess** | Pointer to [**NullableInvitationSiteAccessDto**](InvitationSiteAccessDto.md) |  | [optional]
 **Status** | **string** |  |
@@ -112,6 +119,66 @@ and a boolean to check if the value has been set.
 
 SetCreatedAt sets CreatedAt field to given value.
 
+
+### GetDateOfBirth
+
+`func (o *UserInvitationDto) GetDateOfBirth() string`
+
+GetDateOfBirth returns the DateOfBirth field if non-nil, zero value otherwise.
+
+### GetDateOfBirthOk
+
+`func (o *UserInvitationDto) GetDateOfBirthOk() (*string, bool)`
+
+GetDateOfBirthOk returns a tuple with the DateOfBirth field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDateOfBirth
+
+`func (o *UserInvitationDto) SetDateOfBirth(v string)`
+
+SetDateOfBirth sets DateOfBirth field to given value.
+
+### HasDateOfBirth
+
+`func (o *UserInvitationDto) HasDateOfBirth() bool`
+
+HasDateOfBirth returns a boolean if a field has been set.
+
+### SetDateOfBirthNil
+
+`func (o *UserInvitationDto) SetDateOfBirthNil(b bool)`
+
+ SetDateOfBirthNil sets the value for DateOfBirth to be an explicit nil
+
+### UnsetDateOfBirth
+`func (o *UserInvitationDto) UnsetDateOfBirth()`
+
+UnsetDateOfBirth ensures that no value is present for DateOfBirth, not even an explicit nil
+### GetDefaultGroupIds
+
+`func (o *UserInvitationDto) GetDefaultGroupIds() []string`
+
+GetDefaultGroupIds returns the DefaultGroupIds field if non-nil, zero value otherwise.
+
+### GetDefaultGroupIdsOk
+
+`func (o *UserInvitationDto) GetDefaultGroupIdsOk() (*[]string, bool)`
+
+GetDefaultGroupIdsOk returns a tuple with the DefaultGroupIds field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDefaultGroupIds
+
+`func (o *UserInvitationDto) SetDefaultGroupIds(v []string)`
+
+SetDefaultGroupIds sets DefaultGroupIds field to given value.
+
+### HasDefaultGroupIds
+
+`func (o *UserInvitationDto) HasDefaultGroupIds() bool`
+
+HasDefaultGroupIds returns a boolean if a field has been set.
 
 ### GetDefaultRoles
 
@@ -228,6 +295,41 @@ and a boolean to check if the value has been set.
 SetInvitedByUserId sets InvitedByUserId field to given value.
 
 
+### GetInviteeName
+
+`func (o *UserInvitationDto) GetInviteeName() string`
+
+GetInviteeName returns the InviteeName field if non-nil, zero value otherwise.
+
+### GetInviteeNameOk
+
+`func (o *UserInvitationDto) GetInviteeNameOk() (*string, bool)`
+
+GetInviteeNameOk returns a tuple with the InviteeName field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetInviteeName
+
+`func (o *UserInvitationDto) SetInviteeName(v string)`
+
+SetInviteeName sets InviteeName field to given value.
+
+### HasInviteeName
+
+`func (o *UserInvitationDto) HasInviteeName() bool`
+
+HasInviteeName returns a boolean if a field has been set.
+
+### SetInviteeNameNil
+
+`func (o *UserInvitationDto) SetInviteeNameNil(b bool)`
+
+ SetInviteeNameNil sets the value for InviteeName to be an explicit nil
+
+### UnsetInviteeName
+`func (o *UserInvitationDto) UnsetInviteeName()`
+
+UnsetInviteeName ensures that no value is present for InviteeName, not even an explicit nil
 ### GetLastSentAt
 
 `func (o *UserInvitationDto) GetLastSentAt() string`
@@ -263,6 +365,76 @@ HasLastSentAt returns a boolean if a field has been set.
 `func (o *UserInvitationDto) UnsetLastSentAt()`
 
 UnsetLastSentAt ensures that no value is present for LastSentAt, not even an explicit nil
+### GetLocale
+
+`func (o *UserInvitationDto) GetLocale() string`
+
+GetLocale returns the Locale field if non-nil, zero value otherwise.
+
+### GetLocaleOk
+
+`func (o *UserInvitationDto) GetLocaleOk() (*string, bool)`
+
+GetLocaleOk returns a tuple with the Locale field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetLocale
+
+`func (o *UserInvitationDto) SetLocale(v string)`
+
+SetLocale sets Locale field to given value.
+
+### HasLocale
+
+`func (o *UserInvitationDto) HasLocale() bool`
+
+HasLocale returns a boolean if a field has been set.
+
+### SetLocaleNil
+
+`func (o *UserInvitationDto) SetLocaleNil(b bool)`
+
+ SetLocaleNil sets the value for Locale to be an explicit nil
+
+### UnsetLocale
+`func (o *UserInvitationDto) UnsetLocale()`
+
+UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+### GetMessageLocale
+
+`func (o *UserInvitationDto) GetMessageLocale() string`
+
+GetMessageLocale returns the MessageLocale field if non-nil, zero value otherwise.
+
+### GetMessageLocaleOk
+
+`func (o *UserInvitationDto) GetMessageLocaleOk() (*string, bool)`
+
+GetMessageLocaleOk returns a tuple with the MessageLocale field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMessageLocale
+
+`func (o *UserInvitationDto) SetMessageLocale(v string)`
+
+SetMessageLocale sets MessageLocale field to given value.
+
+### HasMessageLocale
+
+`func (o *UserInvitationDto) HasMessageLocale() bool`
+
+HasMessageLocale returns a boolean if a field has been set.
+
+### SetMessageLocaleNil
+
+`func (o *UserInvitationDto) SetMessageLocaleNil(b bool)`
+
+ SetMessageLocaleNil sets the value for MessageLocale to be an explicit nil
+
+### UnsetMessageLocale
+`func (o *UserInvitationDto) UnsetMessageLocale()`
+
+UnsetMessageLocale ensures that no value is present for MessageLocale, not even an explicit nil
 ### GetOrgId
 
 `func (o *UserInvitationDto) GetOrgId() string`
@@ -318,6 +490,76 @@ HasPhone returns a boolean if a field has been set.
 `func (o *UserInvitationDto) UnsetPhone()`
 
 UnsetPhone ensures that no value is present for Phone, not even an explicit nil
+### GetPhoneTransport
+
+`func (o *UserInvitationDto) GetPhoneTransport() string`
+
+GetPhoneTransport returns the PhoneTransport field if non-nil, zero value otherwise.
+
+### GetPhoneTransportOk
+
+`func (o *UserInvitationDto) GetPhoneTransportOk() (*string, bool)`
+
+GetPhoneTransportOk returns a tuple with the PhoneTransport field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPhoneTransport
+
+`func (o *UserInvitationDto) SetPhoneTransport(v string)`
+
+SetPhoneTransport sets PhoneTransport field to given value.
+
+### HasPhoneTransport
+
+`func (o *UserInvitationDto) HasPhoneTransport() bool`
+
+HasPhoneTransport returns a boolean if a field has been set.
+
+### SetPhoneTransportNil
+
+`func (o *UserInvitationDto) SetPhoneTransportNil(b bool)`
+
+ SetPhoneTransportNil sets the value for PhoneTransport to be an explicit nil
+
+### UnsetPhoneTransport
+`func (o *UserInvitationDto) UnsetPhoneTransport()`
+
+UnsetPhoneTransport ensures that no value is present for PhoneTransport, not even an explicit nil
+### GetResendAvailableAt
+
+`func (o *UserInvitationDto) GetResendAvailableAt() string`
+
+GetResendAvailableAt returns the ResendAvailableAt field if non-nil, zero value otherwise.
+
+### GetResendAvailableAtOk
+
+`func (o *UserInvitationDto) GetResendAvailableAtOk() (*string, bool)`
+
+GetResendAvailableAtOk returns a tuple with the ResendAvailableAt field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetResendAvailableAt
+
+`func (o *UserInvitationDto) SetResendAvailableAt(v string)`
+
+SetResendAvailableAt sets ResendAvailableAt field to given value.
+
+### HasResendAvailableAt
+
+`func (o *UserInvitationDto) HasResendAvailableAt() bool`
+
+HasResendAvailableAt returns a boolean if a field has been set.
+
+### SetResendAvailableAtNil
+
+`func (o *UserInvitationDto) SetResendAvailableAtNil(b bool)`
+
+ SetResendAvailableAtNil sets the value for ResendAvailableAt to be an explicit nil
+
+### UnsetResendAvailableAt
+`func (o *UserInvitationDto) UnsetResendAvailableAt()`
+
+UnsetResendAvailableAt ensures that no value is present for ResendAvailableAt, not even an explicit nil
 ### GetSentCount
 
 `func (o *UserInvitationDto) GetSentCount() int32`

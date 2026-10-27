@@ -28,6 +28,7 @@ type ApiApplyDirectoryListingsRequest struct {
 	deviceId                string
 	xOrg                    *string
 	generateListingsPayload *GenerateListingsPayload
+	idempotencyKey          *string
 }
 
 func (r ApiApplyDirectoryListingsRequest) XOrg(xOrg string) ApiApplyDirectoryListingsRequest {
@@ -40,12 +41,18 @@ func (r ApiApplyDirectoryListingsRequest) GenerateListingsPayload(generateListin
 	return r
 }
 
+// Replay key; a retry with the same key and body returns the original result.
+func (r ApiApplyDirectoryListingsRequest) IdempotencyKey(idempotencyKey string) ApiApplyDirectoryListingsRequest {
+	r.idempotencyKey = &idempotencyKey
+	return r
+}
+
 func (r ApiApplyDirectoryListingsRequest) Execute() (*GeneratePlanResponse, *http.Response, error) {
 	return r.ApiService.ApplyDirectoryListingsExecute(r)
 }
 
 /*
-ApplyDirectoryListings Apply a generation. Idempotent: re-running converges rather than duplicating.
+ApplyDirectoryListings Apply a generation. Idempotent: re-running it leaves the same result and creates no duplicates.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param deviceId
@@ -106,6 +113,9 @@ func (a *DirectoryAPIService) ApplyDirectoryListingsExecute(r ApiApplyDirectoryL
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	if r.idempotencyKey != nil {
+		parameterAddToHeaderOrQuery(localVarHeaderParams, "Idempotency-Key", r.idempotencyKey, "simple", "")
+	}
 	// body params
 	localVarPostBody = r.generateListingsPayload
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
@@ -255,6 +265,117 @@ func (a *DirectoryAPIService) GetDirectoryConfigExecute(r ApiGetDirectoryConfigR
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiOrderDirectoryListingsRequest struct {
+	ctx                   context.Context
+	ApiService            *DirectoryAPIService
+	deviceId              string
+	xOrg                  *string
+	directoryOrderPayload *DirectoryOrderPayload
+}
+
+func (r ApiOrderDirectoryListingsRequest) XOrg(xOrg string) ApiOrderDirectoryListingsRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiOrderDirectoryListingsRequest) DirectoryOrderPayload(directoryOrderPayload DirectoryOrderPayload) ApiOrderDirectoryListingsRequest {
+	r.directoryOrderPayload = &directoryOrderPayload
+	return r
+}
+
+func (r ApiOrderDirectoryListingsRequest) Execute() (*http.Response, error) {
+	return r.ApiService.OrderDirectoryListingsExecute(r)
+}
+
+/*
+OrderDirectoryListings Set `display_order` from the given listing id sequence.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param deviceId
+	@return ApiOrderDirectoryListingsRequest
+*/
+func (a *DirectoryAPIService) OrderDirectoryListings(ctx context.Context, deviceId string) ApiOrderDirectoryListingsRequest {
+	return ApiOrderDirectoryListingsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		deviceId:   deviceId,
+	}
+}
+
+// Execute executes the request
+func (a *DirectoryAPIService) OrderDirectoryListingsExecute(r ApiOrderDirectoryListingsRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodPut
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "DirectoryAPIService.OrderDirectoryListings")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/devices/{device_id}/directory-listings/order"
+	localVarPath = strings.Replace(localVarPath, "{"+"device_id"+"}", url.PathEscape(parameterValueToString(r.deviceId, "deviceId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return nil, reportError("xOrg is required and must be specified")
+	}
+	if r.directoryOrderPayload == nil {
+		return nil, reportError("directoryOrderPayload is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	// body params
+	localVarPostBody = r.directoryOrderPayload
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
 }
 
 type ApiPlanDirectoryListingsRequest struct {

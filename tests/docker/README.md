@@ -35,7 +35,7 @@ Raw Compose:
 ```bash
 SDK_DOCKER_UID="$(id -u)" SDK_DOCKER_GID="$(id -g)" \
   docker compose --env-file tests/docker/rust-pin.env -f tests/docker/compose.yaml run --rm sdk-python \
-  sh -euxc 'uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && uv run pytest -q tests/unit'
+  sh -euxc 'cd python && uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && uv run pytest -q tests/unit'
 ```
 
 See [`../TESTING.md`](../../TESTING.md) for the full command matrix.

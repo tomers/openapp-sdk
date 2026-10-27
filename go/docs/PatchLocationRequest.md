@@ -6,15 +6,16 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **City** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
 **Country** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
+**CountryCode** | Pointer to **NullableString** |  | [optional]
 **FormattedAddress** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
 **Geocode** | Pointer to **bool** |  | [optional]
 **GeocodingProvider** | Pointer to [**NullableGeocodingProviderId**](GeocodingProviderId.md) |  | [optional]
 **Kind** | Pointer to [**NullableLocationKind**](LocationKind.md) |  | [optional]
 **Lat** | Pointer to **NullableFloat64** |  | [optional]
 **Lng** | Pointer to **NullableFloat64** |  | [optional]
-**Locale** | Pointer to **NullableString** | Preferred locale (app code or BCP-47) for geocoding (see &#x60;CreateLocationRequest::locale&#x60;). | [optional]
+**Locale** | Pointer to **NullableString** | Preferred locale (app code or BCP-47) for geocoding: controls the language of geocoded text and the locale key it is tagged under. Defaults to &#x60;en&#x60; when omitted. | [optional]
 **Notes** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
-**ProviderPlaceId** | Pointer to **NullableString** | Replaces the stored place reference. Both fields must be sent together (see &#x60;CreateLocationRequest::provider_place_id&#x60;). | [optional]
+**ProviderPlaceId** | Pointer to **NullableString** | Opaque place id issued by &#x60;geocoding_provider&#x60;; replaces the stored place reference. Both fields must be sent together: a place id cannot be resolved without naming its issuer. | [optional]
 
 ## Methods
 
@@ -105,6 +106,41 @@ HasCountry returns a boolean if a field has been set.
 `func (o *PatchLocationRequest) UnsetCountry()`
 
 UnsetCountry ensures that no value is present for Country, not even an explicit nil
+### GetCountryCode
+
+`func (o *PatchLocationRequest) GetCountryCode() string`
+
+GetCountryCode returns the CountryCode field if non-nil, zero value otherwise.
+
+### GetCountryCodeOk
+
+`func (o *PatchLocationRequest) GetCountryCodeOk() (*string, bool)`
+
+GetCountryCodeOk returns a tuple with the CountryCode field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCountryCode
+
+`func (o *PatchLocationRequest) SetCountryCode(v string)`
+
+SetCountryCode sets CountryCode field to given value.
+
+### HasCountryCode
+
+`func (o *PatchLocationRequest) HasCountryCode() bool`
+
+HasCountryCode returns a boolean if a field has been set.
+
+### SetCountryCodeNil
+
+`func (o *PatchLocationRequest) SetCountryCodeNil(b bool)`
+
+ SetCountryCodeNil sets the value for CountryCode to be an explicit nil
+
+### UnsetCountryCode
+`func (o *PatchLocationRequest) UnsetCountryCode()`
+
+UnsetCountryCode ensures that no value is present for CountryCode, not even an explicit nil
 ### GetFormattedAddress
 
 `func (o *PatchLocationRequest) GetFormattedAddress() LocalizedString`

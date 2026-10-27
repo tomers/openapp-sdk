@@ -19,9 +19,11 @@ import (
 // checks if the PublicPortalCreateSessionRequest type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &PublicPortalCreateSessionRequest{}
 
-// PublicPortalCreateSessionRequest Map of light entity ULID to auto-off duration in seconds (re-exported for OpenAPI).
+// PublicPortalCreateSessionRequest Start a visitor session with a directory entry.
 type PublicPortalCreateSessionRequest struct {
-	Mode           string `json:"mode"`
+	// `voice`, `video` or `message` (case-insensitive); any other value is rejected with 400.
+	Mode string `json:"mode"`
+	// ID of the directory entry (listing entity) to contact. Required; 400 when blank.
 	TargetEntityId string `json:"target_entity_id"`
 }
 

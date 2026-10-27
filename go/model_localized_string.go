@@ -19,9 +19,8 @@ import (
 // checks if the LocalizedString type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LocalizedString{}
 
-// LocalizedString Localized string dictionary.  This matches the dashboard convention: `{ [locale: string]: string }`.  Notes: - Internally this is keyed by `icu_locale_core::Locale` for type-safety. - For JSON/OpenAPI purposes this is treated as a `{ [locale: string]: string }` object.
+// LocalizedString Localized text: a JSON object mapping locale codes (for example `en`, `he`, `pt-BR`) to the text in that language.
 type LocalizedString struct {
-	// OpenAPI representation: `HashMap<String, String>` (JSON object).
 	Value map[string]string `json:"value"`
 }
 

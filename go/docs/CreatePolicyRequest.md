@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 **Capability** | Pointer to **NullableString** | Optional capability scoping (e.g. &#x60;switchable&#x60;, &#x60;users_admin&#x60;). | [optional]
 **Config** | **map[string]interface{}** | Typed-per-&#x60;policy_type&#x60; configuration document. For the documented typed shapes, see &#x60;RequireStepUpPolicyConfig&#x60; and &#x60;ApprovalThresholdPolicyConfig&#x60;. |
 **Enabled** | Pointer to **NullableBool** | Defaults to true. | [optional]
-**Enforcement** | Pointer to **NullableString** | &#x60;enforce&#x60; (default) | &#x60;require_approval&#x60; | &#x60;audit_only&#x60;. | [optional]
+**Enforcement** | Pointer to **NullableString** | &#x60;enforce&#x60; (default) or &#x60;require_approval&#x60;. Each &#x60;policy_type&#x60; declares which modes it accepts (only &#x60;user_sharing&#x60; accepts &#x60;require_approval&#x60;); any other value is rejected with 400. | [optional]
 **PolicyType** | **string** | e.g. &#x60;invitation_curfew&#x60;, &#x60;user_sharing&#x60;. |
 
 ## Methods

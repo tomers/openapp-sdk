@@ -7,13 +7,16 @@ Method | HTTP request | Description
 [**CreateOrg**](OrgsAPI.md#CreateOrg) | **Post** /orgs | Create an organization (body: name, description?, parent_id?).
 [**DeleteOrg**](OrgsAPI.md#DeleteOrg) | **Delete** /orgs/{id} | Soft-delete an organization.
 [**GetOrg**](OrgsAPI.md#GetOrg) | **Get** /orgs/{id} | Get an organization by ID.
-[**GetOrgPermissions**](OrgsAPI.md#GetOrgPermissions) | **Get** /orgs/{id}/permissions | Get current user&#39;s permissions for an organization.
+[**GetOrgDefaultLocale**](OrgsAPI.md#GetOrgDefaultLocale) | **Get** /orgs/{id}/default-locale | Get the org&#39;s default message language.
+[**GetOrgPermissions**](OrgsAPI.md#GetOrgPermissions) | **Get** /orgs/{id}/permissions | Get the current user&#39;s permissions for an organization.
 [**HardDeleteOrg**](OrgsAPI.md#HardDeleteOrg) | **Delete** /orgs/{id}/purge | Permanently delete (purge) an organization.
 [**ListOrgAncestors**](OrgsAPI.md#ListOrgAncestors) | **Get** /orgs/{id}/ancestors | Visible ancestor chain of an org, ordered root-most first (excludes the org itself).
 [**ListOrgChildren**](OrgsAPI.md#ListOrgChildren) | **Get** /orgs/children | List the direct children of an org (or the visible-forest roots) for lazy tree expansion.
 [**ListOrgUsers**](OrgsAPI.md#ListOrgUsers) | **Get** /orgs/{org_id}/users | List users in an organization (and optionally descendant orgs).
 [**ListOrgs**](OrgsAPI.md#ListOrgs) | **Get** /orgs | List organizations the user has access to.
+[**RestoreOrg**](OrgsAPI.md#RestoreOrg) | **Post** /orgs/{id}/restore | Restore a soft-deleted organization.
 [**SearchOrgs**](OrgsAPI.md#SearchOrgs) | **Get** /orgs/search | Free-text search across the orgs visible to the caller (flat, paginated).
+[**SetOrgDefaultLocale**](OrgsAPI.md#SetOrgDefaultLocale) | **Patch** /orgs/{id}/default-locale | Set or clear the org&#39;s default message language.
 [**UpdateOrg**](OrgsAPI.md#UpdateOrg) | **Put** /orgs/{id} | Update an organization (body: name?, description?, parent_id?).
 
 
@@ -238,11 +241,85 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## GetOrgDefaultLocale
+
+> OrgDefaultLocaleResponse GetOrgDefaultLocale(ctx, id).Execute()
+
+Get the org's default message language.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgsAPI.GetOrgDefaultLocale(context.Background(), id).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.GetOrgDefaultLocale``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `GetOrgDefaultLocale`: OrgDefaultLocaleResponse
+	fmt.Fprintf(os.Stdout, "Response from `OrgsAPI.GetOrgDefaultLocale`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetOrgDefaultLocaleRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**OrgDefaultLocaleResponse**](OrgDefaultLocaleResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## GetOrgPermissions
 
 > OrgPermissionsResponse GetOrgPermissions(ctx, id).Execute()
 
-Get current user's permissions for an organization.
+Get the current user's permissions for an organization.
+
+
 
 ### Example
 
@@ -534,7 +611,7 @@ Name | Type | Description  | Notes
 
 ## ListOrgUsers
 
-> PaginatedResponse ListOrgUsers(ctx, orgId).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).Recursive(recursive).Execute()
+> PaginatedResponse ListOrgUsers(ctx, orgId).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).Recursive(recursive).Q(q).Role(role).Execute()
 
 List users in an organization (and optionally descendant orgs).
 
@@ -556,6 +633,8 @@ func main() {
 	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
 	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
 	recursive := true // bool |  (optional)
+	q := "q_example" // string | Case-insensitive substring of name or email. (optional)
+	role := "role_example" // string | Membership role that must be held in the listed org subtree. (optional)
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -563,7 +642,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgsAPI.ListOrgUsers(context.Background(), orgId).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).Recursive(recursive).Execute()
+	resp, r, err := apiClient.OrgsAPI.ListOrgUsers(context.Background(), orgId).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).Recursive(recursive).Q(q).Role(role).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.ListOrgUsers``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -593,6 +672,8 @@ Name | Type | Description  | Notes
  **outputOptions** | [**MultiResourceOutputOptionsQuery**](MultiResourceOutputOptionsQuery.md) |  |
  **pagination** | [**PaginationQuery**](PaginationQuery.md) |  |
  **recursive** | **bool** |  |
+ **q** | **string** | Case-insensitive substring of name or email. |
+ **role** | **string** | Membership role that must be held in the listed org subtree. |
 
 ### Return type
 
@@ -682,6 +763,80 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## RestoreOrg
+
+> OrganizationResponse RestoreOrg(ctx, id).IncludeDeleted(includeDeleted).Execute()
+
+Restore a soft-deleted organization.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	includeDeleted := true // bool |  (optional)
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgsAPI.RestoreOrg(context.Background(), id).IncludeDeleted(includeDeleted).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.RestoreOrg``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `RestoreOrg`: OrganizationResponse
+	fmt.Fprintf(os.Stdout, "Response from `OrgsAPI.RestoreOrg`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiRestoreOrgRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **includeDeleted** | **bool** |  |
+
+### Return type
+
+[**OrganizationResponse**](OrganizationResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## SearchOrgs
 
 > PaginatedResponse SearchOrgs(ctx).Q(q).OutputOptions(outputOptions).Pagination(pagination).Execute()
@@ -749,6 +904,80 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## SetOrgDefaultLocale
+
+> OrgDefaultLocaleResponse SetOrgDefaultLocale(ctx, id).SetOrgDefaultLocaleRequest(setOrgDefaultLocaleRequest).Execute()
+
+Set or clear the org's default message language.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	setOrgDefaultLocaleRequest := *openapiclient.NewSetOrgDefaultLocaleRequest() // SetOrgDefaultLocaleRequest |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgsAPI.SetOrgDefaultLocale(context.Background(), id).SetOrgDefaultLocaleRequest(setOrgDefaultLocaleRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgsAPI.SetOrgDefaultLocale``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `SetOrgDefaultLocale`: OrgDefaultLocaleResponse
+	fmt.Fprintf(os.Stdout, "Response from `OrgsAPI.SetOrgDefaultLocale`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiSetOrgDefaultLocaleRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **setOrgDefaultLocaleRequest** | [**SetOrgDefaultLocaleRequest**](SetOrgDefaultLocaleRequest.md) |  |
+
+### Return type
+
+[**OrgDefaultLocaleResponse**](OrgDefaultLocaleResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)

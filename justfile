@@ -68,12 +68,12 @@ behave:
 docker-core:
     SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" \
       docker compose --env-file {{ _pin_env }} -f {{ _compose }} run --rm sdk-core \
-      sh -euxc 'cargo fmt --all -- --check && cargo clippy --workspace --all-targets --all-features -- -D warnings && cargo test --workspace'
+      sh -euxc 'cd rust && cargo fmt --all -- --check && cargo clippy --workspace --all-targets --all-features -- -D warnings && cargo test --workspace'
 
 docker-python:
     SDK_DOCKER_UID="${SDK_DOCKER_UID:-$(id -u)}" SDK_DOCKER_GID="${SDK_DOCKER_GID:-$(id -g)}" \
       docker compose --env-file {{ _pin_env }} -f {{ _compose }} run --rm sdk-python \
-      sh -euxc 'uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && uv run pytest -v tests/unit tests/contract'
+      sh -euxc 'cd python && uv sync --all-extras && uv run maturin develop --features pyo3/extension-module && uv run pytest -v tests/unit tests/contract'
 
 docker-go:
     #!/usr/bin/env bash
@@ -85,7 +85,7 @@ docker-go:
     docker compose --env-file "{{ _pin_env }}" -f tests/docker/compose.yaml build sdk-go
     docker compose --env-file "{{ _pin_env }}" -f tests/docker/compose.yaml run --rm \
       --user "${SDK_DOCKER_UID}:${SDK_DOCKER_GID}" sdk-go \
-      sh -euxc 'go vet ./... && go build ./... && go test ./...'
+      sh -euxc 'cd go && go vet ./... && go build ./... && go test ./...'
 
 # Merge Allure inputs and generate HTML (after `just test`).
 report-allure:

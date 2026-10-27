@@ -9,7 +9,7 @@ use std::sync::mpsc;
 use std::time::Duration;
 
 use openapp_sdk_core_c_bridge::BridgeStatus;
-use wiremock::matchers::{method, path, query_param};
+use wiremock::matchers::{header, method, path, query_param};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
 fn cstr_to_string(p: *mut c_char) -> String {
@@ -297,7 +297,8 @@ async fn async_devices_get_by_name_not_found() {
 async fn async_zones_get_by_name_happy_path() {
     let server = MockServer::start().await;
     Mock::given(method("GET"))
-        .and(path("/api/v1/integrations/01HINT/zones"))
+        .and(path("/api/v1/zones"))
+        .and(header("X-Org", "01HORG"))
         .respond_with(ResponseTemplate::new(200).set_body_json(serde_json::json!({
             "items": [{"id": "01HZONE", "name": {"en": "Building A"}}],
             "total": 1
@@ -314,11 +315,11 @@ async fn async_zones_get_by_name_happy_path() {
         let (tx, rx) = mpsc::channel();
         let ctx = Box::new(AsyncCbCtx { tx });
         let user_data = Box::into_raw(ctx).cast::<c_void>();
-        let integration_c = CString::new("01HINT").unwrap();
+        let org_c = CString::new("01HORG").unwrap();
         let name_c = CString::new("Building A").unwrap();
         let schedule = openapp_sdk_core_c_bridge::openapp_sdk_client_zones_get_by_name_async(
             client,
-            integration_c.as_ptr(),
+            org_c.as_ptr(),
             name_c.as_ptr(),
             0,
             Some(async_resolve_complete),

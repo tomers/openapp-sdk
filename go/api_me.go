@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 )
 
@@ -618,100 +619,6 @@ func (a *MeAPIService) DeleteMeCallBlockExecute(r ApiDeleteMeCallBlockRequest) (
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeleteMeDeviceTokenRequest struct {
-	ctx        context.Context
-	ApiService *MeAPIService
-	id         string
-}
-
-func (r ApiDeleteMeDeviceTokenRequest) Execute() (*http.Response, error) {
-	return r.ApiService.DeleteMeDeviceTokenExecute(r)
-}
-
-/*
-DeleteMeDeviceToken DELETE /me/device-tokens/{id} — remove a previously registered native token (logout / rotation).
-
-`id` is either the **row id** (ULID) returned from `POST /me/device-tokens`, or the **raw push
-token** (URL-encoded if necessary). If the segment parses as a ULID, the row id path is used;
-otherwise the value is treated as the opaque provider token string.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param id Row ULID from POST response, or URL-encoded raw device token
-	@return ApiDeleteMeDeviceTokenRequest
-*/
-func (a *MeAPIService) DeleteMeDeviceToken(ctx context.Context, id string) ApiDeleteMeDeviceTokenRequest {
-	return ApiDeleteMeDeviceTokenRequest{
-		ApiService: a,
-		ctx:        ctx,
-		id:         id,
-	}
-}
-
-// Execute executes the request
-func (a *MeAPIService) DeleteMeDeviceTokenExecute(r ApiDeleteMeDeviceTokenRequest) (*http.Response, error) {
-	var (
-		localVarHTTPMethod = http.MethodDelete
-		localVarPostBody   interface{}
-		formFiles          []formFile
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.DeleteMeDeviceToken")
-	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/device-tokens/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarHTTPResponse, newErr
-	}
-
-	return localVarHTTPResponse, nil
-}
-
 type ApiDeleteMeGroupRequest struct {
 	ctx        context.Context
 	ApiService *MeAPIService
@@ -887,6 +794,92 @@ func (a *MeAPIService) DeleteMeGroupMemberExecute(r ApiDeleteMeGroupMemberReques
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
+type ApiDeleteMeProfileImageRequest struct {
+	ctx        context.Context
+	ApiService *MeAPIService
+}
+
+func (r ApiDeleteMeProfileImageRequest) Execute() (*http.Response, error) {
+	return r.ApiService.DeleteMeProfileImageExecute(r)
+}
+
+/*
+DeleteMeProfileImage Method for DeleteMeProfileImage
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiDeleteMeProfileImageRequest
+*/
+func (a *MeAPIService) DeleteMeProfileImage(ctx context.Context) ApiDeleteMeProfileImageRequest {
+	return ApiDeleteMeProfileImageRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+func (a *MeAPIService) DeleteMeProfileImageExecute(r ApiDeleteMeProfileImageRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodDelete
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.DeleteMeProfileImage")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/me/profile/image"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return nil, err
@@ -1130,7 +1123,7 @@ func (r ApiGetMeDirectoryListingsRequest) Execute() (*MeListingsResponse, *http.
 }
 
 /*
-GetMeDirectoryListings GET /me/directory-listings — returns listings the current user is a member of.
+GetMeDirectoryListings List the directory listings the current user is a member of.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiGetMeDirectoryListingsRequest
@@ -1658,7 +1651,7 @@ func (r ApiGetMeInvitationsRequest) Execute() (*MeInvitationsResponse, *http.Res
 }
 
 /*
-GetMeInvitations GET /me/invitations — returns invitations the current user has claimed.
+GetMeInvitations List the invitations the current user has claimed.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiGetMeInvitationsRequest
@@ -1746,23 +1739,23 @@ func (a *MeAPIService) GetMeInvitationsExecute(r ApiGetMeInvitationsRequest) (*M
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetMePrivacyExportRequest struct {
+type ApiGetMeMembershipsRequest struct {
 	ctx        context.Context
 	ApiService *MeAPIService
 }
 
-func (r ApiGetMePrivacyExportRequest) Execute() (*PrivacyExportResponse, *http.Response, error) {
-	return r.ApiService.GetMePrivacyExportExecute(r)
+func (r ApiGetMeMembershipsRequest) Execute() (*MeMembershipsResponse, *http.Response, error) {
+	return r.ApiService.GetMeMembershipsExecute(r)
 }
 
 /*
-GetMePrivacyExport Method for GetMePrivacyExport
+GetMeMemberships Method for GetMeMemberships
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiGetMePrivacyExportRequest
+	@return ApiGetMeMembershipsRequest
 */
-func (a *MeAPIService) GetMePrivacyExport(ctx context.Context) ApiGetMePrivacyExportRequest {
-	return ApiGetMePrivacyExportRequest{
+func (a *MeAPIService) GetMeMemberships(ctx context.Context) ApiGetMeMembershipsRequest {
+	return ApiGetMeMembershipsRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -1770,21 +1763,122 @@ func (a *MeAPIService) GetMePrivacyExport(ctx context.Context) ApiGetMePrivacyEx
 
 // Execute executes the request
 //
-//	@return PrivacyExportResponse
-func (a *MeAPIService) GetMePrivacyExportExecute(r ApiGetMePrivacyExportRequest) (*PrivacyExportResponse, *http.Response, error) {
+//	@return MeMembershipsResponse
+func (a *MeAPIService) GetMeMembershipsExecute(r ApiGetMeMembershipsRequest) (*MeMembershipsResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *PrivacyExportResponse
+		localVarReturnValue *MeMembershipsResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.GetMePrivacyExport")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.GetMeMemberships")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/me/privacy-export"
+	localVarPath := localBasePath + "/me/memberships"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetMeNotificationPreferencesRequest struct {
+	ctx        context.Context
+	ApiService *MeAPIService
+}
+
+func (r ApiGetMeNotificationPreferencesRequest) Execute() (*NotificationPreferences, *http.Response, error) {
+	return r.ApiService.GetMeNotificationPreferencesExecute(r)
+}
+
+/*
+GetMeNotificationPreferences Get which optional channels the signed-in user receives notices on.
+
+Email always receives notices and has no switch. A user who never changed a switch has every
+channel on.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiGetMeNotificationPreferencesRequest
+*/
+func (a *MeAPIService) GetMeNotificationPreferences(ctx context.Context) ApiGetMeNotificationPreferencesRequest {
+	return ApiGetMeNotificationPreferencesRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return NotificationPreferences
+func (a *MeAPIService) GetMeNotificationPreferencesExecute(r ApiGetMeNotificationPreferencesRequest) (*NotificationPreferences, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *NotificationPreferences
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.GetMeNotificationPreferences")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/me/notification-preferences"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -1888,320 +1982,6 @@ func (a *MeAPIService) GetMeProfileExecute(r ApiGetMeProfileRequest) (*MeProfile
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiGetMePushSubscriptionStatusRequest struct {
-	ctx        context.Context
-	ApiService *MeAPIService
-}
-
-func (r ApiGetMePushSubscriptionStatusRequest) Execute() (*MePushSubscriptionStatusResponse, *http.Response, error) {
-	return r.ApiService.GetMePushSubscriptionStatusExecute(r)
-}
-
-/*
-GetMePushSubscriptionStatus GET /me/push-subscription-status — returns whether the current user has any push subscription.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiGetMePushSubscriptionStatusRequest
-*/
-func (a *MeAPIService) GetMePushSubscriptionStatus(ctx context.Context) ApiGetMePushSubscriptionStatusRequest {
-	return ApiGetMePushSubscriptionStatusRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return MePushSubscriptionStatusResponse
-func (a *MeAPIService) GetMePushSubscriptionStatusExecute(r ApiGetMePushSubscriptionStatusRequest) (*MePushSubscriptionStatusResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *MePushSubscriptionStatusResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.GetMePushSubscriptionStatus")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/push-subscription-status"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiGetMePushVapidPublicKeyRequest struct {
-	ctx        context.Context
-	ApiService *MeAPIService
-}
-
-func (r ApiGetMePushVapidPublicKeyRequest) Execute() (*MePushVapidPublicKeyResponse, *http.Response, error) {
-	return r.ApiService.GetMePushVapidPublicKeyExecute(r)
-}
-
-/*
-GetMePushVapidPublicKey GET /me/push-vapid-public-key — returns VAPID public key for client subscription. 404 when not configured.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiGetMePushVapidPublicKeyRequest
-*/
-func (a *MeAPIService) GetMePushVapidPublicKey(ctx context.Context) ApiGetMePushVapidPublicKeyRequest {
-	return ApiGetMePushVapidPublicKeyRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return MePushVapidPublicKeyResponse
-func (a *MeAPIService) GetMePushVapidPublicKeyExecute(r ApiGetMePushVapidPublicKeyRequest) (*MePushVapidPublicKeyResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *MePushVapidPublicKeyResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.GetMePushVapidPublicKey")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/push-vapid-public-key"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiGetMeShareAuthoringRequest struct {
-	ctx           context.Context
-	ApiService    *MeAPIService
-	orgId         *string
-	integrationId *string
-}
-
-func (r ApiGetMeShareAuthoringRequest) OrgId(orgId string) ApiGetMeShareAuthoringRequest {
-	r.orgId = &orgId
-	return r
-}
-
-func (r ApiGetMeShareAuthoringRequest) IntegrationId(integrationId string) ApiGetMeShareAuthoringRequest {
-	r.integrationId = &integrationId
-	return r
-}
-
-func (r ApiGetMeShareAuthoringRequest) Execute() (*MeShareAuthoringResponse, *http.Response, error) {
-	return r.ApiService.GetMeShareAuthoringExecute(r)
-}
-
-/*
-GetMeShareAuthoring Method for GetMeShareAuthoring
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiGetMeShareAuthoringRequest
-*/
-func (a *MeAPIService) GetMeShareAuthoring(ctx context.Context) ApiGetMeShareAuthoringRequest {
-	return ApiGetMeShareAuthoringRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return MeShareAuthoringResponse
-func (a *MeAPIService) GetMeShareAuthoringExecute(r ApiGetMeShareAuthoringRequest) (*MeShareAuthoringResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodGet
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *MeShareAuthoringResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.GetMeShareAuthoring")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/share-authoring"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.orgId == nil {
-		return localVarReturnValue, nil, reportError("orgId is required and must be specified")
-	}
-	if r.integrationId == nil {
-		return localVarReturnValue, nil, reportError("integrationId is required and must be specified")
-	}
-
-	parameterAddToHeaderOrQuery(localVarQueryParams, "org_id", r.orgId, "form", "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "integration_id", r.integrationId, "form", "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -2385,7 +2165,7 @@ func (r ApiPatchMeDirectoryListingDndRequest) Execute() (*http.Response, error) 
 }
 
 /*
-PatchMeDirectoryListingDnd PATCH /me/directory-listings/{entityId}/dnd — update DND state for a listing.
+PatchMeDirectoryListingDnd Update DND state for a listing.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param entityId
@@ -2485,7 +2265,7 @@ func (r ApiPatchMeDndRequest) Execute() (*http.Response, error) {
 }
 
 /*
-PatchMeDnd PATCH /me/dnd — update global DND state.
+PatchMeDnd Update global DND state.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiPatchMeDndRequest
@@ -2874,236 +2654,30 @@ func (a *MeAPIService) PostMeCallBlockExecute(r ApiPostMeCallBlockRequest) (*MeC
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiPostMeCallReportRequest struct {
-	ctx                     context.Context
-	ApiService              *MeAPIService
-	postMeCallReportPayload *PostMeCallReportPayload
-}
-
-func (r ApiPostMeCallReportRequest) PostMeCallReportPayload(postMeCallReportPayload PostMeCallReportPayload) ApiPostMeCallReportRequest {
-	r.postMeCallReportPayload = &postMeCallReportPayload
-	return r
-}
-
-func (r ApiPostMeCallReportRequest) Execute() (*MeCallSafetyOkResponse, *http.Response, error) {
-	return r.ApiService.PostMeCallReportExecute(r)
-}
-
-/*
-PostMeCallReport Method for PostMeCallReport
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiPostMeCallReportRequest
-*/
-func (a *MeAPIService) PostMeCallReport(ctx context.Context) ApiPostMeCallReportRequest {
-	return ApiPostMeCallReportRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return MeCallSafetyOkResponse
-func (a *MeAPIService) PostMeCallReportExecute(r ApiPostMeCallReportRequest) (*MeCallSafetyOkResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *MeCallSafetyOkResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PostMeCallReport")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/call-reports"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.postMeCallReportPayload == nil {
-		return localVarReturnValue, nil, reportError("postMeCallReportPayload is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.postMeCallReportPayload
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostMeDeletionRequestRequest struct {
+type ApiPostMeProfileImageRequest struct {
 	ctx        context.Context
 	ApiService *MeAPIService
+	file       *os.File
 }
 
-func (r ApiPostMeDeletionRequestRequest) Execute() (*DeletionRequestResponse, *http.Response, error) {
-	return r.ApiService.PostMeDeletionRequestExecute(r)
-}
-
-/*
-PostMeDeletionRequest Method for PostMeDeletionRequest
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiPostMeDeletionRequestRequest
-*/
-func (a *MeAPIService) PostMeDeletionRequest(ctx context.Context) ApiPostMeDeletionRequestRequest {
-	return ApiPostMeDeletionRequestRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return DeletionRequestResponse
-func (a *MeAPIService) PostMeDeletionRequestExecute(r ApiPostMeDeletionRequestRequest) (*DeletionRequestResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *DeletionRequestResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PostMeDeletionRequest")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/deletion-request"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostMeDeviceTokenRequest struct {
-	ctx                      context.Context
-	ApiService               *MeAPIService
-	postMeDeviceTokenPayload *PostMeDeviceTokenPayload
-}
-
-func (r ApiPostMeDeviceTokenRequest) PostMeDeviceTokenPayload(postMeDeviceTokenPayload PostMeDeviceTokenPayload) ApiPostMeDeviceTokenRequest {
-	r.postMeDeviceTokenPayload = &postMeDeviceTokenPayload
+// Image file bytes (JPEG, PNG, or WebP).
+func (r ApiPostMeProfileImageRequest) File(file *os.File) ApiPostMeProfileImageRequest {
+	r.file = file
 	return r
 }
 
-func (r ApiPostMeDeviceTokenRequest) Execute() (*PostMeDeviceTokenResponse, *http.Response, error) {
-	return r.ApiService.PostMeDeviceTokenExecute(r)
+func (r ApiPostMeProfileImageRequest) Execute() (*ResourceImageUrlResponse, *http.Response, error) {
+	return r.ApiService.PostMeProfileImageExecute(r)
 }
 
 /*
-PostMeDeviceToken POST /me/device-tokens — register a native push token for call notifications.
+PostMeProfileImage Method for PostMeProfileImage
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiPostMeDeviceTokenRequest
+	@return ApiPostMeProfileImageRequest
 */
-func (a *MeAPIService) PostMeDeviceToken(ctx context.Context) ApiPostMeDeviceTokenRequest {
-	return ApiPostMeDeviceTokenRequest{
+func (a *MeAPIService) PostMeProfileImage(ctx context.Context) ApiPostMeProfileImageRequest {
+	return ApiPostMeProfileImageRequest{
 		ApiService: a,
 		ctx:        ctx,
 	}
@@ -3111,31 +2685,31 @@ func (a *MeAPIService) PostMeDeviceToken(ctx context.Context) ApiPostMeDeviceTok
 
 // Execute executes the request
 //
-//	@return PostMeDeviceTokenResponse
-func (a *MeAPIService) PostMeDeviceTokenExecute(r ApiPostMeDeviceTokenRequest) (*PostMeDeviceTokenResponse, *http.Response, error) {
+//	@return ResourceImageUrlResponse
+func (a *MeAPIService) PostMeProfileImageExecute(r ApiPostMeProfileImageRequest) (*ResourceImageUrlResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *PostMeDeviceTokenResponse
+		localVarReturnValue *ResourceImageUrlResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PostMeDeviceToken")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PostMeProfileImage")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/me/device-tokens"
+	localVarPath := localBasePath + "/me/profile/image"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.postMeDeviceTokenPayload == nil {
-		return localVarReturnValue, nil, reportError("postMeDeviceTokenPayload is required and must be specified")
+	if r.file == nil {
+		return localVarReturnValue, nil, reportError("file is required and must be specified")
 	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
+	localVarHTTPContentTypes := []string{"multipart/form-data"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -3151,105 +2725,20 @@ func (a *MeAPIService) PostMeDeviceTokenExecute(r ApiPostMeDeviceTokenRequest) (
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	// body params
-	localVarPostBody = r.postMeDeviceTokenPayload
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
+	var fileLocalVarFormFileName string
+	var fileLocalVarFileName string
+	var fileLocalVarFileBytes []byte
 
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	fileLocalVarFormFileName = "file"
+	fileLocalVarFile := r.file
 
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
+	if fileLocalVarFile != nil {
+		fbs, _ := io.ReadAll(fileLocalVarFile)
 
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostMeProfileSyncRequest struct {
-	ctx        context.Context
-	ApiService *MeAPIService
-}
-
-func (r ApiPostMeProfileSyncRequest) Execute() (*MeProfileResponse, *http.Response, error) {
-	return r.ApiService.PostMeProfileSyncExecute(r)
-}
-
-/*
-PostMeProfileSync Method for PostMeProfileSync
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiPostMeProfileSyncRequest
-*/
-func (a *MeAPIService) PostMeProfileSync(ctx context.Context) ApiPostMeProfileSyncRequest {
-	return ApiPostMeProfileSyncRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-//
-//	@return MeProfileResponse
-func (a *MeAPIService) PostMeProfileSyncExecute(r ApiPostMeProfileSyncRequest) (*MeProfileResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *MeProfileResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PostMeProfileSync")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/profile/sync"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+		fileLocalVarFileBytes = fbs
+		fileLocalVarFileName = fileLocalVarFile.Name()
+		fileLocalVarFile.Close()
+		formFiles = append(formFiles, formFile{fileBytes: fileLocalVarFileBytes, fileName: fileLocalVarFileName, formFileName: fileLocalVarFormFileName})
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
@@ -3286,103 +2775,6 @@ func (a *MeAPIService) PostMeProfileSyncExecute(r ApiPostMeProfileSyncRequest) (
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPostMePushSubscriptionRequest struct {
-	ctx                           context.Context
-	ApiService                    *MeAPIService
-	postMePushSubscriptionPayload *PostMePushSubscriptionPayload
-}
-
-func (r ApiPostMePushSubscriptionRequest) PostMePushSubscriptionPayload(postMePushSubscriptionPayload PostMePushSubscriptionPayload) ApiPostMePushSubscriptionRequest {
-	r.postMePushSubscriptionPayload = &postMePushSubscriptionPayload
-	return r
-}
-
-func (r ApiPostMePushSubscriptionRequest) Execute() (*http.Response, error) {
-	return r.ApiService.PostMePushSubscriptionExecute(r)
-}
-
-/*
-PostMePushSubscription POST /me/push-subscriptions — store Web Push subscription for call notifications.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiPostMePushSubscriptionRequest
-*/
-func (a *MeAPIService) PostMePushSubscription(ctx context.Context) ApiPostMePushSubscriptionRequest {
-	return ApiPostMePushSubscriptionRequest{
-		ApiService: a,
-		ctx:        ctx,
-	}
-}
-
-// Execute executes the request
-func (a *MeAPIService) PostMePushSubscriptionExecute(r ApiPostMePushSubscriptionRequest) (*http.Response, error) {
-	var (
-		localVarHTTPMethod = http.MethodPost
-		localVarPostBody   interface{}
-		formFiles          []formFile
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PostMePushSubscription")
-	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/me/push-subscriptions"
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.postMePushSubscriptionPayload == nil {
-		return nil, reportError("postMePushSubscriptionPayload is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.postMePushSubscriptionPayload
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarHTTPResponse, newErr
-	}
-
-	return localVarHTTPResponse, nil
 }
 
 type ApiProposeMeGroupRequest struct {
@@ -3498,6 +2890,117 @@ func (a *MeAPIService) ProposeMeGroupExecute(r ApiProposeMeGroupRequest) (*http.
 	}
 
 	return localVarHTTPResponse, nil
+}
+
+type ApiPutMeNotificationPreferencesRequest struct {
+	ctx                     context.Context
+	ApiService              *MeAPIService
+	notificationPreferences *NotificationPreferences
+}
+
+func (r ApiPutMeNotificationPreferencesRequest) NotificationPreferences(notificationPreferences NotificationPreferences) ApiPutMeNotificationPreferencesRequest {
+	r.notificationPreferences = &notificationPreferences
+	return r
+}
+
+func (r ApiPutMeNotificationPreferencesRequest) Execute() (*NotificationPreferences, *http.Response, error) {
+	return r.ApiService.PutMeNotificationPreferencesExecute(r)
+}
+
+/*
+PutMeNotificationPreferences Set which optional channels the signed-in user receives notices on.
+
+Replaces all three switches. Email always receives notices and cannot be switched off.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiPutMeNotificationPreferencesRequest
+*/
+func (a *MeAPIService) PutMeNotificationPreferences(ctx context.Context) ApiPutMeNotificationPreferencesRequest {
+	return ApiPutMeNotificationPreferencesRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return NotificationPreferences
+func (a *MeAPIService) PutMeNotificationPreferencesExecute(r ApiPutMeNotificationPreferencesRequest) (*NotificationPreferences, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPut
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *NotificationPreferences
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MeAPIService.PutMeNotificationPreferences")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/me/notification-preferences"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.notificationPreferences == nil {
+		return localVarReturnValue, nil, reportError("notificationPreferences is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.notificationPreferences
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
 type ApiRemoveMeGroupMemberRequest struct {

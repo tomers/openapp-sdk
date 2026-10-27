@@ -8,7 +8,9 @@ cd /workspace/packages/sdk/python
 # stage the file and retry without manual editing.
 uv lock
 uv sync --all-extras
-uv run maturin develop --features pyo3/extension-module
+# Deny rustc warnings in the bridge (and its path dependency openapp-sdk-core) so a warning
+# fails the commit; the sdk-python image ships a minimal toolchain without clippy.
+RUSTFLAGS="${RUSTFLAGS:+$RUSTFLAGS }-D warnings" uv run maturin develop --features pyo3/extension-module
 bash scripts/sdk_python_static_checks.sh
 uv run pytest -q tests/unit
 

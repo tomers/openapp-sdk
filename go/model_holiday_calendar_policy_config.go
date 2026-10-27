@@ -21,10 +21,12 @@ var _ MappedNullable = &HolidayCalendarPolicyConfig{}
 
 // HolidayCalendarPolicyConfig Typed `config` shape for `holiday_calendar`.
 type HolidayCalendarPolicyConfig struct {
-	AppliesTo []PolicyPrincipalKind `json:"applies_to,omitempty"`
 	// Organization-local ISO dates in `YYYY-MM-DD` format.
-	Dates  []*string                    `json:"dates"`
+	Dates []*string `json:"dates"`
+	// Provider-derived output/channel selector: the row binds only actions on that output.
 	Output NullablePolicyOutputSelector `json:"output,omitempty"`
+	// Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy's org.
+	ZoneId NullableString `json:"zone_id,omitempty"`
 }
 
 type _HolidayCalendarPolicyConfig HolidayCalendarPolicyConfig
@@ -45,39 +47,6 @@ func NewHolidayCalendarPolicyConfig(dates []*string) *HolidayCalendarPolicyConfi
 func NewHolidayCalendarPolicyConfigWithDefaults() *HolidayCalendarPolicyConfig {
 	this := HolidayCalendarPolicyConfig{}
 	return &this
-}
-
-// GetAppliesTo returns the AppliesTo field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *HolidayCalendarPolicyConfig) GetAppliesTo() []PolicyPrincipalKind {
-	if o == nil {
-		var ret []PolicyPrincipalKind
-		return ret
-	}
-	return o.AppliesTo
-}
-
-// GetAppliesToOk returns a tuple with the AppliesTo field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *HolidayCalendarPolicyConfig) GetAppliesToOk() ([]PolicyPrincipalKind, bool) {
-	if o == nil || IsNil(o.AppliesTo) {
-		return nil, false
-	}
-	return o.AppliesTo, true
-}
-
-// HasAppliesTo returns a boolean if a field has been set.
-func (o *HolidayCalendarPolicyConfig) HasAppliesTo() bool {
-	if o != nil && !IsNil(o.AppliesTo) {
-		return true
-	}
-
-	return false
-}
-
-// SetAppliesTo gets a reference to the given []PolicyPrincipalKind and assigns it to the AppliesTo field.
-func (o *HolidayCalendarPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind) {
-	o.AppliesTo = v
 }
 
 // GetDates returns the Dates field value
@@ -147,14 +116,57 @@ func (o *HolidayCalendarPolicyConfig) UnsetOutput() {
 	o.Output.Unset()
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *HolidayCalendarPolicyConfig) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId.Get()
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *HolidayCalendarPolicyConfig) GetZoneIdOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.ZoneId.Get(), o.ZoneId.IsSet()
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *HolidayCalendarPolicyConfig) HasZoneId() bool {
+	if o != nil && o.ZoneId.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
+func (o *HolidayCalendarPolicyConfig) SetZoneId(v string) {
+	o.ZoneId.Set(&v)
+}
+
+// SetZoneIdNil sets the value for ZoneId to be an explicit nil
+func (o *HolidayCalendarPolicyConfig) SetZoneIdNil() {
+	o.ZoneId.Set(nil)
+}
+
+// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
+func (o *HolidayCalendarPolicyConfig) UnsetZoneId() {
+	o.ZoneId.Unset()
+}
+
 func (o HolidayCalendarPolicyConfig) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.AppliesTo != nil {
-		toSerialize["applies_to"] = o.AppliesTo
-	}
 	toSerialize["dates"] = o.Dates
 	if o.Output.IsSet() {
 		toSerialize["output"] = o.Output.Get()
+	}
+	if o.ZoneId.IsSet() {
+		toSerialize["zone_id"] = o.ZoneId.Get()
 	}
 	return toSerialize, nil
 }

@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 **Id** | **string** | Unique identifier (ULID). |
 **Metadata** | Pointer to **map[string]string** |  | [optional]
 **Name** | Pointer to **NullableString** | Optional friendly name for the entity. | [optional]
-**ZoneId** | Pointer to **NullableString** | Optional zone this entity belongs to. | [optional]
+**Zone** | Pointer to [**ZonePlacement**](ZonePlacement.md) | Zone placement: inherit the device&#39;s zone, name one explicitly, or none. | [optional]
 
 ## Methods
 
@@ -316,40 +316,30 @@ HasName returns a boolean if a field has been set.
 `func (o *Entity) UnsetName()`
 
 UnsetName ensures that no value is present for Name, not even an explicit nil
-### GetZoneId
+### GetZone
 
-`func (o *Entity) GetZoneId() string`
+`func (o *Entity) GetZone() ZonePlacement`
 
-GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+GetZone returns the Zone field if non-nil, zero value otherwise.
 
-### GetZoneIdOk
+### GetZoneOk
 
-`func (o *Entity) GetZoneIdOk() (*string, bool)`
+`func (o *Entity) GetZoneOk() (*ZonePlacement, bool)`
 
-GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+GetZoneOk returns a tuple with the Zone field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetZoneId
+### SetZone
 
-`func (o *Entity) SetZoneId(v string)`
+`func (o *Entity) SetZone(v ZonePlacement)`
 
-SetZoneId sets ZoneId field to given value.
+SetZone sets Zone field to given value.
 
-### HasZoneId
+### HasZone
 
-`func (o *Entity) HasZoneId() bool`
+`func (o *Entity) HasZone() bool`
 
-HasZoneId returns a boolean if a field has been set.
+HasZone returns a boolean if a field has been set.
 
-### SetZoneIdNil
-
-`func (o *Entity) SetZoneIdNil(b bool)`
-
- SetZoneIdNil sets the value for ZoneId to be an explicit nil
-
-### UnsetZoneId
-`func (o *Entity) UnsetZoneId()`
-
-UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

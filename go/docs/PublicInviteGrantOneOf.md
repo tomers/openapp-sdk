@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **DoorImageThumbUrl** | Pointer to **NullableString** | Presigned URL for the &#x60;thumb&#x60; rendition of the door image, for avatar-sized renders. Absent when the source is already thumb-sized; fall back to &#x60;door_image_url&#x60;. | [optional]
 **DoorImageUrl** | Pointer to **NullableString** | Presigned URL for door image (loaded asynchronously as card background). | [optional]
-**EntryKind** | **string** | Entry type from linked portal device (&#x60;virtual_access.entry_kind&#x60;). Default &#x60;door&#x60;. |
+**EntryKind** | **string** | Entry type configured on the linked portal device (&#x60;entry_kind&#x60; in its &#x60;virtual_access&#x60; metadata). Default &#x60;door&#x60;. |
 **HasLights** | **bool** | Whether the portal has light devices configured (controls light button visibility). |
 **Hold** | Pointer to [**NullablePublicHoldView**](PublicHoldView.md) | Effective door hold when any opener is held (guest-visible). | [optional]
 **Id** | **string** |  |
@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **OpenRateLimit** | Pointer to [**NullablePublicPortalOpenRateLimit**](PublicPortalOpenRateLimit.md) | Enforced integration-scoped minimum interval between &#x60;switchable.open&#x60; calls. A second open inside the interval returns 429 &#x60;provider_open_rate_limited&#x60;. | [optional]
 **Openable** | **bool** | Whether the portal is linked to a live door device (i.e. can actually be opened). When false, the invite UI disables the open action (a misconfigured/unlinked portal). |
 **PublicPortalId** | **string** |  |
+**WifiAvailable** | Pointer to **bool** | The door&#39;s zone is covered by a Wi-Fi network the guest may join, for example where the door has no cellular signal. A suggestion only: the door opens either way. The networks are in &#x60;wifi_networks&#x60; on the response. | [optional]
 
 ## Methods
 
@@ -329,6 +330,31 @@ and a boolean to check if the value has been set.
 
 SetPublicPortalId sets PublicPortalId field to given value.
 
+
+### GetWifiAvailable
+
+`func (o *PublicInviteGrantOneOf) GetWifiAvailable() bool`
+
+GetWifiAvailable returns the WifiAvailable field if non-nil, zero value otherwise.
+
+### GetWifiAvailableOk
+
+`func (o *PublicInviteGrantOneOf) GetWifiAvailableOk() (*bool, bool)`
+
+GetWifiAvailableOk returns a tuple with the WifiAvailable field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetWifiAvailable
+
+`func (o *PublicInviteGrantOneOf) SetWifiAvailable(v bool)`
+
+SetWifiAvailable sets WifiAvailable field to given value.
+
+### HasWifiAvailable
+
+`func (o *PublicInviteGrantOneOf) HasWifiAvailable() bool`
+
+HasWifiAvailable returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -46,6 +46,8 @@ type PublicInviteResponse struct {
 	// How the invite resolves its event location: `none` (hide all location, including the building address), `explicit` (own location), or `inherit` (building location). Lets the guest UI suppress the building address when the invite opts out of location entirely.
 	LocationMode LocationBindingMode `json:"location_mode"`
 	MaxDevices   NullableInt32       `json:"max_devices,omitempty"`
+	// Total uses allowed; omitted when the invitation has no use limit.
+	MaxUses NullableInt32 `json:"max_uses,omitempty"`
 	// Optional admin-defined label (management UI \"name\"); exposed for link previews and guests who already know the invite by name.
 	Name NullableString `json:"name,omitempty"`
 	// Presigned URL for the invite's main photo (best-effort).
@@ -60,9 +62,13 @@ type PublicInviteResponse struct {
 	ScheduleKind         NullableInviteScheduleKind     `json:"schedule_kind,omitempty"`
 	State                PublicInviteState              `json:"state"`
 	// Org IANA timezone used to evaluate invitation curfews (`UTC` when unset).
-	Timezone  NullableString `json:"timezone,omitempty"`
-	ValidFrom NullableString `json:"valid_from,omitempty"`
-	ValidTo   NullableString `json:"valid_to,omitempty"`
+	Timezone NullableString `json:"timezone,omitempty"`
+	// Uses left before the limit is consumed; omitted when the invitation has no use limit.
+	UsesRemaining NullableInt32  `json:"uses_remaining,omitempty"`
+	ValidFrom     NullableString `json:"valid_from,omitempty"`
+	ValidTo       NullableString `json:"valid_to,omitempty"`
+	// Wi-Fi networks that cover the invitation's doors, with credentials, ordered by priority. Present only for an active invitation whose grants are shown, and only when at least one grant has `wifi_available`. Never part of a link preview.
+	WifiNetworks []PublicInviteWifiNetwork `json:"wifi_networks,omitempty"`
 }
 
 type _PublicInviteResponse PublicInviteResponse
@@ -665,6 +671,49 @@ func (o *PublicInviteResponse) UnsetMaxDevices() {
 	o.MaxDevices.Unset()
 }
 
+// GetMaxUses returns the MaxUses field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetMaxUses() int32 {
+	if o == nil || IsNil(o.MaxUses.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.MaxUses.Get()
+}
+
+// GetMaxUsesOk returns a tuple with the MaxUses field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetMaxUsesOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.MaxUses.Get(), o.MaxUses.IsSet()
+}
+
+// HasMaxUses returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasMaxUses() bool {
+	if o != nil && o.MaxUses.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetMaxUses gets a reference to the given NullableInt32 and assigns it to the MaxUses field.
+func (o *PublicInviteResponse) SetMaxUses(v int32) {
+	o.MaxUses.Set(&v)
+}
+
+// SetMaxUsesNil sets the value for MaxUses to be an explicit nil
+func (o *PublicInviteResponse) SetMaxUsesNil() {
+	o.MaxUses.Set(nil)
+}
+
+// UnsetMaxUses ensures that no value is present for MaxUses, not even an explicit nil
+func (o *PublicInviteResponse) UnsetMaxUses() {
+	o.MaxUses.Unset()
+}
+
 // GetName returns the Name field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicInviteResponse) GetName() string {
 	if o == nil || IsNil(o.Name.Get()) {
@@ -1087,6 +1136,49 @@ func (o *PublicInviteResponse) UnsetTimezone() {
 	o.Timezone.Unset()
 }
 
+// GetUsesRemaining returns the UsesRemaining field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteResponse) GetUsesRemaining() int32 {
+	if o == nil || IsNil(o.UsesRemaining.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.UsesRemaining.Get()
+}
+
+// GetUsesRemainingOk returns a tuple with the UsesRemaining field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteResponse) GetUsesRemainingOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.UsesRemaining.Get(), o.UsesRemaining.IsSet()
+}
+
+// HasUsesRemaining returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasUsesRemaining() bool {
+	if o != nil && o.UsesRemaining.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetUsesRemaining gets a reference to the given NullableInt32 and assigns it to the UsesRemaining field.
+func (o *PublicInviteResponse) SetUsesRemaining(v int32) {
+	o.UsesRemaining.Set(&v)
+}
+
+// SetUsesRemainingNil sets the value for UsesRemaining to be an explicit nil
+func (o *PublicInviteResponse) SetUsesRemainingNil() {
+	o.UsesRemaining.Set(nil)
+}
+
+// UnsetUsesRemaining ensures that no value is present for UsesRemaining, not even an explicit nil
+func (o *PublicInviteResponse) UnsetUsesRemaining() {
+	o.UsesRemaining.Unset()
+}
+
 // GetValidFrom returns the ValidFrom field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *PublicInviteResponse) GetValidFrom() string {
 	if o == nil || IsNil(o.ValidFrom.Get()) {
@@ -1173,6 +1265,38 @@ func (o *PublicInviteResponse) UnsetValidTo() {
 	o.ValidTo.Unset()
 }
 
+// GetWifiNetworks returns the WifiNetworks field value if set, zero value otherwise.
+func (o *PublicInviteResponse) GetWifiNetworks() []PublicInviteWifiNetwork {
+	if o == nil || IsNil(o.WifiNetworks) {
+		var ret []PublicInviteWifiNetwork
+		return ret
+	}
+	return o.WifiNetworks
+}
+
+// GetWifiNetworksOk returns a tuple with the WifiNetworks field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicInviteResponse) GetWifiNetworksOk() ([]PublicInviteWifiNetwork, bool) {
+	if o == nil || IsNil(o.WifiNetworks) {
+		return nil, false
+	}
+	return o.WifiNetworks, true
+}
+
+// HasWifiNetworks returns a boolean if a field has been set.
+func (o *PublicInviteResponse) HasWifiNetworks() bool {
+	if o != nil && !IsNil(o.WifiNetworks) {
+		return true
+	}
+
+	return false
+}
+
+// SetWifiNetworks gets a reference to the given []PublicInviteWifiNetwork and assigns it to the WifiNetworks field.
+func (o *PublicInviteResponse) SetWifiNetworks(v []PublicInviteWifiNetwork) {
+	o.WifiNetworks = v
+}
+
 func (o PublicInviteResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.AccessControl.IsSet() {
@@ -1216,6 +1340,9 @@ func (o PublicInviteResponse) ToMap() (map[string]interface{}, error) {
 	if o.MaxDevices.IsSet() {
 		toSerialize["max_devices"] = o.MaxDevices.Get()
 	}
+	if o.MaxUses.IsSet() {
+		toSerialize["max_uses"] = o.MaxUses.Get()
+	}
 	if o.Name.IsSet() {
 		toSerialize["name"] = o.Name.Get()
 	}
@@ -1247,11 +1374,17 @@ func (o PublicInviteResponse) ToMap() (map[string]interface{}, error) {
 	if o.Timezone.IsSet() {
 		toSerialize["timezone"] = o.Timezone.Get()
 	}
+	if o.UsesRemaining.IsSet() {
+		toSerialize["uses_remaining"] = o.UsesRemaining.Get()
+	}
 	if o.ValidFrom.IsSet() {
 		toSerialize["valid_from"] = o.ValidFrom.Get()
 	}
 	if o.ValidTo.IsSet() {
 		toSerialize["valid_to"] = o.ValidTo.Get()
+	}
+	if !IsNil(o.WifiNetworks) {
+		toSerialize["wifi_networks"] = o.WifiNetworks
 	}
 	return toSerialize, nil
 }

@@ -21,11 +21,9 @@ var _ MappedNullable = &CreateOrganizationRequest{}
 
 // CreateOrganizationRequest struct for CreateOrganizationRequest
 type CreateOrganizationRequest struct {
-	Description NullableString `json:"description,omitempty"`
-	// Optional ID parameter (admin-only, not documented in API docs).
-	Id       NullableString  `json:"id,omitempty"`
-	Name     LocalizedString `json:"name"`
-	ParentId NullableString  `json:"parent_id,omitempty"`
+	Description NullableString  `json:"description,omitempty"`
+	Name        LocalizedString `json:"name"`
+	ParentId    NullableString  `json:"parent_id,omitempty"`
 }
 
 type _CreateOrganizationRequest CreateOrganizationRequest
@@ -89,49 +87,6 @@ func (o *CreateOrganizationRequest) SetDescriptionNil() {
 // UnsetDescription ensures that no value is present for Description, not even an explicit nil
 func (o *CreateOrganizationRequest) UnsetDescription() {
 	o.Description.Unset()
-}
-
-// GetId returns the Id field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateOrganizationRequest) GetId() string {
-	if o == nil || IsNil(o.Id.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Id.Get()
-}
-
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateOrganizationRequest) GetIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Id.Get(), o.Id.IsSet()
-}
-
-// HasId returns a boolean if a field has been set.
-func (o *CreateOrganizationRequest) HasId() bool {
-	if o != nil && o.Id.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given NullableString and assigns it to the Id field.
-func (o *CreateOrganizationRequest) SetId(v string) {
-	o.Id.Set(&v)
-}
-
-// SetIdNil sets the value for Id to be an explicit nil
-func (o *CreateOrganizationRequest) SetIdNil() {
-	o.Id.Set(nil)
-}
-
-// UnsetId ensures that no value is present for Id, not even an explicit nil
-func (o *CreateOrganizationRequest) UnsetId() {
-	o.Id.Unset()
 }
 
 // GetName returns the Name field value
@@ -205,9 +160,6 @@ func (o CreateOrganizationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Description.IsSet() {
 		toSerialize["description"] = o.Description.Get()
-	}
-	if o.Id.IsSet() {
-		toSerialize["id"] = o.Id.Get()
 	}
 	toSerialize["name"] = o.Name
 	if o.ParentId.IsSet() {

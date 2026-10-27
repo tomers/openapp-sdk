@@ -23,9 +23,13 @@ var _ MappedNullable = &ApiErrorResponse{}
 type ApiErrorResponse struct {
 	// Server-generated correlation id that ties this error to the request trace and the matching audit event (see the audit log). Present when the request carried one.
 	CorrelationId NullableString `json:"correlationId,omitempty"`
+	// Present when `error_code` is `invite_phone_choice`: the number already on the signed-in account.
+	CurrentPhone NullableString `json:"current_phone,omitempty"`
 	// Optional stable code for clients to branch on (e.g. \"door_unreachable\").
 	ErrorCode NullableString `json:"error_code,omitempty"`
-	Message   string         `json:"message"`
+	// Present when `error_code` is `invite_phone_choice`: the number named by the invitation.
+	InvitedPhone NullableString `json:"invited_phone,omitempty"`
+	Message      string         `json:"message"`
 	// Present when `error_code` is `confirmation_required` (retry with `X-OpenApp-Confirm`).
 	PreviewToken NullableString `json:"preview_token,omitempty"`
 }
@@ -93,6 +97,49 @@ func (o *ApiErrorResponse) UnsetCorrelationId() {
 	o.CorrelationId.Unset()
 }
 
+// GetCurrentPhone returns the CurrentPhone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ApiErrorResponse) GetCurrentPhone() string {
+	if o == nil || IsNil(o.CurrentPhone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.CurrentPhone.Get()
+}
+
+// GetCurrentPhoneOk returns a tuple with the CurrentPhone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ApiErrorResponse) GetCurrentPhoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CurrentPhone.Get(), o.CurrentPhone.IsSet()
+}
+
+// HasCurrentPhone returns a boolean if a field has been set.
+func (o *ApiErrorResponse) HasCurrentPhone() bool {
+	if o != nil && o.CurrentPhone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetCurrentPhone gets a reference to the given NullableString and assigns it to the CurrentPhone field.
+func (o *ApiErrorResponse) SetCurrentPhone(v string) {
+	o.CurrentPhone.Set(&v)
+}
+
+// SetCurrentPhoneNil sets the value for CurrentPhone to be an explicit nil
+func (o *ApiErrorResponse) SetCurrentPhoneNil() {
+	o.CurrentPhone.Set(nil)
+}
+
+// UnsetCurrentPhone ensures that no value is present for CurrentPhone, not even an explicit nil
+func (o *ApiErrorResponse) UnsetCurrentPhone() {
+	o.CurrentPhone.Unset()
+}
+
 // GetErrorCode returns the ErrorCode field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *ApiErrorResponse) GetErrorCode() string {
 	if o == nil || IsNil(o.ErrorCode.Get()) {
@@ -134,6 +181,49 @@ func (o *ApiErrorResponse) SetErrorCodeNil() {
 // UnsetErrorCode ensures that no value is present for ErrorCode, not even an explicit nil
 func (o *ApiErrorResponse) UnsetErrorCode() {
 	o.ErrorCode.Unset()
+}
+
+// GetInvitedPhone returns the InvitedPhone field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *ApiErrorResponse) GetInvitedPhone() string {
+	if o == nil || IsNil(o.InvitedPhone.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.InvitedPhone.Get()
+}
+
+// GetInvitedPhoneOk returns a tuple with the InvitedPhone field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *ApiErrorResponse) GetInvitedPhoneOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InvitedPhone.Get(), o.InvitedPhone.IsSet()
+}
+
+// HasInvitedPhone returns a boolean if a field has been set.
+func (o *ApiErrorResponse) HasInvitedPhone() bool {
+	if o != nil && o.InvitedPhone.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInvitedPhone gets a reference to the given NullableString and assigns it to the InvitedPhone field.
+func (o *ApiErrorResponse) SetInvitedPhone(v string) {
+	o.InvitedPhone.Set(&v)
+}
+
+// SetInvitedPhoneNil sets the value for InvitedPhone to be an explicit nil
+func (o *ApiErrorResponse) SetInvitedPhoneNil() {
+	o.InvitedPhone.Set(nil)
+}
+
+// UnsetInvitedPhone ensures that no value is present for InvitedPhone, not even an explicit nil
+func (o *ApiErrorResponse) UnsetInvitedPhone() {
+	o.InvitedPhone.Unset()
 }
 
 // GetMessage returns the Message field value
@@ -208,8 +298,14 @@ func (o ApiErrorResponse) ToMap() (map[string]interface{}, error) {
 	if o.CorrelationId.IsSet() {
 		toSerialize["correlationId"] = o.CorrelationId.Get()
 	}
+	if o.CurrentPhone.IsSet() {
+		toSerialize["current_phone"] = o.CurrentPhone.Get()
+	}
 	if o.ErrorCode.IsSet() {
 		toSerialize["error_code"] = o.ErrorCode.Get()
+	}
+	if o.InvitedPhone.IsSet() {
+		toSerialize["invited_phone"] = o.InvitedPhone.Get()
 	}
 	toSerialize["message"] = o.Message
 	if o.PreviewToken.IsSet() {

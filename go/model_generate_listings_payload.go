@@ -21,7 +21,8 @@ var _ MappedNullable = &GenerateListingsPayload{}
 
 // GenerateListingsPayload struct for GenerateListingsPayload
 type GenerateListingsPayload struct {
-	ListingKind    NullableString `json:"listing_kind,omitempty"`
+	// The kind written onto every listing this request generates.
+	ListingKind    string         `json:"listing_kind"`
 	NamingPattern  NullableString `json:"naming_pattern,omitempty"`
 	SourceGroupIds []string       `json:"source_group_ids"`
 }
@@ -32,8 +33,9 @@ type _GenerateListingsPayload GenerateListingsPayload
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGenerateListingsPayload(sourceGroupIds []string) *GenerateListingsPayload {
+func NewGenerateListingsPayload(listingKind string, sourceGroupIds []string) *GenerateListingsPayload {
 	this := GenerateListingsPayload{}
+	this.ListingKind = listingKind
 	this.SourceGroupIds = sourceGroupIds
 	return &this
 }
@@ -46,47 +48,28 @@ func NewGenerateListingsPayloadWithDefaults() *GenerateListingsPayload {
 	return &this
 }
 
-// GetListingKind returns the ListingKind field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetListingKind returns the ListingKind field value
 func (o *GenerateListingsPayload) GetListingKind() string {
-	if o == nil || IsNil(o.ListingKind.Get()) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ListingKind.Get()
+
+	return o.ListingKind
 }
 
-// GetListingKindOk returns a tuple with the ListingKind field value if set, nil otherwise
+// GetListingKindOk returns a tuple with the ListingKind field value
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *GenerateListingsPayload) GetListingKindOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.ListingKind.Get(), o.ListingKind.IsSet()
+	return &o.ListingKind, true
 }
 
-// HasListingKind returns a boolean if a field has been set.
-func (o *GenerateListingsPayload) HasListingKind() bool {
-	if o != nil && o.ListingKind.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetListingKind gets a reference to the given NullableString and assigns it to the ListingKind field.
+// SetListingKind sets field value
 func (o *GenerateListingsPayload) SetListingKind(v string) {
-	o.ListingKind.Set(&v)
-}
-
-// SetListingKindNil sets the value for ListingKind to be an explicit nil
-func (o *GenerateListingsPayload) SetListingKindNil() {
-	o.ListingKind.Set(nil)
-}
-
-// UnsetListingKind ensures that no value is present for ListingKind, not even an explicit nil
-func (o *GenerateListingsPayload) UnsetListingKind() {
-	o.ListingKind.Unset()
+	o.ListingKind = v
 }
 
 // GetNamingPattern returns the NamingPattern field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -158,9 +141,7 @@ func (o *GenerateListingsPayload) SetSourceGroupIds(v []string) {
 
 func (o GenerateListingsPayload) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.ListingKind.IsSet() {
-		toSerialize["listing_kind"] = o.ListingKind.Get()
-	}
+	toSerialize["listing_kind"] = o.ListingKind
 	if o.NamingPattern.IsSet() {
 		toSerialize["naming_pattern"] = o.NamingPattern.Get()
 	}
@@ -173,6 +154,7 @@ func (o *GenerateListingsPayload) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"listing_kind",
 		"source_group_ids",
 	}
 

@@ -17,7 +17,7 @@ import (
 // checks if the SiteAccessDoorLifeSafety type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &SiteAccessDoorLifeSafety{}
 
-// SiteAccessDoorLifeSafety A door's life-safety classification, passed through verbatim.  The open-block rule lives in the dashboard (`lifeSafetyOpenBlock`) and is already enforced there for entity tables. Returning the raw fields keeps one rule instead of a second copy of the policy in Rust.
+// SiteAccessDoorLifeSafety A door's life-safety class and commissioning attestation, as stored on the door.  The server refuses `switchable.open` and `switchable.toggle` on an opening that has no class, or whose class requires an attestation that is missing or incomplete (409 `life_safety_class_required` / `life_safety_attestation_required`). This object reports the stored values so clients can show whether the door can be opened.
 type SiteAccessDoorLifeSafety struct {
 	Attestation interface{}    `json:"attestation,omitempty"`
 	Class       NullableString `json:"class,omitempty"`

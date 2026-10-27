@@ -20,7 +20,7 @@ var _ MappedNullable = &UpdatePolicyRequest{}
 // UpdatePolicyRequest struct for UpdatePolicyRequest
 type UpdatePolicyRequest struct {
 	Capability NullableString `json:"capability,omitempty"`
-	// Omitted preserves the current config; explicit JSON null is rejected rather than being silently treated as an omitted field.
+	// Omitted preserves the current config. Explicit JSON `null` is rejected with 400.
 	Config      map[string]interface{} `json:"config,omitempty"`
 	Enabled     NullableBool           `json:"enabled,omitempty"`
 	Enforcement NullableString         `json:"enforcement,omitempty"`

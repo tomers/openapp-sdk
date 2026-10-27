@@ -9,17 +9,18 @@ Name | Type | Description | Notes
 **HardDeleteAt** | Pointer to **time.Time** |  | [optional]
 **PurgeAt** | Pointer to **time.Time** |  | [optional]
 **UpdatedAt** | Pointer to **time.Time** |  | [optional]
-**ExternalId** | Pointer to **string** | External ID from the integration. | [optional]
 **Id** | **string** | Unique identifier (ULID). |
-**IntegrationId** | **string** | Integration this zone belongs to. |
 **Name** | [**LocalizedString**](LocalizedString.md) | Zone name. |
-**ParentZoneId** | Pointer to **string** | Parent zone for hierarchy. | [optional]
+**OrgId** | **string** | Organization that owns this zone. |
+**ParentZoneId** | Pointer to **string** | Parent zone (same org) for hierarchy. | [optional]
+**ProviderLinks** | [**[]ZoneProviderLinkResponse**](ZoneProviderLinkResponse.md) |  |
+**SiteIds** | **[]string** | Access sites (&#x60;virtual_access&#x60; integrations) this zone is a member of, sorted. Empty means unbound (Resources-only until bound; never offered on Access pickers). |
 
 ## Methods
 
 ### NewZoneResponse
 
-`func NewZoneResponse(id string, integrationId string, name LocalizedString, ) *ZoneResponse`
+`func NewZoneResponse(id string, name LocalizedString, orgId string, providerLinks []ZoneProviderLinkResponse, siteIds []string, ) *ZoneResponse`
 
 NewZoneResponse instantiates a new ZoneResponse object
 This constructor will assign default values to properties that have it defined,
@@ -159,31 +160,6 @@ SetUpdatedAt sets UpdatedAt field to given value.
 
 HasUpdatedAt returns a boolean if a field has been set.
 
-### GetExternalId
-
-`func (o *ZoneResponse) GetExternalId() string`
-
-GetExternalId returns the ExternalId field if non-nil, zero value otherwise.
-
-### GetExternalIdOk
-
-`func (o *ZoneResponse) GetExternalIdOk() (*string, bool)`
-
-GetExternalIdOk returns a tuple with the ExternalId field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetExternalId
-
-`func (o *ZoneResponse) SetExternalId(v string)`
-
-SetExternalId sets ExternalId field to given value.
-
-### HasExternalId
-
-`func (o *ZoneResponse) HasExternalId() bool`
-
-HasExternalId returns a boolean if a field has been set.
-
 ### GetId
 
 `func (o *ZoneResponse) GetId() string`
@@ -204,26 +180,6 @@ and a boolean to check if the value has been set.
 SetId sets Id field to given value.
 
 
-### GetIntegrationId
-
-`func (o *ZoneResponse) GetIntegrationId() string`
-
-GetIntegrationId returns the IntegrationId field if non-nil, zero value otherwise.
-
-### GetIntegrationIdOk
-
-`func (o *ZoneResponse) GetIntegrationIdOk() (*string, bool)`
-
-GetIntegrationIdOk returns a tuple with the IntegrationId field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetIntegrationId
-
-`func (o *ZoneResponse) SetIntegrationId(v string)`
-
-SetIntegrationId sets IntegrationId field to given value.
-
-
 ### GetName
 
 `func (o *ZoneResponse) GetName() LocalizedString`
@@ -242,6 +198,26 @@ and a boolean to check if the value has been set.
 `func (o *ZoneResponse) SetName(v LocalizedString)`
 
 SetName sets Name field to given value.
+
+
+### GetOrgId
+
+`func (o *ZoneResponse) GetOrgId() string`
+
+GetOrgId returns the OrgId field if non-nil, zero value otherwise.
+
+### GetOrgIdOk
+
+`func (o *ZoneResponse) GetOrgIdOk() (*string, bool)`
+
+GetOrgIdOk returns a tuple with the OrgId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOrgId
+
+`func (o *ZoneResponse) SetOrgId(v string)`
+
+SetOrgId sets OrgId field to given value.
 
 
 ### GetParentZoneId
@@ -268,6 +244,46 @@ SetParentZoneId sets ParentZoneId field to given value.
 `func (o *ZoneResponse) HasParentZoneId() bool`
 
 HasParentZoneId returns a boolean if a field has been set.
+
+### GetProviderLinks
+
+`func (o *ZoneResponse) GetProviderLinks() []ZoneProviderLinkResponse`
+
+GetProviderLinks returns the ProviderLinks field if non-nil, zero value otherwise.
+
+### GetProviderLinksOk
+
+`func (o *ZoneResponse) GetProviderLinksOk() (*[]ZoneProviderLinkResponse, bool)`
+
+GetProviderLinksOk returns a tuple with the ProviderLinks field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetProviderLinks
+
+`func (o *ZoneResponse) SetProviderLinks(v []ZoneProviderLinkResponse)`
+
+SetProviderLinks sets ProviderLinks field to given value.
+
+
+### GetSiteIds
+
+`func (o *ZoneResponse) GetSiteIds() []string`
+
+GetSiteIds returns the SiteIds field if non-nil, zero value otherwise.
+
+### GetSiteIdsOk
+
+`func (o *ZoneResponse) GetSiteIdsOk() (*[]string, bool)`
+
+GetSiteIdsOk returns a tuple with the SiteIds field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSiteIds
+
+`func (o *ZoneResponse) SetSiteIds(v []string)`
+
+SetSiteIds sets SiteIds field to given value.
+
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

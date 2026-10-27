@@ -4,11 +4,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) |  | [optional]
 **BlackoutDates** | Pointer to **[]string** | Organization-local ISO dates that invitations cannot use. | [optional]
-**HolidayCalendar** | Pointer to **NullableBool** | Include dates from applicable &#x60;holiday_calendar&#x60; rows. | [optional]
-**Output** | Pointer to [**NullablePolicyOutputSelector**](PolicyOutputSelector.md) |  | [optional]
+**HolidayCalendar** | Pointer to **NullableBool** | Also block the dates from applicable &#x60;holiday_calendar&#x60; policies. | [optional]
+**Output** | Pointer to [**NullablePolicyOutputSelector**](PolicyOutputSelector.md) | Provider-derived output/channel selector: the row binds only actions on that output. | [optional]
 **Weekdays** | Pointer to **[]int32** | Sunday is 0; Saturday is 6. Omit to leave weekdays unrestricted for this row. | [optional]
+**ZoneId** | Pointer to **NullableString** | Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy&#39;s org. | [optional]
 
 ## Methods
 
@@ -29,41 +29,6 @@ NewInvitationAllowedDaysPolicyConfigWithDefaults instantiates a new InvitationAl
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetAppliesTo
-
-`func (o *InvitationAllowedDaysPolicyConfig) GetAppliesTo() []PolicyPrincipalKind`
-
-GetAppliesTo returns the AppliesTo field if non-nil, zero value otherwise.
-
-### GetAppliesToOk
-
-`func (o *InvitationAllowedDaysPolicyConfig) GetAppliesToOk() (*[]PolicyPrincipalKind, bool)`
-
-GetAppliesToOk returns a tuple with the AppliesTo field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetAppliesTo
-
-`func (o *InvitationAllowedDaysPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind)`
-
-SetAppliesTo sets AppliesTo field to given value.
-
-### HasAppliesTo
-
-`func (o *InvitationAllowedDaysPolicyConfig) HasAppliesTo() bool`
-
-HasAppliesTo returns a boolean if a field has been set.
-
-### SetAppliesToNil
-
-`func (o *InvitationAllowedDaysPolicyConfig) SetAppliesToNil(b bool)`
-
- SetAppliesToNil sets the value for AppliesTo to be an explicit nil
-
-### UnsetAppliesTo
-`func (o *InvitationAllowedDaysPolicyConfig) UnsetAppliesTo()`
-
-UnsetAppliesTo ensures that no value is present for AppliesTo, not even an explicit nil
 ### GetBlackoutDates
 
 `func (o *InvitationAllowedDaysPolicyConfig) GetBlackoutDates() []*string`
@@ -204,5 +169,40 @@ HasWeekdays returns a boolean if a field has been set.
 `func (o *InvitationAllowedDaysPolicyConfig) UnsetWeekdays()`
 
 UnsetWeekdays ensures that no value is present for Weekdays, not even an explicit nil
+### GetZoneId
+
+`func (o *InvitationAllowedDaysPolicyConfig) GetZoneId() string`
+
+GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+
+### GetZoneIdOk
+
+`func (o *InvitationAllowedDaysPolicyConfig) GetZoneIdOk() (*string, bool)`
+
+GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneId
+
+`func (o *InvitationAllowedDaysPolicyConfig) SetZoneId(v string)`
+
+SetZoneId sets ZoneId field to given value.
+
+### HasZoneId
+
+`func (o *InvitationAllowedDaysPolicyConfig) HasZoneId() bool`
+
+HasZoneId returns a boolean if a field has been set.
+
+### SetZoneIdNil
+
+`func (o *InvitationAllowedDaysPolicyConfig) SetZoneIdNil(b bool)`
+
+ SetZoneIdNil sets the value for ZoneId to be an explicit nil
+
+### UnsetZoneId
+`func (o *InvitationAllowedDaysPolicyConfig) UnsetZoneId()`
+
+UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

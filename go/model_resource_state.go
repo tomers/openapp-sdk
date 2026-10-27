@@ -15,7 +15,7 @@ import (
 	"fmt"
 )
 
-// ResourceState Per-resource degradation state (mirrors the `degradation_state` column).
+// ResourceState Degradation state of a single resource.
 type ResourceState string
 
 // List of ResourceState

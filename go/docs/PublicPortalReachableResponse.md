@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Reachable** | **bool** |  |
+**Reason** | Pointer to **NullableString** | Why the door is not reachable, when the server knows. &#x60;door_not_connected&#x60;: the portal has no door (it was purged, or never linked), so retrying cannot help. Omitted when reachable and when the cause is a door that exists but did not answer. | [optional]
 
 ## Methods
 
@@ -45,5 +46,40 @@ and a boolean to check if the value has been set.
 SetReachable sets Reachable field to given value.
 
 
+### GetReason
+
+`func (o *PublicPortalReachableResponse) GetReason() string`
+
+GetReason returns the Reason field if non-nil, zero value otherwise.
+
+### GetReasonOk
+
+`func (o *PublicPortalReachableResponse) GetReasonOk() (*string, bool)`
+
+GetReasonOk returns a tuple with the Reason field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetReason
+
+`func (o *PublicPortalReachableResponse) SetReason(v string)`
+
+SetReason sets Reason field to given value.
+
+### HasReason
+
+`func (o *PublicPortalReachableResponse) HasReason() bool`
+
+HasReason returns a boolean if a field has been set.
+
+### SetReasonNil
+
+`func (o *PublicPortalReachableResponse) SetReasonNil(b bool)`
+
+ SetReasonNil sets the value for Reason to be an explicit nil
+
+### UnsetReason
+`func (o *PublicPortalReachableResponse) UnsetReason()`
+
+UnsetReason ensures that no value is present for Reason, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

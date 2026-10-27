@@ -24,19 +24,6 @@ func Test_openapi_DirectoryListingMembersAPIService(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = apiClient.Close() })
 
-	t.Run("Test DirectoryListingMembersAPIService AddPerson", func(t *testing.T) {
-
-		t.Skip("skip test") // remove to run test
-
-		var id string
-
-		httpRes, err := apiClient.DirectoryListingMembersAPI.AddPerson(context.Background(), id).Execute()
-
-		require.Nil(t, err)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test DirectoryListingMembersAPIService AddDirectoryListingMember", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -51,14 +38,13 @@ func Test_openapi_DirectoryListingMembersAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test DirectoryListingMembersAPIService DeletePerson", func(t *testing.T) {
+	t.Run("Test DirectoryListingMembersAPIService AddPerson", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		var id string
-		var userId string
 
-		httpRes, err := apiClient.DirectoryListingMembersAPI.DeletePerson(context.Background(), id, userId).Execute()
+		httpRes, err := apiClient.DirectoryListingMembersAPI.AddPerson(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
@@ -70,22 +56,23 @@ func Test_openapi_DirectoryListingMembersAPIService(t *testing.T) {
 		t.Skip("skip test") // remove to run test
 
 		var id string
-		var userId string
+		var memberId string
 
-		httpRes, err := apiClient.DirectoryListingMembersAPI.DeleteDirectoryListingMember(context.Background(), id, userId).Execute()
+		httpRes, err := apiClient.DirectoryListingMembersAPI.DeleteDirectoryListingMember(context.Background(), id, memberId).Execute()
 
 		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
 
 	})
 
-	t.Run("Test DirectoryListingMembersAPIService ListPeople", func(t *testing.T) {
+	t.Run("Test DirectoryListingMembersAPIService DeletePerson", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		var id string
+		var userId string
 
-		httpRes, err := apiClient.DirectoryListingMembersAPI.ListPeople(context.Background(), id).Execute()
+		httpRes, err := apiClient.DirectoryListingMembersAPI.DeletePerson(context.Background(), id, userId).Execute()
 
 		require.Nil(t, err)
 		assert.Equal(t, 200, httpRes.StatusCode)
@@ -119,14 +106,43 @@ func Test_openapi_DirectoryListingMembersAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test DirectoryListingMembersAPIService ListPeople", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.DirectoryListingMembersAPI.ListPeople(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test DirectoryListingMembersAPIService UpdateDirectoryListingMember", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var memberId string
+
+		resp, httpRes, err := apiClient.DirectoryListingMembersAPI.UpdateDirectoryListingMember(context.Background(), id, memberId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test DirectoryListingMembersAPIService UpdatePerson", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		var id string
 		var userId string
 
-		resp, httpRes, err := apiClient.DirectoryListingMembersAPI.UpdateDirectoryListingMember(context.Background(), id, userId).Execute()
+		resp, httpRes, err := apiClient.DirectoryListingMembersAPI.UpdatePerson(context.Background(), id, userId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

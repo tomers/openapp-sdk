@@ -19,12 +19,22 @@ var _ MappedNullable = &CreateInvitationRequest{}
 
 // CreateInvitationRequest struct for CreateInvitationRequest
 type CreateInvitationRequest struct {
+	// Parent-declared date of birth (`YYYY-MM-DD`). Must classify as under 16. Applied to the account at redeem when the account has none. Omit when the invitee is an adult.
+	DateOfBirth NullableString `json:"date_of_birth,omitempty"`
+	// Groups the person joins when they redeem, in the same transaction as the org role.
+	DefaultGroupIds []string `json:"default_group_ids,omitempty"`
 	// Roles to assign on accept (within the inviting org).
 	DefaultRoles []string       `json:"default_roles,omitempty"`
 	Email        NullableString `json:"email,omitempty"`
-	Phone        NullableString `json:"phone,omitempty"`
+	// Name of the person being invited, up to 100 characters. Greets them in the invitation and labels the pending invitation for the inviter. At sign-up it becomes the account name only when no name is known, and the person confirms it. Omit when unknown.
+	InviteeName NullableString `json:"invitee_name,omitempty"`
+	// Language of the invitation SMS/email: a supported locale code. Used when the contact has no account with a language of its own; resends reuse it. Omit to fall back to the org's default message language, then English.
+	Locale NullableString `json:"locale,omitempty"`
+	Phone  NullableString `json:"phone,omitempty"`
 	// Optional site (and listing) access applied atomically when the invitation is redeemed.
 	SiteAccess NullableInvitationSiteAccessDto `json:"site_access,omitempty"`
+	// Must be `true` when `phone` is set: confirms the person being invited agreed to receive text messages from OpenApp at that number. The confirmation is recorded with who gave it and when. Not needed for email-only invitations.
+	SmsConsentConfirmed *bool `json:"sms_consent_confirmed,omitempty"`
 }
 
 // NewCreateInvitationRequest instantiates a new CreateInvitationRequest object
@@ -42,6 +52,81 @@ func NewCreateInvitationRequest() *CreateInvitationRequest {
 func NewCreateInvitationRequestWithDefaults() *CreateInvitationRequest {
 	this := CreateInvitationRequest{}
 	return &this
+}
+
+// GetDateOfBirth returns the DateOfBirth field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateInvitationRequest) GetDateOfBirth() string {
+	if o == nil || IsNil(o.DateOfBirth.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.DateOfBirth.Get()
+}
+
+// GetDateOfBirthOk returns a tuple with the DateOfBirth field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateInvitationRequest) GetDateOfBirthOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DateOfBirth.Get(), o.DateOfBirth.IsSet()
+}
+
+// HasDateOfBirth returns a boolean if a field has been set.
+func (o *CreateInvitationRequest) HasDateOfBirth() bool {
+	if o != nil && o.DateOfBirth.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetDateOfBirth gets a reference to the given NullableString and assigns it to the DateOfBirth field.
+func (o *CreateInvitationRequest) SetDateOfBirth(v string) {
+	o.DateOfBirth.Set(&v)
+}
+
+// SetDateOfBirthNil sets the value for DateOfBirth to be an explicit nil
+func (o *CreateInvitationRequest) SetDateOfBirthNil() {
+	o.DateOfBirth.Set(nil)
+}
+
+// UnsetDateOfBirth ensures that no value is present for DateOfBirth, not even an explicit nil
+func (o *CreateInvitationRequest) UnsetDateOfBirth() {
+	o.DateOfBirth.Unset()
+}
+
+// GetDefaultGroupIds returns the DefaultGroupIds field value if set, zero value otherwise.
+func (o *CreateInvitationRequest) GetDefaultGroupIds() []string {
+	if o == nil || IsNil(o.DefaultGroupIds) {
+		var ret []string
+		return ret
+	}
+	return o.DefaultGroupIds
+}
+
+// GetDefaultGroupIdsOk returns a tuple with the DefaultGroupIds field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateInvitationRequest) GetDefaultGroupIdsOk() ([]string, bool) {
+	if o == nil || IsNil(o.DefaultGroupIds) {
+		return nil, false
+	}
+	return o.DefaultGroupIds, true
+}
+
+// HasDefaultGroupIds returns a boolean if a field has been set.
+func (o *CreateInvitationRequest) HasDefaultGroupIds() bool {
+	if o != nil && !IsNil(o.DefaultGroupIds) {
+		return true
+	}
+
+	return false
+}
+
+// SetDefaultGroupIds gets a reference to the given []string and assigns it to the DefaultGroupIds field.
+func (o *CreateInvitationRequest) SetDefaultGroupIds(v []string) {
+	o.DefaultGroupIds = v
 }
 
 // GetDefaultRoles returns the DefaultRoles field value if set, zero value otherwise.
@@ -117,6 +202,92 @@ func (o *CreateInvitationRequest) SetEmailNil() {
 // UnsetEmail ensures that no value is present for Email, not even an explicit nil
 func (o *CreateInvitationRequest) UnsetEmail() {
 	o.Email.Unset()
+}
+
+// GetInviteeName returns the InviteeName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateInvitationRequest) GetInviteeName() string {
+	if o == nil || IsNil(o.InviteeName.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.InviteeName.Get()
+}
+
+// GetInviteeNameOk returns a tuple with the InviteeName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateInvitationRequest) GetInviteeNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InviteeName.Get(), o.InviteeName.IsSet()
+}
+
+// HasInviteeName returns a boolean if a field has been set.
+func (o *CreateInvitationRequest) HasInviteeName() bool {
+	if o != nil && o.InviteeName.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInviteeName gets a reference to the given NullableString and assigns it to the InviteeName field.
+func (o *CreateInvitationRequest) SetInviteeName(v string) {
+	o.InviteeName.Set(&v)
+}
+
+// SetInviteeNameNil sets the value for InviteeName to be an explicit nil
+func (o *CreateInvitationRequest) SetInviteeNameNil() {
+	o.InviteeName.Set(nil)
+}
+
+// UnsetInviteeName ensures that no value is present for InviteeName, not even an explicit nil
+func (o *CreateInvitationRequest) UnsetInviteeName() {
+	o.InviteeName.Unset()
+}
+
+// GetLocale returns the Locale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateInvitationRequest) GetLocale() string {
+	if o == nil || IsNil(o.Locale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Locale.Get()
+}
+
+// GetLocaleOk returns a tuple with the Locale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateInvitationRequest) GetLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Locale.Get(), o.Locale.IsSet()
+}
+
+// HasLocale returns a boolean if a field has been set.
+func (o *CreateInvitationRequest) HasLocale() bool {
+	if o != nil && o.Locale.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocale gets a reference to the given NullableString and assigns it to the Locale field.
+func (o *CreateInvitationRequest) SetLocale(v string) {
+	o.Locale.Set(&v)
+}
+
+// SetLocaleNil sets the value for Locale to be an explicit nil
+func (o *CreateInvitationRequest) SetLocaleNil() {
+	o.Locale.Set(nil)
+}
+
+// UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+func (o *CreateInvitationRequest) UnsetLocale() {
+	o.Locale.Unset()
 }
 
 // GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -205,19 +376,66 @@ func (o *CreateInvitationRequest) UnsetSiteAccess() {
 	o.SiteAccess.Unset()
 }
 
+// GetSmsConsentConfirmed returns the SmsConsentConfirmed field value if set, zero value otherwise.
+func (o *CreateInvitationRequest) GetSmsConsentConfirmed() bool {
+	if o == nil || IsNil(o.SmsConsentConfirmed) {
+		var ret bool
+		return ret
+	}
+	return *o.SmsConsentConfirmed
+}
+
+// GetSmsConsentConfirmedOk returns a tuple with the SmsConsentConfirmed field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateInvitationRequest) GetSmsConsentConfirmedOk() (*bool, bool) {
+	if o == nil || IsNil(o.SmsConsentConfirmed) {
+		return nil, false
+	}
+	return o.SmsConsentConfirmed, true
+}
+
+// HasSmsConsentConfirmed returns a boolean if a field has been set.
+func (o *CreateInvitationRequest) HasSmsConsentConfirmed() bool {
+	if o != nil && !IsNil(o.SmsConsentConfirmed) {
+		return true
+	}
+
+	return false
+}
+
+// SetSmsConsentConfirmed gets a reference to the given bool and assigns it to the SmsConsentConfirmed field.
+func (o *CreateInvitationRequest) SetSmsConsentConfirmed(v bool) {
+	o.SmsConsentConfirmed = &v
+}
+
 func (o CreateInvitationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if o.DateOfBirth.IsSet() {
+		toSerialize["date_of_birth"] = o.DateOfBirth.Get()
+	}
+	if !IsNil(o.DefaultGroupIds) {
+		toSerialize["default_group_ids"] = o.DefaultGroupIds
+	}
 	if !IsNil(o.DefaultRoles) {
 		toSerialize["default_roles"] = o.DefaultRoles
 	}
 	if o.Email.IsSet() {
 		toSerialize["email"] = o.Email.Get()
 	}
+	if o.InviteeName.IsSet() {
+		toSerialize["invitee_name"] = o.InviteeName.Get()
+	}
+	if o.Locale.IsSet() {
+		toSerialize["locale"] = o.Locale.Get()
+	}
 	if o.Phone.IsSet() {
 		toSerialize["phone"] = o.Phone.Get()
 	}
 	if o.SiteAccess.IsSet() {
 		toSerialize["site_access"] = o.SiteAccess.Get()
+	}
+	if !IsNil(o.SmsConsentConfirmed) {
+		toSerialize["sms_consent_confirmed"] = o.SmsConsentConfirmed
 	}
 	return toSerialize, nil
 }

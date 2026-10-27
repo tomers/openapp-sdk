@@ -4,13 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**ChannelIndex** | Pointer to **NullableInt32** |  | [optional]
+**ChannelIndex** | Pointer to **int32** |  | [optional]
 **DeviceId** | **NullableString** |  |
 **EntityType** | **NullableString** |  |
 **ExternalId** | Pointer to **NullableString** |  | [optional]
-**Metadata** | Pointer to **map[string]interface{}** | Arbitrary, persisted entity metadata (integration-specific).  For example, MQTT entities can store: - &#x60;command_topic&#x60; - &#x60;toggle_payload&#x60;  Values are converted to strings (non-strings are JSON-stringified) to match &#x60;domain::Metadata&#x60;. | [optional]
+**Metadata** | Pointer to **map[string]interface{}** | Arbitrary, persisted entity metadata (integration-specific).  For example, MQTT entities can store: - &#x60;command_topic&#x60; - &#x60;toggle_payload&#x60;  Values are stored as strings: non-string values are JSON-stringified. | [optional]
 **Name** | Pointer to **string** | Optional friendly name for the entity. | [optional]
-**ZoneId** | Pointer to **NullableString** |  | [optional]
+**Zone** | Pointer to [**ZonePlacement**](ZonePlacement.md) | Zone placement; defaults to &#x60;{\&quot;mode\&quot;:\&quot;inherit\&quot;}&#x60; (follow the device zone). | [optional]
 
 ## Methods
 
@@ -56,16 +56,6 @@ SetChannelIndex sets ChannelIndex field to given value.
 
 HasChannelIndex returns a boolean if a field has been set.
 
-### SetChannelIndexNil
-
-`func (o *CreateEntityRequest) SetChannelIndexNil(b bool)`
-
- SetChannelIndexNil sets the value for ChannelIndex to be an explicit nil
-
-### UnsetChannelIndex
-`func (o *CreateEntityRequest) UnsetChannelIndex()`
-
-UnsetChannelIndex ensures that no value is present for ChannelIndex, not even an explicit nil
 ### GetDeviceId
 
 `func (o *CreateEntityRequest) GetDeviceId() string`
@@ -211,40 +201,30 @@ SetName sets Name field to given value.
 
 HasName returns a boolean if a field has been set.
 
-### GetZoneId
+### GetZone
 
-`func (o *CreateEntityRequest) GetZoneId() string`
+`func (o *CreateEntityRequest) GetZone() ZonePlacement`
 
-GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+GetZone returns the Zone field if non-nil, zero value otherwise.
 
-### GetZoneIdOk
+### GetZoneOk
 
-`func (o *CreateEntityRequest) GetZoneIdOk() (*string, bool)`
+`func (o *CreateEntityRequest) GetZoneOk() (*ZonePlacement, bool)`
 
-GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+GetZoneOk returns a tuple with the Zone field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetZoneId
+### SetZone
 
-`func (o *CreateEntityRequest) SetZoneId(v string)`
+`func (o *CreateEntityRequest) SetZone(v ZonePlacement)`
 
-SetZoneId sets ZoneId field to given value.
+SetZone sets Zone field to given value.
 
-### HasZoneId
+### HasZone
 
-`func (o *CreateEntityRequest) HasZoneId() bool`
+`func (o *CreateEntityRequest) HasZone() bool`
 
-HasZoneId returns a boolean if a field has been set.
+HasZone returns a boolean if a field has been set.
 
-### SetZoneIdNil
-
-`func (o *CreateEntityRequest) SetZoneIdNil(b bool)`
-
- SetZoneIdNil sets the value for ZoneId to be an explicit nil
-
-### UnsetZoneId
-`func (o *CreateEntityRequest) UnsetZoneId()`
-
-UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

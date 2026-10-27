@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **DeviceMetadata** | Pointer to **interface{}** |  | [optional]
 **ExternalId** | Pointer to **NullableString** |  | [optional]
 **Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) |  | [optional]
+**ZoneId** | Pointer to **NullableString** | Omit for no change, &#x60;null&#x60; to clear, or a zone id (same org) to place the device. | [optional]
 
 ## Methods
 
@@ -132,5 +133,40 @@ HasName returns a boolean if a field has been set.
 `func (o *UpdateDeviceRequest) UnsetName()`
 
 UnsetName ensures that no value is present for Name, not even an explicit nil
+### GetZoneId
+
+`func (o *UpdateDeviceRequest) GetZoneId() string`
+
+GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+
+### GetZoneIdOk
+
+`func (o *UpdateDeviceRequest) GetZoneIdOk() (*string, bool)`
+
+GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneId
+
+`func (o *UpdateDeviceRequest) SetZoneId(v string)`
+
+SetZoneId sets ZoneId field to given value.
+
+### HasZoneId
+
+`func (o *UpdateDeviceRequest) HasZoneId() bool`
+
+HasZoneId returns a boolean if a field has been set.
+
+### SetZoneIdNil
+
+`func (o *UpdateDeviceRequest) SetZoneIdNil(b bool)`
+
+ SetZoneIdNil sets the value for ZoneId to be an explicit nil
+
+### UnsetZoneId
+`func (o *UpdateDeviceRequest) UnsetZoneId()`
+
+UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

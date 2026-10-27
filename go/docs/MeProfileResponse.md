@@ -6,12 +6,18 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Email** | Pointer to **NullableString** |  | [optional]
 **EmailVerified** | **bool** |  |
+**IdpImageThumbUrl** | Pointer to **NullableString** |  | [optional]
+**IdpImageUrl** | Pointer to **NullableString** | OpenApp-hosted preview of the last imported identity-provider portrait. | [optional]
 **IdpLinks** | [**[]IdpLinkResponse**](IdpLinkResponse.md) |  |
 **ImageSyncError** | Pointer to **NullableString** |  | [optional]
 **ImageThumbUrl** | Pointer to **NullableString** |  | [optional]
-**ImageUrl** | Pointer to **NullableString** |  | [optional]
-**Locale** | Pointer to **NullableString** |  | [optional]
-**Name** | Pointer to **NullableString** |  | [optional]
+**ImageUrl** | Pointer to **NullableString** | Portrait others see, from the selected photo choice (&#x60;idp&#x60;, &#x60;openapp&#x60;, or &#x60;none&#x60;). | [optional]
+**Locale** | Pointer to **NullableString** | Explicit preferred locale: a supported locale code, or &#x60;null&#x60; to use the app language. Messages use it ahead of &#x60;observed_locale&#x60;. | [optional]
+**Name** | [**LocalizedString**](LocalizedString.md) | Display name as a locale-to-string map. May be empty when the account has no name yet. |
+**NameConfirmationPending** | **bool** | True while the account still owes a name confirmation after accepting an invitation: the name is the inviter&#39;s spelling, or there is none. Clears once a name is saved through &#x60;PATCH /me/profile&#x60;, or when an identity provider supplies the name. |
+**ObservedLocale** | Pointer to **NullableString** | Last app/device language reported through &#x60;PUT /me/locale/observed&#x60;. Read-only here. | [optional]
+**OpenappImageThumbUrl** | Pointer to **NullableString** |  | [optional]
+**OpenappImageUrl** | Pointer to **NullableString** | OpenApp-hosted preview of the optional account override portrait. | [optional]
 **Phone** | Pointer to **NullableString** |  | [optional]
 **PhoneVerified** | **bool** |  |
 **ProfileSources** | [**ProfileSourcesResponse**](ProfileSourcesResponse.md) |  |
@@ -20,7 +26,7 @@ Name | Type | Description | Notes
 
 ### NewMeProfileResponse
 
-`func NewMeProfileResponse(emailVerified bool, idpLinks []IdpLinkResponse, phoneVerified bool, profileSources ProfileSourcesResponse, ) *MeProfileResponse`
+`func NewMeProfileResponse(emailVerified bool, idpLinks []IdpLinkResponse, name LocalizedString, nameConfirmationPending bool, phoneVerified bool, profileSources ProfileSourcesResponse, ) *MeProfileResponse`
 
 NewMeProfileResponse instantiates a new MeProfileResponse object
 This constructor will assign default values to properties that have it defined,
@@ -90,6 +96,76 @@ and a boolean to check if the value has been set.
 SetEmailVerified sets EmailVerified field to given value.
 
 
+### GetIdpImageThumbUrl
+
+`func (o *MeProfileResponse) GetIdpImageThumbUrl() string`
+
+GetIdpImageThumbUrl returns the IdpImageThumbUrl field if non-nil, zero value otherwise.
+
+### GetIdpImageThumbUrlOk
+
+`func (o *MeProfileResponse) GetIdpImageThumbUrlOk() (*string, bool)`
+
+GetIdpImageThumbUrlOk returns a tuple with the IdpImageThumbUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIdpImageThumbUrl
+
+`func (o *MeProfileResponse) SetIdpImageThumbUrl(v string)`
+
+SetIdpImageThumbUrl sets IdpImageThumbUrl field to given value.
+
+### HasIdpImageThumbUrl
+
+`func (o *MeProfileResponse) HasIdpImageThumbUrl() bool`
+
+HasIdpImageThumbUrl returns a boolean if a field has been set.
+
+### SetIdpImageThumbUrlNil
+
+`func (o *MeProfileResponse) SetIdpImageThumbUrlNil(b bool)`
+
+ SetIdpImageThumbUrlNil sets the value for IdpImageThumbUrl to be an explicit nil
+
+### UnsetIdpImageThumbUrl
+`func (o *MeProfileResponse) UnsetIdpImageThumbUrl()`
+
+UnsetIdpImageThumbUrl ensures that no value is present for IdpImageThumbUrl, not even an explicit nil
+### GetIdpImageUrl
+
+`func (o *MeProfileResponse) GetIdpImageUrl() string`
+
+GetIdpImageUrl returns the IdpImageUrl field if non-nil, zero value otherwise.
+
+### GetIdpImageUrlOk
+
+`func (o *MeProfileResponse) GetIdpImageUrlOk() (*string, bool)`
+
+GetIdpImageUrlOk returns a tuple with the IdpImageUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetIdpImageUrl
+
+`func (o *MeProfileResponse) SetIdpImageUrl(v string)`
+
+SetIdpImageUrl sets IdpImageUrl field to given value.
+
+### HasIdpImageUrl
+
+`func (o *MeProfileResponse) HasIdpImageUrl() bool`
+
+HasIdpImageUrl returns a boolean if a field has been set.
+
+### SetIdpImageUrlNil
+
+`func (o *MeProfileResponse) SetIdpImageUrlNil(b bool)`
+
+ SetIdpImageUrlNil sets the value for IdpImageUrl to be an explicit nil
+
+### UnsetIdpImageUrl
+`func (o *MeProfileResponse) UnsetIdpImageUrl()`
+
+UnsetIdpImageUrl ensures that no value is present for IdpImageUrl, not even an explicit nil
 ### GetIdpLinks
 
 `func (o *MeProfileResponse) GetIdpLinks() []IdpLinkResponse`
@@ -252,39 +328,149 @@ HasLocale returns a boolean if a field has been set.
 UnsetLocale ensures that no value is present for Locale, not even an explicit nil
 ### GetName
 
-`func (o *MeProfileResponse) GetName() string`
+`func (o *MeProfileResponse) GetName() LocalizedString`
 
 GetName returns the Name field if non-nil, zero value otherwise.
 
 ### GetNameOk
 
-`func (o *MeProfileResponse) GetNameOk() (*string, bool)`
+`func (o *MeProfileResponse) GetNameOk() (*LocalizedString, bool)`
 
 GetNameOk returns a tuple with the Name field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetName
 
-`func (o *MeProfileResponse) SetName(v string)`
+`func (o *MeProfileResponse) SetName(v LocalizedString)`
 
 SetName sets Name field to given value.
 
-### HasName
 
-`func (o *MeProfileResponse) HasName() bool`
+### GetNameConfirmationPending
 
-HasName returns a boolean if a field has been set.
+`func (o *MeProfileResponse) GetNameConfirmationPending() bool`
 
-### SetNameNil
+GetNameConfirmationPending returns the NameConfirmationPending field if non-nil, zero value otherwise.
 
-`func (o *MeProfileResponse) SetNameNil(b bool)`
+### GetNameConfirmationPendingOk
 
- SetNameNil sets the value for Name to be an explicit nil
+`func (o *MeProfileResponse) GetNameConfirmationPendingOk() (*bool, bool)`
 
-### UnsetName
-`func (o *MeProfileResponse) UnsetName()`
+GetNameConfirmationPendingOk returns a tuple with the NameConfirmationPending field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
 
-UnsetName ensures that no value is present for Name, not even an explicit nil
+### SetNameConfirmationPending
+
+`func (o *MeProfileResponse) SetNameConfirmationPending(v bool)`
+
+SetNameConfirmationPending sets NameConfirmationPending field to given value.
+
+
+### GetObservedLocale
+
+`func (o *MeProfileResponse) GetObservedLocale() string`
+
+GetObservedLocale returns the ObservedLocale field if non-nil, zero value otherwise.
+
+### GetObservedLocaleOk
+
+`func (o *MeProfileResponse) GetObservedLocaleOk() (*string, bool)`
+
+GetObservedLocaleOk returns a tuple with the ObservedLocale field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetObservedLocale
+
+`func (o *MeProfileResponse) SetObservedLocale(v string)`
+
+SetObservedLocale sets ObservedLocale field to given value.
+
+### HasObservedLocale
+
+`func (o *MeProfileResponse) HasObservedLocale() bool`
+
+HasObservedLocale returns a boolean if a field has been set.
+
+### SetObservedLocaleNil
+
+`func (o *MeProfileResponse) SetObservedLocaleNil(b bool)`
+
+ SetObservedLocaleNil sets the value for ObservedLocale to be an explicit nil
+
+### UnsetObservedLocale
+`func (o *MeProfileResponse) UnsetObservedLocale()`
+
+UnsetObservedLocale ensures that no value is present for ObservedLocale, not even an explicit nil
+### GetOpenappImageThumbUrl
+
+`func (o *MeProfileResponse) GetOpenappImageThumbUrl() string`
+
+GetOpenappImageThumbUrl returns the OpenappImageThumbUrl field if non-nil, zero value otherwise.
+
+### GetOpenappImageThumbUrlOk
+
+`func (o *MeProfileResponse) GetOpenappImageThumbUrlOk() (*string, bool)`
+
+GetOpenappImageThumbUrlOk returns a tuple with the OpenappImageThumbUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOpenappImageThumbUrl
+
+`func (o *MeProfileResponse) SetOpenappImageThumbUrl(v string)`
+
+SetOpenappImageThumbUrl sets OpenappImageThumbUrl field to given value.
+
+### HasOpenappImageThumbUrl
+
+`func (o *MeProfileResponse) HasOpenappImageThumbUrl() bool`
+
+HasOpenappImageThumbUrl returns a boolean if a field has been set.
+
+### SetOpenappImageThumbUrlNil
+
+`func (o *MeProfileResponse) SetOpenappImageThumbUrlNil(b bool)`
+
+ SetOpenappImageThumbUrlNil sets the value for OpenappImageThumbUrl to be an explicit nil
+
+### UnsetOpenappImageThumbUrl
+`func (o *MeProfileResponse) UnsetOpenappImageThumbUrl()`
+
+UnsetOpenappImageThumbUrl ensures that no value is present for OpenappImageThumbUrl, not even an explicit nil
+### GetOpenappImageUrl
+
+`func (o *MeProfileResponse) GetOpenappImageUrl() string`
+
+GetOpenappImageUrl returns the OpenappImageUrl field if non-nil, zero value otherwise.
+
+### GetOpenappImageUrlOk
+
+`func (o *MeProfileResponse) GetOpenappImageUrlOk() (*string, bool)`
+
+GetOpenappImageUrlOk returns a tuple with the OpenappImageUrl field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetOpenappImageUrl
+
+`func (o *MeProfileResponse) SetOpenappImageUrl(v string)`
+
+SetOpenappImageUrl sets OpenappImageUrl field to given value.
+
+### HasOpenappImageUrl
+
+`func (o *MeProfileResponse) HasOpenappImageUrl() bool`
+
+HasOpenappImageUrl returns a boolean if a field has been set.
+
+### SetOpenappImageUrlNil
+
+`func (o *MeProfileResponse) SetOpenappImageUrlNil(b bool)`
+
+ SetOpenappImageUrlNil sets the value for OpenappImageUrl to be an explicit nil
+
+### UnsetOpenappImageUrl
+`func (o *MeProfileResponse) UnsetOpenappImageUrl()`
+
+UnsetOpenappImageUrl ensures that no value is present for OpenappImageUrl, not even an explicit nil
 ### GetPhone
 
 `func (o *MeProfileResponse) GetPhone() string`

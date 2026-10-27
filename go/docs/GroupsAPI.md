@@ -17,12 +17,16 @@ Method | HTTP request | Description
 [**ListGroupAdmissions**](GroupsAPI.md#ListGroupAdmissions) | **Get** /groups/{id}/admissions | The admission ledger for a group in the acting org, including removed members.
 [**ListGroupLinks**](GroupsAPI.md#ListGroupLinks) | **Get** /groups/{id}/links | Links for one group, so an owner can see where their roster is in use.
 [**ListGroupMembers**](GroupsAPI.md#ListGroupMembers) | **Get** /groups/{id}/members | List members as the acting org may see them: only admitted members appear.
+[**ListIntegrationGroups**](GroupsAPI.md#ListIntegrationGroups) | **Get** /integrations/{id}/groups | Groups linked into the organization that owns this integration.
 [**ListOrgGroups**](GroupsAPI.md#ListOrgGroups) | **Get** /orgs/{org_id}/groups | List groups linked into an org.
 [**PostGroupImage**](GroupsAPI.md#PostGroupImage) | **Post** /groups/{id}/image | Upload or replace a group&#39;s photo.
+[**PurgeGroup**](GroupsAPI.md#PurgeGroup) | **Delete** /groups/{id}/purge | Permanently delete a soft-deleted group.
 [**RedeemGroupShareOffer**](GroupsAPI.md#RedeemGroupShareOffer) | **Post** /group-share-offers/redeem | Redeem an offer, creating a pending link into the acting org.
+[**RestoreGroup**](GroupsAPI.md#RestoreGroup) | **Post** /groups/{id}/restore | Restore a soft-deleted group. Memberships removed at delete are not recreated.
 [**RevokeGroupLink**](GroupsAPI.md#RevokeGroupLink) | **Delete** /groups/{id}/links/{org_id} | Revoke a link. Either side may do this, so a household and a building can each walk away.
 [**UpdateGroup**](GroupsAPI.md#UpdateGroup) | **Put** /groups/{id} | Update a group&#39;s name, description, kind, or shareable flag.
 [**UpdateGroupLink**](GroupsAPI.md#UpdateGroupLink) | **Put** /groups/{id}/links/{org_id} | Change how this org admits a group&#39;s members, or re-sync a pinned link.
+[**UpdateGroupMemberRole**](GroupsAPI.md#UpdateGroupMemberRole) | **Put** /groups/{id}/members/{member_ref} | Change a member&#39;s role after they have been added.
 
 
 
@@ -997,6 +1001,80 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## ListIntegrationGroups
+
+> []GroupResponse ListIntegrationGroups(ctx, id).XOrg(xOrg).Execute()
+
+Groups linked into the organization that owns this integration.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	xOrg := "xOrg_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.GroupsAPI.ListIntegrationGroups(context.Background(), id).XOrg(xOrg).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `GroupsAPI.ListIntegrationGroups``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `ListIntegrationGroups`: []GroupResponse
+	fmt.Fprintf(os.Stdout, "Response from `GroupsAPI.ListIntegrationGroups`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListIntegrationGroupsRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **xOrg** | **string** |  |
+
+### Return type
+
+[**[]GroupResponse**](GroupResponse.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## ListOrgGroups
 
 > []GroupResponse ListOrgGroups(ctx, orgId).XOrg(xOrg).Execute()
@@ -1147,6 +1225,78 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## PurgeGroup
+
+> PurgeGroup(ctx, id).XOrg(xOrg).Execute()
+
+Permanently delete a soft-deleted group.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	xOrg := "xOrg_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	r, err := apiClient.GroupsAPI.PurgeGroup(context.Background(), id).XOrg(xOrg).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `GroupsAPI.PurgeGroup``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPurgeGroupRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **xOrg** | **string** |  |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## RedeemGroupShareOffer
 
 > GroupShareOfferResponse RedeemGroupShareOffer(ctx).XOrg(xOrg).RedeemGroupShareOfferPayload(redeemGroupShareOfferPayload).Execute()
@@ -1213,6 +1363,78 @@ Name | Type | Description  | Notes
 
 - **Content-Type**: application/json
 - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## RestoreGroup
+
+> RestoreGroup(ctx, id).XOrg(xOrg).Execute()
+
+Restore a soft-deleted group. Memberships removed at delete are not recreated.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	xOrg := "xOrg_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	r, err := apiClient.GroupsAPI.RestoreGroup(context.Background(), id).XOrg(xOrg).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `GroupsAPI.RestoreGroup``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiRestoreGroupRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **xOrg** | **string** |  |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
 [[Back to Model list]](../README.md#documentation-for-models)
@@ -1443,6 +1665,83 @@ Name | Type | Description  | Notes
 
 - **Content-Type**: application/json
 - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## UpdateGroupMemberRole
+
+> UpdateGroupMemberRole(ctx, id, memberRef).XOrg(xOrg).UpdateGroupMemberPayload(updateGroupMemberPayload).Execute()
+
+Change a member's role after they have been added.
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	memberRef := "memberRef_example" // string |
+	xOrg := "xOrg_example" // string |
+	updateGroupMemberPayload := *openapiclient.NewUpdateGroupMemberPayload("Role_example") // UpdateGroupMemberPayload |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	r, err := apiClient.GroupsAPI.UpdateGroupMemberRole(context.Background(), id, memberRef).XOrg(xOrg).UpdateGroupMemberPayload(updateGroupMemberPayload).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `GroupsAPI.UpdateGroupMemberRole``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+**memberRef** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpdateGroupMemberRoleRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **xOrg** | **string** |  |
+ **updateGroupMemberPayload** | [**UpdateGroupMemberPayload**](UpdateGroupMemberPayload.md) |  |
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: Not defined
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
 [[Back to Model list]](../README.md#documentation-for-models)

@@ -183,7 +183,7 @@ func (r ApiCreateUserRequest) Execute() (*UserResponse, *http.Response, error) {
 /*
 CreateUser Create a user in the organization context.
 
-Create a user. Ordinary organization administrators must use `POST /orgs/{id}/invitations` for email/phone contacts. Direct creation is limited to platform administration and initial provisioning. Quota: each org the user is added to consumes 1 from that org's `org_users` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
+Create a user. Ordinary organization administrators must use `POST /orgs/{id}/invitations` for email/phone contacts. Direct creation is limited to platform administration. Quota: each org the user is added to consumes 1 from that org's `org_users` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateUserRequest
@@ -1045,65 +1045,74 @@ func (a *UsersAPIService) HardDeleteUserExecute(r ApiHardDeleteUserRequest) (*Us
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiOrgProposeAccountMergeRequest struct {
-	ctx                    context.Context
-	ApiService             *UsersAPIService
-	orgId                  string
-	orgProposeMergeRequest *OrgProposeMergeRequest
+type ApiRestoreUserRequest struct {
+	ctx            context.Context
+	ApiService     *UsersAPIService
+	id             string
+	xOrg           *string
+	includeDeleted *bool
 }
 
-func (r ApiOrgProposeAccountMergeRequest) OrgProposeMergeRequest(orgProposeMergeRequest OrgProposeMergeRequest) ApiOrgProposeAccountMergeRequest {
-	r.orgProposeMergeRequest = &orgProposeMergeRequest
+func (r ApiRestoreUserRequest) XOrg(xOrg string) ApiRestoreUserRequest {
+	r.xOrg = &xOrg
 	return r
 }
 
-func (r ApiOrgProposeAccountMergeRequest) Execute() (*OrgProposeMergeResponse, *http.Response, error) {
-	return r.ApiService.OrgProposeAccountMergeExecute(r)
+func (r ApiRestoreUserRequest) IncludeDeleted(includeDeleted bool) ApiRestoreUserRequest {
+	r.includeDeleted = &includeDeleted
+	return r
+}
+
+func (r ApiRestoreUserRequest) Execute() (*UserResponse, *http.Response, error) {
+	return r.ApiService.RestoreUserExecute(r)
 }
 
 /*
-OrgProposeAccountMerge Method for OrgProposeAccountMerge
+RestoreUser Restore a soft-deleted user.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param orgId
-	@return ApiOrgProposeAccountMergeRequest
+	@param id
+	@return ApiRestoreUserRequest
 */
-func (a *UsersAPIService) OrgProposeAccountMerge(ctx context.Context, orgId string) ApiOrgProposeAccountMergeRequest {
-	return ApiOrgProposeAccountMergeRequest{
+func (a *UsersAPIService) RestoreUser(ctx context.Context, id string) ApiRestoreUserRequest {
+	return ApiRestoreUserRequest{
 		ApiService: a,
 		ctx:        ctx,
-		orgId:      orgId,
+		id:         id,
 	}
 }
 
 // Execute executes the request
 //
-//	@return OrgProposeMergeResponse
-func (a *UsersAPIService) OrgProposeAccountMergeExecute(r ApiOrgProposeAccountMergeRequest) (*OrgProposeMergeResponse, *http.Response, error) {
+//	@return UserResponse
+func (a *UsersAPIService) RestoreUserExecute(r ApiRestoreUserRequest) (*UserResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *OrgProposeMergeResponse
+		localVarReturnValue *UserResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersAPIService.OrgProposeAccountMerge")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UsersAPIService.RestoreUser")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/orgs/{org_id}/account-merges"
-	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
+	localVarPath := localBasePath + "/users/{id}/restore"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.orgProposeMergeRequest == nil {
-		return localVarReturnValue, nil, reportError("orgProposeMergeRequest is required and must be specified")
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
 
+	if r.includeDeleted != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
+	}
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
+	localVarHTTPContentTypes := []string{}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -1119,8 +1128,7 @@ func (a *UsersAPIService) OrgProposeAccountMergeExecute(r ApiOrgProposeAccountMe
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	// body params
-	localVarPostBody = r.orgProposeMergeRequest
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -1142,6 +1150,60 @@ func (a *UsersAPIService) OrgProposeAccountMergeExecute(r ApiOrgProposeAccountMe
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
 		}
 		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
@@ -1167,6 +1229,7 @@ type ApiSearchUsersRequest struct {
 	limit      *int32
 	offset     *int32
 	excludeIds *string
+	role       *string
 }
 
 // Search text (ILIKE on name and email)
@@ -1200,6 +1263,12 @@ func (r ApiSearchUsersRequest) Offset(offset int32) ApiSearchUsersRequest {
 // Comma-separated user IDs to exclude
 func (r ApiSearchUsersRequest) ExcludeIds(excludeIds string) ApiSearchUsersRequest {
 	r.excludeIds = &excludeIds
+	return r
+}
+
+// Membership role that must be held (within &#x60;org_id&#x60; when set; any org when &#x60;scope&#x3D;all&#x60;).
+func (r ApiSearchUsersRequest) Role(role string) ApiSearchUsersRequest {
+	r.role = &role
 	return r
 }
 
@@ -1259,6 +1328,9 @@ func (a *UsersAPIService) SearchUsersExecute(r ApiSearchUsersRequest) (*Paginate
 	}
 	if r.excludeIds != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "exclude_ids", r.excludeIds, "form", "")
+	}
+	if r.role != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "role", r.role, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

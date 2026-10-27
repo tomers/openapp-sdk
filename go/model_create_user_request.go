@@ -21,17 +21,13 @@ var _ MappedNullable = &CreateUserRequest{}
 
 // CreateUserRequest struct for CreateUserRequest
 type CreateUserRequest struct {
-	// Login email. Omit for phone-only provisioning (Kratos uses `traits.phone` only; OpenApp stores a synthetic `{id}@phone.openapp.local` placeholder in `users.email`).
+	// Login email. Omit for phone-only accounts.
 	Email NullableString `json:"email,omitempty"`
 	// Given name stored on the Kratos identity (`traits.name.first`) when creating the account.
 	FirstName NullableString `json:"first_name,omitempty"`
-	// Optional ID parameter (admin-only, not documented in API docs) This field is intentionally not included in OpenAPI documentation
-	Id NullableString `json:"id,omitempty"`
 	// Family name stored on the Kratos identity (`traits.name.last`) when creating the account.
 	LastName NullableString  `json:"last_name,omitempty"`
 	Name     LocalizedString `json:"name"`
-	// Optional password for Kratos identity (provisioning only; same permission as id). When set, the Kratos identity is created with this password so the user can log in immediately.
-	Password NullableString `json:"password,omitempty"`
 	// E.164 phone (`+[country][digits]`). When set, must satisfy the same pattern as Kratos.
 	Phone NullableString `json:"phone,omitempty"`
 	// Org ID (string) to list of role names. Optional.
@@ -144,49 +140,6 @@ func (o *CreateUserRequest) UnsetFirstName() {
 	o.FirstName.Unset()
 }
 
-// GetId returns the Id field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateUserRequest) GetId() string {
-	if o == nil || IsNil(o.Id.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Id.Get()
-}
-
-// GetIdOk returns a tuple with the Id field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateUserRequest) GetIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Id.Get(), o.Id.IsSet()
-}
-
-// HasId returns a boolean if a field has been set.
-func (o *CreateUserRequest) HasId() bool {
-	if o != nil && o.Id.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetId gets a reference to the given NullableString and assigns it to the Id field.
-func (o *CreateUserRequest) SetId(v string) {
-	o.Id.Set(&v)
-}
-
-// SetIdNil sets the value for Id to be an explicit nil
-func (o *CreateUserRequest) SetIdNil() {
-	o.Id.Set(nil)
-}
-
-// UnsetId ensures that no value is present for Id, not even an explicit nil
-func (o *CreateUserRequest) UnsetId() {
-	o.Id.Unset()
-}
-
 // GetLastName returns the LastName field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *CreateUserRequest) GetLastName() string {
 	if o == nil || IsNil(o.LastName.Get()) {
@@ -252,49 +205,6 @@ func (o *CreateUserRequest) GetNameOk() (*LocalizedString, bool) {
 // SetName sets field value
 func (o *CreateUserRequest) SetName(v LocalizedString) {
 	o.Name = v
-}
-
-// GetPassword returns the Password field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateUserRequest) GetPassword() string {
-	if o == nil || IsNil(o.Password.Get()) {
-		var ret string
-		return ret
-	}
-	return *o.Password.Get()
-}
-
-// GetPasswordOk returns a tuple with the Password field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateUserRequest) GetPasswordOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return o.Password.Get(), o.Password.IsSet()
-}
-
-// HasPassword returns a boolean if a field has been set.
-func (o *CreateUserRequest) HasPassword() bool {
-	if o != nil && o.Password.IsSet() {
-		return true
-	}
-
-	return false
-}
-
-// SetPassword gets a reference to the given NullableString and assigns it to the Password field.
-func (o *CreateUserRequest) SetPassword(v string) {
-	o.Password.Set(&v)
-}
-
-// SetPasswordNil sets the value for Password to be an explicit nil
-func (o *CreateUserRequest) SetPasswordNil() {
-	o.Password.Set(nil)
-}
-
-// UnsetPassword ensures that no value is present for Password, not even an explicit nil
-func (o *CreateUserRequest) UnsetPassword() {
-	o.Password.Unset()
 }
 
 // GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -381,16 +291,10 @@ func (o CreateUserRequest) ToMap() (map[string]interface{}, error) {
 	if o.FirstName.IsSet() {
 		toSerialize["first_name"] = o.FirstName.Get()
 	}
-	if o.Id.IsSet() {
-		toSerialize["id"] = o.Id.Get()
-	}
 	if o.LastName.IsSet() {
 		toSerialize["last_name"] = o.LastName.Get()
 	}
 	toSerialize["name"] = o.Name
-	if o.Password.IsSet() {
-		toSerialize["password"] = o.Password.Get()
-	}
 	if o.Phone.IsSet() {
 		toSerialize["phone"] = o.Phone.Get()
 	}

@@ -22,232 +22,6 @@ import (
 // AgentsAPIService AgentsAPI service
 type AgentsAPIService service
 
-type ApiCopilotChatRequest struct {
-	ctx                context.Context
-	ApiService         *AgentsAPIService
-	orgId              string
-	copilotChatRequest *CopilotChatRequest
-}
-
-func (r ApiCopilotChatRequest) CopilotChatRequest(copilotChatRequest CopilotChatRequest) ApiCopilotChatRequest {
-	r.copilotChatRequest = &copilotChatRequest
-	return r
-}
-
-func (r ApiCopilotChatRequest) Execute() (*CopilotChatResponse, *http.Response, error) {
-	return r.ApiService.CopilotChatExecute(r)
-}
-
-/*
-CopilotChat Method for CopilotChat
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param orgId
-	@return ApiCopilotChatRequest
-*/
-func (a *AgentsAPIService) CopilotChat(ctx context.Context, orgId string) ApiCopilotChatRequest {
-	return ApiCopilotChatRequest{
-		ApiService: a,
-		ctx:        ctx,
-		orgId:      orgId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return CopilotChatResponse
-func (a *AgentsAPIService) CopilotChatExecute(r ApiCopilotChatRequest) (*CopilotChatResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *CopilotChatResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AgentsAPIService.CopilotChat")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/orgs/{org_id}/copilot/chat"
-	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.copilotChatRequest == nil {
-		return localVarReturnValue, nil, reportError("copilotChatRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.copilotChatRequest
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiCopilotCommitRequest struct {
-	ctx                  context.Context
-	ApiService           *AgentsAPIService
-	orgId                string
-	copilotCommitRequest *CopilotCommitRequest
-}
-
-func (r ApiCopilotCommitRequest) CopilotCommitRequest(copilotCommitRequest CopilotCommitRequest) ApiCopilotCommitRequest {
-	r.copilotCommitRequest = &copilotCommitRequest
-	return r
-}
-
-func (r ApiCopilotCommitRequest) Execute() (*CopilotCommitResponse, *http.Response, error) {
-	return r.ApiService.CopilotCommitExecute(r)
-}
-
-/*
-CopilotCommit Method for CopilotCommit
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param orgId
-	@return ApiCopilotCommitRequest
-*/
-func (a *AgentsAPIService) CopilotCommit(ctx context.Context, orgId string) ApiCopilotCommitRequest {
-	return ApiCopilotCommitRequest{
-		ApiService: a,
-		ctx:        ctx,
-		orgId:      orgId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return CopilotCommitResponse
-func (a *AgentsAPIService) CopilotCommitExecute(r ApiCopilotCommitRequest) (*CopilotCommitResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *CopilotCommitResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AgentsAPIService.CopilotCommit")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/orgs/{org_id}/copilot/commit"
-	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.copilotCommitRequest == nil {
-		return localVarReturnValue, nil, reportError("copilotCommitRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.copilotCommitRequest
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type ApiCreateAgentRequest struct {
 	ctx                context.Context
 	ApiService         *AgentsAPIService
@@ -924,6 +698,100 @@ func (a *AgentsAPIService) DeleteAliasExecute(r ApiDeleteAliasRequest) (*http.Re
 	return localVarHTTPResponse, nil
 }
 
+type ApiDeletePmsConnectorRequest struct {
+	ctx         context.Context
+	ApiService  *AgentsAPIService
+	orgId       string
+	connectorId string
+}
+
+func (r ApiDeletePmsConnectorRequest) Execute() (*http.Response, error) {
+	return r.ApiService.DeletePmsConnectorExecute(r)
+}
+
+/*
+DeletePmsConnector Delete a PMS connector and its signing secret. Deliveries signed with that secret are rejected from then on; this is how a leaked secret is retired (create a new connector and reconfigure the PMS).
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param orgId
+	@param connectorId
+	@return ApiDeletePmsConnectorRequest
+*/
+func (a *AgentsAPIService) DeletePmsConnector(ctx context.Context, orgId string, connectorId string) ApiDeletePmsConnectorRequest {
+	return ApiDeletePmsConnectorRequest{
+		ApiService:  a,
+		ctx:         ctx,
+		orgId:       orgId,
+		connectorId: connectorId,
+	}
+}
+
+// Execute executes the request
+func (a *AgentsAPIService) DeletePmsConnectorExecute(r ApiDeletePmsConnectorRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod = http.MethodDelete
+		localVarPostBody   interface{}
+		formFiles          []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AgentsAPIService.DeletePmsConnector")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{org_id}/connectors/pms/{connector_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"connector_id"+"}", url.PathEscape(parameterValueToString(r.connectorId, "connectorId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
+}
+
 type ApiGetAgentRequest struct {
 	ctx        context.Context
 	ApiService *AgentsAPIService
@@ -1252,6 +1120,108 @@ func (a *AgentsAPIService) ListAliasesExecute(r ApiListAliasesRequest) (*http.Re
 	return localVarHTTPResponse, nil
 }
 
+type ApiListPmsConnectorsRequest struct {
+	ctx        context.Context
+	ApiService *AgentsAPIService
+	orgId      string
+}
+
+func (r ApiListPmsConnectorsRequest) Execute() ([]PmsConnectorResponse, *http.Response, error) {
+	return r.ApiService.ListPmsConnectorsExecute(r)
+}
+
+/*
+ListPmsConnectors Method for ListPmsConnectors
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param orgId
+	@return ApiListPmsConnectorsRequest
+*/
+func (a *AgentsAPIService) ListPmsConnectors(ctx context.Context, orgId string) ApiListPmsConnectorsRequest {
+	return ApiListPmsConnectorsRequest{
+		ApiService: a,
+		ctx:        ctx,
+		orgId:      orgId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return []PmsConnectorResponse
+func (a *AgentsAPIService) ListPmsConnectorsExecute(r ApiListPmsConnectorsRequest) ([]PmsConnectorResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue []PmsConnectorResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AgentsAPIService.ListPmsConnectors")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{org_id}/connectors/pms"
+	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiListSkillsRequest struct {
 	ctx        context.Context
 	ApiService *AgentsAPIService
@@ -1537,237 +1507,25 @@ func (a *AgentsAPIService) OauthProtectedResourceExecute(r ApiOauthProtectedReso
 	return localVarHTTPResponse, nil
 }
 
-type ApiPerceptionLprRequest struct {
-	ctx                  context.Context
-	ApiService           *AgentsAPIService
-	orgId                string
-	perceptionLprRequest *PerceptionLprRequest
-}
-
-func (r ApiPerceptionLprRequest) PerceptionLprRequest(perceptionLprRequest PerceptionLprRequest) ApiPerceptionLprRequest {
-	r.perceptionLprRequest = &perceptionLprRequest
-	return r
-}
-
-func (r ApiPerceptionLprRequest) Execute() (*PerceptionActionResponse, *http.Response, error) {
-	return r.ApiService.PerceptionLprExecute(r)
-}
-
-/*
-PerceptionLpr Method for PerceptionLpr
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param orgId
-	@return ApiPerceptionLprRequest
-*/
-func (a *AgentsAPIService) PerceptionLpr(ctx context.Context, orgId string) ApiPerceptionLprRequest {
-	return ApiPerceptionLprRequest{
-		ApiService: a,
-		ctx:        ctx,
-		orgId:      orgId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return PerceptionActionResponse
-func (a *AgentsAPIService) PerceptionLprExecute(r ApiPerceptionLprRequest) (*PerceptionActionResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *PerceptionActionResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AgentsAPIService.PerceptionLpr")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/orgs/{org_id}/perception/lpr"
-	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.perceptionLprRequest == nil {
-		return localVarReturnValue, nil, reportError("perceptionLprRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.perceptionLprRequest
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiPerceptionVisitorPresentRequest struct {
-	ctx                      context.Context
-	ApiService               *AgentsAPIService
-	orgId                    string
-	perceptionVisitorRequest *PerceptionVisitorRequest
-}
-
-func (r ApiPerceptionVisitorPresentRequest) PerceptionVisitorRequest(perceptionVisitorRequest PerceptionVisitorRequest) ApiPerceptionVisitorPresentRequest {
-	r.perceptionVisitorRequest = &perceptionVisitorRequest
-	return r
-}
-
-func (r ApiPerceptionVisitorPresentRequest) Execute() (*PerceptionActionResponse, *http.Response, error) {
-	return r.ApiService.PerceptionVisitorPresentExecute(r)
-}
-
-/*
-PerceptionVisitorPresent Method for PerceptionVisitorPresent
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param orgId
-	@return ApiPerceptionVisitorPresentRequest
-*/
-func (a *AgentsAPIService) PerceptionVisitorPresent(ctx context.Context, orgId string) ApiPerceptionVisitorPresentRequest {
-	return ApiPerceptionVisitorPresentRequest{
-		ApiService: a,
-		ctx:        ctx,
-		orgId:      orgId,
-	}
-}
-
-// Execute executes the request
-//
-//	@return PerceptionActionResponse
-func (a *AgentsAPIService) PerceptionVisitorPresentExecute(r ApiPerceptionVisitorPresentRequest) (*PerceptionActionResponse, *http.Response, error) {
-	var (
-		localVarHTTPMethod  = http.MethodPost
-		localVarPostBody    interface{}
-		formFiles           []formFile
-		localVarReturnValue *PerceptionActionResponse
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AgentsAPIService.PerceptionVisitorPresent")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/orgs/{org_id}/perception/visitor-present"
-	localVarPath = strings.Replace(localVarPath, "{"+"org_id"+"}", url.PathEscape(parameterValueToString(r.orgId, "orgId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.perceptionVisitorRequest == nil {
-		return localVarReturnValue, nil, reportError("perceptionVisitorRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.perceptionVisitorRequest
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type ApiPmsInboundRequest struct {
 	ctx               context.Context
 	ApiService        *AgentsAPIService
 	connectorId       string
+	xOpenAppTimestamp *string
+	xOpenAppSignature *string
 	pmsInboundPayload *PmsInboundPayload
+}
+
+// Unix time (seconds) the request was signed
+func (r ApiPmsInboundRequest) XOpenAppTimestamp(xOpenAppTimestamp string) ApiPmsInboundRequest {
+	r.xOpenAppTimestamp = &xOpenAppTimestamp
+	return r
+}
+
+// &#x60;sha256&#x3D;&lt;hex HMAC-SHA256 of \&quot;{timestamp}.{body}\&quot;&gt;&#x60;
+func (r ApiPmsInboundRequest) XOpenAppSignature(xOpenAppSignature string) ApiPmsInboundRequest {
+	r.xOpenAppSignature = &xOpenAppSignature
+	return r
 }
 
 func (r ApiPmsInboundRequest) PmsInboundPayload(pmsInboundPayload PmsInboundPayload) ApiPmsInboundRequest {
@@ -1780,7 +1538,15 @@ func (r ApiPmsInboundRequest) Execute() (*http.Response, error) {
 }
 
 /*
-PmsInbound Method for PmsInbound
+PmsInbound Receive a PMS event. Unauthenticated at the gateway; each request is authenticated by an HMAC-SHA256 signature made with the connector's signing secret.
+
+Sign as follows:
+  - `X-OpenApp-Timestamp`: current Unix time in seconds.
+  - `X-OpenApp-Signature`: `sha256=` followed by the lowercase hex HMAC-SHA256 of
+    `{timestamp}.{raw request body}`.
+
+Requests signed more than 5 minutes from server time, and repeats of an already accepted
+signature, are rejected with `401`.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param connectorId
@@ -1813,6 +1579,12 @@ func (a *AgentsAPIService) PmsInboundExecute(r ApiPmsInboundRequest) (*http.Resp
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.xOpenAppTimestamp == nil {
+		return nil, reportError("xOpenAppTimestamp is required and must be specified")
+	}
+	if r.xOpenAppSignature == nil {
+		return nil, reportError("xOpenAppSignature is required and must be specified")
+	}
 	if r.pmsInboundPayload == nil {
 		return nil, reportError("pmsInboundPayload is required and must be specified")
 	}
@@ -1834,6 +1606,8 @@ func (a *AgentsAPIService) PmsInboundExecute(r ApiPmsInboundRequest) (*http.Resp
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-OpenApp-Timestamp", r.xOpenAppTimestamp, "simple", "")
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-OpenApp-Signature", r.xOpenAppSignature, "simple", "")
 	// body params
 	localVarPostBody = r.pmsInboundPayload
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)

@@ -20,15 +20,16 @@ var _ MappedNullable = &CreateEntityRequest{}
 
 // CreateEntityRequest struct for CreateEntityRequest
 type CreateEntityRequest struct {
-	ChannelIndex NullableInt32  `json:"channel_index,omitempty"`
+	ChannelIndex *int32         `json:"channel_index,omitempty"`
 	DeviceId     NullableString `json:"device_id"`
 	EntityType   NullableString `json:"entity_type"`
 	ExternalId   NullableString `json:"external_id,omitempty"`
-	// Arbitrary, persisted entity metadata (integration-specific).  For example, MQTT entities can store: - `command_topic` - `toggle_payload`  Values are converted to strings (non-strings are JSON-stringified) to match `domain::Metadata`.
+	// Arbitrary, persisted entity metadata (integration-specific).  For example, MQTT entities can store: - `command_topic` - `toggle_payload`  Values are stored as strings: non-string values are JSON-stringified.
 	Metadata *map[string]interface{} `json:"metadata,omitempty"`
 	// Optional friendly name for the entity.
-	Name                 *string        `json:"name,omitempty"`
-	ZoneId               NullableString `json:"zone_id,omitempty"`
+	Name *string `json:"name,omitempty"`
+	// Zone placement; defaults to `{\"mode\":\"inherit\"}` (follow the device zone).
+	Zone                 *ZonePlacement `json:"zone,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -53,47 +54,36 @@ func NewCreateEntityRequestWithDefaults() *CreateEntityRequest {
 	return &this
 }
 
-// GetChannelIndex returns the ChannelIndex field value if set, zero value otherwise (both if not set or set to explicit null).
+// GetChannelIndex returns the ChannelIndex field value if set, zero value otherwise.
 func (o *CreateEntityRequest) GetChannelIndex() int32 {
-	if o == nil || IsNil(o.ChannelIndex.Get()) {
+	if o == nil || IsNil(o.ChannelIndex) {
 		var ret int32
 		return ret
 	}
-	return *o.ChannelIndex.Get()
+	return *o.ChannelIndex
 }
 
 // GetChannelIndexOk returns a tuple with the ChannelIndex field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
 func (o *CreateEntityRequest) GetChannelIndexOk() (*int32, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.ChannelIndex) {
 		return nil, false
 	}
-	return o.ChannelIndex.Get(), o.ChannelIndex.IsSet()
+	return o.ChannelIndex, true
 }
 
 // HasChannelIndex returns a boolean if a field has been set.
 func (o *CreateEntityRequest) HasChannelIndex() bool {
-	if o != nil && o.ChannelIndex.IsSet() {
+	if o != nil && !IsNil(o.ChannelIndex) {
 		return true
 	}
 
 	return false
 }
 
-// SetChannelIndex gets a reference to the given NullableInt32 and assigns it to the ChannelIndex field.
+// SetChannelIndex gets a reference to the given int32 and assigns it to the ChannelIndex field.
 func (o *CreateEntityRequest) SetChannelIndex(v int32) {
-	o.ChannelIndex.Set(&v)
-}
-
-// SetChannelIndexNil sets the value for ChannelIndex to be an explicit nil
-func (o *CreateEntityRequest) SetChannelIndexNil() {
-	o.ChannelIndex.Set(nil)
-}
-
-// UnsetChannelIndex ensures that no value is present for ChannelIndex, not even an explicit nil
-func (o *CreateEntityRequest) UnsetChannelIndex() {
-	o.ChannelIndex.Unset()
+	o.ChannelIndex = &v
 }
 
 // GetDeviceId returns the DeviceId field value
@@ -255,53 +245,42 @@ func (o *CreateEntityRequest) SetName(v string) {
 	o.Name = &v
 }
 
-// GetZoneId returns the ZoneId field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateEntityRequest) GetZoneId() string {
-	if o == nil || IsNil(o.ZoneId.Get()) {
-		var ret string
+// GetZone returns the Zone field value if set, zero value otherwise.
+func (o *CreateEntityRequest) GetZone() ZonePlacement {
+	if o == nil || IsNil(o.Zone) {
+		var ret ZonePlacement
 		return ret
 	}
-	return *o.ZoneId.Get()
+	return *o.Zone
 }
 
-// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// GetZoneOk returns a tuple with the Zone field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-// NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateEntityRequest) GetZoneIdOk() (*string, bool) {
-	if o == nil {
+func (o *CreateEntityRequest) GetZoneOk() (*ZonePlacement, bool) {
+	if o == nil || IsNil(o.Zone) {
 		return nil, false
 	}
-	return o.ZoneId.Get(), o.ZoneId.IsSet()
+	return o.Zone, true
 }
 
-// HasZoneId returns a boolean if a field has been set.
-func (o *CreateEntityRequest) HasZoneId() bool {
-	if o != nil && o.ZoneId.IsSet() {
+// HasZone returns a boolean if a field has been set.
+func (o *CreateEntityRequest) HasZone() bool {
+	if o != nil && !IsNil(o.Zone) {
 		return true
 	}
 
 	return false
 }
 
-// SetZoneId gets a reference to the given NullableString and assigns it to the ZoneId field.
-func (o *CreateEntityRequest) SetZoneId(v string) {
-	o.ZoneId.Set(&v)
-}
-
-// SetZoneIdNil sets the value for ZoneId to be an explicit nil
-func (o *CreateEntityRequest) SetZoneIdNil() {
-	o.ZoneId.Set(nil)
-}
-
-// UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
-func (o *CreateEntityRequest) UnsetZoneId() {
-	o.ZoneId.Unset()
+// SetZone gets a reference to the given ZonePlacement and assigns it to the Zone field.
+func (o *CreateEntityRequest) SetZone(v ZonePlacement) {
+	o.Zone = &v
 }
 
 func (o CreateEntityRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if o.ChannelIndex.IsSet() {
-		toSerialize["channel_index"] = o.ChannelIndex.Get()
+	if !IsNil(o.ChannelIndex) {
+		toSerialize["channel_index"] = o.ChannelIndex
 	}
 	toSerialize["device_id"] = o.DeviceId.Get()
 	toSerialize["entity_type"] = o.EntityType.Get()
@@ -314,8 +293,8 @@ func (o CreateEntityRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
-	if o.ZoneId.IsSet() {
-		toSerialize["zone_id"] = o.ZoneId.Get()
+	if !IsNil(o.Zone) {
+		toSerialize["zone"] = o.Zone
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -367,7 +346,7 @@ func (o *CreateEntityRequest) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "external_id")
 		delete(additionalProperties, "metadata")
 		delete(additionalProperties, "name")
-		delete(additionalProperties, "zone_id")
+		delete(additionalProperties, "zone")
 		o.AdditionalProperties = additionalProperties
 	}
 

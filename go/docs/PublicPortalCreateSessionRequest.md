@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Mode** | **string** |  |
-**TargetEntityId** | **string** |  |
+**Mode** | **string** | &#x60;voice&#x60;, &#x60;video&#x60; or &#x60;message&#x60; (case-insensitive); any other value is rejected with 400. |
+**TargetEntityId** | **string** | ID of the directory entry (listing entity) to contact. Required; 400 when blank. |
 
 ## Methods
 

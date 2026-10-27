@@ -4,11 +4,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**AppliesTo** | Pointer to [**[]PolicyPrincipalKind**](PolicyPrincipalKind.md) |  | [optional]
 **Output** | Pointer to [**NullableInvitationAllowedEntryKindsPolicyConfigOutput**](InvitationAllowedEntryKindsPolicyConfigOutput.md) |  | [optional]
 **RequirePhoto** | Pointer to **NullableBool** |  | [optional]
 **RequirePin** | Pointer to **NullableBool** |  | [optional]
 **RequireVerifiedPhone** | Pointer to **NullableBool** |  | [optional]
+**ZoneId** | Pointer to **NullableString** | Zone the row is scoped to (org and integration rows only): it binds only when the acting effective zone is this zone or a descendant. Must be a live zone of the policy&#39;s org. | [optional]
 
 ## Methods
 
@@ -29,41 +29,6 @@ NewInvitationIdentityPolicyConfigWithDefaults instantiates a new InvitationIdent
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
 
-### GetAppliesTo
-
-`func (o *InvitationIdentityPolicyConfig) GetAppliesTo() []PolicyPrincipalKind`
-
-GetAppliesTo returns the AppliesTo field if non-nil, zero value otherwise.
-
-### GetAppliesToOk
-
-`func (o *InvitationIdentityPolicyConfig) GetAppliesToOk() (*[]PolicyPrincipalKind, bool)`
-
-GetAppliesToOk returns a tuple with the AppliesTo field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetAppliesTo
-
-`func (o *InvitationIdentityPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind)`
-
-SetAppliesTo sets AppliesTo field to given value.
-
-### HasAppliesTo
-
-`func (o *InvitationIdentityPolicyConfig) HasAppliesTo() bool`
-
-HasAppliesTo returns a boolean if a field has been set.
-
-### SetAppliesToNil
-
-`func (o *InvitationIdentityPolicyConfig) SetAppliesToNil(b bool)`
-
- SetAppliesToNil sets the value for AppliesTo to be an explicit nil
-
-### UnsetAppliesTo
-`func (o *InvitationIdentityPolicyConfig) UnsetAppliesTo()`
-
-UnsetAppliesTo ensures that no value is present for AppliesTo, not even an explicit nil
 ### GetOutput
 
 `func (o *InvitationIdentityPolicyConfig) GetOutput() InvitationAllowedEntryKindsPolicyConfigOutput`
@@ -204,5 +169,40 @@ HasRequireVerifiedPhone returns a boolean if a field has been set.
 `func (o *InvitationIdentityPolicyConfig) UnsetRequireVerifiedPhone()`
 
 UnsetRequireVerifiedPhone ensures that no value is present for RequireVerifiedPhone, not even an explicit nil
+### GetZoneId
+
+`func (o *InvitationIdentityPolicyConfig) GetZoneId() string`
+
+GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+
+### GetZoneIdOk
+
+`func (o *InvitationIdentityPolicyConfig) GetZoneIdOk() (*string, bool)`
+
+GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneId
+
+`func (o *InvitationIdentityPolicyConfig) SetZoneId(v string)`
+
+SetZoneId sets ZoneId field to given value.
+
+### HasZoneId
+
+`func (o *InvitationIdentityPolicyConfig) HasZoneId() bool`
+
+HasZoneId returns a boolean if a field has been set.
+
+### SetZoneIdNil
+
+`func (o *InvitationIdentityPolicyConfig) SetZoneIdNil(b bool)`
+
+ SetZoneIdNil sets the value for ZoneId to be an explicit nil
+
+### UnsetZoneId
+`func (o *InvitationIdentityPolicyConfig) UnsetZoneId()`
+
+UnsetZoneId ensures that no value is present for ZoneId, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

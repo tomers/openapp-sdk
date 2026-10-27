@@ -1,5 +1,7 @@
 # Local SDK builds for tomers/openapp-sdk.
 # Repo root is mounted at /workspace (rust/, python/, go/, tests/ at top level).
+# working_dir stays /workspace. Dockerd creates a missing working_dir as root on
+# the bind mount before the container user applies; language commands cd themselves.
 #
 # RUST_VERSION / RUST_DEBIAN: from rust-pin.env (kept in sync with OpenApp config.toml
 # `[rust]` by `just maintenance rust-pin-sync`). Pass `--env-file tests/docker/rust-pin.env`.
@@ -19,7 +21,7 @@ services:
       - openapp-sdk-cargo-registry:/usr/local/cargo/registry
       - openapp-sdk-cargo-git:/usr/local/cargo/git
       - openapp-sdk-rustup:/usr/local/rustup
-    working_dir: /workspace/rust
+    working_dir: /workspace
     user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
     environment:
       HOME: /tmp
@@ -35,11 +37,12 @@ services:
         RUST_VERSION: ${RUST_VERSION:?set RUST_VERSION from rust-pin.env}
     volumes:
       - ../..:/workspace
-      - openapp-sdk-python-venv:/workspace/python/.venv
+      # uv's content-addressed cache; the environment itself is rebuilt each run.
+      - openapp-sdk-uv-cache:/opt/uv-cache
       - openapp-sdk-cargo-registry:/usr/local/cargo/registry
       - openapp-sdk-cargo-git:/usr/local/cargo/git
       - openapp-sdk-rustup:/usr/local/rustup
-    working_dir: /workspace/python
+    working_dir: /workspace
     user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
     environment:
       HOME: /tmp
@@ -47,6 +50,9 @@ services:
       RUSTUP_HOME: /usr/local/rustup
       RUSTUP_AUTO_INSTALL: "0"
       UV_LINK_MODE: copy
+      UV_CACHE_DIR: /opt/uv-cache
+      # Per-run environment outside the bind mount; never touches the repo's .venv.
+      UV_PROJECT_ENVIRONMENT: /tmp/sdk-python-venv
 
   sdk-go:
     build:
@@ -57,7 +63,7 @@ services:
         RUST_DEBIAN: ${RUST_DEBIAN:?set RUST_DEBIAN from rust-pin.env}
     volumes:
       - ../..:/workspace
-    working_dir: /workspace/go
+    working_dir: /workspace
     user: "${SDK_DOCKER_UID:-1000}:${SDK_DOCKER_GID:-1000}"
     environment:
       HOME: /tmp
@@ -73,4 +79,4 @@ volumes:
   openapp-sdk-cargo-registry:
   openapp-sdk-cargo-git:
   openapp-sdk-rustup:
-  openapp-sdk-python-venv:
+  openapp-sdk-uv-cache:

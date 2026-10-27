@@ -64,6 +64,20 @@ func Test_openapi_OrgsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test OrgsAPIService GetOrgDefaultLocale", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.OrgsAPI.GetOrgDefaultLocale(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test OrgsAPIService GetOrgPermissions", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -92,6 +106,32 @@ func Test_openapi_OrgsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test OrgsAPIService ListOrgAncestors", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.OrgsAPI.ListOrgAncestors(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test OrgsAPIService ListOrgChildren", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.OrgsAPI.ListOrgChildren(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test OrgsAPIService ListOrgUsers", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -111,6 +151,46 @@ func Test_openapi_OrgsAPIService(t *testing.T) {
 		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.OrgsAPI.ListOrgs(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test OrgsAPIService RestoreOrg", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.OrgsAPI.RestoreOrg(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test OrgsAPIService SearchOrgs", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.OrgsAPI.SearchOrgs(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test OrgsAPIService SetOrgDefaultLocale", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.OrgsAPI.SetOrgDefaultLocale(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

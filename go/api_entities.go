@@ -1577,14 +1577,16 @@ func (a *EntitiesAPIService) ListDeviceEntitiesExecute(r ApiListDeviceEntitiesRe
 }
 
 type ApiListEntitiesRequest struct {
-	ctx           context.Context
-	ApiService    *EntitiesAPIService
-	xOrg          *string
-	outputOptions *MultiResourceOutputOptionsQuery
-	pagination    *PaginationQuery
-	zoneId        *string
-	q             *string
-	sort          *string
+	ctx                context.Context
+	ApiService         *EntitiesAPIService
+	xOrg               *string
+	outputOptions      *MultiResourceOutputOptionsQuery
+	pagination         *PaginationQuery
+	zoneId             *string
+	includeDescendants *bool
+	q                  *string
+	sort               *string
+	orgScope           *string
 }
 
 func (r ApiListEntitiesRequest) XOrg(xOrg string) ApiListEntitiesRequest {
@@ -1602,9 +1604,15 @@ func (r ApiListEntitiesRequest) Pagination(pagination PaginationQuery) ApiListEn
 	return r
 }
 
-// Optional filter: only entities in this zone.
+// Optional filter: only entities whose **effective** zone is this zone. A malformed id is 400.
 func (r ApiListEntitiesRequest) ZoneId(zoneId string) ApiListEntitiesRequest {
 	r.zoneId = &zoneId
+	return r
+}
+
+// With &#x60;zone_id&#x60;: also match entities whose effective zone is a descendant zone.
+func (r ApiListEntitiesRequest) IncludeDescendants(includeDescendants bool) ApiListEntitiesRequest {
+	r.includeDescendants = &includeDescendants
 	return r
 }
 
@@ -1614,9 +1622,15 @@ func (r ApiListEntitiesRequest) Q(q string) ApiListEntitiesRequest {
 	return r
 }
 
-// Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;zone_id&#x60; is set. Defaults to insertion order when omitted.
+// Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Combines with &#x60;zone_id&#x60; and &#x60;q&#x60;. Defaults to insertion order when omitted.
 func (r ApiListEntitiesRequest) Sort(sort string) ApiListEntitiesRequest {
 	r.sort = &sort
+	return r
+}
+
+// &#x60;self&#x60; (default): org subtree of X-Org. &#x60;self_and_ancestors&#x60;: exact X-Org plus ancestor orgs where the caller has &#x60;entities:list&#x60; (door-wiring pickers for shared HOA hardware). Cannot combine with &#x60;zone_id&#x60;.
+func (r ApiListEntitiesRequest) OrgScope(orgScope string) ApiListEntitiesRequest {
+	r.orgScope = &orgScope
 	return r
 }
 
@@ -1673,11 +1687,17 @@ func (a *EntitiesAPIService) ListEntitiesExecute(r ApiListEntitiesRequest) (*Pag
 	if r.zoneId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "zone_id", r.zoneId, "form", "")
 	}
+	if r.includeDescendants != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "include_descendants", r.includeDescendants, "form", "")
+	}
 	if r.q != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
 	}
 	if r.sort != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "sort", r.sort, "form", "")
+	}
+	if r.orgScope != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "org_scope", r.orgScope, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -1718,6 +1738,17 @@ func (a *EntitiesAPIService) ListEntitiesExecute(r ApiListEntitiesRequest) (*Pag
 		newErr := &GenericOpenAPIError{
 			body:  localVarBody,
 			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 401 {
 			var v ApiErrorResponse
@@ -1981,7 +2012,7 @@ func (r ApiPreviewEntityActionRequest) Execute() (*http.Response, error) {
 }
 
 /*
-PreviewEntityAction Preview an entity action (Cedar + policies, no hardware call).
+PreviewEntityAction Preview an entity action: evaluates permissions and policies without calling the hardware.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id

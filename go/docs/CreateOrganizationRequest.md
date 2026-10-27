@@ -5,7 +5,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Description** | Pointer to **NullableString** |  | [optional]
-**Id** | Pointer to **NullableString** | Optional ID parameter (admin-only, not documented in API docs). | [optional]
 **Name** | [**LocalizedString**](LocalizedString.md) |  |
 **ParentId** | Pointer to **NullableString** |  | [optional]
 
@@ -63,41 +62,6 @@ HasDescription returns a boolean if a field has been set.
 `func (o *CreateOrganizationRequest) UnsetDescription()`
 
 UnsetDescription ensures that no value is present for Description, not even an explicit nil
-### GetId
-
-`func (o *CreateOrganizationRequest) GetId() string`
-
-GetId returns the Id field if non-nil, zero value otherwise.
-
-### GetIdOk
-
-`func (o *CreateOrganizationRequest) GetIdOk() (*string, bool)`
-
-GetIdOk returns a tuple with the Id field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetId
-
-`func (o *CreateOrganizationRequest) SetId(v string)`
-
-SetId sets Id field to given value.
-
-### HasId
-
-`func (o *CreateOrganizationRequest) HasId() bool`
-
-HasId returns a boolean if a field has been set.
-
-### SetIdNil
-
-`func (o *CreateOrganizationRequest) SetIdNil(b bool)`
-
- SetIdNil sets the value for Id to be an explicit nil
-
-### UnsetId
-`func (o *CreateOrganizationRequest) UnsetId()`
-
-UnsetId ensures that no value is present for Id, not even an explicit nil
 ### GetName
 
 `func (o *CreateOrganizationRequest) GetName() LocalizedString`

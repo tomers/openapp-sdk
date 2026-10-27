@@ -92,6 +92,20 @@ func Test_openapi_EntitiesAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test EntitiesAPIService GetEntityHold", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.EntitiesAPI.GetEntityHold(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test EntitiesAPIService GetEntityMetadataDefinition", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -167,6 +181,34 @@ func Test_openapi_EntitiesAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.EntitiesAPI.PatchEntity(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test EntitiesAPIService PreviewEntityAction", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+		var actionId string
+
+		httpRes, err := apiClient.EntitiesAPI.PreviewEntityAction(context.Background(), id, actionId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test EntitiesAPIService PutEntityHold", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.EntitiesAPI.PutEntityHold(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

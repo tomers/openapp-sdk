@@ -19,10 +19,10 @@ var _ MappedNullable = &RequireStepUpPolicyConfig{}
 
 // RequireStepUpPolicyConfig Typed `config` shape for `require_step_up`.
 type RequireStepUpPolicyConfig struct {
-	// Principal kinds requiring confirmation; unknown and empty values are rejected.
+	// Principal kinds the row binds; unknown and empty values are rejected. Omitted binds the type's default principals.
 	AppliesTo []PolicyPrincipalKind `json:"applies_to,omitempty"`
-	// Optional provider-derived output/channel selector.
-	Output NullablePolicyOutputSelector `json:"output,omitempty"`
+	// Entities requiring confirmation: `\"*\"`, one entity ULID, or a non-empty array of entity ULIDs. Omitted applies to every entity.
+	ResourceSelector map[string]interface{} `json:"resource_selector,omitempty"`
 }
 
 // NewRequireStepUpPolicyConfig instantiates a new RequireStepUpPolicyConfig object
@@ -75,47 +75,37 @@ func (o *RequireStepUpPolicyConfig) SetAppliesTo(v []PolicyPrincipalKind) {
 	o.AppliesTo = v
 }
 
-// GetOutput returns the Output field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *RequireStepUpPolicyConfig) GetOutput() PolicyOutputSelector {
-	if o == nil || IsNil(o.Output.Get()) {
-		var ret PolicyOutputSelector
+// GetResourceSelector returns the ResourceSelector field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *RequireStepUpPolicyConfig) GetResourceSelector() map[string]interface{} {
+	if o == nil {
+		var ret map[string]interface{}
 		return ret
 	}
-	return *o.Output.Get()
+	return o.ResourceSelector
 }
 
-// GetOutputOk returns a tuple with the Output field value if set, nil otherwise
+// GetResourceSelectorOk returns a tuple with the ResourceSelector field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *RequireStepUpPolicyConfig) GetOutputOk() (*PolicyOutputSelector, bool) {
-	if o == nil {
-		return nil, false
+func (o *RequireStepUpPolicyConfig) GetResourceSelectorOk() (map[string]interface{}, bool) {
+	if o == nil || IsNil(o.ResourceSelector) {
+		return map[string]interface{}{}, false
 	}
-	return o.Output.Get(), o.Output.IsSet()
+	return o.ResourceSelector, true
 }
 
-// HasOutput returns a boolean if a field has been set.
-func (o *RequireStepUpPolicyConfig) HasOutput() bool {
-	if o != nil && o.Output.IsSet() {
+// HasResourceSelector returns a boolean if a field has been set.
+func (o *RequireStepUpPolicyConfig) HasResourceSelector() bool {
+	if o != nil && !IsNil(o.ResourceSelector) {
 		return true
 	}
 
 	return false
 }
 
-// SetOutput gets a reference to the given NullablePolicyOutputSelector and assigns it to the Output field.
-func (o *RequireStepUpPolicyConfig) SetOutput(v PolicyOutputSelector) {
-	o.Output.Set(&v)
-}
-
-// SetOutputNil sets the value for Output to be an explicit nil
-func (o *RequireStepUpPolicyConfig) SetOutputNil() {
-	o.Output.Set(nil)
-}
-
-// UnsetOutput ensures that no value is present for Output, not even an explicit nil
-func (o *RequireStepUpPolicyConfig) UnsetOutput() {
-	o.Output.Unset()
+// SetResourceSelector gets a reference to the given map[string]interface{} and assigns it to the ResourceSelector field.
+func (o *RequireStepUpPolicyConfig) SetResourceSelector(v map[string]interface{}) {
+	o.ResourceSelector = v
 }
 
 func (o RequireStepUpPolicyConfig) ToMap() (map[string]interface{}, error) {
@@ -123,8 +113,8 @@ func (o RequireStepUpPolicyConfig) ToMap() (map[string]interface{}, error) {
 	if o.AppliesTo != nil {
 		toSerialize["applies_to"] = o.AppliesTo
 	}
-	if o.Output.IsSet() {
-		toSerialize["output"] = o.Output.Get()
+	if o.ResourceSelector != nil {
+		toSerialize["resource_selector"] = o.ResourceSelector
 	}
 	return toSerialize, nil
 }

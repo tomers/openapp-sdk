@@ -13,6 +13,10 @@
 
 * `ENTITIES` (value: `"entities"`)
 
+* `GROUPS` (value: `"groups"`)
+
+* `EXTERNAL_GROUP_MEMBERS` (value: `"external_group_members"`)
+
 * `ZONES` (value: `"zones"`)
 
 * `API_KEYS` (value: `"api_keys"`)
@@ -32,6 +36,8 @@
 * `AI_REQUESTS` (value: `"ai_requests"`)
 
 * `GEOCODING_REQUESTS` (value: `"geocoding_requests"`)
+
+* `INVITATION_API_REQUESTS` (value: `"invitation_api_requests"`)
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

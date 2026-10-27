@@ -51,6 +51,75 @@ func Test_openapi_LocationsAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test LocationsAPIService DeleteLocationImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		httpRes, err := apiClient.LocationsAPI.DeleteLocationImage(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetAccessInviteLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetAccessInviteLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetAccessPortalLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetAccessPortalLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetDeviceLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetDeviceLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetIntegrationLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetIntegrationLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test LocationsAPIService GetLocation", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -58,6 +127,48 @@ func Test_openapi_LocationsAPIService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.LocationsAPI.GetLocation(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetLocationImage", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetLocationImage(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetOrgLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetOrgLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService GetZoneLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.GetZoneLocationBinding(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)
@@ -107,13 +218,97 @@ func Test_openapi_LocationsAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test LocationsAPIService PostLocationGeocode", func(t *testing.T) {
+	t.Run("Test LocationsAPIService PostLocationImage", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
 		var id string
 
-		resp, httpRes, err := apiClient.LocationsAPI.PostLocationGeocode(context.Background(), id).Execute()
+		resp, httpRes, err := apiClient.LocationsAPI.PostLocationImage(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService PutAccessInviteLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.PutAccessInviteLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService PutAccessPortalLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.PutAccessPortalLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService PutDeviceLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.PutDeviceLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService PutIntegrationLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.PutIntegrationLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService PutOrgLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.PutOrgLocationBinding(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test LocationsAPIService PutZoneLocationBinding", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.LocationsAPI.PutZoneLocationBinding(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

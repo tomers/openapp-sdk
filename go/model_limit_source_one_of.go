@@ -19,7 +19,7 @@ import (
 // checks if the LimitSourceOneOf type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &LimitSourceOneOf{}
 
-// LimitSourceOneOf A row in `quota_overrides`; carries the override id for traceability.
+// LimitSourceOneOf A per-subject quota override; carries the override id.
 type LimitSourceOneOf struct {
 	Id   string `json:"id"`
 	Kind string `json:"kind"`

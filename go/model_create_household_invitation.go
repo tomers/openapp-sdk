@@ -20,7 +20,13 @@ var _ MappedNullable = &CreateHouseholdInvitation{}
 // CreateHouseholdInvitation struct for CreateHouseholdInvitation
 type CreateHouseholdInvitation struct {
 	Email NullableString `json:"email,omitempty"`
-	Phone NullableString `json:"phone,omitempty"`
+	// Optional name for the person you invite. It greets them in the invitation and labels the pending invitation for you. When they sign up without a name it becomes their account name, and they are asked to confirm it. Blank counts as no name; at most 100 characters.
+	InviteeName NullableString `json:"invitee_name,omitempty"`
+	// Language of the invitation SMS/email: a supported locale code. Used when the contact has no account with a language of its own; resends reuse it. Omit to fall back to the household's home org default message language, then English.
+	Locale NullableString `json:"locale,omitempty"`
+	Phone  NullableString `json:"phone,omitempty"`
+	// Must be `true` when `phone` is set: confirms the person you invite agreed to receive text messages from OpenApp at that number. The confirmation is recorded with who gave it and when. Not needed for email-only invitations.
+	SmsConsentConfirmed *bool `json:"sms_consent_confirmed,omitempty"`
 }
 
 // NewCreateHouseholdInvitation instantiates a new CreateHouseholdInvitation object
@@ -83,6 +89,92 @@ func (o *CreateHouseholdInvitation) UnsetEmail() {
 	o.Email.Unset()
 }
 
+// GetInviteeName returns the InviteeName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateHouseholdInvitation) GetInviteeName() string {
+	if o == nil || IsNil(o.InviteeName.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.InviteeName.Get()
+}
+
+// GetInviteeNameOk returns a tuple with the InviteeName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateHouseholdInvitation) GetInviteeNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InviteeName.Get(), o.InviteeName.IsSet()
+}
+
+// HasInviteeName returns a boolean if a field has been set.
+func (o *CreateHouseholdInvitation) HasInviteeName() bool {
+	if o != nil && o.InviteeName.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInviteeName gets a reference to the given NullableString and assigns it to the InviteeName field.
+func (o *CreateHouseholdInvitation) SetInviteeName(v string) {
+	o.InviteeName.Set(&v)
+}
+
+// SetInviteeNameNil sets the value for InviteeName to be an explicit nil
+func (o *CreateHouseholdInvitation) SetInviteeNameNil() {
+	o.InviteeName.Set(nil)
+}
+
+// UnsetInviteeName ensures that no value is present for InviteeName, not even an explicit nil
+func (o *CreateHouseholdInvitation) UnsetInviteeName() {
+	o.InviteeName.Unset()
+}
+
+// GetLocale returns the Locale field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *CreateHouseholdInvitation) GetLocale() string {
+	if o == nil || IsNil(o.Locale.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.Locale.Get()
+}
+
+// GetLocaleOk returns a tuple with the Locale field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *CreateHouseholdInvitation) GetLocaleOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Locale.Get(), o.Locale.IsSet()
+}
+
+// HasLocale returns a boolean if a field has been set.
+func (o *CreateHouseholdInvitation) HasLocale() bool {
+	if o != nil && o.Locale.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetLocale gets a reference to the given NullableString and assigns it to the Locale field.
+func (o *CreateHouseholdInvitation) SetLocale(v string) {
+	o.Locale.Set(&v)
+}
+
+// SetLocaleNil sets the value for Locale to be an explicit nil
+func (o *CreateHouseholdInvitation) SetLocaleNil() {
+	o.Locale.Set(nil)
+}
+
+// UnsetLocale ensures that no value is present for Locale, not even an explicit nil
+func (o *CreateHouseholdInvitation) UnsetLocale() {
+	o.Locale.Unset()
+}
+
 // GetPhone returns the Phone field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *CreateHouseholdInvitation) GetPhone() string {
 	if o == nil || IsNil(o.Phone.Get()) {
@@ -126,13 +218,54 @@ func (o *CreateHouseholdInvitation) UnsetPhone() {
 	o.Phone.Unset()
 }
 
+// GetSmsConsentConfirmed returns the SmsConsentConfirmed field value if set, zero value otherwise.
+func (o *CreateHouseholdInvitation) GetSmsConsentConfirmed() bool {
+	if o == nil || IsNil(o.SmsConsentConfirmed) {
+		var ret bool
+		return ret
+	}
+	return *o.SmsConsentConfirmed
+}
+
+// GetSmsConsentConfirmedOk returns a tuple with the SmsConsentConfirmed field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateHouseholdInvitation) GetSmsConsentConfirmedOk() (*bool, bool) {
+	if o == nil || IsNil(o.SmsConsentConfirmed) {
+		return nil, false
+	}
+	return o.SmsConsentConfirmed, true
+}
+
+// HasSmsConsentConfirmed returns a boolean if a field has been set.
+func (o *CreateHouseholdInvitation) HasSmsConsentConfirmed() bool {
+	if o != nil && !IsNil(o.SmsConsentConfirmed) {
+		return true
+	}
+
+	return false
+}
+
+// SetSmsConsentConfirmed gets a reference to the given bool and assigns it to the SmsConsentConfirmed field.
+func (o *CreateHouseholdInvitation) SetSmsConsentConfirmed(v bool) {
+	o.SmsConsentConfirmed = &v
+}
+
 func (o CreateHouseholdInvitation) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Email.IsSet() {
 		toSerialize["email"] = o.Email.Get()
 	}
+	if o.InviteeName.IsSet() {
+		toSerialize["invitee_name"] = o.InviteeName.Get()
+	}
+	if o.Locale.IsSet() {
+		toSerialize["locale"] = o.Locale.Get()
+	}
 	if o.Phone.IsSet() {
 		toSerialize["phone"] = o.Phone.Get()
+	}
+	if !IsNil(o.SmsConsentConfirmed) {
+		toSerialize["sms_consent_confirmed"] = o.SmsConsentConfirmed
 	}
 	return toSerialize, nil
 }

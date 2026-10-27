@@ -40,6 +40,8 @@ type IntegrationResponse struct {
 	OrgId string `json:"org_id"`
 	// Provider type (e.g. homeassistant, shelly_cloud).
 	ProviderType ProviderType `json:"provider_type"`
+	// JSON Pointers into `config` of write-only credential fields (schema `format: password`) that currently hold a value. Credential values are never returned here; an update that omits them keeps the stored value and `null` clears it.
+	CredentialsSet []string `json:"credentials_set"`
 	// Human-friendly provider type name(s), keyed by locale.
 	ProviderTypeName LocalizedString `json:"provider_type_name"`
 }
@@ -50,7 +52,7 @@ type _IntegrationResponse IntegrationResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewIntegrationResponse(enabled bool, health IntegrationHealth, id string, name LocalizedString, orgId string, providerType ProviderType, providerTypeName LocalizedString) *IntegrationResponse {
+func NewIntegrationResponse(enabled bool, health IntegrationHealth, id string, name LocalizedString, orgId string, providerType ProviderType, credentialsSet []string, providerTypeName LocalizedString) *IntegrationResponse {
 	this := IntegrationResponse{}
 	this.Enabled = enabled
 	this.Health = health
@@ -58,6 +60,7 @@ func NewIntegrationResponse(enabled bool, health IntegrationHealth, id string, n
 	this.Name = name
 	this.OrgId = orgId
 	this.ProviderType = providerType
+	this.CredentialsSet = credentialsSet
 	this.ProviderTypeName = providerTypeName
 	return &this
 }
@@ -407,6 +410,30 @@ func (o *IntegrationResponse) SetProviderType(v ProviderType) {
 	o.ProviderType = v
 }
 
+// GetCredentialsSet returns the CredentialsSet field value
+func (o *IntegrationResponse) GetCredentialsSet() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.CredentialsSet
+}
+
+// GetCredentialsSetOk returns a tuple with the CredentialsSet field value
+// and a boolean to check if the value has been set.
+func (o *IntegrationResponse) GetCredentialsSetOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CredentialsSet, true
+}
+
+// SetCredentialsSet sets field value
+func (o *IntegrationResponse) SetCredentialsSet(v []string) {
+	o.CredentialsSet = v
+}
+
 // GetProviderTypeName returns the ProviderTypeName field value
 func (o *IntegrationResponse) GetProviderTypeName() LocalizedString {
 	if o == nil {
@@ -457,6 +484,7 @@ func (o IntegrationResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize["name"] = o.Name
 	toSerialize["org_id"] = o.OrgId
 	toSerialize["provider_type"] = o.ProviderType
+	toSerialize["credentials_set"] = o.CredentialsSet
 	toSerialize["provider_type_name"] = o.ProviderTypeName
 	return toSerialize, nil
 }
@@ -472,6 +500,7 @@ func (o *IntegrationResponse) UnmarshalJSON(data []byte) (err error) {
 		"name",
 		"org_id",
 		"provider_type",
+		"credentials_set",
 		"provider_type_name",
 	}
 

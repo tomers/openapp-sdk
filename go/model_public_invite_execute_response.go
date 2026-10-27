@@ -28,6 +28,8 @@ type PublicInviteExecuteResponse struct {
 	LightsAutoOffDuration map[string]int64 `json:"lights_auto_off_duration,omitempty"`
 	Message               NullableString   `json:"message,omitempty"`
 	Ok                    bool             `json:"ok"`
+	// Uses left after this execution; omitted when the invitation has no use limit.
+	UsesRemaining NullableInt32 `json:"uses_remaining,omitempty"`
 }
 
 type _PublicInviteExecuteResponse PublicInviteExecuteResponse
@@ -268,6 +270,49 @@ func (o *PublicInviteExecuteResponse) SetOk(v bool) {
 	o.Ok = v
 }
 
+// GetUsesRemaining returns the UsesRemaining field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *PublicInviteExecuteResponse) GetUsesRemaining() int32 {
+	if o == nil || IsNil(o.UsesRemaining.Get()) {
+		var ret int32
+		return ret
+	}
+	return *o.UsesRemaining.Get()
+}
+
+// GetUsesRemainingOk returns a tuple with the UsesRemaining field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *PublicInviteExecuteResponse) GetUsesRemainingOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.UsesRemaining.Get(), o.UsesRemaining.IsSet()
+}
+
+// HasUsesRemaining returns a boolean if a field has been set.
+func (o *PublicInviteExecuteResponse) HasUsesRemaining() bool {
+	if o != nil && o.UsesRemaining.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetUsesRemaining gets a reference to the given NullableInt32 and assigns it to the UsesRemaining field.
+func (o *PublicInviteExecuteResponse) SetUsesRemaining(v int32) {
+	o.UsesRemaining.Set(&v)
+}
+
+// SetUsesRemainingNil sets the value for UsesRemaining to be an explicit nil
+func (o *PublicInviteExecuteResponse) SetUsesRemainingNil() {
+	o.UsesRemaining.Set(nil)
+}
+
+// UnsetUsesRemaining ensures that no value is present for UsesRemaining, not even an explicit nil
+func (o *PublicInviteExecuteResponse) UnsetUsesRemaining() {
+	o.UsesRemaining.Unset()
+}
+
 func (o PublicInviteExecuteResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Degradation != nil {
@@ -286,6 +331,9 @@ func (o PublicInviteExecuteResponse) ToMap() (map[string]interface{}, error) {
 		toSerialize["message"] = o.Message.Get()
 	}
 	toSerialize["ok"] = o.Ok
+	if o.UsesRemaining.IsSet() {
+		toSerialize["uses_remaining"] = o.UsesRemaining.Get()
+	}
 	return toSerialize, nil
 }
 

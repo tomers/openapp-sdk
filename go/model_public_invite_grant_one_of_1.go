@@ -27,6 +27,8 @@ type PublicInviteGrantOneOf1 struct {
 	Kind     string      `json:"kind"`
 	Label    interface{} `json:"label,omitempty"`
 	Payload  interface{} `json:"payload,omitempty"`
+	// The acted-on device's zone is covered by a Wi-Fi network (see `PortalOpen`).
+	WifiAvailable *bool `json:"wifi_available,omitempty"`
 }
 
 type _PublicInviteGrantOneOf1 PublicInviteGrantOneOf1
@@ -214,6 +216,38 @@ func (o *PublicInviteGrantOneOf1) SetPayload(v interface{}) {
 	o.Payload = v
 }
 
+// GetWifiAvailable returns the WifiAvailable field value if set, zero value otherwise.
+func (o *PublicInviteGrantOneOf1) GetWifiAvailable() bool {
+	if o == nil || IsNil(o.WifiAvailable) {
+		var ret bool
+		return ret
+	}
+	return *o.WifiAvailable
+}
+
+// GetWifiAvailableOk returns a tuple with the WifiAvailable field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PublicInviteGrantOneOf1) GetWifiAvailableOk() (*bool, bool) {
+	if o == nil || IsNil(o.WifiAvailable) {
+		return nil, false
+	}
+	return o.WifiAvailable, true
+}
+
+// HasWifiAvailable returns a boolean if a field has been set.
+func (o *PublicInviteGrantOneOf1) HasWifiAvailable() bool {
+	if o != nil && !IsNil(o.WifiAvailable) {
+		return true
+	}
+
+	return false
+}
+
+// SetWifiAvailable gets a reference to the given bool and assigns it to the WifiAvailable field.
+func (o *PublicInviteGrantOneOf1) SetWifiAvailable(v bool) {
+	o.WifiAvailable = &v
+}
+
 func (o PublicInviteGrantOneOf1) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["action_id"] = o.ActionId
@@ -225,6 +259,9 @@ func (o PublicInviteGrantOneOf1) ToMap() (map[string]interface{}, error) {
 	}
 	if o.Payload != nil {
 		toSerialize["payload"] = o.Payload
+	}
+	if !IsNil(o.WifiAvailable) {
+		toSerialize["wifi_available"] = o.WifiAvailable
 	}
 	return toSerialize, nil
 }

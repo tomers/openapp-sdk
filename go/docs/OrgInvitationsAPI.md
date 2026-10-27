@@ -4,11 +4,12 @@ All URIs are relative to */api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CancelInvitation**](OrgInvitationsAPI.md#CancelInvitation) | **Delete** /orgs/{id}/invitations/{invite_id} | DELETE &#x60;/orgs/{id}/invitations/{invite_id}&#x60; — mark invitation cancelled.
-[**CreateInvitation**](OrgInvitationsAPI.md#CreateInvitation) | **Post** /orgs/{id}/invitations | POST &#x60;/orgs/{id}/invitations&#x60; — mint an invitation and dispatch its PIN.
-[**HardDeleteInvitation**](OrgInvitationsAPI.md#HardDeleteInvitation) | **Delete** /orgs/{id}/invitations/{invite_id}/purge | DELETE &#x60;/orgs/{id}/invitations/{invite_id}/purge&#x60; — permanently remove any invitation status.
-[**ListInvitations**](OrgInvitationsAPI.md#ListInvitations) | **Get** /orgs/{id}/invitations | GET &#x60;/orgs/{id}/invitations&#x60; — list all invitations attached to the org (any status).
-[**ResendInvitation**](OrgInvitationsAPI.md#ResendInvitation) | **Post** /orgs/{id}/invitations/{invite_id}/resend | POST &#x60;/orgs/{id}/invitations/{invite_id}/resend&#x60; — re-issue fresh token+PIN.
+[**CancelInvitation**](OrgInvitationsAPI.md#CancelInvitation) | **Delete** /orgs/{id}/invitations/{invite_id} | Cancel an invitation.
+[**CreateInvitation**](OrgInvitationsAPI.md#CreateInvitation) | **Post** /orgs/{id}/invitations | Create an invitation and send its PIN to the invitee. Create an org invitation.
+[**HardDeleteInvitation**](OrgInvitationsAPI.md#HardDeleteInvitation) | **Delete** /orgs/{id}/invitations/{invite_id}/purge | Permanently delete an invitation, whatever its status.
+[**ListInvitations**](OrgInvitationsAPI.md#ListInvitations) | **Get** /orgs/{id}/invitations | List invitations of the org.
+[**ResendInvitation**](OrgInvitationsAPI.md#ResendInvitation) | **Post** /orgs/{id}/invitations/{invite_id}/resend | Resend an invitation with a freshly issued token and PIN.
+[**UpdateInvitation**](OrgInvitationsAPI.md#UpdateInvitation) | **Patch** /orgs/{id}/invitations/{invite_id} | Edit a pending invitation.
 
 
 
@@ -16,7 +17,7 @@ Method | HTTP request | Description
 
 > CancelInvitation(ctx, id, inviteId).Execute()
 
-DELETE `/orgs/{id}/invitations/{invite_id}` — mark invitation cancelled.
+Cancel an invitation.
 
 ### Example
 
@@ -89,7 +90,9 @@ Name | Type | Description  | Notes
 
 > CreateInvitationResponse CreateInvitation(ctx, id).CreateInvitationRequest(createInvitationRequest).Execute()
 
-POST `/orgs/{id}/invitations` — mint an invitation and dispatch its PIN.
+Create an invitation and send its PIN to the invitee. Create an org invitation.
+
+
 
 ### Example
 
@@ -163,7 +166,7 @@ Name | Type | Description  | Notes
 
 > HardDeleteInvitation(ctx, id, inviteId).Execute()
 
-DELETE `/orgs/{id}/invitations/{invite_id}/purge` — permanently remove any invitation status.
+Permanently delete an invitation, whatever its status.
 
 ### Example
 
@@ -234,9 +237,11 @@ Name | Type | Description  | Notes
 
 ## ListInvitations
 
-> ListInvitationsResponse ListInvitations(ctx, id).Execute()
+> ListInvitationsResponse ListInvitations(ctx, id).ListingEntityId(listingEntityId).Execute()
 
-GET `/orgs/{id}/invitations` — list all invitations attached to the org (any status).
+List invitations of the org.
+
+
 
 ### Example
 
@@ -252,6 +257,7 @@ import (
 
 func main() {
 	id := "id_example" // string |
+	listingEntityId := "listingEntityId_example" // string | When set, only invitations that grant this directory listing are returned. Callers with `users:list` may filter any listing in the org. Listing admins without `users:list` may only request a listing they administer (or omit this to receive every invitation for listings they administer). (optional)
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -259,7 +265,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgInvitationsAPI.ListInvitations(context.Background(), id).Execute()
+	resp, r, err := apiClient.OrgInvitationsAPI.ListInvitations(context.Background(), id).ListingEntityId(listingEntityId).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgInvitationsAPI.ListInvitations``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -285,6 +291,7 @@ Other parameters are passed through a pointer to a apiListInvitationsRequest str
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
+ **listingEntityId** | **string** | When set, only invitations that grant this directory listing are returned. Callers with &#x60;users:list&#x60; may filter any listing in the org. Listing admins without &#x60;users:list&#x60; may only request a listing they administer (or omit this to receive every invitation for listings they administer). |
 
 ### Return type
 
@@ -306,9 +313,9 @@ Name | Type | Description  | Notes
 
 ## ResendInvitation
 
-> UserInvitationDto ResendInvitation(ctx, id, inviteId).Execute()
+> UserInvitationDto ResendInvitation(ctx, id, inviteId).ResendInvitationRequest(resendInvitationRequest).Execute()
 
-POST `/orgs/{id}/invitations/{invite_id}/resend` — re-issue fresh token+PIN.
+Resend an invitation with a freshly issued token and PIN.
 
 ### Example
 
@@ -325,6 +332,7 @@ import (
 func main() {
 	id := "id_example" // string |
 	inviteId := "inviteId_example" // string |
+	resendInvitationRequest := *openapiclient.NewResendInvitationRequest() // ResendInvitationRequest |
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -332,7 +340,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.OrgInvitationsAPI.ResendInvitation(context.Background(), id, inviteId).Execute()
+	resp, r, err := apiClient.OrgInvitationsAPI.ResendInvitation(context.Background(), id, inviteId).ResendInvitationRequest(resendInvitationRequest).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `OrgInvitationsAPI.ResendInvitation``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -360,6 +368,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
+ **resendInvitationRequest** | [**ResendInvitationRequest**](ResendInvitationRequest.md) |  |
 
 ### Return type
 
@@ -371,7 +380,86 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## UpdateInvitation
+
+> UserInvitationDto UpdateInvitation(ctx, id, inviteId).UpdateInvitationRequest(updateInvitationRequest).Execute()
+
+Edit a pending invitation.
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	id := "id_example" // string |
+	inviteId := "inviteId_example" // string |
+	updateInvitationRequest := *openapiclient.NewUpdateInvitationRequest() // UpdateInvitationRequest |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.OrgInvitationsAPI.UpdateInvitation(context.Background(), id, inviteId).UpdateInvitationRequest(updateInvitationRequest).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `OrgInvitationsAPI.UpdateInvitation``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `UpdateInvitation`: UserInvitationDto
+	fmt.Fprintf(os.Stdout, "Response from `OrgInvitationsAPI.UpdateInvitation`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**id** | **string** |  |
+**inviteId** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpdateInvitationRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+ **updateInvitationRequest** | [**UpdateInvitationRequest**](UpdateInvitationRequest.md) |  |
+
+### Return type
+
+[**UserInvitationDto**](UserInvitationDto.md)
+
+### Authorization
+
+[api_key](../README.md#api_key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)

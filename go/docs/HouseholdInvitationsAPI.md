@@ -8,7 +8,7 @@ Method | HTTP request | Description
 [**Create**](HouseholdInvitationsAPI.md#Create) | **Post** /groups/{group_id}/household-invitations |
 [**ListManager**](HouseholdInvitationsAPI.md#ListManager) | **Get** /groups/{group_id}/household-invitations |
 [**Preview**](HouseholdInvitationsAPI.md#Preview) | **Post** /household-invitations/preview |
-[**Redeem**](HouseholdInvitationsAPI.md#Redeem) | **Post** /household-invitations/redeem |
+[**Redeem**](HouseholdInvitationsAPI.md#Redeem) | **Post** /household-invitations/redeem | Redeem a household invitation with &#x60;token&#x60; + &#x60;pin&#x60;.
 [**Resend**](HouseholdInvitationsAPI.md#Resend) | **Post** /groups/{group_id}/household-invitations/{id}/resend |
 
 
@@ -304,6 +304,8 @@ No authorization required
 
 > RedeemHouseholdInvitationResponse Redeem(ctx).RedeemHouseholdInvitationRequest(redeemHouseholdInvitationRequest).Execute()
 
+Redeem a household invitation with `token` + `pin`.
+
 
 
 ### Example
@@ -370,7 +372,7 @@ Name | Type | Description  | Notes
 
 ## Resend
 
-> HouseholdInvitationResponse Resend(ctx, groupId, id).Execute()
+> HouseholdInvitationResponse Resend(ctx, groupId, id).ResendHouseholdInvitation(resendHouseholdInvitation).Execute()
 
 
 
@@ -389,6 +391,7 @@ import (
 func main() {
 	groupId := "groupId_example" // string |
 	id := "id_example" // string |
+	resendHouseholdInvitation := *openapiclient.NewResendHouseholdInvitation() // ResendHouseholdInvitation |
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -396,7 +399,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.HouseholdInvitationsAPI.Resend(context.Background(), groupId, id).Execute()
+	resp, r, err := apiClient.HouseholdInvitationsAPI.Resend(context.Background(), groupId, id).ResendHouseholdInvitation(resendHouseholdInvitation).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `HouseholdInvitationsAPI.Resend``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -424,6 +427,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
 
+ **resendHouseholdInvitation** | [**ResendHouseholdInvitation**](ResendHouseholdInvitation.md) |  |
 
 ### Return type
 
@@ -435,7 +439,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)

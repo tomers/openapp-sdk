@@ -21,11 +21,17 @@ var _ MappedNullable = &InvitationPreviewResponse{}
 
 // InvitationPreviewResponse struct for InvitationPreviewResponse
 type InvitationPreviewResponse struct {
-	Channel   string `json:"channel"`
-	ExpiresAt string `json:"expires_at"`
-	OrgId     string `json:"org_id"`
-	Status    string `json:"status"`
-	// Masked destination so the redeem page can confirm \"we'll send the code to +9725…78\".
+	Channel string `json:"channel"`
+	// Org roles granted on accept. Reflects the invitation as it is now, not as it was when a message was sent.
+	DefaultRoles  []string    `json:"default_roles"`
+	ExpiresAt     string      `json:"expires_at"`
+	InvitedByName interface{} `json:"invited_by_name,omitempty"`
+	OrgId         string      `json:"org_id"`
+	OrgName       interface{} `json:"org_name,omitempty"`
+	// Site (and listing) access granted on accept; absent when the invitation grants none.
+	SiteAccess NullableInvitationPreviewSiteAccess `json:"site_access,omitempty"`
+	Status     string                              `json:"status"`
+	// Masked destination the code is sent to (for example `+9725…78`).
 	TargetMasked string `json:"target_masked"`
 }
 
@@ -35,9 +41,10 @@ type _InvitationPreviewResponse InvitationPreviewResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInvitationPreviewResponse(channel string, expiresAt string, orgId string, status string, targetMasked string) *InvitationPreviewResponse {
+func NewInvitationPreviewResponse(channel string, defaultRoles []string, expiresAt string, orgId string, status string, targetMasked string) *InvitationPreviewResponse {
 	this := InvitationPreviewResponse{}
 	this.Channel = channel
+	this.DefaultRoles = defaultRoles
 	this.ExpiresAt = expiresAt
 	this.OrgId = orgId
 	this.Status = status
@@ -77,6 +84,30 @@ func (o *InvitationPreviewResponse) SetChannel(v string) {
 	o.Channel = v
 }
 
+// GetDefaultRoles returns the DefaultRoles field value
+func (o *InvitationPreviewResponse) GetDefaultRoles() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.DefaultRoles
+}
+
+// GetDefaultRolesOk returns a tuple with the DefaultRoles field value
+// and a boolean to check if the value has been set.
+func (o *InvitationPreviewResponse) GetDefaultRolesOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.DefaultRoles, true
+}
+
+// SetDefaultRoles sets field value
+func (o *InvitationPreviewResponse) SetDefaultRoles(v []string) {
+	o.DefaultRoles = v
+}
+
 // GetExpiresAt returns the ExpiresAt field value
 func (o *InvitationPreviewResponse) GetExpiresAt() string {
 	if o == nil {
@@ -101,6 +132,39 @@ func (o *InvitationPreviewResponse) SetExpiresAt(v string) {
 	o.ExpiresAt = v
 }
 
+// GetInvitedByName returns the InvitedByName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InvitationPreviewResponse) GetInvitedByName() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.InvitedByName
+}
+
+// GetInvitedByNameOk returns a tuple with the InvitedByName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InvitationPreviewResponse) GetInvitedByNameOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.InvitedByName) {
+		return nil, false
+	}
+	return &o.InvitedByName, true
+}
+
+// HasInvitedByName returns a boolean if a field has been set.
+func (o *InvitationPreviewResponse) HasInvitedByName() bool {
+	if o != nil && !IsNil(o.InvitedByName) {
+		return true
+	}
+
+	return false
+}
+
+// SetInvitedByName gets a reference to the given interface{} and assigns it to the InvitedByName field.
+func (o *InvitationPreviewResponse) SetInvitedByName(v interface{}) {
+	o.InvitedByName = v
+}
+
 // GetOrgId returns the OrgId field value
 func (o *InvitationPreviewResponse) GetOrgId() string {
 	if o == nil {
@@ -123,6 +187,82 @@ func (o *InvitationPreviewResponse) GetOrgIdOk() (*string, bool) {
 // SetOrgId sets field value
 func (o *InvitationPreviewResponse) SetOrgId(v string) {
 	o.OrgId = v
+}
+
+// GetOrgName returns the OrgName field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InvitationPreviewResponse) GetOrgName() interface{} {
+	if o == nil {
+		var ret interface{}
+		return ret
+	}
+	return o.OrgName
+}
+
+// GetOrgNameOk returns a tuple with the OrgName field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InvitationPreviewResponse) GetOrgNameOk() (*interface{}, bool) {
+	if o == nil || IsNil(o.OrgName) {
+		return nil, false
+	}
+	return &o.OrgName, true
+}
+
+// HasOrgName returns a boolean if a field has been set.
+func (o *InvitationPreviewResponse) HasOrgName() bool {
+	if o != nil && !IsNil(o.OrgName) {
+		return true
+	}
+
+	return false
+}
+
+// SetOrgName gets a reference to the given interface{} and assigns it to the OrgName field.
+func (o *InvitationPreviewResponse) SetOrgName(v interface{}) {
+	o.OrgName = v
+}
+
+// GetSiteAccess returns the SiteAccess field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *InvitationPreviewResponse) GetSiteAccess() InvitationPreviewSiteAccess {
+	if o == nil || IsNil(o.SiteAccess.Get()) {
+		var ret InvitationPreviewSiteAccess
+		return ret
+	}
+	return *o.SiteAccess.Get()
+}
+
+// GetSiteAccessOk returns a tuple with the SiteAccess field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *InvitationPreviewResponse) GetSiteAccessOk() (*InvitationPreviewSiteAccess, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.SiteAccess.Get(), o.SiteAccess.IsSet()
+}
+
+// HasSiteAccess returns a boolean if a field has been set.
+func (o *InvitationPreviewResponse) HasSiteAccess() bool {
+	if o != nil && o.SiteAccess.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetSiteAccess gets a reference to the given NullableInvitationPreviewSiteAccess and assigns it to the SiteAccess field.
+func (o *InvitationPreviewResponse) SetSiteAccess(v InvitationPreviewSiteAccess) {
+	o.SiteAccess.Set(&v)
+}
+
+// SetSiteAccessNil sets the value for SiteAccess to be an explicit nil
+func (o *InvitationPreviewResponse) SetSiteAccessNil() {
+	o.SiteAccess.Set(nil)
+}
+
+// UnsetSiteAccess ensures that no value is present for SiteAccess, not even an explicit nil
+func (o *InvitationPreviewResponse) UnsetSiteAccess() {
+	o.SiteAccess.Unset()
 }
 
 // GetStatus returns the Status field value
@@ -176,8 +316,18 @@ func (o *InvitationPreviewResponse) SetTargetMasked(v string) {
 func (o InvitationPreviewResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["channel"] = o.Channel
+	toSerialize["default_roles"] = o.DefaultRoles
 	toSerialize["expires_at"] = o.ExpiresAt
+	if o.InvitedByName != nil {
+		toSerialize["invited_by_name"] = o.InvitedByName
+	}
 	toSerialize["org_id"] = o.OrgId
+	if o.OrgName != nil {
+		toSerialize["org_name"] = o.OrgName
+	}
+	if o.SiteAccess.IsSet() {
+		toSerialize["site_access"] = o.SiteAccess.Get()
+	}
 	toSerialize["status"] = o.Status
 	toSerialize["target_masked"] = o.TargetMasked
 	return toSerialize, nil
@@ -189,6 +339,7 @@ func (o *InvitationPreviewResponse) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"channel",
+		"default_roles",
 		"expires_at",
 		"org_id",
 		"status",

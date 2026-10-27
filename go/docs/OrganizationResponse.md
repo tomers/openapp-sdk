@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 **Name** | [**LocalizedString**](LocalizedString.md) | Organization name. |
 **ParentId** | Pointer to **string** | Parent organization ID for hierarchy. | [optional]
 **UserRoles** | **map[string][]string** | User ID to roles mapping for this org (keys are org IDs as strings). |
-**HasChildren** | Pointer to **NullableBool** | Whether this org has at least one child visible to the requester.  Populated only by the tree endpoints (children / search); &#x60;None&#x60; elsewhere. Lets the org selector render an expand affordance without first fetching the node&#39;s children. | [optional]
+**HasChildren** | Pointer to **NullableBool** | Whether this org has at least one child visible to the requester.  Present only in responses from the org children and search endpoints; omitted elsewhere. Lets a client show whether a node can be expanded without fetching its children. | [optional]
 **ParentName** | Pointer to [**NullableLocalizedString**](LocalizedString.md) | Localized name of the parent org when &#x60;parent_id&#x60; is set (for UI hierarchy). Resolved server-side; does not require the client to &#x60;GET&#x60; the parent. | [optional]
 
 ## Methods

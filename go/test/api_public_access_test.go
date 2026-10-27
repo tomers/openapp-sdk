@@ -38,6 +38,33 @@ func Test_openapi_PublicAccessAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test PublicAccessAPIService GetPublicInviteLocale", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var inviteToken string
+
+		resp, httpRes, err := apiClient.PublicAccessAPI.GetPublicInviteLocale(context.Background(), inviteToken).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test PublicAccessAPIService GetPublicInvitePhoto", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var inviteToken string
+
+		httpRes, err := apiClient.PublicAccessAPI.GetPublicInvitePhoto(context.Background(), inviteToken).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test PublicAccessAPIService GetPublicPortal", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -128,6 +155,34 @@ func Test_openapi_PublicAccessAPIService(t *testing.T) {
 		var inviteToken string
 
 		resp, httpRes, err := apiClient.PublicAccessAPI.PostPublicInviteExecute(context.Background(), inviteToken).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test PublicAccessAPIService PostPublicInviteOtpStart", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var inviteToken string
+
+		resp, httpRes, err := apiClient.PublicAccessAPI.PostPublicInviteOtpStart(context.Background(), inviteToken).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test PublicAccessAPIService PostPublicInviteRenewal", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var inviteToken string
+
+		resp, httpRes, err := apiClient.PublicAccessAPI.PostPublicInviteRenewal(context.Background(), inviteToken).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

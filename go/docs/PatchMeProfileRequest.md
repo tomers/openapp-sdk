@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Locale** | Pointer to **NullableString** |  | [optional]
-**Name** | Pointer to **NullableString** |  | [optional]
+**Locale** | Pointer to **NullableString** | A supported locale code (&#x60;en&#x60;, &#x60;zh_cn&#x60;, &#x60;es&#x60;, &#x60;ru&#x60;, &#x60;pt_br&#x60;, &#x60;de&#x60;, &#x60;fr&#x60;, &#x60;ja&#x60;, &#x60;ar&#x60;, &#x60;it&#x60;, &#x60;he&#x60;); any other value is rejected with 422. JSON &#x60;null&#x60; clears the explicit choice so messages follow the app language; omitting it leaves the locale unchanged. | [optional]
+**Name** | Pointer to [**NullableLocalizedString**](LocalizedString.md) | Replaces the whole stored name map. Requires OpenApp as the name source. | [optional]
 **ProfileSources** | Pointer to [**NullableProfileSourcePatch**](ProfileSourcePatch.md) |  | [optional]
 
 ## Methods
@@ -64,20 +64,20 @@ HasLocale returns a boolean if a field has been set.
 UnsetLocale ensures that no value is present for Locale, not even an explicit nil
 ### GetName
 
-`func (o *PatchMeProfileRequest) GetName() string`
+`func (o *PatchMeProfileRequest) GetName() LocalizedString`
 
 GetName returns the Name field if non-nil, zero value otherwise.
 
 ### GetNameOk
 
-`func (o *PatchMeProfileRequest) GetNameOk() (*string, bool)`
+`func (o *PatchMeProfileRequest) GetNameOk() (*LocalizedString, bool)`
 
 GetNameOk returns a tuple with the Name field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetName
 
-`func (o *PatchMeProfileRequest) SetName(v string)`
+`func (o *PatchMeProfileRequest) SetName(v LocalizedString)`
 
 SetName sets Name field to given value.
 

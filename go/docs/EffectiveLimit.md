@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Source** | [**LimitSource**](LimitSource.md) | Where this value came from: an override, the org&#39;s tier, or the system default. |
-**Value** | Pointer to **NullableInt64** | The effective cap. &#x60;None&#x60; means \&quot;unlimited\&quot;. | [optional]
+**Source** | [**LimitSource**](LimitSource.md) | Where this value came from: an override, the org&#39;s tier, the system default, or the platform exemption. |
+**Value** | Pointer to **NullableInt64** | The effective cap, in the quota&#39;s unit. Null means unlimited. | [optional]
 
 ## Methods
 

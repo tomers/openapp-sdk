@@ -27,7 +27,6 @@ type ApiCreateZoneRequest struct {
 	ApiService        *ZonesAPIService
 	xOrg              *string
 	createZoneRequest *CreateZoneRequest
-	includeDeleted    *bool
 }
 
 func (r ApiCreateZoneRequest) XOrg(xOrg string) ApiCreateZoneRequest {
@@ -40,19 +39,14 @@ func (r ApiCreateZoneRequest) CreateZoneRequest(createZoneRequest CreateZoneRequ
 	return r
 }
 
-func (r ApiCreateZoneRequest) IncludeDeleted(includeDeleted bool) ApiCreateZoneRequest {
-	r.includeDeleted = &includeDeleted
-	return r
-}
-
 func (r ApiCreateZoneRequest) Execute() (*ZoneResponse, *http.Response, error) {
 	return r.ApiService.CreateZoneExecute(r)
 }
 
 /*
-CreateZone Create a zone for an integration.
+CreateZone Create a zone in the `X-Org` organization.
 
-Create a zone. Quota: consumes 1 from `zones` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full).
+Create a zone owned by the `X-Org` organization. Quota: consumes 1 from `zones` (unit: count, lifetime capacity) — capacity-checked before creation (429 `quota_exceeded` when full). 422 when `parent_zone_id` is missing, deleted, in another org, or too deep. `site_ids` binds Access sites; omitted inherits the parent's memberships when a parent is set, otherwise unbound.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiCreateZoneRequest
@@ -92,9 +86,6 @@ func (a *ZonesAPIService) CreateZoneExecute(r ApiCreateZoneRequest) (*ZoneRespon
 		return localVarReturnValue, nil, reportError("createZoneRequest is required and must be specified")
 	}
 
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
 
@@ -170,7 +161,7 @@ func (a *ZonesAPIService) CreateZoneExecute(r ApiCreateZoneRequest) (*ZoneRespon
 			newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 404 {
+		if localVarHTTPResponse.StatusCode == 422 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -181,7 +172,7 @@ func (a *ZonesAPIService) CreateZoneExecute(r ApiCreateZoneRequest) (*ZoneRespon
 			newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 422 {
+		if localVarHTTPResponse.StatusCode == 429 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -218,11 +209,11 @@ func (a *ZonesAPIService) CreateZoneExecute(r ApiCreateZoneRequest) (*ZoneRespon
 }
 
 type ApiDeleteZoneRequest struct {
-	ctx            context.Context
-	ApiService     *ZonesAPIService
-	id             string
-	xOrg           *string
-	includeDeleted *bool
+	ctx        context.Context
+	ApiService *ZonesAPIService
+	id         string
+	xOrg       *string
+	cascade    *string
 }
 
 func (r ApiDeleteZoneRequest) XOrg(xOrg string) ApiDeleteZoneRequest {
@@ -230,8 +221,9 @@ func (r ApiDeleteZoneRequest) XOrg(xOrg string) ApiDeleteZoneRequest {
 	return r
 }
 
-func (r ApiDeleteZoneRequest) IncludeDeleted(includeDeleted bool) ApiDeleteZoneRequest {
-	r.includeDeleted = &includeDeleted
+// &#x60;detach&#x60; clears every reference (children become roots, devices lose the zone, explicit entities become &#x60;mode&#x3D;none&#x60;) before deleting. Without it a referenced zone gives 409.
+func (r ApiDeleteZoneRequest) Cascade(cascade string) ApiDeleteZoneRequest {
+	r.cascade = &cascade
 	return r
 }
 
@@ -241,6 +233,8 @@ func (r ApiDeleteZoneRequest) Execute() (*ZoneResponse, *http.Response, error) {
 
 /*
 DeleteZone Soft-delete a zone.
+
+Soft-delete a zone. 409 `zone_in_use` while non-deleted child zones, devices, explicit entities, or policies reference it, unless `cascade=detach` (children become roots, devices get no zone, explicit entities become `mode=none`, zone-scoped policies lose the zone and are disabled; recorded as `details.detached`).
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -280,8 +274,8 @@ func (a *ZonesAPIService) DeleteZoneExecute(r ApiDeleteZoneRequest) (*ZoneRespon
 		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
 
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
+	if r.cascade != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "cascade", r.cascade, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -367,7 +361,7 @@ func (a *ZonesAPIService) DeleteZoneExecute(r ApiDeleteZoneRequest) (*ZoneRespon
 			newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
-		if localVarHTTPResponse.StatusCode == 422 {
+		if localVarHTTPResponse.StatusCode == 409 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
@@ -404,20 +398,14 @@ func (a *ZonesAPIService) DeleteZoneExecute(r ApiDeleteZoneRequest) (*ZoneRespon
 }
 
 type ApiGetZoneRequest struct {
-	ctx            context.Context
-	ApiService     *ZonesAPIService
-	id             string
-	xOrg           *string
-	includeDeleted *bool
+	ctx        context.Context
+	ApiService *ZonesAPIService
+	id         string
+	xOrg       *string
 }
 
 func (r ApiGetZoneRequest) XOrg(xOrg string) ApiGetZoneRequest {
 	r.xOrg = &xOrg
-	return r
-}
-
-func (r ApiGetZoneRequest) IncludeDeleted(includeDeleted bool) ApiGetZoneRequest {
-	r.includeDeleted = &includeDeleted
 	return r
 }
 
@@ -466,9 +454,6 @@ func (a *ZonesAPIService) GetZoneExecute(r ApiGetZoneRequest) (*ZoneResponse, *h
 		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
 
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -578,21 +563,342 @@ func (a *ZonesAPIService) GetZoneExecute(r ApiGetZoneRequest) (*ZoneResponse, *h
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiHardDeleteZoneRequest struct {
-	ctx            context.Context
-	ApiService     *ZonesAPIService
-	id             string
-	xOrg           *string
-	includeDeleted *bool
+type ApiGetZoneSummaryRequest struct {
+	ctx        context.Context
+	ApiService *ZonesAPIService
+	id         string
+	xOrg       *string
 }
 
-func (r ApiHardDeleteZoneRequest) XOrg(xOrg string) ApiHardDeleteZoneRequest {
+func (r ApiGetZoneSummaryRequest) XOrg(xOrg string) ApiGetZoneSummaryRequest {
 	r.xOrg = &xOrg
 	return r
 }
 
-func (r ApiHardDeleteZoneRequest) IncludeDeleted(includeDeleted bool) ApiHardDeleteZoneRequest {
-	r.includeDeleted = &includeDeleted
+func (r ApiGetZoneSummaryRequest) Execute() (*ZoneSummaryResponse, *http.Response, error) {
+	return r.ApiService.GetZoneSummaryExecute(r)
+}
+
+/*
+GetZoneSummary Room view: the zone, its path, children, and placement counts.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiGetZoneSummaryRequest
+*/
+func (a *ZonesAPIService) GetZoneSummary(ctx context.Context, id string) ApiGetZoneSummaryRequest {
+	return ApiGetZoneSummaryRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ZoneSummaryResponse
+func (a *ZonesAPIService) GetZoneSummaryExecute(r ApiGetZoneSummaryRequest) (*ZoneSummaryResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ZoneSummaryResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.GetZoneSummary")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/zones/{id}/summary"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetZoneTreeRequest struct {
+	ctx        context.Context
+	ApiService *ZonesAPIService
+	xOrg       *string
+	siteId     *string
+}
+
+func (r ApiGetZoneTreeRequest) XOrg(xOrg string) ApiGetZoneTreeRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+// Only zones that are members of this Access site (&#x60;virtual_access&#x60; integration id).
+func (r ApiGetZoneTreeRequest) SiteId(siteId string) ApiGetZoneTreeRequest {
+	r.siteId = &siteId
+	return r
+}
+
+func (r ApiGetZoneTreeRequest) Execute() (*ZoneTreeResponse, *http.Response, error) {
+	return r.ApiService.GetZoneTreeExecute(r)
+}
+
+/*
+GetZoneTree The org zone hierarchy with direct device and effective-entity counts.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiGetZoneTreeRequest
+*/
+func (a *ZonesAPIService) GetZoneTree(ctx context.Context) ApiGetZoneTreeRequest {
+	return ApiGetZoneTreeRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return ZoneTreeResponse
+func (a *ZonesAPIService) GetZoneTreeExecute(r ApiGetZoneTreeRequest) (*ZoneTreeResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *ZoneTreeResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.GetZoneTree")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/zones/tree"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+
+	if r.siteId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "site_id", r.siteId, "form", "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiHardDeleteZoneRequest struct {
+	ctx        context.Context
+	ApiService *ZonesAPIService
+	id         string
+	xOrg       *string
+}
+
+func (r ApiHardDeleteZoneRequest) XOrg(xOrg string) ApiHardDeleteZoneRequest {
+	r.xOrg = &xOrg
 	return r
 }
 
@@ -641,8 +947,227 @@ func (a *ZonesAPIService) HardDeleteZoneExecute(r ApiHardDeleteZoneRequest) (*Zo
 		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
 
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListZonesRequest struct {
+	ctx           context.Context
+	ApiService    *ZonesAPIService
+	xOrg          *string
+	outputOptions *ListZonesOutputOptionsParameter
+	pagination    *ListZonesPaginationParameter
+	parentZoneId  *string
+	root          *bool
+	q             *string
+	siteId        *string
+}
+
+func (r ApiListZonesRequest) XOrg(xOrg string) ApiListZonesRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiListZonesRequest) OutputOptions(outputOptions ListZonesOutputOptionsParameter) ApiListZonesRequest {
+	r.outputOptions = &outputOptions
+	return r
+}
+
+func (r ApiListZonesRequest) Pagination(pagination ListZonesPaginationParameter) ApiListZonesRequest {
+	r.pagination = &pagination
+	return r
+}
+
+// Only direct children of this zone.
+func (r ApiListZonesRequest) ParentZoneId(parentZoneId string) ApiListZonesRequest {
+	r.parentZoneId = &parentZoneId
+	return r
+}
+
+// Only root zones. Cannot be combined with &#x60;parent_zone_id&#x60;.
+func (r ApiListZonesRequest) Root(root bool) ApiListZonesRequest {
+	r.root = &root
+	return r
+}
+
+// Case-insensitive substring match on the localized name.
+func (r ApiListZonesRequest) Q(q string) ApiListZonesRequest {
+	r.q = &q
+	return r
+}
+
+// Only zones that are members of this Access site (&#x60;virtual_access&#x60; integration id).
+func (r ApiListZonesRequest) SiteId(siteId string) ApiListZonesRequest {
+	r.siteId = &siteId
+	return r
+}
+
+func (r ApiListZonesRequest) Execute() (*PaginatedResponseZoneResponse, *http.Response, error) {
+	return r.ApiService.ListZonesExecute(r)
+}
+
+/*
+ListZones List zones in the `X-Org` organization subtree.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiListZonesRequest
+*/
+func (a *ZonesAPIService) ListZones(ctx context.Context) ApiListZonesRequest {
+	return ApiListZonesRequest{
+		ApiService: a,
+		ctx:        ctx,
+	}
+}
+
+// Execute executes the request
+//
+//	@return PaginatedResponseZoneResponse
+func (a *ZonesAPIService) ListZonesExecute(r ApiListZonesRequest) (*PaginatedResponseZoneResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodGet
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *PaginatedResponseZoneResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.ListZones")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/zones"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+	if r.outputOptions == nil {
+		return localVarReturnValue, nil, reportError("outputOptions is required and must be specified")
+	}
+	if r.pagination == nil {
+		return localVarReturnValue, nil, reportError("pagination is required and must be specified")
+	}
+
+	parameterAddToHeaderOrQuery(localVarQueryParams, "output_options", r.outputOptions, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "pagination", r.pagination, "form", "")
+	if r.parentZoneId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "parent_zone_id", r.parentZoneId, "form", "")
+	}
+	if r.root != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "root", r.root, "form", "")
+	}
+	if r.q != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "q", r.q, "form", "")
+	}
+	if r.siteId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "site_id", r.siteId, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -662,6 +1187,174 @@ func (a *ZonesAPIService) HardDeleteZoneExecute(r ApiHardDeleteZoneRequest) (*Zo
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		if localVarHTTPResponse.StatusCode == 400 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 401 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 403 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 500 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiMergeZonesRequest struct {
+	ctx               context.Context
+	ApiService        *ZonesAPIService
+	id                string
+	xOrg              *string
+	mergeZonesRequest *MergeZonesRequest
+}
+
+func (r ApiMergeZonesRequest) XOrg(xOrg string) ApiMergeZonesRequest {
+	r.xOrg = &xOrg
+	return r
+}
+
+func (r ApiMergeZonesRequest) MergeZonesRequest(mergeZonesRequest MergeZonesRequest) ApiMergeZonesRequest {
+	r.mergeZonesRequest = &mergeZonesRequest
+	return r
+}
+
+func (r ApiMergeZonesRequest) Execute() (*MergeZonesResponse, *http.Response, error) {
+	return r.ApiService.MergeZonesExecute(r)
+}
+
+/*
+MergeZones Merge zones into the target zone.
+
+Move child zones, devices, explicit entities, and provider links from each source zone onto the target, then soft-delete the sources. Requires `zones:update` and `zones:delete` on the zones' org; every zone must be live and in the target's org, and the target must not be inside a source. Audited as `zone.merged`.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@return ApiMergeZonesRequest
+*/
+func (a *ZonesAPIService) MergeZones(ctx context.Context, id string) ApiMergeZonesRequest {
+	return ApiMergeZonesRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+	}
+}
+
+// Execute executes the request
+//
+//	@return MergeZonesResponse
+func (a *ZonesAPIService) MergeZonesExecute(r ApiMergeZonesRequest) (*MergeZonesResponse, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPost
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *MergeZonesResponse
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.MergeZones")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/zones/{id}/merge"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
+	if r.mergeZonesRequest == nil {
+		return localVarReturnValue, nil, reportError("mergeZonesRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
+	// body params
+	localVarPostBody = r.mergeZonesRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -764,67 +1457,55 @@ func (a *ZonesAPIService) HardDeleteZoneExecute(r ApiHardDeleteZoneRequest) (*Zo
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListIntegrationZonesRequest struct {
-	ctx           context.Context
-	ApiService    *ZonesAPIService
-	integrationId string
-	xOrg          *string
-	outputOptions *MultiResourceOutputOptionsQuery
-	pagination    *PaginationQuery
+type ApiRestoreZoneRequest struct {
+	ctx        context.Context
+	ApiService *ZonesAPIService
+	id         string
+	xOrg       *string
 }
 
-func (r ApiListIntegrationZonesRequest) XOrg(xOrg string) ApiListIntegrationZonesRequest {
+func (r ApiRestoreZoneRequest) XOrg(xOrg string) ApiRestoreZoneRequest {
 	r.xOrg = &xOrg
 	return r
 }
 
-func (r ApiListIntegrationZonesRequest) OutputOptions(outputOptions MultiResourceOutputOptionsQuery) ApiListIntegrationZonesRequest {
-	r.outputOptions = &outputOptions
-	return r
-}
-
-func (r ApiListIntegrationZonesRequest) Pagination(pagination PaginationQuery) ApiListIntegrationZonesRequest {
-	r.pagination = &pagination
-	return r
-}
-
-func (r ApiListIntegrationZonesRequest) Execute() (*PaginatedResponseZoneResponse, *http.Response, error) {
-	return r.ApiService.ListIntegrationZonesExecute(r)
+func (r ApiRestoreZoneRequest) Execute() (*ZoneResponse, *http.Response, error) {
+	return r.ApiService.RestoreZoneExecute(r)
 }
 
 /*
-ListIntegrationZones List zones for an integration.
+RestoreZone Restore a soft-deleted zone. References detached on delete are not reattached.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param integrationId
-	@return ApiListIntegrationZonesRequest
+	@param id
+	@return ApiRestoreZoneRequest
 */
-func (a *ZonesAPIService) ListIntegrationZones(ctx context.Context, integrationId string) ApiListIntegrationZonesRequest {
-	return ApiListIntegrationZonesRequest{
-		ApiService:    a,
-		ctx:           ctx,
-		integrationId: integrationId,
+func (a *ZonesAPIService) RestoreZone(ctx context.Context, id string) ApiRestoreZoneRequest {
+	return ApiRestoreZoneRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
 	}
 }
 
 // Execute executes the request
 //
-//	@return PaginatedResponseZoneResponse
-func (a *ZonesAPIService) ListIntegrationZonesExecute(r ApiListIntegrationZonesRequest) (*PaginatedResponseZoneResponse, *http.Response, error) {
+//	@return ZoneResponse
+func (a *ZonesAPIService) RestoreZoneExecute(r ApiRestoreZoneRequest) (*ZoneResponse, *http.Response, error) {
 	var (
-		localVarHTTPMethod  = http.MethodGet
+		localVarHTTPMethod  = http.MethodPost
 		localVarPostBody    interface{}
 		formFiles           []formFile
-		localVarReturnValue *PaginatedResponseZoneResponse
+		localVarReturnValue *ZoneResponse
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.ListIntegrationZones")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ZonesAPIService.RestoreZone")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/integrations/{integration_id}/zones"
-	localVarPath = strings.Replace(localVarPath, "{"+"integration_id"+"}", url.PathEscape(parameterValueToString(r.integrationId, "integrationId")), -1)
+	localVarPath := localBasePath + "/zones/{id}/restore"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -832,15 +1513,7 @@ func (a *ZonesAPIService) ListIntegrationZonesExecute(r ApiListIntegrationZonesR
 	if r.xOrg == nil {
 		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
 	}
-	if r.outputOptions == nil {
-		return localVarReturnValue, nil, reportError("outputOptions is required and must be specified")
-	}
-	if r.pagination == nil {
-		return localVarReturnValue, nil, reportError("pagination is required and must be specified")
-	}
 
-	parameterAddToHeaderOrQuery(localVarQueryParams, "output_options", r.outputOptions, "form", "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "pagination", r.pagination, "form", "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -914,6 +1587,17 @@ func (a *ZonesAPIService) ListIntegrationZonesExecute(r ApiListIntegrationZonesR
 			newErr.model = v
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
+		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
 		if localVarHTTPResponse.StatusCode == 500 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
@@ -945,7 +1629,6 @@ type ApiUpdateZoneRequest struct {
 	id                string
 	xOrg              *string
 	updateZoneRequest *UpdateZoneRequest
-	includeDeleted    *bool
 }
 
 func (r ApiUpdateZoneRequest) XOrg(xOrg string) ApiUpdateZoneRequest {
@@ -958,17 +1641,14 @@ func (r ApiUpdateZoneRequest) UpdateZoneRequest(updateZoneRequest UpdateZoneRequ
 	return r
 }
 
-func (r ApiUpdateZoneRequest) IncludeDeleted(includeDeleted bool) ApiUpdateZoneRequest {
-	r.includeDeleted = &includeDeleted
-	return r
-}
-
 func (r ApiUpdateZoneRequest) Execute() (*ZoneResponse, *http.Response, error) {
 	return r.ApiService.UpdateZoneExecute(r)
 }
 
 /*
-UpdateZone Update a zone.
+UpdateZone Update a zone (rename and/or reparent).
+
+Rename, reparent, or replace Access-site memberships for a zone. 422 when the new parent is missing, deleted, in another org, would form a cycle (`zone_cycle`), exceeds the depth cap, or memberships are not a subset of the new parent's (`zone_site_mismatch`). 409 `zone_site_in_use` when narrowing memberships would orphan another site's doors or entities.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -1011,9 +1691,6 @@ func (a *ZonesAPIService) UpdateZoneExecute(r ApiUpdateZoneRequest) (*ZoneRespon
 		return localVarReturnValue, nil, reportError("updateZoneRequest is required and must be specified")
 	}
 
-	if r.includeDeleted != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "include_deleted", r.includeDeleted, "form", "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
 
@@ -1090,6 +1767,17 @@ func (a *ZonesAPIService) UpdateZoneExecute(r ApiUpdateZoneRequest) (*ZoneRespon
 			return localVarReturnValue, localVarHTTPResponse, newErr
 		}
 		if localVarHTTPResponse.StatusCode == 404 {
+			var v ApiErrorResponse
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+			newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+			newErr.model = v
+			return localVarReturnValue, localVarHTTPResponse, newErr
+		}
+		if localVarHTTPResponse.StatusCode == 409 {
 			var v ApiErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {

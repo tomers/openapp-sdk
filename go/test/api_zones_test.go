@@ -64,6 +64,32 @@ func Test_openapi_ZonesAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test ZonesAPIService GetZoneSummary", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.ZonesAPI.GetZoneSummary(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test ZonesAPIService GetZoneTree", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		resp, httpRes, err := apiClient.ZonesAPI.GetZoneTree(context.Background()).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test ZonesAPIService HardDeleteZone", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
@@ -78,13 +104,39 @@ func Test_openapi_ZonesAPIService(t *testing.T) {
 
 	})
 
-	t.Run("Test ZonesAPIService ListIntegrationZones", func(t *testing.T) {
+	t.Run("Test ZonesAPIService ListZones", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test
 
-		var integrationId string
+		resp, httpRes, err := apiClient.ZonesAPI.ListZones(context.Background()).Execute()
 
-		resp, httpRes, err := apiClient.ZonesAPI.ListIntegrationZones(context.Background(), integrationId).Execute()
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test ZonesAPIService MergeZones", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.ZonesAPI.MergeZones(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test ZonesAPIService RestoreZone", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var id string
+
+		resp, httpRes, err := apiClient.ZonesAPI.RestoreZone(context.Background(), id).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

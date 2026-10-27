@@ -22,6 +22,7 @@ var _ MappedNullable = &GeneratePlanResponse{}
 // GeneratePlanResponse struct for GeneratePlanResponse
 type GeneratePlanResponse struct {
 	Create    []GeneratePlanEntry `json:"create"`
+	Orphaned  []GeneratePlanEntry `json:"orphaned"`
 	Skipped   []GeneratePlanEntry `json:"skipped"`
 	Unchanged []GeneratePlanEntry `json:"unchanged"`
 	Update    []GeneratePlanEntry `json:"update"`
@@ -33,9 +34,10 @@ type _GeneratePlanResponse GeneratePlanResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGeneratePlanResponse(create []GeneratePlanEntry, skipped []GeneratePlanEntry, unchanged []GeneratePlanEntry, update []GeneratePlanEntry) *GeneratePlanResponse {
+func NewGeneratePlanResponse(create []GeneratePlanEntry, orphaned []GeneratePlanEntry, skipped []GeneratePlanEntry, unchanged []GeneratePlanEntry, update []GeneratePlanEntry) *GeneratePlanResponse {
 	this := GeneratePlanResponse{}
 	this.Create = create
+	this.Orphaned = orphaned
 	this.Skipped = skipped
 	this.Unchanged = unchanged
 	this.Update = update
@@ -72,6 +74,30 @@ func (o *GeneratePlanResponse) GetCreateOk() ([]GeneratePlanEntry, bool) {
 // SetCreate sets field value
 func (o *GeneratePlanResponse) SetCreate(v []GeneratePlanEntry) {
 	o.Create = v
+}
+
+// GetOrphaned returns the Orphaned field value
+func (o *GeneratePlanResponse) GetOrphaned() []GeneratePlanEntry {
+	if o == nil {
+		var ret []GeneratePlanEntry
+		return ret
+	}
+
+	return o.Orphaned
+}
+
+// GetOrphanedOk returns a tuple with the Orphaned field value
+// and a boolean to check if the value has been set.
+func (o *GeneratePlanResponse) GetOrphanedOk() ([]GeneratePlanEntry, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.Orphaned, true
+}
+
+// SetOrphaned sets field value
+func (o *GeneratePlanResponse) SetOrphaned(v []GeneratePlanEntry) {
+	o.Orphaned = v
 }
 
 // GetSkipped returns the Skipped field value
@@ -149,6 +175,7 @@ func (o *GeneratePlanResponse) SetUpdate(v []GeneratePlanEntry) {
 func (o GeneratePlanResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["create"] = o.Create
+	toSerialize["orphaned"] = o.Orphaned
 	toSerialize["skipped"] = o.Skipped
 	toSerialize["unchanged"] = o.Unchanged
 	toSerialize["update"] = o.Update
@@ -161,6 +188,7 @@ func (o *GeneratePlanResponse) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"create",
+		"orphaned",
 		"skipped",
 		"unchanged",
 		"update",

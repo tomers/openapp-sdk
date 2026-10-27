@@ -10,8 +10,9 @@ Name | Type | Description | Notes
 **IsAdmin** | Pointer to **NullableBool** |  | [optional]
 **LastSeenAt** | Pointer to **NullableString** |  | [optional]
 **OpenappUserId** | Pointer to **NullableString** | Present when &#x60;status &#x3D;&#x3D; linked&#x60;. ULID string of the OpenApp user. | [optional]
-**PendingInvitationId** | Pointer to **NullableString** | Present when &#x60;status &#x3D;&#x3D; invited&#x60;. ULID string of the matching &#x60;user_invitations&#x60; row. | [optional]
+**PendingInvitationId** | Pointer to **NullableString** | Present when &#x60;status &#x3D;&#x3D; invited&#x60;. ULID of the matching pending org invitation. | [optional]
 **Phone** | Pointer to **NullableString** |  | [optional]
+**PhoneTransport** | Pointer to **NullableString** | &#x60;sms&#x60; or &#x60;whatsapp&#x60; when &#x60;status &#x3D;&#x3D; invited&#x60; and a phone PIN was sent. | [optional]
 **Status** | **string** | &#x60;linked&#x60; | &#x60;invited&#x60; | &#x60;unlinked&#x60;. |
 **Unmanaged** | **bool** | True when the vendor user is on the gate but not linked to an OpenApp user (flag only). |
 
@@ -299,6 +300,41 @@ HasPhone returns a boolean if a field has been set.
 `func (o *IntegrationUserItem) UnsetPhone()`
 
 UnsetPhone ensures that no value is present for Phone, not even an explicit nil
+### GetPhoneTransport
+
+`func (o *IntegrationUserItem) GetPhoneTransport() string`
+
+GetPhoneTransport returns the PhoneTransport field if non-nil, zero value otherwise.
+
+### GetPhoneTransportOk
+
+`func (o *IntegrationUserItem) GetPhoneTransportOk() (*string, bool)`
+
+GetPhoneTransportOk returns a tuple with the PhoneTransport field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPhoneTransport
+
+`func (o *IntegrationUserItem) SetPhoneTransport(v string)`
+
+SetPhoneTransport sets PhoneTransport field to given value.
+
+### HasPhoneTransport
+
+`func (o *IntegrationUserItem) HasPhoneTransport() bool`
+
+HasPhoneTransport returns a boolean if a field has been set.
+
+### SetPhoneTransportNil
+
+`func (o *IntegrationUserItem) SetPhoneTransportNil(b bool)`
+
+ SetPhoneTransportNil sets the value for PhoneTransport to be an explicit nil
+
+### UnsetPhoneTransport
+`func (o *IntegrationUserItem) UnsetPhoneTransport()`
+
+UnsetPhoneTransport ensures that no value is present for PhoneTransport, not even an explicit nil
 ### GetStatus
 
 `func (o *IntegrationUserItem) GetStatus() string`

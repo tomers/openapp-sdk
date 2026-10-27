@@ -34,7 +34,7 @@ func (r ApiCancelInvitationRequest) Execute() (*http.Response, error) {
 }
 
 /*
-CancelInvitation DELETE `/orgs/{id}/invitations/{invite_id}` — mark invitation cancelled.
+CancelInvitation Cancel an invitation.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -133,7 +133,12 @@ func (r ApiCreateInvitationRequest) Execute() (*CreateInvitationResponse, *http.
 }
 
 /*
-CreateInvitation POST `/orgs/{id}/invitations` — mint an invitation and dispatch its PIN.
+CreateInvitation Create an invitation and send its PIN to the invitee. Create an org invitation.
+
+Callers with `users:create` may invite with any valid payload. Listing admins
+without that permission may invite only with listing `site_access` (building
+role `resident`, `default_roles` empty or `member`, no `default_group_ids`) for
+a listing they administer.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -241,7 +246,7 @@ func (r ApiHardDeleteInvitationRequest) Execute() (*http.Response, error) {
 }
 
 /*
-HardDeleteInvitation DELETE `/orgs/{id}/invitations/{invite_id}/purge` — permanently remove any invitation status.
+HardDeleteInvitation Permanently delete an invitation, whatever its status.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -324,9 +329,16 @@ func (a *OrgInvitationsAPIService) HardDeleteInvitationExecute(r ApiHardDeleteIn
 }
 
 type ApiListInvitationsRequest struct {
-	ctx        context.Context
-	ApiService *OrgInvitationsAPIService
-	id         string
+	ctx             context.Context
+	ApiService      *OrgInvitationsAPIService
+	id              string
+	listingEntityId *string
+}
+
+// When set, only invitations that grant this directory listing are returned. Callers with &#x60;users:list&#x60; may filter any listing in the org. Listing admins without &#x60;users:list&#x60; may only request a listing they administer (or omit this to receive every invitation for listings they administer).
+func (r ApiListInvitationsRequest) ListingEntityId(listingEntityId string) ApiListInvitationsRequest {
+	r.listingEntityId = &listingEntityId
+	return r
 }
 
 func (r ApiListInvitationsRequest) Execute() (*ListInvitationsResponse, *http.Response, error) {
@@ -334,7 +346,11 @@ func (r ApiListInvitationsRequest) Execute() (*ListInvitationsResponse, *http.Re
 }
 
 /*
-ListInvitations GET `/orgs/{id}/invitations` — list all invitations attached to the org (any status).
+ListInvitations List invitations of the org.
+
+Callers with `users:list` see every invitation (optionally filtered by
+`listing_entity_id`). Listing admins without that permission see only invitations
+whose site access targets a listing they administer.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -371,6 +387,9 @@ func (a *OrgInvitationsAPIService) ListInvitationsExecute(r ApiListInvitationsRe
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.listingEntityId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "listing_entity_id", r.listingEntityId, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -426,10 +445,16 @@ func (a *OrgInvitationsAPIService) ListInvitationsExecute(r ApiListInvitationsRe
 }
 
 type ApiResendInvitationRequest struct {
-	ctx        context.Context
-	ApiService *OrgInvitationsAPIService
-	id         string
-	inviteId   string
+	ctx                     context.Context
+	ApiService              *OrgInvitationsAPIService
+	id                      string
+	inviteId                string
+	resendInvitationRequest *ResendInvitationRequest
+}
+
+func (r ApiResendInvitationRequest) ResendInvitationRequest(resendInvitationRequest ResendInvitationRequest) ApiResendInvitationRequest {
+	r.resendInvitationRequest = &resendInvitationRequest
+	return r
 }
 
 func (r ApiResendInvitationRequest) Execute() (*UserInvitationDto, *http.Response, error) {
@@ -437,7 +462,7 @@ func (r ApiResendInvitationRequest) Execute() (*UserInvitationDto, *http.Respons
 }
 
 /*
-ResendInvitation POST `/orgs/{id}/invitations/{invite_id}/resend` — re-issue fresh token+PIN.
+ResendInvitation Resend an invitation with a freshly issued token and PIN.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param id
@@ -476,9 +501,12 @@ func (a *OrgInvitationsAPIService) ResendInvitationExecute(r ApiResendInvitation
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.resendInvitationRequest == nil {
+		return localVarReturnValue, nil, reportError("resendInvitationRequest is required and must be specified")
+	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -494,6 +522,129 @@ func (a *OrgInvitationsAPIService) ResendInvitationExecute(r ApiResendInvitation
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	// body params
+	localVarPostBody = r.resendInvitationRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiUpdateInvitationRequest struct {
+	ctx                     context.Context
+	ApiService              *OrgInvitationsAPIService
+	id                      string
+	inviteId                string
+	updateInvitationRequest *UpdateInvitationRequest
+}
+
+func (r ApiUpdateInvitationRequest) UpdateInvitationRequest(updateInvitationRequest UpdateInvitationRequest) ApiUpdateInvitationRequest {
+	r.updateInvitationRequest = &updateInvitationRequest
+	return r
+}
+
+func (r ApiUpdateInvitationRequest) Execute() (*UserInvitationDto, *http.Response, error) {
+	return r.ApiService.UpdateInvitationExecute(r)
+}
+
+/*
+UpdateInvitation Edit a pending invitation.
+
+The invitee's contact, the link, and the PIN never change, so a message sent before the edit
+still works and redeems against the edited values. Call resend afterwards to deliver a message
+in the new language and describing the new role; resend issues a new link and PIN.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param id
+	@param inviteId
+	@return ApiUpdateInvitationRequest
+*/
+func (a *OrgInvitationsAPIService) UpdateInvitation(ctx context.Context, id string, inviteId string) ApiUpdateInvitationRequest {
+	return ApiUpdateInvitationRequest{
+		ApiService: a,
+		ctx:        ctx,
+		id:         id,
+		inviteId:   inviteId,
+	}
+}
+
+// Execute executes the request
+//
+//	@return UserInvitationDto
+func (a *OrgInvitationsAPIService) UpdateInvitationExecute(r ApiUpdateInvitationRequest) (*UserInvitationDto, *http.Response, error) {
+	var (
+		localVarHTTPMethod  = http.MethodPatch
+		localVarPostBody    interface{}
+		formFiles           []formFile
+		localVarReturnValue *UserInvitationDto
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrgInvitationsAPIService.UpdateInvitation")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/orgs/{id}/invitations/{invite_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", url.PathEscape(parameterValueToString(r.id, "id")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"invite_id"+"}", url.PathEscape(parameterValueToString(r.inviteId, "inviteId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.updateInvitationRequest == nil {
+		return localVarReturnValue, nil, reportError("updateInvitationRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.updateInvitationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

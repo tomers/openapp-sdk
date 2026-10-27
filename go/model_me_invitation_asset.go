@@ -24,16 +24,18 @@ type MeInvitationAsset struct {
 	// Integration / building summary with photo (best-effort).
 	AccessControl NullablePublicPortalAccessControl `json:"access_control,omitempty"`
 	BuildingName  interface{}                       `json:"building_name,omitempty"`
-	// True when the requester has `integrations:read` on the invite's org, i.e. may open the invitation's management page. Mirrors the authz check in `list_integration_access_invites`.
+	// True when the requester has `integrations:read` on the invite's org, i.e. may open the invitation's management page.
 	CanRead   bool           `json:"can_read"`
 	ClaimedAt NullableString `json:"claimed_at,omitempty"`
 	// One entry per grant in the invite, with label / door image / lights flag enriched the same way as `GET /public/access/invites/{token}`. Lets clients render multi-door invitations without an extra round trip.
-	Grants         []PublicInviteGrant `json:"grants"`
-	IntegrationId  string              `json:"integration_id"`
-	InviteLinkId   string              `json:"invite_link_id"`
-	InviteeMessage interface{}         `json:"invitee_message,omitempty"`
-	LastUsedAt     NullableString      `json:"last_used_at,omitempty"`
-	MaxUses        NullableInt32       `json:"max_uses,omitempty"`
+	Grants        []PublicInviteGrant `json:"grants"`
+	IntegrationId string              `json:"integration_id"`
+	InviteLinkId  string              `json:"invite_link_id"`
+	// Guest bearer from when this user claimed the invite. Present so the personal access page can link to the share URL (`/invite/{token}`). Absent for claims created before the column existed or via admin DSL.
+	InviteToken    NullableString `json:"invite_token,omitempty"`
+	InviteeMessage interface{}    `json:"invitee_message,omitempty"`
+	LastUsedAt     NullableString `json:"last_used_at,omitempty"`
+	MaxUses        NullableInt32  `json:"max_uses,omitempty"`
 	// Admin-defined invite name (mirrors `PublicInviteResponse.name`).
 	Name  NullableString `json:"name,omitempty"`
 	OrgId string         `json:"org_id"`
@@ -291,6 +293,49 @@ func (o *MeInvitationAsset) GetInviteLinkIdOk() (*string, bool) {
 // SetInviteLinkId sets field value
 func (o *MeInvitationAsset) SetInviteLinkId(v string) {
 	o.InviteLinkId = v
+}
+
+// GetInviteToken returns the InviteToken field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *MeInvitationAsset) GetInviteToken() string {
+	if o == nil || IsNil(o.InviteToken.Get()) {
+		var ret string
+		return ret
+	}
+	return *o.InviteToken.Get()
+}
+
+// GetInviteTokenOk returns a tuple with the InviteToken field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *MeInvitationAsset) GetInviteTokenOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.InviteToken.Get(), o.InviteToken.IsSet()
+}
+
+// HasInviteToken returns a boolean if a field has been set.
+func (o *MeInvitationAsset) HasInviteToken() bool {
+	if o != nil && o.InviteToken.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetInviteToken gets a reference to the given NullableString and assigns it to the InviteToken field.
+func (o *MeInvitationAsset) SetInviteToken(v string) {
+	o.InviteToken.Set(&v)
+}
+
+// SetInviteTokenNil sets the value for InviteToken to be an explicit nil
+func (o *MeInvitationAsset) SetInviteTokenNil() {
+	o.InviteToken.Set(nil)
+}
+
+// UnsetInviteToken ensures that no value is present for InviteToken, not even an explicit nil
+func (o *MeInvitationAsset) UnsetInviteToken() {
+	o.InviteToken.Unset()
 }
 
 // GetInviteeMessage returns the InviteeMessage field value if set, zero value otherwise (both if not set or set to explicit null).
@@ -800,6 +845,9 @@ func (o MeInvitationAsset) ToMap() (map[string]interface{}, error) {
 	toSerialize["grants"] = o.Grants
 	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["invite_link_id"] = o.InviteLinkId
+	if o.InviteToken.IsSet() {
+		toSerialize["invite_token"] = o.InviteToken.Get()
+	}
 	if o.InviteeMessage != nil {
 		toSerialize["invitee_message"] = o.InviteeMessage
 	}

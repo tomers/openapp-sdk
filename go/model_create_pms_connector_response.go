@@ -21,10 +21,11 @@ var _ MappedNullable = &CreatePmsConnectorResponse{}
 
 // CreatePmsConnectorResponse struct for CreatePmsConnectorResponse
 type CreatePmsConnectorResponse struct {
-	Id             string `json:"id"`
-	Name           string `json:"name"`
-	Provider       string `json:"provider"`
-	WebhookSecret  string `json:"webhook_secret"`
+	Id       string `json:"id"`
+	Name     string `json:"name"`
+	Provider string `json:"provider"`
+	// HMAC-SHA256 signing key, returned exactly once. The PMS signs each delivery with it (see `POST /pms/{connector_id}/inbound`); it is never returned again.
+	SigningSecret  string `json:"signing_secret"`
 	WebhookUrlPath string `json:"webhook_url_path"`
 }
 
@@ -34,12 +35,12 @@ type _CreatePmsConnectorResponse CreatePmsConnectorResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreatePmsConnectorResponse(id string, name string, provider string, webhookSecret string, webhookUrlPath string) *CreatePmsConnectorResponse {
+func NewCreatePmsConnectorResponse(id string, name string, provider string, signingSecret string, webhookUrlPath string) *CreatePmsConnectorResponse {
 	this := CreatePmsConnectorResponse{}
 	this.Id = id
 	this.Name = name
 	this.Provider = provider
-	this.WebhookSecret = webhookSecret
+	this.SigningSecret = signingSecret
 	this.WebhookUrlPath = webhookUrlPath
 	return &this
 }
@@ -124,28 +125,28 @@ func (o *CreatePmsConnectorResponse) SetProvider(v string) {
 	o.Provider = v
 }
 
-// GetWebhookSecret returns the WebhookSecret field value
-func (o *CreatePmsConnectorResponse) GetWebhookSecret() string {
+// GetSigningSecret returns the SigningSecret field value
+func (o *CreatePmsConnectorResponse) GetSigningSecret() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
 
-	return o.WebhookSecret
+	return o.SigningSecret
 }
 
-// GetWebhookSecretOk returns a tuple with the WebhookSecret field value
+// GetSigningSecretOk returns a tuple with the SigningSecret field value
 // and a boolean to check if the value has been set.
-func (o *CreatePmsConnectorResponse) GetWebhookSecretOk() (*string, bool) {
+func (o *CreatePmsConnectorResponse) GetSigningSecretOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.WebhookSecret, true
+	return &o.SigningSecret, true
 }
 
-// SetWebhookSecret sets field value
-func (o *CreatePmsConnectorResponse) SetWebhookSecret(v string) {
-	o.WebhookSecret = v
+// SetSigningSecret sets field value
+func (o *CreatePmsConnectorResponse) SetSigningSecret(v string) {
+	o.SigningSecret = v
 }
 
 // GetWebhookUrlPath returns the WebhookUrlPath field value
@@ -177,7 +178,7 @@ func (o CreatePmsConnectorResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize["id"] = o.Id
 	toSerialize["name"] = o.Name
 	toSerialize["provider"] = o.Provider
-	toSerialize["webhook_secret"] = o.WebhookSecret
+	toSerialize["signing_secret"] = o.SigningSecret
 	toSerialize["webhook_url_path"] = o.WebhookUrlPath
 	return toSerialize, nil
 }
@@ -190,7 +191,7 @@ func (o *CreatePmsConnectorResponse) UnmarshalJSON(data []byte) (err error) {
 		"id",
 		"name",
 		"provider",
-		"webhook_secret",
+		"signing_secret",
 		"webhook_url_path",
 	}
 

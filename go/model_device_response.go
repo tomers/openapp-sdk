@@ -38,7 +38,11 @@ type DeviceResponse struct {
 	Name LocalizedString `json:"name"`
 	// Organization that owns this device.
 	OrgId string `json:"org_id"`
-	// Server-computed, read-only: true when this OpenApp device record is the canonical (primary) instance for its physical hardware in the global `physical_devices` registry. Never accepted from a request body. See `docs/POLICIES_HDD.md` §6.3.
+	// Zone the device is placed in (same org). Entities with `zone.mode = inherit` take it.
+	ZoneId *string `json:"zone_id,omitempty"`
+	// JSON Pointers into `device_metadata` of write-only credential fields (schema `format: password`) that currently hold a value. Credential values are never returned here; an update that omits them keeps the stored value and `null` clears it.
+	CredentialsSet []string `json:"credentials_set"`
+	// Read-only, computed by the server: true when this device record is the primary instance for its physical hardware, when the same hardware has more than one device record. Never accepted in a request body.
 	IsPrimaryInstance NullableBool `json:"is_primary_instance,omitempty"`
 	// Present when `include_stale=true` was requested and the provider supports stale detection.
 	Stale NullableBool `json:"stale,omitempty"`
@@ -50,12 +54,13 @@ type _DeviceResponse DeviceResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewDeviceResponse(id string, integrationId string, name LocalizedString, orgId string) *DeviceResponse {
+func NewDeviceResponse(id string, integrationId string, name LocalizedString, orgId string, credentialsSet []string) *DeviceResponse {
 	this := DeviceResponse{}
 	this.Id = id
 	this.IntegrationId = integrationId
 	this.Name = name
 	this.OrgId = orgId
+	this.CredentialsSet = credentialsSet
 	return &this
 }
 
@@ -388,6 +393,62 @@ func (o *DeviceResponse) SetOrgId(v string) {
 	o.OrgId = v
 }
 
+// GetZoneId returns the ZoneId field value if set, zero value otherwise.
+func (o *DeviceResponse) GetZoneId() string {
+	if o == nil || IsNil(o.ZoneId) {
+		var ret string
+		return ret
+	}
+	return *o.ZoneId
+}
+
+// GetZoneIdOk returns a tuple with the ZoneId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetZoneIdOk() (*string, bool) {
+	if o == nil || IsNil(o.ZoneId) {
+		return nil, false
+	}
+	return o.ZoneId, true
+}
+
+// HasZoneId returns a boolean if a field has been set.
+func (o *DeviceResponse) HasZoneId() bool {
+	if o != nil && !IsNil(o.ZoneId) {
+		return true
+	}
+
+	return false
+}
+
+// SetZoneId gets a reference to the given string and assigns it to the ZoneId field.
+func (o *DeviceResponse) SetZoneId(v string) {
+	o.ZoneId = &v
+}
+
+// GetCredentialsSet returns the CredentialsSet field value
+func (o *DeviceResponse) GetCredentialsSet() []string {
+	if o == nil {
+		var ret []string
+		return ret
+	}
+
+	return o.CredentialsSet
+}
+
+// GetCredentialsSetOk returns a tuple with the CredentialsSet field value
+// and a boolean to check if the value has been set.
+func (o *DeviceResponse) GetCredentialsSetOk() ([]string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.CredentialsSet, true
+}
+
+// SetCredentialsSet sets field value
+func (o *DeviceResponse) SetCredentialsSet(v []string) {
+	o.CredentialsSet = v
+}
+
 // GetIsPrimaryInstance returns the IsPrimaryInstance field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *DeviceResponse) GetIsPrimaryInstance() bool {
 	if o == nil || IsNil(o.IsPrimaryInstance.Get()) {
@@ -501,6 +562,10 @@ func (o DeviceResponse) ToMap() (map[string]interface{}, error) {
 	toSerialize["integration_id"] = o.IntegrationId
 	toSerialize["name"] = o.Name
 	toSerialize["org_id"] = o.OrgId
+	if !IsNil(o.ZoneId) {
+		toSerialize["zone_id"] = o.ZoneId
+	}
+	toSerialize["credentials_set"] = o.CredentialsSet
 	if o.IsPrimaryInstance.IsSet() {
 		toSerialize["is_primary_instance"] = o.IsPrimaryInstance.Get()
 	}
@@ -519,6 +584,7 @@ func (o *DeviceResponse) UnmarshalJSON(data []byte) (err error) {
 		"integration_id",
 		"name",
 		"org_id",
+		"credentials_set",
 	}
 
 	allProperties := make(map[string]interface{})

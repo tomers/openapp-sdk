@@ -19,7 +19,7 @@ import (
 // checks if the QuotaReport type satisfies the MappedNullable interface at compile time
 var _ MappedNullable = &QuotaReport{}
 
-// QuotaReport Full quota report for an org; powers `/dashboard/billing`.
+// QuotaReport Full quota usage report for an org.
 type QuotaReport struct {
 	// Over-capacity remediation snapshot. Present only when the degradation system is enabled and the caller is permitted to see it; `null` otherwise.
 	Degradation NullableDegradationStatus `json:"degradation,omitempty"`

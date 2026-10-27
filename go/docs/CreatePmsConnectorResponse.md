@@ -7,14 +7,14 @@ Name | Type | Description | Notes
 **Id** | **string** |  |
 **Name** | **string** |  |
 **Provider** | **string** |  |
-**WebhookSecret** | **string** |  |
+**SigningSecret** | **string** | HMAC-SHA256 signing key, returned exactly once. The PMS signs each delivery with it (see &#x60;POST /pms/{connector_id}/inbound&#x60;); it is never returned again. |
 **WebhookUrlPath** | **string** |  |
 
 ## Methods
 
 ### NewCreatePmsConnectorResponse
 
-`func NewCreatePmsConnectorResponse(id string, name string, provider string, webhookSecret string, webhookUrlPath string, ) *CreatePmsConnectorResponse`
+`func NewCreatePmsConnectorResponse(id string, name string, provider string, signingSecret string, webhookUrlPath string, ) *CreatePmsConnectorResponse`
 
 NewCreatePmsConnectorResponse instantiates a new CreatePmsConnectorResponse object
 This constructor will assign default values to properties that have it defined,
@@ -89,24 +89,24 @@ and a boolean to check if the value has been set.
 SetProvider sets Provider field to given value.
 
 
-### GetWebhookSecret
+### GetSigningSecret
 
-`func (o *CreatePmsConnectorResponse) GetWebhookSecret() string`
+`func (o *CreatePmsConnectorResponse) GetSigningSecret() string`
 
-GetWebhookSecret returns the WebhookSecret field if non-nil, zero value otherwise.
+GetSigningSecret returns the SigningSecret field if non-nil, zero value otherwise.
 
-### GetWebhookSecretOk
+### GetSigningSecretOk
 
-`func (o *CreatePmsConnectorResponse) GetWebhookSecretOk() (*string, bool)`
+`func (o *CreatePmsConnectorResponse) GetSigningSecretOk() (*string, bool)`
 
-GetWebhookSecretOk returns a tuple with the WebhookSecret field if it's non-nil, zero value otherwise
+GetSigningSecretOk returns a tuple with the SigningSecret field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
-### SetWebhookSecret
+### SetSigningSecret
 
-`func (o *CreatePmsConnectorResponse) SetWebhookSecret(v string)`
+`func (o *CreatePmsConnectorResponse) SetSigningSecret(v string)`
 
-SetWebhookSecret sets WebhookSecret field to given value.
+SetSigningSecret sets SigningSecret field to given value.
 
 
 ### GetWebhookUrlPath

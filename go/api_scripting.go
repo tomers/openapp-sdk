@@ -150,7 +150,14 @@ func (a *ScriptingAPIService) CancelScriptingExecutionExecute(r ApiCancelScripti
 type ApiCreateScriptingExecutionRequest struct {
 	ctx                             context.Context
 	ApiService                      *ScriptingAPIService
+	xOrg                            *string
 	createScriptingExecutionRequest *CreateScriptingExecutionRequest
+}
+
+// Organization that owns the execution; the caller needs the scripting execute role in it
+func (r ApiCreateScriptingExecutionRequest) XOrg(xOrg string) ApiCreateScriptingExecutionRequest {
+	r.xOrg = &xOrg
+	return r
 }
 
 func (r ApiCreateScriptingExecutionRequest) CreateScriptingExecutionRequest(createScriptingExecutionRequest CreateScriptingExecutionRequest) ApiCreateScriptingExecutionRequest {
@@ -198,6 +205,9 @@ func (a *ScriptingAPIService) CreateScriptingExecutionExecute(r ApiCreateScripti
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.xOrg == nil {
+		return localVarReturnValue, nil, reportError("xOrg is required and must be specified")
+	}
 	if r.createScriptingExecutionRequest == nil {
 		return localVarReturnValue, nil, reportError("createScriptingExecutionRequest is required and must be specified")
 	}
@@ -219,6 +229,7 @@ func (a *ScriptingAPIService) CreateScriptingExecutionExecute(r ApiCreateScripti
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	parameterAddToHeaderOrQuery(localVarHeaderParams, "X-Org", r.xOrg, "simple", "")
 	// body params
 	localVarPostBody = r.createScriptingExecutionRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)

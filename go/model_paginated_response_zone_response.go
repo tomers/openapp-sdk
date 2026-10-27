@@ -21,8 +21,8 @@ var _ MappedNullable = &PaginatedResponseZoneResponse{}
 
 // PaginatedResponseZoneResponse Paginated response body for list endpoints.
 type PaginatedResponseZoneResponse struct {
-	Items []Zone `json:"items"`
-	Total int64  `json:"total"`
+	Items []PaginatedResponseZoneResponseItemsInner `json:"items"`
+	Total int64                                     `json:"total"`
 }
 
 type _PaginatedResponseZoneResponse PaginatedResponseZoneResponse
@@ -31,7 +31,7 @@ type _PaginatedResponseZoneResponse PaginatedResponseZoneResponse
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewPaginatedResponseZoneResponse(items []Zone, total int64) *PaginatedResponseZoneResponse {
+func NewPaginatedResponseZoneResponse(items []PaginatedResponseZoneResponseItemsInner, total int64) *PaginatedResponseZoneResponse {
 	this := PaginatedResponseZoneResponse{}
 	this.Items = items
 	this.Total = total
@@ -47,9 +47,9 @@ func NewPaginatedResponseZoneResponseWithDefaults() *PaginatedResponseZoneRespon
 }
 
 // GetItems returns the Items field value
-func (o *PaginatedResponseZoneResponse) GetItems() []Zone {
+func (o *PaginatedResponseZoneResponse) GetItems() []PaginatedResponseZoneResponseItemsInner {
 	if o == nil {
-		var ret []Zone
+		var ret []PaginatedResponseZoneResponseItemsInner
 		return ret
 	}
 
@@ -58,7 +58,7 @@ func (o *PaginatedResponseZoneResponse) GetItems() []Zone {
 
 // GetItemsOk returns a tuple with the Items field value
 // and a boolean to check if the value has been set.
-func (o *PaginatedResponseZoneResponse) GetItemsOk() ([]Zone, bool) {
+func (o *PaginatedResponseZoneResponse) GetItemsOk() ([]PaginatedResponseZoneResponseItemsInner, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -66,7 +66,7 @@ func (o *PaginatedResponseZoneResponse) GetItemsOk() ([]Zone, bool) {
 }
 
 // SetItems sets field value
-func (o *PaginatedResponseZoneResponse) SetItems(v []Zone) {
+func (o *PaginatedResponseZoneResponse) SetItems(v []PaginatedResponseZoneResponseItemsInner) {
 	o.Items = v
 }
 

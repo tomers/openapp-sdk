@@ -28,7 +28,7 @@ type UpdateAccessInviteRequest struct {
 	// Admin-only emergency exception: skip invitation curfew at redemption.
 	CurfewExempt          NullableBool   `json:"curfew_exempt,omitempty"`
 	DisabledJustification NullableString `json:"disabled_justification,omitempty"`
-	// Omitted leaves the stored phone unchanged; JSON `null` clears it. External-record precondition and correlation. When present, `source`/`record_id` must match the invitation's stored reference (or bind it for the first time), and a `revision` older than the stored one is rejected with `external_revision_stale` so a late event cannot restore an earlier room, window, or portal set.
+	// External-record precondition and correlation. When present, `source`/`record_id` must match the invitation's stored reference (or bind it for the first time), and a `revision` older than the stored one is rejected with `external_revision_stale` so a late event cannot restore an earlier room, window, or portal set.
 	ExternalRef    NullableExternalReferenceInput `json:"external_ref,omitempty"`
 	InviteeMessage interface{}                    `json:"invitee_message,omitempty"`
 	IsEnabled      NullableBool                   `json:"is_enabled,omitempty"`

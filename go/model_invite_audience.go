@@ -15,7 +15,7 @@ import (
 	"fmt"
 )
 
-// InviteAudience Who an invitation may be used by.  `anyone_with_link` is the historical behaviour: the bearer of the link may use it. `listed_contacts` requires the bearer to resolve to one of the invitation's named contacts, which is what stops a credential being passed around.
+// InviteAudience Who an invitation may be used by.  `anyone_with_link`: whoever holds the link may use it. `listed_contacts`: the bearer must resolve to one of the invitation's named contacts, so a forwarded link cannot be used by someone else.
 type InviteAudience string
 
 // List of InviteAudience

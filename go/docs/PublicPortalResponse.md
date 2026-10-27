@@ -7,9 +7,10 @@ Name | Type | Description | Notes
 **AccessControl** | Pointer to [**NullablePublicPortalAccessControl**](PublicPortalAccessControl.md) | Access-control integration summary (building name, address, photo). | [optional]
 **AccessDirectory** | Pointer to [**NullablePublicPortalAccessControl**](PublicPortalAccessControl.md) | Visitor directory device summary for this portal (building directory name, photo). | [optional]
 **Branding** | Pointer to **interface{}** |  | [optional]
+**DoorConnected** | **bool** | False when the portal has no door to open: the door was purged, or the portal was never linked to one. The printed QR code stays valid; an admin can link a door again. |
 **DoorEffectiveAutoOffDuration** | Pointer to **NullableInt64** |  | [optional]
 **DoorImageUrl** | Pointer to **NullableString** | Image URL for the door (presigned S3 URL from media service). | [optional]
-**EntryKind** | **string** | Entry type from linked portal device (&#x60;virtual_access.entry_kind&#x60;). Default &#x60;door&#x60;. |
+**EntryKind** | **string** | Entry type configured on the linked portal device (&#x60;entry_kind&#x60; in its &#x60;virtual_access&#x60; metadata). Default &#x60;door&#x60;. |
 **Hold** | Pointer to [**NullablePublicHoldView**](PublicHoldView.md) | Effective door hold when any opener is held (guest-visible). | [optional]
 **Lights** | Pointer to [**[]PublicPortalLight**](PublicPortalLight.md) |  | [optional]
 **Mode** | [**PublicPortalMode**](PublicPortalMode.md) |  |
@@ -21,7 +22,7 @@ Name | Type | Description | Notes
 
 ### NewPublicPortalResponse
 
-`func NewPublicPortalResponse(entryKind string, mode PublicPortalMode, publicPortalId string, ) *PublicPortalResponse`
+`func NewPublicPortalResponse(doorConnected bool, entryKind string, mode PublicPortalMode, publicPortalId string, ) *PublicPortalResponse`
 
 NewPublicPortalResponse instantiates a new PublicPortalResponse object
 This constructor will assign default values to properties that have it defined,
@@ -141,6 +142,26 @@ HasBranding returns a boolean if a field has been set.
 `func (o *PublicPortalResponse) UnsetBranding()`
 
 UnsetBranding ensures that no value is present for Branding, not even an explicit nil
+### GetDoorConnected
+
+`func (o *PublicPortalResponse) GetDoorConnected() bool`
+
+GetDoorConnected returns the DoorConnected field if non-nil, zero value otherwise.
+
+### GetDoorConnectedOk
+
+`func (o *PublicPortalResponse) GetDoorConnectedOk() (*bool, bool)`
+
+GetDoorConnectedOk returns a tuple with the DoorConnected field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetDoorConnected
+
+`func (o *PublicPortalResponse) SetDoorConnected(v bool)`
+
+SetDoorConnected sets DoorConnected field to given value.
+
+
 ### GetDoorEffectiveAutoOffDuration
 
 `func (o *PublicPortalResponse) GetDoorEffectiveAutoOffDuration() int64`

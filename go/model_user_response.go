@@ -31,7 +31,7 @@ type UserResponse struct {
 	Email string `json:"email"`
 	// Unique identifier (ULID).
 	Id string `json:"id"`
-	// When set, this row was absorbed into another user. Follow for live identity.
+	// When set, this user was merged into the user with this id; use that user as the live identity.
 	MergedIntoUserId *string `json:"merged_into_user_id,omitempty"`
 	// Display name.
 	Name LocalizedString `json:"name"`

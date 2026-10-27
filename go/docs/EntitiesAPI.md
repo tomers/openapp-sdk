@@ -16,7 +16,7 @@ Method | HTTP request | Description
 [**ListDeviceEntities**](EntitiesAPI.md#ListDeviceEntities) | **Get** /devices/{device_id}/entities | List entities for a device.
 [**ListEntities**](EntitiesAPI.md#ListEntities) | **Get** /entities |
 [**PatchEntity**](EntitiesAPI.md#PatchEntity) | **Patch** /entities/{id} | Partially update entity metadata (shallow merge). Other fields (&#x60;name&#x60;, etc.) are unchanged.
-[**PreviewEntityAction**](EntitiesAPI.md#PreviewEntityAction) | **Post** /entities/{id}/actions/{action_id}/preview | Preview an entity action (Cedar + policies, no hardware call).
+[**PreviewEntityAction**](EntitiesAPI.md#PreviewEntityAction) | **Post** /entities/{id}/actions/{action_id}/preview | Preview an entity action: evaluates permissions and policies without calling the hardware.
 [**PutEntityHold**](EntitiesAPI.md#PutEntityHold) | **Put** /entities/{id}/hold |
 [**RestoreEntity**](EntitiesAPI.md#RestoreEntity) | **Post** /entities/{id}/restore | Restore a soft-deleted entity.
 [**UpdateEntity**](EntitiesAPI.md#UpdateEntity) | **Put** /entities/{id} | Update an entity.
@@ -782,7 +782,7 @@ Name | Type | Description  | Notes
 
 ## ListEntities
 
-> PaginatedResponse ListEntities(ctx).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).ZoneId(zoneId).Q(q).Sort(sort).Execute()
+> PaginatedResponse ListEntities(ctx).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).ZoneId(zoneId).IncludeDescendants(includeDescendants).Q(q).Sort(sort).OrgScope(orgScope).Execute()
 
 
 
@@ -802,9 +802,11 @@ func main() {
 	xOrg := "xOrg_example" // string |
 	outputOptions := *openapiclient.NewMultiResourceOutputOptionsQuery() // MultiResourceOutputOptionsQuery |
 	pagination := *openapiclient.NewPaginationQuery() // PaginationQuery |
-	zoneId := "zoneId_example" // string | Optional filter: only entities in this zone. (optional)
+	zoneId := "zoneId_example" // string | Optional filter: only entities whose **effective** zone is this zone. A malformed id is 400. (optional)
+	includeDescendants := true // bool | With `zone_id`: also match entities whose effective zone is a descendant zone. (optional)
 	q := "q_example" // string | Case-insensitive substring match on entity `name` (plain text). Applies to org-wide lists. (optional)
-	sort := "sort_example" // string | Server-side ordering for org-wide lists: `name:asc`, `name:desc`, `created_at:asc`, `created_at:desc`. Ignored when `zone_id` is set. Defaults to insertion order when omitted. (optional)
+	sort := "sort_example" // string | Server-side ordering for org-wide lists: `name:asc`, `name:desc`, `created_at:asc`, `created_at:desc`. Combines with `zone_id` and `q`. Defaults to insertion order when omitted. (optional)
+	orgScope := "orgScope_example" // string | `self` (default): org subtree of X-Org. `self_and_ancestors`: exact X-Org plus ancestor orgs where the caller has `entities:list` (door-wiring pickers for shared HOA hardware). Cannot combine with `zone_id`. (optional)
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -812,7 +814,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.EntitiesAPI.ListEntities(context.Background()).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).ZoneId(zoneId).Q(q).Sort(sort).Execute()
+	resp, r, err := apiClient.EntitiesAPI.ListEntities(context.Background()).XOrg(xOrg).OutputOptions(outputOptions).Pagination(pagination).ZoneId(zoneId).IncludeDescendants(includeDescendants).Q(q).Sort(sort).OrgScope(orgScope).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `EntitiesAPI.ListEntities``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -836,9 +838,11 @@ Name | Type | Description  | Notes
  **xOrg** | **string** |  |
  **outputOptions** | [**MultiResourceOutputOptionsQuery**](MultiResourceOutputOptionsQuery.md) |  |
  **pagination** | [**PaginationQuery**](PaginationQuery.md) |  |
- **zoneId** | **string** | Optional filter: only entities in this zone. |
+ **zoneId** | **string** | Optional filter: only entities whose **effective** zone is this zone. A malformed id is 400. |
+ **includeDescendants** | **bool** | With &#x60;zone_id&#x60;: also match entities whose effective zone is a descendant zone. |
  **q** | **string** | Case-insensitive substring match on entity &#x60;name&#x60; (plain text). Applies to org-wide lists. |
- **sort** | **string** | Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Ignored when &#x60;zone_id&#x60; is set. Defaults to insertion order when omitted. |
+ **sort** | **string** | Server-side ordering for org-wide lists: &#x60;name:asc&#x60;, &#x60;name:desc&#x60;, &#x60;created_at:asc&#x60;, &#x60;created_at:desc&#x60;. Combines with &#x60;zone_id&#x60; and &#x60;q&#x60;. Defaults to insertion order when omitted. |
+ **orgScope** | **string** | &#x60;self&#x60; (default): org subtree of X-Org. &#x60;self_and_ancestors&#x60;: exact X-Org plus ancestor orgs where the caller has &#x60;entities:list&#x60; (door-wiring pickers for shared HOA hardware). Cannot combine with &#x60;zone_id&#x60;. |
 
 ### Return type
 
@@ -940,7 +944,7 @@ Name | Type | Description  | Notes
 
 > PreviewEntityAction(ctx, id, actionId).Body(body).Execute()
 
-Preview an entity action (Cedar + policies, no hardware call).
+Preview an entity action: evaluates permissions and policies without calling the hardware.
 
 ### Example
 

@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **LightsAutoOffDuration** | Pointer to **map[string]int64** | Map of light entity ULID to auto-off duration in seconds. | [optional]
 **Message** | Pointer to **NullableString** |  | [optional]
 **Ok** | **bool** |  |
+**UsesRemaining** | Pointer to **NullableInt32** | Uses left after this execution; omitted when the invitation has no use limit. | [optional]
 
 ## Methods
 
@@ -215,5 +216,40 @@ and a boolean to check if the value has been set.
 SetOk sets Ok field to given value.
 
 
+### GetUsesRemaining
+
+`func (o *PublicInviteExecuteResponse) GetUsesRemaining() int32`
+
+GetUsesRemaining returns the UsesRemaining field if non-nil, zero value otherwise.
+
+### GetUsesRemainingOk
+
+`func (o *PublicInviteExecuteResponse) GetUsesRemainingOk() (*int32, bool)`
+
+GetUsesRemainingOk returns a tuple with the UsesRemaining field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetUsesRemaining
+
+`func (o *PublicInviteExecuteResponse) SetUsesRemaining(v int32)`
+
+SetUsesRemaining sets UsesRemaining field to given value.
+
+### HasUsesRemaining
+
+`func (o *PublicInviteExecuteResponse) HasUsesRemaining() bool`
+
+HasUsesRemaining returns a boolean if a field has been set.
+
+### SetUsesRemainingNil
+
+`func (o *PublicInviteExecuteResponse) SetUsesRemainingNil(b bool)`
+
+ SetUsesRemainingNil sets the value for UsesRemaining to be an explicit nil
+
+### UnsetUsesRemaining
+`func (o *PublicInviteExecuteResponse) UnsetUsesRemaining()`
+
+UnsetUsesRemaining ensures that no value is present for UsesRemaining, not even an explicit nil
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

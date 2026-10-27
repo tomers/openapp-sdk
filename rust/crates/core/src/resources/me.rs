@@ -49,42 +49,4 @@ impl MeClient {
             })
             .await
     }
-
-    pub async fn push_subscription_status(
-        &self,
-    ) -> Result<types::MePushSubscriptionStatusResponse, SdkError> {
-        self.transport
-            .request_json::<(), types::MePushSubscriptionStatusResponse>(RequestSpec {
-                method: Method::GET,
-                path: "/me/push-subscription-status",
-                ..Default::default()
-            })
-            .await
-    }
-
-    pub async fn push_vapid_public_key(
-        &self,
-    ) -> Result<types::MePushVapidPublicKeyResponse, SdkError> {
-        self.transport
-            .request_json::<(), types::MePushVapidPublicKeyResponse>(RequestSpec {
-                method: Method::GET,
-                path: "/me/push-vapid-public-key",
-                ..Default::default()
-            })
-            .await
-    }
-
-    pub async fn subscribe_push(
-        &self,
-        body: &types::PostMePushSubscriptionPayload,
-    ) -> Result<(), SdkError> {
-        self.transport
-            .request_json::<types::PostMePushSubscriptionPayload, ()>(RequestSpec {
-                method: Method::POST,
-                path: "/me/push-subscriptions",
-                body: Some(body),
-                ..Default::default()
-            })
-            .await
-    }
 }

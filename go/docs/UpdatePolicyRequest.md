@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Capability** | Pointer to **NullableString** |  | [optional]
-**Config** | Pointer to **map[string]interface{}** | Omitted preserves the current config; explicit JSON null is rejected rather than being silently treated as an omitted field. | [optional]
+**Config** | Pointer to **map[string]interface{}** | Omitted preserves the current config. Explicit JSON &#x60;null&#x60; is rejected with 400. | [optional]
 **Enabled** | Pointer to **NullableBool** |  | [optional]
 **Enforcement** | Pointer to **NullableString** |  | [optional]
 

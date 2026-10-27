@@ -52,6 +52,19 @@ func Test_openapi_DirectoryAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test DirectoryAPIService OrderDirectoryListings", func(t *testing.T) {
+
+		t.Skip("skip test") // remove to run test
+
+		var deviceId string
+
+		httpRes, err := apiClient.DirectoryAPI.OrderDirectoryListings(context.Background(), deviceId).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test DirectoryAPIService PlanDirectoryListings", func(t *testing.T) {
 
 		t.Skip("skip test") // remove to run test

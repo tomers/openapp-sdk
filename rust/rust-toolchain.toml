@@ -1,5 +1,5 @@
 # Canonical SDK rustc pin — channel matches config.toml `[rust].version`.
 # CI: `.github/actions/setup-rust-pin` · Docker: rust:${version}-slim-${debian}
 [toolchain]
-channel = "1.98.0"
+channel = "1.99.1"
 components = ["rustfmt", "clippy"]

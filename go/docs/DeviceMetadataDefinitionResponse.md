@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**CredentialsSet** | **[]string** | JSON Pointers into &#x60;data&#x60; of write-only credential fields that currently hold a value. |
 **Data** | **interface{}** |  |
 **ProviderType** | **string** |  |
 **Schema** | **interface{}** |  |
@@ -12,7 +13,7 @@ Name | Type | Description | Notes
 
 ### NewDeviceMetadataDefinitionResponse
 
-`func NewDeviceMetadataDefinitionResponse(data interface{}, providerType string, schema interface{}, ) *DeviceMetadataDefinitionResponse`
+`func NewDeviceMetadataDefinitionResponse(credentialsSet []string, data interface{}, providerType string, schema interface{}, ) *DeviceMetadataDefinitionResponse`
 
 NewDeviceMetadataDefinitionResponse instantiates a new DeviceMetadataDefinitionResponse object
 This constructor will assign default values to properties that have it defined,
@@ -26,6 +27,26 @@ will change when the set of required properties is changed
 NewDeviceMetadataDefinitionResponseWithDefaults instantiates a new DeviceMetadataDefinitionResponse object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetCredentialsSet
+
+`func (o *DeviceMetadataDefinitionResponse) GetCredentialsSet() []string`
+
+GetCredentialsSet returns the CredentialsSet field if non-nil, zero value otherwise.
+
+### GetCredentialsSetOk
+
+`func (o *DeviceMetadataDefinitionResponse) GetCredentialsSetOk() (*[]string, bool)`
+
+GetCredentialsSetOk returns a tuple with the CredentialsSet field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCredentialsSet
+
+`func (o *DeviceMetadataDefinitionResponse) SetCredentialsSet(v []string)`
+
+SetCredentialsSet sets CredentialsSet field to given value.
+
 
 ### GetData
 

@@ -193,36 +193,4 @@ impl OrgsClient {
             })
             .await
     }
-
-    pub async fn copilot_chat(
-        &self,
-        org_id: &str,
-        body: &JsonValue,
-    ) -> Result<JsonValue, SdkError> {
-        let path = format!("/orgs/{org_id}/copilot/chat");
-        self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
-                method: Method::POST,
-                path: &path,
-                body: Some(body),
-                ..Default::default()
-            })
-            .await
-    }
-
-    pub async fn copilot_commit(
-        &self,
-        org_id: &str,
-        body: &JsonValue,
-    ) -> Result<JsonValue, SdkError> {
-        let path = format!("/orgs/{org_id}/copilot/commit");
-        self.transport
-            .request_json::<JsonValue, JsonValue>(RequestSpec {
-                method: Method::POST,
-                path: &path,
-                body: Some(body),
-                ..Default::default()
-            })
-            .await
-    }
 }

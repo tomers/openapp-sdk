@@ -5,6 +5,7 @@ All URIs are relative to */api/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**GetPublicInvite**](PublicAccessAPI.md#GetPublicInvite) | **Get** /public/access/invites/{inviteToken} |
+[**GetPublicInviteLocale**](PublicAccessAPI.md#GetPublicInviteLocale) | **Get** /public/access/invites/{inviteToken}/locale |
 [**GetPublicInvitePhoto**](PublicAccessAPI.md#GetPublicInvitePhoto) | **Get** /public/access/invites/{inviteToken}/photo |
 [**GetPublicPortal**](PublicAccessAPI.md#GetPublicPortal) | **Get** /public/access/portals/{publicPortalId} |
 [**GetPublicPortalReachable**](PublicAccessAPI.md#GetPublicPortalReachable) | **Get** /public/access/portals/{publicPortalId}/reachable |
@@ -86,6 +87,78 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**PublicInviteResponse**](PublicInviteResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## GetPublicInviteLocale
+
+> PublicInviteLocaleResponse GetPublicInviteLocale(ctx, inviteToken).Execute()
+
+
+
+### Example
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+	openapiclient "github.com/tomers/openapp-sdk/go"
+)
+
+func main() {
+	inviteToken := "inviteToken_example" // string |
+
+	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "NewAPIClient: %v\n", err)
+		os.Exit(1)
+	}
+	defer apiClient.Close()
+	resp, r, err := apiClient.PublicAccessAPI.GetPublicInviteLocale(context.Background(), inviteToken).Execute()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error when calling `PublicAccessAPI.GetPublicInviteLocale``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+	}
+	// response from `GetPublicInviteLocale`: PublicInviteLocaleResponse
+	fmt.Fprintf(os.Stdout, "Response from `PublicAccessAPI.GetPublicInviteLocale`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**inviteToken** | **string** |  |
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetPublicInviteLocaleRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+### Return type
+
+[**PublicInviteLocaleResponse**](PublicInviteLocaleResponse.md)
 
 ### Authorization
 

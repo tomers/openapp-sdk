@@ -15,14 +15,16 @@ Name | Type | Description | Notes
 **IntegrationId** | **string** | Owning integration (e.g. Shelly Cloud account/connection). |
 **Name** | [**LocalizedString**](LocalizedString.md) | Human-readable name. |
 **OrgId** | **string** | Organization that owns this device. |
-**IsPrimaryInstance** | Pointer to **NullableBool** | Server-computed, read-only: true when this OpenApp device record is the canonical (primary) instance for its physical hardware in the global &#x60;physical_devices&#x60; registry. Never accepted from a request body. See &#x60;docs/POLICIES_HDD.md&#x60; §6.3. | [optional]
+**ZoneId** | Pointer to **string** | Zone the device is placed in (same org). Entities with &#x60;zone.mode &#x3D; inherit&#x60; take it. | [optional]
+**CredentialsSet** | **[]string** | JSON Pointers into &#x60;device_metadata&#x60; of write-only credential fields (schema &#x60;format: password&#x60;) that currently hold a value. Credential values are never returned here; an update that omits them keeps the stored value and &#x60;null&#x60; clears it. |
+**IsPrimaryInstance** | Pointer to **NullableBool** | Read-only, computed by the server: true when this device record is the primary instance for its physical hardware, when the same hardware has more than one device record. Never accepted in a request body. | [optional]
 **Stale** | Pointer to **NullableBool** | Present when &#x60;include_stale&#x3D;true&#x60; was requested and the provider supports stale detection. | [optional]
 
 ## Methods
 
 ### NewDeviceResponse
 
-`func NewDeviceResponse(id string, integrationId string, name LocalizedString, orgId string, ) *DeviceResponse`
+`func NewDeviceResponse(id string, integrationId string, name LocalizedString, orgId string, credentialsSet []string, ) *DeviceResponse`
 
 NewDeviceResponse instantiates a new DeviceResponse object
 This constructor will assign default values to properties that have it defined,
@@ -300,6 +302,51 @@ and a boolean to check if the value has been set.
 `func (o *DeviceResponse) SetOrgId(v string)`
 
 SetOrgId sets OrgId field to given value.
+
+
+### GetZoneId
+
+`func (o *DeviceResponse) GetZoneId() string`
+
+GetZoneId returns the ZoneId field if non-nil, zero value otherwise.
+
+### GetZoneIdOk
+
+`func (o *DeviceResponse) GetZoneIdOk() (*string, bool)`
+
+GetZoneIdOk returns a tuple with the ZoneId field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetZoneId
+
+`func (o *DeviceResponse) SetZoneId(v string)`
+
+SetZoneId sets ZoneId field to given value.
+
+### HasZoneId
+
+`func (o *DeviceResponse) HasZoneId() bool`
+
+HasZoneId returns a boolean if a field has been set.
+
+### GetCredentialsSet
+
+`func (o *DeviceResponse) GetCredentialsSet() []string`
+
+GetCredentialsSet returns the CredentialsSet field if non-nil, zero value otherwise.
+
+### GetCredentialsSetOk
+
+`func (o *DeviceResponse) GetCredentialsSetOk() (*[]string, bool)`
+
+GetCredentialsSetOk returns a tuple with the CredentialsSet field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetCredentialsSet
+
+`func (o *DeviceResponse) SetCredentialsSet(v []string)`
+
+SetCredentialsSet sets CredentialsSet field to given value.
 
 
 ### GetIsPrimaryInstance

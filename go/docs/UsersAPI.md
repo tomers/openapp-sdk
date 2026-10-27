@@ -10,7 +10,7 @@ Method | HTTP request | Description
 [**DeleteUser**](UsersAPI.md#DeleteUser) | **Delete** /users/{id} | Soft-delete a user.
 [**GetUser**](UsersAPI.md#GetUser) | **Get** /users/{id} | Get a user by ID.
 [**HardDeleteUser**](UsersAPI.md#HardDeleteUser) | **Delete** /users/{id}/purge | Permanently delete (purge) a user.
-[**OrgProposeAccountMerge**](UsersAPI.md#OrgProposeAccountMerge) | **Post** /orgs/{org_id}/account-merges |
+[**RestoreUser**](UsersAPI.md#RestoreUser) | **Post** /users/{id}/restore | Restore a soft-deleted user.
 [**SearchUsers**](UsersAPI.md#SearchUsers) | **Get** /users/search | Search users by name/email. Requires &#x60;users:list&#x60; in the org (&#x60;X-Org&#x60; or &#x60;org_id&#x60;), or on the root org when &#x60;scope&#x3D;all&#x60;.
 [**UpdateUser**](UsersAPI.md#UpdateUser) | **Put** /users/{id} | Update a user by ID.
 
@@ -476,11 +476,11 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## OrgProposeAccountMerge
+## RestoreUser
 
-> OrgProposeMergeResponse OrgProposeAccountMerge(ctx, orgId).OrgProposeMergeRequest(orgProposeMergeRequest).Execute()
+> UserResponse RestoreUser(ctx, id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 
-
+Restore a soft-deleted user.
 
 ### Example
 
@@ -495,8 +495,9 @@ import (
 )
 
 func main() {
-	orgId := "orgId_example" // string |
-	orgProposeMergeRequest := *openapiclient.NewOrgProposeMergeRequest("OrgUserId_example") // OrgProposeMergeRequest |
+	id := "id_example" // string |
+	xOrg := "xOrg_example" // string |
+	includeDeleted := true // bool |  (optional)
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -504,13 +505,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.OrgProposeAccountMerge(context.Background(), orgId).OrgProposeMergeRequest(orgProposeMergeRequest).Execute()
+	resp, r, err := apiClient.UsersAPI.RestoreUser(context.Background(), id).XOrg(xOrg).IncludeDeleted(includeDeleted).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.OrgProposeAccountMerge``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.RestoreUser``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `OrgProposeAccountMerge`: OrgProposeMergeResponse
-	fmt.Fprintf(os.Stdout, "Response from `UsersAPI.OrgProposeAccountMerge`: %v\n", resp)
+	// response from `RestoreUser`: UserResponse
+	fmt.Fprintf(os.Stdout, "Response from `UsersAPI.RestoreUser`: %v\n", resp)
 }
 ```
 
@@ -520,21 +521,22 @@ func main() {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**orgId** | **string** |  |
+**id** | **string** |  |
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiOrgProposeAccountMergeRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiRestoreUserRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
- **orgProposeMergeRequest** | [**OrgProposeMergeRequest**](OrgProposeMergeRequest.md) |  |
+ **xOrg** | **string** |  |
+ **includeDeleted** | **bool** |  |
 
 ### Return type
 
-[**OrgProposeMergeResponse**](OrgProposeMergeResponse.md)
+[**UserResponse**](UserResponse.md)
 
 ### Authorization
 
@@ -542,7 +544,7 @@ Name | Type | Description  | Notes
 
 ### HTTP request headers
 
-- **Content-Type**: application/json
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
@@ -552,7 +554,7 @@ Name | Type | Description  | Notes
 
 ## SearchUsers
 
-> PaginatedResponse SearchUsers(ctx).Q(q).OrgId(orgId).Scope(scope).Limit(limit).Offset(offset).ExcludeIds(excludeIds).Execute()
+> PaginatedResponse SearchUsers(ctx).Q(q).OrgId(orgId).Scope(scope).Limit(limit).Offset(offset).ExcludeIds(excludeIds).Role(role).Execute()
 
 Search users by name/email. Requires `users:list` in the org (`X-Org` or `org_id`), or on the root org when `scope=all`.
 
@@ -575,6 +577,7 @@ func main() {
 	limit := int32(56) // int32 |  (optional)
 	offset := int32(56) // int32 |  (optional)
 	excludeIds := "excludeIds_example" // string | Comma-separated user IDs to exclude (optional)
+	role := "role_example" // string | Membership role that must be held (within `org_id` when set; any org when `scope=all`). (optional)
 
 	apiClient, err := openapiclient.NewAPIClient("http://127.0.0.1:8080_openapp_example_secret")
 	if err != nil {
@@ -582,7 +585,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer apiClient.Close()
-	resp, r, err := apiClient.UsersAPI.SearchUsers(context.Background()).Q(q).OrgId(orgId).Scope(scope).Limit(limit).Offset(offset).ExcludeIds(excludeIds).Execute()
+	resp, r, err := apiClient.UsersAPI.SearchUsers(context.Background()).Q(q).OrgId(orgId).Scope(scope).Limit(limit).Offset(offset).ExcludeIds(excludeIds).Role(role).Execute()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error when calling `UsersAPI.SearchUsers``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -609,6 +612,7 @@ Name | Type | Description  | Notes
  **limit** | **int32** |  |
  **offset** | **int32** |  |
  **excludeIds** | **string** | Comma-separated user IDs to exclude |
+ **role** | **string** | Membership role that must be held (within &#x60;org_id&#x60; when set; any org when &#x60;scope&#x3D;all&#x60;). |
 
 ### Return type
 
