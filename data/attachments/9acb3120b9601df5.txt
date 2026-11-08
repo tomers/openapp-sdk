@@ -1,0 +1,12 @@
+
+Verifying a pact between [1mopenapp-python-sdk[0m and [1mopenapp-http-api[0m
+
+  GET backend status (0s loading, 6ms verification)
+     Given backend is running
+    returns a response which
+      has status code [1m200[0m ([32mOK[0m)
+      includes headers
+        "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
+      has a matching body ([32mOK[0m)
+
+
