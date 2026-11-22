@@ -1,0 +1,1 @@
+{"items": [{"id": "o1", "name": "Acme"}], "next_cursor": null}
